@@ -1,0 +1,47 @@
+# SQL lint: validate SQL in data/sql and data-pipelines
+name: SQL Lint
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'data/sql/**'
+      - 'data-pipelines/**/*.sql'
+      - '.github/workflows/sql-lint.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'data/sql/**'
+      - 'data-pipelines/**/*.sql'
+      - '.github/workflows/sql-lint.yml'
+
+jobs:
+  sql-lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install sqlfluff (BigQuery dialect)
+        run: |
+          pip install sqlfluff sqlfluff-dbt
+          sqlfluff dialects
+
+      - name: Lint SQL files
+        run: |
+          sqlfluff lint data/sql --dialect bigquery || true
+          for d in data-pipelines/bronze data-pipelines/silver data-pipelines/gold; do
+            if [ -d "$d" ]; then
+              sqlfluff lint "$d" --dialect bigquery || true
+            fi
+          done
+        continue-on-error: true
+
+      - name: List SQL files
+        run: |
+          echo "SQL files in repo:"
+          find . -name '*.sql' -not -path './.git/*' | head -50
