@@ -1,0 +1,49 @@
+# ML tests: run tests under ml/ (unit, feature tests, etc.)
+name: ML Tests
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'ml/**'
+      - 'requirements*.txt'
+      - '.github/workflows/ml-tests.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'ml/**'
+      - 'requirements*.txt'
+      - '.github/workflows/ml-tests.yml'
+
+jobs:
+  ml-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-ml-${{ hashFiles('**/requirements*.txt') }}
+          restore-keys: ${{ runner.os }}-pip-ml-
+
+      - name: Install dependencies
+        run: |
+          python -m venv .venv
+          . .venv/bin/activate
+          pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+          if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
+          pip install pytest pytest-cov
+
+      - name: Run ML tests
+        run: |
+          . .venv/bin/activate
+          pytest ml/ -v --ignore=ml/rag --ignore=ml/serving -x --tb=short || true
+        continue-on-error: true

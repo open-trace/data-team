@@ -1,0 +1,20 @@
+# Core (notebooks, pipelines, BigQuery client)
+google-cloud-bigquery>=3.14.0
+google-cloud-storage>=2.14.0
+pandas>=2.0.0
+pyarrow>=14.0.0
+db-dtypes>=1.2.0
+
+# Local partition DB (PostgreSQL)
+sqlalchemy>=2.0.0
+psycopg2-binary>=2.9.0
+
+# ML (features, training, evaluation)
+scikit-learn>=1.3.0
+numpy>=1.24.0,<2.0
+
+# Optional: Vertex AI, RAG, serving
+# google-cloud-aiplatform>=1.38.0
+
+# Optional: larger local partition analytics (data/local/)
+# duckdb>=0.9.0
