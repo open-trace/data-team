@@ -17,13 +17,48 @@ We use **PostgreSQL** so the team’s local environment is close to BigQuery (fu
 
 So: collaboration is smooth as long as everyone has their **own** database (or schema); the repo only holds code and schema.
 
+## For team members (shared repo)
+
+When this repo is shared with the team, **everyone gets the same local DB setup**:
+
+- **Same schema:** The table list (`scripts/bronze_tables.txt`) and schema script (`bq_schema_to_local_pg.py`) are in the repo. When any team member runs the scripts, they create the **same tables** (same columns and types) in their local Postgres, using the same BigQuery project/dataset.
+- **Same workflow:** Everyone uses the same Docker Compose, same scripts, and the same `.env.example` as a template. Run `docker compose up -d`, create your DB, copy `.env.example` to `.env` and add your own BigQuery credentials and `LOCAL_DB_URL`, then run `bash data/local/scripts/populate_local_db.sh`.
+- **Your own data:** Each person’s local DB is **their own copy**. The rows in it are whatever they synced from BigQuery when they ran the sync. To get similar data across the team, use the same `BQ_PARTITION_LIMIT` and filters in `.env` (or document the recommended values in the repo).
+
+So: same structure and process for everyone; each team member syncs their own data into their own database.
+
 ## Layout
 
 | Path | Purpose |
 |------|---------|
 | **`schema/`** | DDL for the local DB (PostgreSQL and optional SQLite). Mirror bronze/silver/gold **database** structures. |
-| **`scripts/`** | Scripts to sync a partition from a BigQuery **database** into the local DB (e.g. `bq_partition_to_local.py`). |
+| **`scripts/`** | Scripts to sync a partition from a BigQuery **database** into the local DB (e.g. `bq_partition_to_local.py`). **`engine_connector.py`** is the single entry point for all DB connections: use it when reading, writing, or creating tables/datasets. |
 | **`.env.example`** | Example env vars for BQ and **PostgreSQL** `LOCAL_DB_URL` (do not commit `.env`). |
+
+## Creating bronze tables from BigQuery
+
+To recreate the bronze tables (from the list in `scripts/bronze_tables.txt`) on your local PostgreSQL database:
+
+1. **Set env:** `BQ_PROJECT`, `BQ_DATASET`, and optionally `LOCAL_DB_URL` (to create tables directly on your local DB).
+2. **Generate DDL and create tables:**  
+   From repo root:
+   ```bash
+   python data/local/scripts/bq_schema_to_local_pg.py
+   ```
+   This fetches each table’s schema from BigQuery, writes one `.sql` file per table under `schema/bronze/`, and (if `LOCAL_DB_URL` is set) runs the DDL so the tables exist locally. Use `--write-only` to only write `.sql` files, or `--execute-only` to run existing `.sql` files against the local DB without calling BigQuery.
+3. **Load data:** Sync a partition into each table with the existing script (per table) or the batch helper:
+   ```bash
+   python data/local/scripts/bq_partition_to_local.py --table <table_id> --target-table <table_id>
+   # Or sync all listed bronze tables:
+   python data/local/scripts/sync_all_bronze_tables.py
+   ```
+   Use `BQ_PARTITION_LIMIT` or `--limit` to control how many rows are pulled per table.
+
+**One-shot (from repo root):** If `data/local/.env` is configured, you can run:
+   ```bash
+   bash data/local/scripts/populate_local_db.sh
+   ```
+   This loads `.env`, creates all bronze tables from BigQuery schemas, then syncs data into them.
 
 ## Usage
 

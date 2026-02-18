@@ -1,13 +1,15 @@
-# Local PostgreSQL for the data team. Each developer runs this on their machine
-# and points LOCAL_DB_URL in data/local/.env to their own database (e.g. datateam_local).
-# Use one database per developer to avoid collaboration conflicts.
+# Local PostgreSQL + optional full setup (schema, bronze sync, GIS) in Docker.
 #
-# Usage:
+# Postgres only (DB + datateam_local created on first run):
 #   docker compose up -d
-#   Create your DB: docker compose exec postgres psql -U postgres -c "CREATE DATABASE datateam_local;"
-#   In .env: LOCAL_DB_URL=postgresql://postgres:postgres@localhost:5432/datateam_local
 #
-# Stop: docker compose down
+# Everything in Docker (Postgres + create tables + sync from BigQuery + load GIS CSV):
+#   Ensure data/local/.env and data/local/keys/opentrace-bq-key.json exist, then:
+#   docker compose --profile setup up
+#   The "setup" container runs populate_local_db.sh once and exits.
+#
+# From the host, use LOCAL_DB_URL=postgresql://postgres:postgres@localhost:5432/datateam_local
+# to connect to Postgres. Stop: docker compose down
 
 services:
   postgres:
@@ -20,11 +22,30 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./data/local/init-db:/docker-entrypoint-initdb.d:ro
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
       interval: 5s
       timeout: 5s
       retries: 5
+
+  setup:
+    build: .
+    profiles:
+      - setup
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - .:/app
+    env_file:
+      - data/local/.env
+    environment:
+      LOCAL_DB_URL: postgresql://postgres:postgres@postgres:5432/datateam_local
+      GOOGLE_APPLICATION_CREDENTIALS: /app/data/local/keys/opentrace-bq-key.json
+    working_dir: /app
+    command: bash data/local/scripts/populate_local_db.sh
+    restart: "no"
 
 volumes:
   postgres_data:

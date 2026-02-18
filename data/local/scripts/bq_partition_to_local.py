@@ -15,10 +15,15 @@ Requires: GOOGLE_APPLICATION_CREDENTIALS or gcloud auth for BigQuery.
 from __future__ import annotations
 
 import os
+import re
 import sys
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
+_SCRIPTS_DIR = Path(__file__).resolve().parent
+if str(_SCRIPTS_DIR) not in sys.path:
+    sys.path.insert(0, str(_SCRIPTS_DIR))
+from engine_connector import get_engine  # noqa: E402
 
 
 def get_config() -> dict:
@@ -37,10 +42,8 @@ def get_config() -> dict:
 
 
 def _resolve_local_db_path(path: str) -> str:
-    p = Path(path)
-    if not p.is_absolute():
-        p = REPO_ROOT / p
-    return str(p)
+    from engine_connector import _resolve_path
+    return _resolve_path(path)
 
 
 def build_query(config: dict) -> str:
@@ -49,28 +52,13 @@ def build_query(config: dict) -> str:
     table = config["bq_table"]
     if not project or not dataset:
         raise ValueError("Set BQ_PROJECT and BQ_DATASET (e.g. in .env)")
-    full_table = f"`{project}`.{dataset}.{table}"
+    table_bq = f"`{table}`" if re.search(r"[\s\-]", table) else table
+    full_table = f"`{project}`.{dataset}.{table_bq}"
     query = f"SELECT * FROM {full_table}"
     if config["partition_filter"]:
         query += f" WHERE {config['partition_filter']}"
     query += f" LIMIT {config['limit']}"
     return query
-
-
-def get_engine(config: dict):
-    """Return a SQLAlchemy engine for the configured local DB (PostgreSQL or SQLite)."""
-    from sqlalchemy import create_engine
-
-    if config.get("local_db_url"):
-        url = config["local_db_url"]
-        if not url.startswith("postgresql"):
-            url = f"postgresql+psycopg2://{url}" if "://" not in url else url
-        if url.startswith("postgresql://") and "+" not in url:
-            url = url.replace("postgresql://", "postgresql+psycopg2://", 1)
-        return create_engine(url)
-    path = config["local_db_path"]
-    Path(path).parent.mkdir(parents=True, exist_ok=True)
-    return create_engine(f"sqlite:///{path}")
 
 
 def main() -> None:
@@ -109,7 +97,7 @@ def main() -> None:
     client = bigquery.Client(project=config["bq_project"])
     df = client.query(query).to_dataframe()
 
-    engine = get_engine(config)
+    engine = get_engine(config=config)
     with engine.begin() as conn:
         df.to_sql(
             config["target_table"],
