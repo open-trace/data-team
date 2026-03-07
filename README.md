@@ -51,7 +51,9 @@ See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) for details.
    ```
 
 2. **Local partition DB (PostgreSQL recommended)**  
-   Start Postgres: `docker compose up -d`, then create your DB (e.g. `CREATE DATABASE datateam_local;`). Copy `data/local/.env.example` to `data/local/.env` and set `LOCAL_DB_URL=postgresql://postgres:postgres@localhost:5432/datateam_local` and your BigQuery settings. Run `python data/local/scripts/bq_partition_to_local.py` to sync a partition. Use one database per developer for smooth collaboration (see [data/local/README.md](data/local/README.md)).
+   - **Postgres only:** Run **`docker compose up -d`**. On first run, Postgres starts and **`datateam_local`** is created automatically.  
+   - **Everything in Docker (Postgres + schema + bronze sync + GIS):** Ensure `data/local/.env` exists (copy from `.env.example`) and `data/local/keys/opentrace-bq-key.json` is in place, then run **`docker compose --profile setup up`**. The `setup` service runs `populate_local_db.sh` inside a container (creates tables from BigQuery schemas, syncs bronze data, loads the GIS CSV) and exits. Connect from your machine with **`LOCAL_DB_URL=postgresql://postgres:postgres@localhost:5432/datateam_local`**.  
+   - **Host-only populate:** Alternatively run **`bash data/local/scripts/populate_local_db.sh`** on your machine after `docker compose up -d`. Use one database per developer (see [data/local/README.md](data/local/README.md)).
 
 3. **Develop pipelines**  
    Use notebooks in `data-pipelines/` (ingestion, bronze, silver, gold), optionally against the local DB. When ready, add or update SQL in `data/sql/bronze_to_silver/` and `data/sql/silver_to_gold/` for BigQuery.

@@ -51,6 +51,7 @@ infra/terraform/*.tfvars
 !.env.example
 *.pem
 service-account*.json
+data/local/keys/opentrace-bq-key.json
 
 # Local partition DB (do not commit)
 data/local/*.db
