@@ -1,0 +1,16 @@
+# Silver models: read from bronze models (ref) and silver source; write to silver dataset.
+# Use ref('bronze_model_name') for bronze models and source('silver', '...') for silver tables. Tables and columns are in models/sources.yml.
+# Run with: dbt run --target silver (or dbt run --target silver --select silver.*)
+
+version: 2
+
+models:
+  - name: silver_example
+    description: "Example silver model. Replace with real logic using ref('...') and source('silver', '...')."
+    columns:
+      - name: id
+        description: "Placeholder primary key"
+      - name: layer
+        description: "Pipeline layer (silver)"
+      - name: _loaded_at
+        description: "Load timestamp"
