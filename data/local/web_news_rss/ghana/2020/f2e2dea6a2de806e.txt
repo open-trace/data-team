@@ -1,0 +1,93 @@
+---
+id: f2e2dea6a2de806e
+url: https://news.google.com/rss/articles/CBMilwFBVV95cUxOTHNNMklzaDRMRl9RVTBQeGdWRkJURDZwLXBfWHRjc0p6RlNLUnZ2el9uY1lSTTRSTmk5OXE1cUtuUk5KN19Ua1Z2WVU2VUk1RC1vbHpHMUwyTUhESkNBNHZEdTBSRFIxY2JtQkJjVUc1OEFIWGQ5d09XV213V0c3UlpwTW9FVDRzZEc2Sy1XejEybmNoWVBF0gGWAUFVX3lxTE1zQ0lKQkNaa3JtSHFRVlItYkFiYUN4S1NweWlOamp2UVp0bnFHMW0wNjdEQlhFQ3YwdWhTMFc3UzBBOVZKX1VFeUp2NXNZMUV0QlJqaXRYUzNwU1JlUWRVejl5dFhnWGFaVXB6bTl1OG1YWkN6TG5LZVlIYVh6TFRUUVRPOUJWbDZoQzVoZko0X0ZBOENwQQ?oc=5
+rss_url: https://news.google.com/rss/articles/CBMilwFBVV95cUxOTHNNMklzaDRMRl9RVTBQeGdWRkJURDZwLXBfWHRjc0p6RlNLUnZ2el9uY1lSTTRSTmk5OXE1cUtuUk5KN19Ua1Z2WVU2VUk1RC1vbHpHMUwyTUhESkNBNHZEdTBSRFIxY2JtQkJjVUc1OEFIWGQ5d09XV213V0c3UlpwTW9FVDRzZEc2Sy1XejEybmNoWVBF0gGWAUFVX3lxTE1zQ0lKQkNaa3JtSHFRVlItYkFiYUN4S1NweWlOamp2UVp0bnFHMW0wNjdEQlhFQ3YwdWhTMFc3UzBBOVZKX1VFeUp2NXNZMUV0QlJqaXRYUzNwU1JlUWRVejl5dFhnWGFaVXB6bTl1OG1YWkN6TG5LZVlIYVh6TFRUUVRPOUJWbDZoQzVoZko0X0ZBOENwQQ?oc=5
+title: 'Nkonya Tayi: Co-operative Cocoa Farmers Receive Certificate To Operate - Modern
+  Ghana'
+country: Ghana
+domain: agriculture
+domain_score: 9
+info_type: news_article
+published_at: '2020-07-07T00:00:00+00:00'
+published_at_source: rss
+published_at_confidence: 0.95
+published_at_raw: '2020-07-07'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:20:46+00:00'
+extracted_at: '2026-03-24T16:20:44+00:00'
+feed_name: Google News — Ghana agriculture [2020-07-06]
+source: rss
+body_source: tavily_search
+phase1_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMilwFBVV95cUxOTHNNMklzaDRMRl9RVTBQeGdWRkJURDZwLXBfWHRjc0p6RlNLUnZ2el9uY1lSTTRSTmk5OXE1cUtuUk5KN19Ua1Z2WVU2VUk1RC1vbHpHMUwyTUhESkNBNHZEdTBSRFIxY2JtQkJjVUc1OEFIWGQ5d09XV213V0c3UlpwTW9FVDRzZEc2Sy1XejEybmNoWVBF0gGWAUFVX3lxTE1zQ0lKQkNaa3JtSHFRVlItYkFiYUN4S1NweWlOamp2UVp0bnFHMW0wNjdEQlhFQ3YwdWhTMFc3UzBBOVZKX1VFeUp2NXNZMUV0QlJqaXRYUzNwU1JlUWRVejl5dFhnWGFaVXB6bTl1OG1YWkN6TG5LZVlIYVh6TFRUUVRPOUJWbDZoQzVoZko0X0ZBOENwQQ?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49DTngCN0enZEKYX9ST7I2XiPOOVnft85WsyN9PRxc3S6BQJqM3MsfjdUafRTzQ5RIXBaDsWY0PiVu31pKYXTpdgYbrfKCqR
+article_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMilwFBVV95cUxOTHNNMklzaDRMRl9RVTBQeGdWRkJURDZwLXBfWHRjc0p6RlNLUnZ2el9uY1lSTTRSTmk5OXE1cUtuUk5KN19Ua1Z2WVU2VUk1RC1vbHpHMUwyTUhESkNBNHZEdTBSRFIxY2JtQkJjVUc1OEFIWGQ5d09XV213V0c3UlpwTW9FVDRzZEc2Sy1XejEybmNoWVBF0gGWAUFVX3lxTE1zQ0lKQkNaa3JtSHFRVlItYkFiYUN4S1NweWlOamp2UVp0bnFHMW0wNjdEQlhFQ3YwdWhTMFc3UzBBOVZKX1VFeUp2NXNZMUV0QlJqaXRYUzNwU1JlUWRVejl5dFhnWGFaVXB6bTl1OG1YWkN6TG5LZVlIYVh6TFRUUVRPOUJWbDZoQzVoZko0X0ZBOENwQQ?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49DTngCN0enZEKYX9ST7I2XiPOOVnft85WsyN9PRxc3S6BQJqM3MsfjdUafRTzQ5RIXBaDsWY0PiVu31pKYXTpdgYbrfKCqR
+enriched: true
+enrichment_used: tavily_search
+dedupe_id: 49b33c1720fb60a1
+cluster_id: 9fef9061a658a174
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- agricultural
+- farmers
+- farming
+- cattle
+- harvest
+- cocoa
+domain_scores:
+  agriculture: 9
+  economics: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMilwFBVV95cUxOTHNNMklzaDRMRl9RVTBQeGdWRkJURDZwLXBfWHRjc0p6RlNLUnZ2el9uY1lSTTRSTmk5OXE1cUtuUk5KN19Ua1Z2WVU2VUk1RC1vbHpHMUwyTUhESkNBNHZEdTBSRFIxY2JtQkJjVUc1OEFIWGQ5d09XV213V0c3UlpwTW9FVDRzZEc2Sy1XejEybmNoWVBF0gGWAUFVX3lxTE1zQ0lKQkNaa3JtSHFRVlItYkFiYUN4S1NweWlOamp2UVp0bnFHMW0wNjdEQlhFQ3YwdWhTMFc3UzBBOVZKX1VFeUp2NXNZMUV0QlJqaXRYUzNwU1JlUWRVejl5dFhnWGFaVXB6bTl1OG1YWkN6TG5LZVlIYVh6TFRUUVRPOUJWbDZoQzVoZko0X0ZBOENwQQ?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49DTngCN0enZEKYX9ST7I2XiPOOVnft85WsyN9PRxc3S6BQJqM3MsfjdUafRTzQ5RIXBaDsWY0PiVu31pKYXTpdgYbrfKCqR
+---
+
+Bilia awarded New Century Workforce Scholar award - Powell Tribune Northwest College student Matilde Bilia has been named a 2026 New Century Workforce Scholar and will receive a first of its kind $1,500 scholarship. Northwest College student Matilde Bilia has been named a 2026 New Century Workforce Scholar and will receive a first of its kind $1,500 scholarship. The scholarship was created to support students at associate degree-granting institutions on a national scale as they plan to enter the workforce upon completing a degree or certificate. “We congratulate Matilde for receiving this prestigious scholarship, and we are honored to partner with The Coca-Cola Foundation to recognize these outstanding achievements,” said Phi Theta Kappa’s President and CEO, Dr. Lynn Tincher-Ladner. “Scholarship programs like this are integral for creating opportunities for students to succeed as they prepare to enter the workforce and for putting college completion within reach.”. Phi Theta Kappa is the first honor society recognizing the academic achievement of students at associate degree-granting colleges and helping them to grow as scholars and leaders. http://www.powelltribune.com/stories/bilia-awarded-new-century-workforce-scholar-award,173911?
+
+Farming in Dunhuang murals - China Daily The Spring Equinox, the fourth of the 24 solar terms, starts on March 20, marking the start of busy days in the fields for farmers and their cattle. Glimpse a scene of agricultural life from the mid-Tang Dynasty (618-907), beautifully preserved in this mural of Dunhuang, Northwest China's Gansu province. Tea farmers harvest West Lake Longjing tea in China's Hangzhou. Ten photos from across China: March 13 - 19. * China takes steps to support graduates' employment ahead of graduation season. Your package from Weifang, China is on its way. A look at China's economy in Jan-Feb, 2026. Justin Yifu Lin: 'AI Plus' driving China's leapfrog development. Paomapai pageantry puts hamlet in national spotlight. Ten photos from across China: March 13 - 19. 2026 NPC & CPPCC National Committee annual sessions. The content (including but not limited to text, photo, multimedia information, etc) published in this site belongs to China Daily Information Co (CDIC). https://www.chinadaily.com.cn/a/202603/20/WS69bd2c5ba310d6866eb3efff.html
+
+Future chocolate: Mondelēz, Lindt and Barry Callebaut reshape taste - FoodNavigator.com # Future chocolate: Mondelēz, Lindt and Barry Callebaut reshape taste. ## From Mondelēz and Barry Callebaut to Lindt, the future of chocolate is being defined by bold flavour innovation, smarter formulations and a refusal to compromise on indulgence. * Despite experimentation with cocoa alternatives, taste remains the top purchase driver as the global chocolate market approaches $147bn. While many chocolate manufacturers across the world are factoring cocoa alternatives into their NPD, there’s one country that refuses to join in. Barry Callebaut reports that the biggest chocolate trends for 2026 and beyond focus on ‘minorstone’ moments instead of big milestone occasions, global flavour inspiration, health-forward choices, functional benefits and multisensorial experiences. “As you may know we have different chocolate brands in different markets so the best way for us to scale is to find Innovation ideas that can be leveraged across a range of brands.”. New fillings and inclusions will continue to drive NPD in chocolate, but cocoa replacements and alternatives will undoubtedly be the stories that make the headlines. https://www.foodnavigator.com/Article/2026/03/18/future-chocolate-mondelez-lindt-and-barry-callebaut-adapt/

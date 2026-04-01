@@ -1,0 +1,15 @@
+---
+id: 520ce54ccf0ee3ea
+url: https://www.ncronline.org
+title: Front page
+country: Nigeria
+domain: agriculture
+domain_score: 2
+info_type: news_article
+published_at: '2024-01-03'
+feed_name: Google News — Nigeria agriculture [2024-01-02]
+source: rss
+body_source: fetched_html
+---
+
+Vatican News Pope Leo: Death and pain caused by wars a scandal for entire human family Vatican As the U.S. and Israel-Iran war enters its fourth week, and amid a deep humanitarian crisis throughout the region, Pope Leo XIV appealed during his Sunday Angelus prayer March 22: "Persevere in prayer, so that hostilities may cease and paths of peace may finally open up, based on sincere dialogue and respect for the dignity of every human person." Paulina Guzik

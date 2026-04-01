@@ -1,0 +1,120 @@
+---
+id: a58932bba3e75b18
+url: https://fmino.gov.ng/fg-launches-youth-agribusiness-land-initiative-unlocks-42-youth-centres-for-agricultural-opportunities/
+rss_url: https://fmino.gov.ng/fg-launches-youth-agribusiness-land-initiative-unlocks-42-youth-centres-for-agricultural-opportunities/
+title: FG Launches Youth Agribusiness Land Initiative, Unlocks 42 Youth Centres for
+  Agricultural Opportunities - Federal Ministry of Information and National Orientation
+country: Nigeria
+domain: agriculture
+domain_score: 13
+info_type: news_article
+published_at: '2026-03-10T12:47:24+00:00'
+published_at_source: html
+published_at_confidence: 0.85
+published_at_raw: '2026-03-10T12:47:24+00:00'
+html_published_at: '2026-03-10T12:47:24+00:00'
+html_published_raw: '2026-03-10T12:47:24+00:00'
+article_updated_at: '2026-03-11T14:33:51+00:00'
+html_updated_raw: '2026-03-11T14:33:51+00:00'
+ingested_at: '2026-03-24T15:34:16+00:00'
+extracted_at: '2026-03-24T15:34:16+00:00'
+feed_name: Tavily discovery — Agricultural Gender, Youth & Inclusion
+source: rss
+body_source: fetched_html
+phase1_fetch_url: https://fmino.gov.ng/fg-launches-youth-agribusiness-land-initiative-unlocks-42-youth-centres-for-agricultural-opportunities/
+article_fetch_url: https://fmino.gov.ng/fg-launches-youth-agribusiness-land-initiative-unlocks-42-youth-centres-for-agricultural-opportunities/
+enriched: false
+enrichment_used: null
+dedupe_id: 8577a97ab3cef6d8
+cluster_id: 6365a41875e3c8e3
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- agriculture
+- agricultural
+- agribusiness
+- farming
+- food security
+domain_scores:
+  agriculture: 13
+  Land Use & Soil Health: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+---
+
+The Federal Government, through the Federal Ministry of Youth Development, has launched a strategic initiative to unlock land resources within the 42 National Youth Development Centres across the country to promote youth participation in agribusiness and expand economic opportunities for young Nigerians.
+The initiative was unveiled during the official media launch of the Youth in Agribusiness Land Trust Fund (YALTF) and the signing of a Memorandum of Understanding (MoU) between the Ministry and the International Institute of Tropical Agriculture (IITA).
+Speaking at the event, the Honourable Minister of Youth Development, Comrade Ayodele Olawande, said the programme is designed to provide young Nigerians with access to land and the necessary support to succeed in agribusiness.
+He emphasised the critical role of Nigeria’s youth, who make up over 60 percent of the population, noting that with the right opportunities, skills, and support, they can drive economic growth, innovation, and agricultural transformation.
+According to the Minister, the initiative will equip young Nigerians with modern agricultural knowledge, exposure to value-chain opportunities, and climate-smart farming practices, while leveraging IITA’s expertise in training, incubation, and agribusiness innovation.
+He also commended the collaborative framework of the initiative, which he said brings together state governments, development partners, financial institutions, and private sector stakeholders to support youth participation in agriculture.
+The Minister further disclosed that IITA is prepared to begin training more than six million young Nigerians who have already expressed interest in agriculture, creating a strong pipeline of future agripreneurs across the country.
+“Today’s launch represents a forward-looking strategy to strengthen food security, boost agricultural productivity, and empower young people as key drivers of national development,” the Minister stated.
+He called on partners and stakeholders to collaborate with the Ministry and IITA to expand the initiative and translate the commitments into tangible opportunities for Nigeria’s youth.
+In her welcome remarks, Permanent Secretary of the Federal Ministry of Youth Development, Dr. Maryam Ismaila Keshinro, described the launch of the Youth in Agribusiness Land Trust Initiative as a significant step toward empowering Nigerian youth through agriculture.
+She noted that the official media launch of the programme and the signing of the MoU between the Ministry and IITA demonstrate a shared commitment to tackling youth unemployment while strengthening national food security.
+Dr. Keshinro added that the initiative aims to train over six million young Nigerians in agriculture and agribusiness by expanding youth access to land, digital farming tools, and climate-resilient agricultural practices.
+According to her, the programme aligns with the Federal Government’s Renewed Hope Agenda and reflects the Ministry’s commitment to delivering measurable results and inclusive opportunities for young Nigerians.
+In his address ,the Director-General of IITA, Dr. Simeon Ehui, described the launch of the Youth in Agribusiness Land Trust Fund and the signing of the MoU with the Federal Ministry of Youth Development as a major step toward expanding opportunities for Nigerian youth in agriculture.
+He noted that the initiative builds on earlier engagements with the Honourable Minister and reflects a shared commitment to translating ideas into practical solutions for youth employment.
+Dr. Ehui emphasised that with over 60 percent of Nigeria’s population under the age of 30, empowering young people through agribusiness is critical to achieving sustainable economic growth and strengthening food security.
+He added that IITA will provide technical support, training, and innovation to transform the National Youth Development Centres into hubs for agribusiness skills development and enterprise creation.
+Omolara Esan
+Director (Information & PR)
+March 10, 2026.

@@ -1,0 +1,98 @@
+---
+id: 0cc0346558d27af7
+url: https://news.google.com/rss/articles/CBMi1wFBVV95cUxPaWZnakx3eWYxX3pYTmNhUDJFUWRPRHBiYVBjOHlicklEamc2NExhbVd2LTZCSXItei1qOWJkVjNrbDI2cVRhTkRscFBJRDhNcGp1Tnd4Z1JzRGEwZ3pBVHZvLVFPS1djS3BSWm01UXVPQTJqV1pXeHZwT0JGdm9Fc29WZ2wtbHJPdGdLbmhlZXQ4QnJqMzJJOVlMNmg0ZmFwNUlUMENTUDhaRXlXQWwxVEp6OW9vTkkzUHVXdXVkaWlFUkpDNmdITS0ydUpTSkw4bU02aFFoY9IB5AFBVV95cUxQTWYtM1VseW1hc0VMcXBsQmgwSkI2ZTlMcnZabmtFdmdnQ0JQSFVwM0Y4YlNocUFNdjRUMGI4Q0VCTnRVUV9UcjZiaVdFdkhOcF82OGhTei1lZW1HTmpLd0hSUHhIUXRfSEhfNlRJd29ReHVxTFlvY096Tk9EeUNJdFg1cGhpZG5Dd0xuc0Y5VVAxTzRMZkFXVFdQc3JvZmZKMmZ6bmgtUFpPVUk2enpUX1FKZGlrMGlqLV9YdFZTX05jSlFpZGpiM2lESHVzMHRKMEhxcl9iay1WUE5vaHI2QnBQbHM?oc=5
+rss_url: https://news.google.com/rss/articles/CBMi1wFBVV95cUxPaWZnakx3eWYxX3pYTmNhUDJFUWRPRHBiYVBjOHlicklEamc2NExhbVd2LTZCSXItei1qOWJkVjNrbDI2cVRhTkRscFBJRDhNcGp1Tnd4Z1JzRGEwZ3pBVHZvLVFPS1djS3BSWm01UXVPQTJqV1pXeHZwT0JGdm9Fc29WZ2wtbHJPdGdLbmhlZXQ4QnJqMzJJOVlMNmg0ZmFwNUlUMENTUDhaRXlXQWwxVEp6OW9vTkkzUHVXdXVkaWlFUkpDNmdITS0ydUpTSkw4bU02aFFoY9IB5AFBVV95cUxQTWYtM1VseW1hc0VMcXBsQmgwSkI2ZTlMcnZabmtFdmdnQ0JQSFVwM0Y4YlNocUFNdjRUMGI4Q0VCTnRVUV9UcjZiaVdFdkhOcF82OGhTei1lZW1HTmpLd0hSUHhIUXRfSEhfNlRJd29ReHVxTFlvY096Tk9EeUNJdFg1cGhpZG5Dd0xuc0Y5VVAxTzRMZkFXVFdQc3JvZmZKMmZ6bmgtUFpPVUk2enpUX1FKZGlrMGlqLV9YdFZTX05jSlFpZGpiM2lESHVzMHRKMEhxcl9iay1WUE5vaHI2QnBQbHM?oc=5
+title: 'Biochar application can help Ghana’s smallholder farmers fight back climate
+  change: Study - Down To Earth'
+country: Ghana
+domain: agriculture
+domain_score: 2
+info_type: news_article
+published_at: '2020-08-25T00:00:00+00:00'
+published_at_source: rss
+published_at_confidence: 0.95
+published_at_raw: '2020-08-25'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:21:52+00:00'
+extracted_at: '2026-03-24T16:21:51+00:00'
+feed_name: Google News — Ghana agriculture [2020-08-24]
+source: rss
+body_source: tavily_search
+phase1_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMi1wFBVV95cUxPaWZnakx3eWYxX3pYTmNhUDJFUWRPRHBiYVBjOHlicklEamc2NExhbVd2LTZCSXItei1qOWJkVjNrbDI2cVRhTkRscFBJRDhNcGp1Tnd4Z1JzRGEwZ3pBVHZvLVFPS1djS3BSWm01UXVPQTJqV1pXeHZwT0JGdm9Fc29WZ2wtbHJPdGdLbmhlZXQ4QnJqMzJJOVlMNmg0ZmFwNUlUMENTUDhaRXlXQWwxVEp6OW9vTkkzUHVXdXVkaWlFUkpDNmdITS0ydUpTSkw4bU02aFFoY9IB5AFBVV95cUxQTWYtM1VseW1hc0VMcXBsQmgwSkI2ZTlMcnZabmtFdmdnQ0JQSFVwM0Y4YlNocUFNdjRUMGI4Q0VCTnRVUV9UcjZiaVdFdkhOcF82OGhTei1lZW1HTmpLd0hSUHhIUXRfSEhfNlRJd29ReHVxTFlvY096Tk9EeUNJdFg1cGhpZG5Dd0xuc0Y5VVAxTzRMZkFXVFdQc3JvZmZKMmZ6bmgtUFpPVUk2enpUX1FKZGlrMGlqLV9YdFZTX05jSlFpZGpiM2lESHVzMHRKMEhxcl9iay1WUE5vaHI2QnBQbHM?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49DvXuafhrBxDQsLem0c4WUThOCKNnw6je7NdlEP4t463EVYCcT5LssoQiJj5UCMYD_jYxBLKmMt9HBCT9TF2pg9KEg8mtdf
+article_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMi1wFBVV95cUxPaWZnakx3eWYxX3pYTmNhUDJFUWRPRHBiYVBjOHlicklEamc2NExhbVd2LTZCSXItei1qOWJkVjNrbDI2cVRhTkRscFBJRDhNcGp1Tnd4Z1JzRGEwZ3pBVHZvLVFPS1djS3BSWm01UXVPQTJqV1pXeHZwT0JGdm9Fc29WZ2wtbHJPdGdLbmhlZXQ4QnJqMzJJOVlMNmg0ZmFwNUlUMENTUDhaRXlXQWwxVEp6OW9vTkkzUHVXdXVkaWlFUkpDNmdITS0ydUpTSkw4bU02aFFoY9IB5AFBVV95cUxQTWYtM1VseW1hc0VMcXBsQmgwSkI2ZTlMcnZabmtFdmdnQ0JQSFVwM0Y4YlNocUFNdjRUMGI4Q0VCTnRVUV9UcjZiaVdFdkhOcF82OGhTei1lZW1HTmpLd0hSUHhIUXRfSEhfNlRJd29ReHVxTFlvY096Tk9EeUNJdFg1cGhpZG5Dd0xuc0Y5VVAxTzRMZkFXVFdQc3JvZmZKMmZ6bmgtUFpPVUk2enpUX1FKZGlrMGlqLV9YdFZTX05jSlFpZGpiM2lESHVzMHRKMEhxcl9iay1WUE5vaHI2QnBQbHM?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49DvXuafhrBxDQsLem0c4WUThOCKNnw6je7NdlEP4t463EVYCcT5LssoQiJj5UCMYD_jYxBLKmMt9HBCT9TF2pg9KEg8mtdf
+enriched: true
+enrichment_used: tavily_search
+dedupe_id: bd097aa63d744a49
+cluster_id: 0841ac92d7af557f
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- farmers
+- smallholder
+- soil
+domain_scores:
+  agriculture: 2
+  economics: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMi1wFBVV95cUxPaWZnakx3eWYxX3pYTmNhUDJFUWRPRHBiYVBjOHlicklEamc2NExhbVd2LTZCSXItei1qOWJkVjNrbDI2cVRhTkRscFBJRDhNcGp1Tnd4Z1JzRGEwZ3pBVHZvLVFPS1djS3BSWm01UXVPQTJqV1pXeHZwT0JGdm9Fc29WZ2wtbHJPdGdLbmhlZXQ4QnJqMzJJOVlMNmg0ZmFwNUlUMENTUDhaRXlXQWwxVEp6OW9vTkkzUHVXdXVkaWlFUkpDNmdITS0ydUpTSkw4bU02aFFoY9IB5AFBVV95cUxQTWYtM1VseW1hc0VMcXBsQmgwSkI2ZTlMcnZabmtFdmdnQ0JQSFVwM0Y4YlNocUFNdjRUMGI4Q0VCTnRVUV9UcjZiaVdFdkhOcF82OGhTei1lZW1HTmpLd0hSUHhIUXRfSEhfNlRJd29ReHVxTFlvY096Tk9EeUNJdFg1cGhpZG5Dd0xuc0Y5VVAxTzRMZkFXVFdQc3JvZmZKMmZ6bmgtUFpPVUk2enpUX1FKZGlrMGlqLV9YdFZTX05jSlFpZGpiM2lESHVzMHRKMEhxcl9iay1WUE5vaHI2QnBQbHM?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49DvXuafhrBxDQsLem0c4WUThOCKNnw6je7NdlEP4t463EVYCcT5LssoQiJj5UCMYD_jYxBLKmMt9HBCT9TF2pg9KEg8mtdf
+---
+
+Groundbreaking study finds a natural way to fight climate change - USA Today ## This first-of-its-kind study found beavers have a surprisingly efficient method of safely storing carbon dioxide. “Our findings show that beavers don’t just change landscapes: they fundamentally shift how carbon dioxide moves through them," said study lead author Joshua Larsen, of the University of Birmingham in the U.K., in a statement. So carbon sinks act as a kind of natural buffer against climate change," Hallberg said in an email to USA TODAY. “Our research shows that beavers are powerful agents of carbon capture and adsorption," said study co-author Annegret Larsen, assistant professor in the soil geography and landscape group at Wageningen University in the Netherlands. "By reshaping waterways and creating rich wetland habitats, beavers physically change how carbon is stored across landscapes.”. When scaled across all floodplain areas suitable for beaver recolonization in Switzerland, researchers estimate that beaver wetlands could offset 1.2–1.8% of the nation’s annual carbon emissions: delivering climate benefits without active human intervention or financial cost, according to a statement from the University of Birmingham. https://www.usatoday.com/story/news/weather/2026/03/22/climate-change-study-beavers-have-big-impact/89228448007/
+
+Priority questions for the next decade of blue carbon science - Nature Since then, research and policy have increasingly focused on the manageability of these three blue carbon ecosystems (BCEs), particularly how their conservation and restoration can support climate mitigation by enhancing carbon capture and avoiding emissions from their degradation or loss, while also delivering adaptation co-benefits such as coastal protection and biodiversity support2."),3."). Such monitoring would also improve assessments of BCE services at scale and anticipate future data needs to ensure robust, accurate, site-specific and globally representative blue carbon assessments that support conservation, restoration and climate mitigation strategies. The term ‘blue carbon’ was initially introduced as a policy and marketing strategy to promote conservation, restoration and management of coastal vegetated ecosystems based on their carbon storage and climate change mitigation potential1."). Blue carbon science would benefit from coordinated international research and standardized monitoring to address data gaps, particularly in the global south, underrepresented regions and emerging BCEs. International guidelines should be updated and expanded to reflect the latest high-quality data and ensure equitable access to data and methodologies. https://www.nature.com/articles/s41559-026-03020-6
+
+Using cow dung for sustainable carbon dioxide capture - Phys.org Image 6: Towards climate change mitigation: Using cow dung for sustainable carbon dioxide capture. As an effort to address this issue, researchers from the Indian Institute of Technology Gandhinagar (IITGN) have proposed low-cost, sustainable, and scalable porous carbons derived from cow dung. Nitrogen-doped porous carbon (NDPC) derived from cow dung demonstrates high efficiency in capturing CO 2, with a surface area of 1,153 m 2/g and 58% greater performance than untreated carbon. The material is produced using a simple, low-cost, and environmentally friendly process, offering stable adsorption at low temperatures and supporting sustainable, large-scale carbon capture. https://phys.org/news/2026-03-cow-dung-sustainable-carbon-dioxide.html

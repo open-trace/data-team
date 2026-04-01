@@ -1,0 +1,15 @@
+---
+id: 9cce77fcf527642b
+url: https://www.architecturalrecord.com
+title: Architectural Record | Building Architecture, House Design &amp; Products
+country: Rwanda
+domain: agriculture
+domain_score: 2
+info_type: news_article
+published_at: '2025-11-07'
+feed_name: Google News — Rwanda agriculture
+source: rss
+body_source: fetched_html
+---
+
+DIGSAU and MJMA Design a Muscular Addition to Princeton’s Dillon Gymnasium MJMA Architecture & Design A 1947 Collegiate Gothic fitness facility in the heart of Princeton's campus is renovated and expanded with a hybrid mass-timber addition. By: Patrick Templeton

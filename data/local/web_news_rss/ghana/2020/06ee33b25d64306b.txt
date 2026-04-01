@@ -1,0 +1,138 @@
+---
+id: 06ee33b25d64306b
+url: https://news.google.com/rss/articles/CBMitgFBVV95cUxPbFViM3hMTndfS3lFa1o4Q0RQS3I5WWpJc19SUnVaWUVHcG4wNWFsU05zcFVHaURrWmUxd0FjUkQ3enh0V1l6NDBGbEh5NEJ1bmZLQmRWWlZIRHkwLUU3QVlrQUUtbkNtWUJ1QmJFbDd6Ymtva1JTTkRTZzZSZkR3R21GUGtPd0tTNmVseFJsc3ZOeUVSbFRjRmJWQmdPcXJMVG1iZlRCUXBxLVVoZlY1dUlIdjliZw?oc=5
+rss_url: https://news.google.com/rss/articles/CBMitgFBVV95cUxPbFViM3hMTndfS3lFa1o4Q0RQS3I5WWpJc19SUnVaWUVHcG4wNWFsU05zcFVHaURrWmUxd0FjUkQ3enh0V1l6NDBGbEh5NEJ1bmZLQmRWWlZIRHkwLUU3QVlrQUUtbkNtWUJ1QmJFbDd6Ymtva1JTTkRTZzZSZkR3R21GUGtPd0tTNmVseFJsc3ZOeUVSbFRjRmJWQmdPcXJMVG1iZlRCUXBxLVVoZlY1dUlIdjliZw?oc=5
+title: Ending Deforestation is Not Enough, Agroforestry is a Must for Cocoa Sustainability
+  - Mighty Earth
+country: Ghana
+domain: agriculture
+domain_score: 3
+info_type: news_article
+published_at: '2020-07-13T00:00:00+00:00'
+published_at_source: rss
+published_at_confidence: 0.95
+published_at_raw: '2020-07-13'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:20:53+00:00'
+extracted_at: '2026-03-24T16:20:51+00:00'
+feed_name: Google News — Ghana agriculture [2020-07-12]
+source: rss
+body_source: tavily_search
+phase1_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMitgFBVV95cUxPbFViM3hMTndfS3lFa1o4Q0RQS3I5WWpJc19SUnVaWUVHcG4wNWFsU05zcFVHaURrWmUxd0FjUkQ3enh0V1l6NDBGbEh5NEJ1bmZLQmRWWlZIRHkwLUU3QVlrQUUtbkNtWUJ1QmJFbDd6Ymtva1JTTkRTZzZSZkR3R21GUGtPd0tTNmVseFJsc3ZOeUVSbFRjRmJWQmdPcXJMVG1iZlRCUXBxLVVoZlY1dUlIdjliZw?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49BXs3omXoYNgRPlICUM7YXNiTZmPQIqDQWlsid8ZKiG3bRDTtWlRw8ji9rYP5QPOdDj1UV3ad90gfyLp3vp_i8BncvP8sUS
+article_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMitgFBVV95cUxPbFViM3hMTndfS3lFa1o4Q0RQS3I5WWpJc19SUnVaWUVHcG4wNWFsU05zcFVHaURrWmUxd0FjUkQ3enh0V1l6NDBGbEh5NEJ1bmZLQmRWWlZIRHkwLUU3QVlrQUUtbkNtWUJ1QmJFbDd6Ymtva1JTTkRTZzZSZkR3R21GUGtPd0tTNmVseFJsc3ZOeUVSbFRjRmJWQmdPcXJMVG1iZlRCUXBxLVVoZlY1dUlIdjliZw?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49BXs3omXoYNgRPlICUM7YXNiTZmPQIqDQWlsid8ZKiG3bRDTtWlRw8ji9rYP5QPOdDj1UV3ad90gfyLp3vp_i8BncvP8sUS
+enriched: true
+enrichment_used: tavily_search
+dedupe_id: f6e410910bfd8beb
+cluster_id: e3f7e2857b57350a
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- farm
+- rice
+- cocoa
+- greenhouse
+- dairy
+domain_scores:
+  agriculture: 3
+  economics: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMitgFBVV95cUxPbFViM3hMTndfS3lFa1o4Q0RQS3I5WWpJc19SUnVaWUVHcG4wNWFsU05zcFVHaURrWmUxd0FjUkQ3enh0V1l6NDBGbEh5NEJ1bmZLQmRWWlZIRHkwLUU3QVlrQUUtbkNtWUJ1QmJFbDd6Ymtva1JTTkRTZzZSZkR3R21GUGtPd0tTNmVseFJsc3ZOeUVSbFRjRmJWQmdPcXJMVG1iZlRCUXBxLVVoZlY1dUlIdjliZw?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49BXs3omXoYNgRPlICUM7YXNiTZmPQIqDQWlsid8ZKiG3bRDTtWlRw8ji9rYP5QPOdDj1UV3ad90gfyLp3vp_i8BncvP8sUS
+---
+
+Sustainability transition requires a nature-focused response to financial stress - Nature Here we discuss how financial stress impacts environmental sustainability, namely deforestation, air pollution and biodiversity, from local to global scales. Third, we discuss the effect of the ‘Great Stagnation’ – the prolonged period of global economic slowdown since the Global Financial Crisis of 2008/9 – on environmental sustainability. Below we discuss statistical evidence of the global and regional impacts of financial crises on deforestation, air pollution and biodiversity, based on episodes of financial crises over 20–30 years from > 150 countries6."),26."),28."). A credible pathway to sustainability transition requires transforming conditionality-based global financial support programmes from short-term ‘economic adjustment programmes’ to longer-term ‘sustainability adjustment programmes’ with increased natural capital and nature protection funds in line with the Paris Agreement, the Kunming-Montreal Global Biodiversity Framework (GBK), and the Sustainable Development Goals. Furthermore, the existing structure of global finance does not align sufficiently and effectively well with the proposed here sustainability transition paradigm that prioritises global commons47 Financial Crises, Poverty and Environmental Sustainability: Challenges in the Context of the SDGs and Covid-19 Recovery United Nations. https://www.nature.com/articles/s44458-026-00049-3
+
+DFI Reinforces Commitment to People, Products and Planet in 2025 Sustainability Disclosure - Financial Times | EQS Newswire / 23/03/2026 / 05:45 CET/CEST  HONG KONG SAR - Media OutReach Newswire - 23 March 2026 - DFI Retail Group (DFI or the Group) is pleased to announce its 2025 Sustainability Disclosure, highlighting the Group's continued progress and commitment to advancing sustainability across Asia. |  | | --- | | *DFI Retail Group Sustainability Disclosure 2025* |    In 2025, DFI delivered strong progress on key sustainability commitments:  * 22% reduction in Scope 1 and 2 greenhouse gas emissions compared to the 2021 baseline, with a target of 50% reduction by 2030. Initiatives included the launch of 380 tonnes of Low-Carbon Rice achieving a minimum 30% on-farm emissions reduction, sourcing 100% deforestation-free certified coffee beans for 7CAFÉ Hong Kong, Macau, and Singapore, and IKEA, and partnering with The Mills Fabrica to launch the DFI Sustainability Innovation Challenge to identify global solutions for beef and dairy emissions. https://markets.ft.com/data/announce/detail?dockey=600-202603230045DGAP____ASPR_____corporate_2295564_en-1
+
+Sustainability takes a back seat to efficiency for capital investment - Food Business News Home » Sustainability takes a back seat to efficiency for capital investment. # Sustainability takes a back seat to efficiency for capital investment. Sustainability is not an overriding priority when it comes to bakers’ capital investment decisions, according to *Baking & Snack*’s 2026 Capital Spending Study, sponsored by BEMA and conducted by Cypress Research. Only 22% of bakers reported that sustainability-driven equipment/technology investments were important goals for their capital investment in 2026. Ultimately, bakers are making these investments with the intention of improved efficiency, even when decisions are sustainability-driven. “The most important driver is the equipment’s efficiency, and the sustainability aspect comes next.”. As Hellmer referenced, 52% of respondents reported that sustainability is not an important investment goal. When making sustainability-driven equipment/technology investments, 35% of respondents said efficiency was the motivation for the investment while 23% reported it was the functionality. Maybe most surprisingly, the largest share of customers driving bakers’ sustainability investments are domestic (38%), not global (14%). ## Maple Leaf frees capital for future food investment. https://www.foodbusinessnews.net/articles/30014-sustainability-takes-a-back-seat-to-efficiency-for-capital-investment

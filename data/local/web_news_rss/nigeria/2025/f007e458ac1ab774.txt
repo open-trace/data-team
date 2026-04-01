@@ -1,0 +1,76 @@
+---
+id: f007e458ac1ab774
+url: https://www.meda.org/program/rise/
+rss_url: https://www.meda.org/program/rise/
+title: Resilient and Inclusive Agri-food Systems Empowering Women and Youth in Nigeria
+  (RISE) - MEDA
+country: Nigeria
+domain: agriculture
+domain_score: 22
+info_type: news_article
+published_at: '2025-09-02T18:17:45+00:00'
+published_at_source: html
+published_at_confidence: 0.85
+published_at_raw: '2025-09-02T18:17:45+00:00'
+html_published_at: '2025-09-02T18:17:45+00:00'
+html_published_raw: '2025-09-02T18:17:45+00:00'
+article_updated_at: '2025-10-31T13:45:45+00:00'
+html_updated_raw: '2025-10-31T13:45:45+00:00'
+ingested_at: '2026-03-24T15:34:07+00:00'
+extracted_at: '2026-03-24T15:34:07+00:00'
+feed_name: Tavily discovery — Agricultural Gender, Youth & Inclusion
+source: rss
+body_source: fetched_html
+phase1_fetch_url: https://www.meda.org/program/rise/
+article_fetch_url: https://www.meda.org/program/rise/
+enriched: false
+enrichment_used: null
+dedupe_id: 1a910f2d56be3af2
+cluster_id: ef438877878279e4
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- agriculture
+- agricultural
+- agro-
+- farmer
+- farmers
+- smallholder
+- maize
+- rice
+- extension service
+- value chain
+domain_scores:
+  agriculture: 22
+  Land Use & Soil Health: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+---
+
+RISE will build a more resilient, inclusive, and sustainable agri-food system in Northern Nigeria, benefiting women and youth smallholder farmers and women- and youth-led agribusinesses, by enhancing productivity, improving business performance, and fostering an enabling environment at both the local and state government levels. The project is expected to create 8,000 decent jobs.
+RISE will benefit an estimated 50,000 people, including 12,500 individual smallholder farmers and their household members. The project will also improve the business performance of 450 women- and youth-led MSMEs and 250 farmer cooperatives by providing matching grants, innovation funds, and smart incentives in four agricultural value chains: rice, maize, groundnut, and soybean.
+In Northern Nigeria, and particularly in Bauchi, Kaduna, and Kano States, women and girls face even greater challenges than those in the South, including lower literacy rates and early marriage. They are often involved in less economically beneficial stages of the agricultural value chain, primarily due to discriminatory social norms that limit their access to resources, education, technology, and decision-making power in agricultural policy.
+In Nigeria, women farmers and women-led agribusinesses face systemic barriers rooted in entrenched gender gaps and patriarchal norms. On average, women farmers receive less than 5 percent of available agricultural extension services, and only 22 percent have access to any form of business or financial literacy training. These challenges, coupled with restrictive gender norms, limit women’s ability to access finance and other inputs. Women-led agribusinesses and farmer cooperatives in turn underperform, producing 30 percent less than their male counterparts, and resulting in a gender gap in profits spanning as wide as 39 percent nationally.
+To address these challenges, RISE will partner with local women’s rights organizations to implement activities linked to community engagement and gender equality. The project will link producers (farmer cooperatives) with aggregators (agribusinesses) to create more efficient and sustainable agriculture value chains and to strengthen the skills of smallholder farmers and entrepreneurs to sustain income generation beyond the project’s lifespan.
+RISE is implemented using MEDA’s Program Plus approach and partnership model to drive sustainable change. The project works at the following levels:
+RISE uses a grant mechanism that is designed to enable farmer cooperatives and agribusinesses to adopt climate-smart technologies and inputs to increase production and efficiency. Project innovation funds will support women and youth by investing in locally-led innovations in agro-processing and market linkages and by promoting women-friendly solutions.
+Decent Jobs:
+Individual entrepreneurs or smallholder farmers if their work achieves at least one of the following:
+Clients:
+Individuals, businesses and other organizations directly benefiting from financial or technical assistance from a MEDA intervention as part of a formal contract, including the following sub-categories:

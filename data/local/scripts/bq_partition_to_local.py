@@ -26,6 +26,22 @@ if str(_SCRIPTS_DIR) not in sys.path:
 from engine_connector import get_engine  # noqa: E402
 
 
+def _load_dotenv() -> None:
+    """Load data/local/.env into os.environ when not already set (run from repo root)."""
+    env_file = REPO_ROOT / "data" / "local" / ".env"
+    if not env_file.exists():
+        return
+    for line in env_file.read_text().splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        key, _, value = line.partition("=")
+        key = key.strip().replace("export ", "", 1).strip()
+        value = value.strip().strip("'\"")
+        if key and key not in os.environ:
+            os.environ[key] = value
+
+
 def get_config() -> dict:
     return {
         "bq_project": os.environ.get("BQ_PROJECT", ""),
@@ -63,6 +79,8 @@ def build_query(config: dict) -> str:
 
 def main() -> None:
     import argparse
+
+    _load_dotenv()
 
     parser = argparse.ArgumentParser(description="Sync a BQ partition to local DB (PostgreSQL or SQLite)")
     parser.add_argument("--table", default=os.environ.get("BQ_TABLE", "bronze_events"))

@@ -1,0 +1,15 @@
+---
+id: 3d99eaf6324cd04a
+url: https://www.vanguardngr.com
+title: Vanguard News
+country: Nigeria
+domain: agriculture
+domain_score: 2
+info_type: news_article
+published_at: '2025-12-16'
+feed_name: Google News — Nigeria agriculture
+source: rss
+body_source: fetched_html
+---
+
+Tinubu rallies governors on security, vows increased foreign support President Bola Tinubu on Sunday tasked state governors to intensify collaboration in tackling insecurity, pledging increased foreign support to strengthen Nigeria’s security architecture.

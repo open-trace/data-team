@@ -1,0 +1,157 @@
+---
+id: fa0bc415f63fd081
+url: https://news.google.com/rss/articles/CBMiuAFBVV95cUxQY2VoQV84SFdtY1NBcGJhMzlpWmd5WWlvYnRvRXYtSWx5Tk53Q0RYMkNLa2dwZzNYN3NsYmFDZFk0MGliWUxsdnFDWFp1RngwUGJaTGJSYWRRVzkzLXAxSE8wTUdLUlNMRlN4WDFha08zQ0FFamJTa3l2VHRqMG5jaVhReGZyN0lBQXBLQVpQb2cxMzcwSlpZWGtfZEZyOGRCRU41RkhLZElSMW0xblJQUWZWaHRwbXQ4?oc=5
+rss_url: https://news.google.com/rss/articles/CBMiuAFBVV95cUxQY2VoQV84SFdtY1NBcGJhMzlpWmd5WWlvYnRvRXYtSWx5Tk53Q0RYMkNLa2dwZzNYN3NsYmFDZFk0MGliWUxsdnFDWFp1RngwUGJaTGJSYWRRVzkzLXAxSE8wTUdLUlNMRlN4WDFha08zQ0FFamJTa3l2VHRqMG5jaVhReGZyN0lBQXBLQVpQb2cxMzcwSlpZWGtfZEZyOGRCRU41RkhLZElSMW0xblJQUWZWaHRwbXQ4?oc=5
+title: Vegetable farmers in urban Ghana don’t worry much about food safety - but they
+  should - The Conversation
+country: Ghana
+domain: agriculture
+domain_score: 14
+info_type: news_article
+published_at: '2020-08-11T00:00:00+00:00'
+published_at_source: rss
+published_at_confidence: 0.95
+published_at_raw: '2020-08-11'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:22:01+00:00'
+extracted_at: '2026-03-24T16:22:00+00:00'
+feed_name: Google News — Ghana agriculture [2020-08-10]
+source: rss
+body_source: tavily_search
+phase1_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMiuAFBVV95cUxQY2VoQV84SFdtY1NBcGJhMzlpWmd5WWlvYnRvRXYtSWx5Tk53Q0RYMkNLa2dwZzNYN3NsYmFDZFk0MGliWUxsdnFDWFp1RngwUGJaTGJSYWRRVzkzLXAxSE8wTUdLUlNMRlN4WDFha08zQ0FFamJTa3l2VHRqMG5jaVhReGZyN0lBQXBLQVpQb2cxMzcwSlpZWGtfZEZyOGRCRU41RkhLZElSMW0xblJQUWZWaHRwbXQ4?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49BlPdQaAiYwPhzuOn83Ka_huA5VJ5NQ5sDk0WpNbB19UW2pTZEE6QkWamleak4JLJKPSluSbymz16exJ4oxtbHXBC7rW4wK
+article_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMiuAFBVV95cUxQY2VoQV84SFdtY1NBcGJhMzlpWmd5WWlvYnRvRXYtSWx5Tk53Q0RYMkNLa2dwZzNYN3NsYmFDZFk0MGliWUxsdnFDWFp1RngwUGJaTGJSYWRRVzkzLXAxSE8wTUdLUlNMRlN4WDFha08zQ0FFamJTa3l2VHRqMG5jaVhReGZyN0lBQXBLQVpQb2cxMzcwSlpZWGtfZEZyOGRCRU41RkhLZElSMW0xblJQUWZWaHRwbXQ4?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49BlPdQaAiYwPhzuOn83Ka_huA5VJ5NQ5sDk0WpNbB19UW2pTZEE6QkWamleak4JLJKPSluSbymz16exJ4oxtbHXBC7rW4wK
+enriched: true
+enrichment_used: tavily_search
+dedupe_id: ab832844bf047fde
+cluster_id: 15e49eb32e2375a8
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- agriculture
+- agribusiness
+- farmers
+- farm
+- rice
+- arable
+domain_scores:
+  agriculture: 14
+  economics: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMiuAFBVV95cUxQY2VoQV84SFdtY1NBcGJhMzlpWmd5WWlvYnRvRXYtSWx5Tk53Q0RYMkNLa2dwZzNYN3NsYmFDZFk0MGliWUxsdnFDWFp1RngwUGJaTGJSYWRRVzkzLXAxSE8wTUdLUlNMRlN4WDFha08zQ0FFamJTa3l2VHRqMG5jaVhReGZyN0lBQXBLQVpQb2cxMzcwSlpZWGtfZEZyOGRCRU41RkhLZElSMW0xblJQUWZWaHRwbXQ4?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49BlPdQaAiYwPhzuOn83Ka_huA5VJ5NQ5sDk0WpNbB19UW2pTZEE6QkWamleak4JLJKPSluSbymz16exJ4oxtbHXBC7rW4wK
+---
+
+Ghana has arable lands, we have no excuse to fail in agriculture – Kpebu - 3News # Ghana has arable lands, we have no excuse to fail in agriculture – Kpebu. ##### Follow Us. Laud Nartey is a current affairs editor with the MG News team at Media General, serving TV3 Ghana, 3News, Onua TV and more platforms. #### There is no reason why we can’t produce tomatoes in Ghana – Bentil. #### We need better agric policies in Ghana – Bentil in ban on tomatoes by B. #### Burkina Faso’s ban on tomato export poses national security risk to Ghana – Akosua Manu. #### Burkina Faso’s ban on tomato export should motivate Ghana to step up Agric – Kpebu. ### LIVE: The KeyPoints- Fuel price hikes, SIM registration and Bank of Ghana’s gold sale policy. ### LIVE: Ghana Tonight || 20-03-2026. ### Chamber of Agribusiness Ghana urges Government to roll out a national tomato emergency strategy. ### Comments (0). Please sign in to leave a comment. By commenting, you agree to ourcommunity guidelines. https://3news.com/news/ghana-has-arable-lands-we-have-no-excuse-to-fail-in-agriculture-kpebu
+
+I lost my love of cooking after 12 years as a chef. Moving to a pig farm restored it - The Guardian I was a keen-bean 15-year-old when I got my first job in a commercial kitchen in Canberra, raised on a diet of Jamie and Nigella and bursting with a passion for food. But as the years went on, my love for the kitchen was dulled by a series of toxic workplaces, bullying bosses and long hours. I wanted to get a sense of how the food world operated outside the kitchen, and with the land and produce, by working directly with farmers, cheesemakers, market gardeners, bush foods experts and winemakers. Despite being a pig farm, meals were often vegetable-based, with the philosophy of eating better meat less often. I made fresh pasta, folded dumplings, dressed salads and made puff pastry from scratch – a skill I’d learned in kitchens, but had never bothered to do at home before. Placing the onion tart on the table at the pig farm, I felt the same joy as that 15-year-old apprentice: proudly serving a dish to friends. https://www.theguardian.com/food/2026/mar/21/hospitality-love-of-cooking-chef-pig-farm
+
+Nearly 10 million pounds of Trader Joe’s food recalled. What to know - Democrat and Chronicle # Nearly 10 million pounds of Trader Joe’s food recalled. Nearly 10 million pounds of Trader Joe's frozen products have been recalled because they could be contaminated with glass. Ajinomoto Foods North America Inc. said in a notice posted by the Food and Drug Administration that over 400,000 cases, or about 9.8 million pounds, of Trader Joe's Vegetable Fried Rice are being recalled due to the presence of "foreign objects.". The vegetable fried rice packages were listed in a March 3 news release from Trader Joe's as being included in the recall. Other products mentioned by Trader Joe's included its Chicken Fried Rice, Japanese Style Fried Rice and Chicken Shu Mai. The Department of Agriculture’s Food Safety and Inspection Service (FSIS) said in a March 3 announcement that carrots were "the likely source of the glass contamination" after it received multiple complaints of glass being present in the packages. ## Trader Joe's recall details. ## Where were recalled Trader Joe's products sent? https://www.democratandchronicle.com/story/grocery/stores/2026/03/24/trader-joes-food-recall-10-million-pounds-what-to-know/89296788007/

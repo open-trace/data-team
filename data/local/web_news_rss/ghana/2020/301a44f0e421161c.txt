@@ -1,0 +1,99 @@
+---
+id: 301a44f0e421161c
+url: https://news.google.com/rss/articles/CBMivAFBVV95cUxNbHpBU09CczdPQ3pPM3YwR2s1M19jZEI5T0NsODYwWHV0YmV1OThoWFBqMFI4WXFFd0VlZmROclpFZE5iVHRiVHlfZnJrbVE0bzBOYzZjWU1ZY2o1b1FrSDE2OTc1Z29OVVZrQ3FZSVVKQnluRDFwWUYxZk1MT0hBRjQ3TTZKMDYtSkJUbzFXNlNfWUlhZ0hzSlJKa0kwVm5QUDlQTjVERFJHaG1kQjVtUzQ0UFpGbXQ3QXlsbg?oc=5
+rss_url: https://news.google.com/rss/articles/CBMivAFBVV95cUxNbHpBU09CczdPQ3pPM3YwR2s1M19jZEI5T0NsODYwWHV0YmV1OThoWFBqMFI4WXFFd0VlZmROclpFZE5iVHRiVHlfZnJrbVE0bzBOYzZjWU1ZY2o1b1FrSDE2OTc1Z29OVVZrQ3FZSVVKQnluRDFwWUYxZk1MT0hBRjQ3TTZKMDYtSkJUbzFXNlNfWUlhZ0hzSlJKa0kwVm5QUDlQTjVERFJHaG1kQjVtUzQ0UFpGbXQ3QXlsbg?oc=5
+title: Agricultural Manufacturing Group poised to help farmers increase yield - Graphic
+  Online
+country: Ghana
+domain: agriculture
+domain_score: 26
+info_type: news_article
+published_at: '2020-06-11T00:00:00+00:00'
+published_at_source: rss
+published_at_confidence: 0.95
+published_at_raw: '2020-06-11'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:19:34+00:00'
+extracted_at: '2026-03-24T16:19:33+00:00'
+feed_name: Google News — Ghana agriculture [2020-06-10]
+source: rss
+body_source: tavily_search
+phase1_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMivAFBVV95cUxNbHpBU09CczdPQ3pPM3YwR2s1M19jZEI5T0NsODYwWHV0YmV1OThoWFBqMFI4WXFFd0VlZmROclpFZE5iVHRiVHlfZnJrbVE0bzBOYzZjWU1ZY2o1b1FrSDE2OTc1Z29OVVZrQ3FZSVVKQnluRDFwWUYxZk1MT0hBRjQ3TTZKMDYtSkJUbzFXNlNfWUlhZ0hzSlJKa0kwVm5QUDlQTjVERFJHaG1kQjVtUzQ0UFpGbXQ3QXlsbg?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49AnF8C3fT8pB2ovRj2Toj7c5YsSXYg9K7rD9rCRcnpoGOwn5IviG4MX0ia0_xDJqKJbIdd7R0ELQ9VuYIZKkvA8HdhFux9V
+article_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMivAFBVV95cUxNbHpBU09CczdPQ3pPM3YwR2s1M19jZEI5T0NsODYwWHV0YmV1OThoWFBqMFI4WXFFd0VlZmROclpFZE5iVHRiVHlfZnJrbVE0bzBOYzZjWU1ZY2o1b1FrSDE2OTc1Z29OVVZrQ3FZSVVKQnluRDFwWUYxZk1MT0hBRjQ3TTZKMDYtSkJUbzFXNlNfWUlhZ0hzSlJKa0kwVm5QUDlQTjVERFJHaG1kQjVtUzQ0UFpGbXQ3QXlsbg?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49AnF8C3fT8pB2ovRj2Toj7c5YsSXYg9K7rD9rCRcnpoGOwn5IviG4MX0ia0_xDJqKJbIdd7R0ELQ9VuYIZKkvA8HdhFux9V
+enriched: true
+enrichment_used: tavily_search
+dedupe_id: 1444d1ab1fb1d07b
+cluster_id: befe43511e192dde
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- agriculture
+- agricultural
+- farmers
+- farming
+- farm
+- crop
+- crops
+- planting
+- seed
+- food security
+- value chain
+- greenhouse
+domain_scores:
+  agriculture: 26
+  economics: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMivAFBVV95cUxNbHpBU09CczdPQ3pPM3YwR2s1M19jZEI5T0NsODYwWHV0YmV1OThoWFBqMFI4WXFFd0VlZmROclpFZE5iVHRiVHlfZnJrbVE0bzBOYzZjWU1ZY2o1b1FrSDE2OTc1Z29OVVZrQ3FZSVVKQnluRDFwWUYxZk1MT0hBRjQ3TTZKMDYtSkJUbzFXNlNfWUlhZ0hzSlJKa0kwVm5QUDlQTjVERFJHaG1kQjVtUzQ0UFpGbXQ3QXlsbg?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49AnF8C3fT8pB2ovRj2Toj7c5YsSXYg9K7rD9rCRcnpoGOwn5IviG4MX0ia0_xDJqKJbIdd7R0ELQ9VuYIZKkvA8HdhFux9V
+---
+
+Greenhouse Manufacturing Plant DPR 2026: Investment Cost, Market Growth & ROI - openPR.com Setting up a greenhouse manufacturing plant positions investors in one of the most stable and essential segments of the controlled-environment agriculture and food security value chain, backed by sustained global growth driven by rising demand for protected cultivation techniques, increasing food security concerns, rapid urbanization, and growing adoption of precision farming technologies. These margins are supported by stable demand across commercial agriculture, horticulture, floriculture, nurseries, and agri-tech enterprises, value-added processing through structural frame fabrication and automated assembly providing large-scale production while maintaining low production costs, and the critical importance of greenhouse systems serving vital functions to increase crop yields while minimizing climate-related risks, enabling precision farming programs, and empowering farmers to control growing conditions as crucial elements in contemporary agricultural systems delivering dependable performance with precise climate management meeting crop production requirements. https://www.openpr.com/news/4432133/greenhouse-manufacturing-plant-dpr-2026-investment-cost
+
+Taranis Uses AI and Drones to Boost Crop Yields - Farms.com # Taranis Uses AI and Drones to Boost Crop Yields | Farms.com. Image 8: Alberta Seed GuideImage 9: Better FarmingImage 10: Better PorkImage 11: Farms.com Risk ManagementImage 12: Farms.com Precision Agriculture Digital Digest. Image 18: Farms.com Professional ServicesImage 19: PigCHAMP. # Taranis Uses AI and Drones to Boost Crop Yields. Image 26: Taranis Uses AI and Drones to Boost Crop Yields. Taranis is helping farmers and ag retailers make more informed decisions by combining drones, software, and artificial intelligence into a single precision agriculture solution. Jason Minton, Chief Commercial Officer at Taranis, told farms.com how the platform is designed to give growers a clearer, more detailed view of their fields. Top Farming Tips for Strong Crops 2026›. FDA Issues Emergency Use Authorization for Topica...›. Photos: Canada’s Farm Show ignites Regina on open...›. ## Crop News by Better Farming. USDA’s Farm Service Agency Reminds Minn...›. Image 37: Alberta Seed GuideImage 38: Better FarmingImage 39: Better PorkImage 40: Farms.com Risk ManagementImage 41: Farms.com Precision Agriculture Digital Digest. Image 47: Farms.com Professional ServicesImage 48: PigCHAMP. https://www.farms.com/ag-industry-news/taranis-uses-ai-and-drones-to-boost-crop-yields-766.aspx
+
+Top Farming Tips for Strong Crops 2026 - Farms.com # Top Farming Tips for Strong Crops 2026 | Farms.com. Image 8: Alberta Seed GuideImage 9: Better FarmingImage 10: Better PorkImage 11: Farms.com Risk ManagementImage 12: Farms.com Precision Agriculture Digital Digest. # Top Farming Tips for Strong Crops 2026. Image 26: Top Farming Tips for Strong Crops 2026. Strong planning and timely decisions can help ensure better crop performance and reduce risks during the growing season. By focusing on proper timing, using available technologies, and controlling weeds early, farmers can build a strong foundation for a successful 2026 growing season. Innovation Takes Center Stage at Canada’s Farm...›. No-Tillers Report Planting Soybeans in Narrower Wi...›. Farm Equipment Continues Trade Values & Trends Con...›. ## Crop News by Better Farming. Dyna Gro Seed Farmers Achieve Top Yield A...›. Image 30: MSU Extension to Host Healthy Animals, Strong Farms Biosecurity Webinar for Small Farms and Agricultural Service Providers. Image 37: Alberta Seed GuideImage 38: Better FarmingImage 39: Better PorkImage 40: Farms.com Risk ManagementImage 41: Farms.com Precision Agriculture Digital Digest. https://www.farms.com/ag-industry-news/top-farming-tips-for-strong-crops-2026-714.aspx

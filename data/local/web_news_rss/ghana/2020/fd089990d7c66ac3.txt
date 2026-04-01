@@ -1,0 +1,76 @@
+---
+id: fd089990d7c66ac3
+url: https://news.google.com/rss/articles/CBMi7wFBVV95cUxPZVFDNTZvYldKYTZNSUZLSS1RVFJ6M3pQU3F0LTJVdkMzVmtEaFZWUkUtcmVzSkp2SnVpS3JSWl94cDQzcGJ6dVlESzRCbFlGYWV6UEhUNnd1a3JXdjE4a05yODZtbW5rTzFOQ0NYckY5MnNuR0RWSF9uQ2hzQzdJQjRuMTVpNTVJYzZfUjhveGNTSkxCVFY4Z19KM1ZPc0lqSWxZdDhlUlFfdWxIQmN2cGxhZmQwUGdEWWtSR3A5QjNMYXpnUHc4amNoMnZ0THVXSnIzU3BLT2pNQUxTemZ4TVBjTGxmTmNXVWpuUnRqcw?oc=5
+rss_url: https://news.google.com/rss/articles/CBMi7wFBVV95cUxPZVFDNTZvYldKYTZNSUZLSS1RVFJ6M3pQU3F0LTJVdkMzVmtEaFZWUkUtcmVzSkp2SnVpS3JSWl94cDQzcGJ6dVlESzRCbFlGYWV6UEhUNnd1a3JXdjE4a05yODZtbW5rTzFOQ0NYckY5MnNuR0RWSF9uQ2hzQzdJQjRuMTVpNTVJYzZfUjhveGNTSkxCVFY4Z19KM1ZPc0lqSWxZdDhlUlFfdWxIQmN2cGxhZmQwUGdEWWtSR3A5QjNMYXpnUHc4amNoMnZ0THVXSnIzU3BLT2pNQUxTemZ4TVBjTGxmTmNXVWpuUnRqcw?oc=5
+title: Government of Japan through FAO, enhanced productivity of smallholder farmers
+  in two breadbasket counties of Liberia - Food and Agriculture Organization
+country: Ghana
+domain: agriculture
+domain_score: 21
+info_type: news_article
+published_at: '2020-01-13T00:00:00+00:00'
+published_at_source: rss
+published_at_confidence: 0.95
+published_at_raw: '2020-01-13'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:14:24+00:00'
+extracted_at: '2026-03-24T16:14:23+00:00'
+feed_name: Google News — Ghana agriculture [2020-01-12]
+source: rss
+body_source: tavily_search
+phase1_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMi7wFBVV95cUxPZVFDNTZvYldKYTZNSUZLSS1RVFJ6M3pQU3F0LTJVdkMzVmtEaFZWUkUtcmVzSkp2SnVpS3JSWl94cDQzcGJ6dVlESzRCbFlGYWV6UEhUNnd1a3JXdjE4a05yODZtbW5rTzFOQ0NYckY5MnNuR0RWSF9uQ2hzQzdJQjRuMTVpNTVJYzZfUjhveGNTSkxCVFY4Z19KM1ZPc0lqSWxZdDhlUlFfdWxIQmN2cGxhZmQwUGdEWWtSR3A5QjNMYXpnUHc4amNoMnZ0THVXSnIzU3BLT2pNQUxTemZ4TVBjTGxmTmNXVWpuUnRqcw?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49AWn30FUftkmjCqPfeeKQEySVTSXzdi_nv-H3M4GWpxjqNlr3EV9OoNjhRtAJJlGUzq-e65sbNASEoIC_KJXWeLYyazlCm5
+article_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMi7wFBVV95cUxPZVFDNTZvYldKYTZNSUZLSS1RVFJ6M3pQU3F0LTJVdkMzVmtEaFZWUkUtcmVzSkp2SnVpS3JSWl94cDQzcGJ6dVlESzRCbFlGYWV6UEhUNnd1a3JXdjE4a05yODZtbW5rTzFOQ0NYckY5MnNuR0RWSF9uQ2hzQzdJQjRuMTVpNTVJYzZfUjhveGNTSkxCVFY4Z19KM1ZPc0lqSWxZdDhlUlFfdWxIQmN2cGxhZmQwUGdEWWtSR3A5QjNMYXpnUHc4amNoMnZ0THVXSnIzU3BLT2pNQUxTemZ4TVBjTGxmTmNXVWpuUnRqcw?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49AWn30FUftkmjCqPfeeKQEySVTSXzdi_nv-H3M4GWpxjqNlr3EV9OoNjhRtAJJlGUzq-e65sbNASEoIC_KJXWeLYyazlCm5
+enriched: true
+enrichment_used: tavily_search
+dedupe_id: 6bd59db67458601b
+cluster_id: d2697d1fa2821c49
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- agriculture
+- agricultural
+- agrifood
+- farmer
+- farmers
+- farming
+- smallholder
+- crops
+- harvest
+- irrigation
+- food security
+- minister of agriculture
+- post-harvest
+domain_scores:
+  agriculture: 21
+  economics: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMi7wFBVV95cUxPZVFDNTZvYldKYTZNSUZLSS1RVFJ6M3pQU3F0LTJVdkMzVmtEaFZWUkUtcmVzSkp2SnVpS3JSWl94cDQzcGJ6dVlESzRCbFlGYWV6UEhUNnd1a3JXdjE4a05yODZtbW5rTzFOQ0NYckY5MnNuR0RWSF9uQ2hzQzdJQjRuMTVpNTVJYzZfUjhveGNTSkxCVFY4Z19KM1ZPc0lqSWxZdDhlUlFfdWxIQmN2cGxhZmQwUGdEWWtSR3A5QjNMYXpnUHc4amNoMnZ0THVXSnIzU3BLT2pNQUxTemZ4TVBjTGxmTmNXVWpuUnRqcw?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49AWn30FUftkmjCqPfeeKQEySVTSXzdi_nv-H3M4GWpxjqNlr3EV9OoNjhRtAJJlGUzq-e65sbNASEoIC_KJXWeLYyazlCm5
+---
+
+Improving Women’s Livelihoods Through Water-smart Post-harvest Innovation - global-agriculture.com # Improving Women’s Livelihoods Through Water-smart Post-harvest Innovation. This World Water Day 2026, an ICARDA-led initiative funded by the Government of Japan, shows how rural women in Egypt are improving water productivity through post-harvest innovation. These units, equipped with co-designed hybrid solar dryers, vegetable slicers, grinders, and sesame oil extractors, enable women to process surplus produce, reduce post-harvest losses, and extend the shelf life of perishable crops. For tomatoes, drying reduced post-harvest losses from 30% to 10%, increasing water productivity by 28%. As women process and package their products, they are not just improving their livelihoods, but also strengthening the resilience of entire food systems in the face of rising prices and climate pressures. Women-led post-harvest initiatives in Egypt’s dryland farming systems hold significant potential to increase water productivity and strengthen food security. Through ongoing innovation and partnerships with cooperatives, NGOs, and the Egyptian Ministry of Water Resources and Irrigation, ICARDA is supporting women in building a more resilient and sustainable agricultural future. https://www.global-agriculture.com/ag-tech-research-news/improving-womens-livelihoods-through-water-smart-post-harvest-innovation/
+
+Closing The Gender Gap In Agrifood Systems Can Help Reduce Food Insecurity And Boost Global GDP: FAO Gender Experts - global-agriculture.com ****21** March 2026, ****Rome****:** The United Nations-designated The International Year of the Woman Farmer (IYWF 2026),  shines a spotlight on the essential yet often overlooked roles women play across agrifood systems – from production to trade. To reverse this trend, FAO has called for scaled-up and coordinated action towards women’s empowerment in agrifood systems, including increased and targeted investments, gender-transformative agrifood policies and programs, better data, meaningful participation of women farmers in decision-making, and sustained political commitment and actions. During the International Year of the Woman Farmer 2026, FAO will lead global efforts and events to raise awareness of women farmers’ essential roles and the challenges they face, while mobilizing commitment, policy action and investment to close gender gaps in agrifood systems. FAO emphasizes that the International Year should serve as a vital catalyst to empower women farmers and close gender gaps in agrifood systems, igniting a transformative movement for global action. https://www.global-agriculture.com/faq-in-global-agriculture/closing-the-gender-gap-in-agrifood-systems-can-help-reduce-food-insecurity-and-boost-global-gdp-fao-gender-experts/
+
+iciHaiti - Agriculture : Presentation of sectoral priorities to the FAO - iciHaiti.com Haiti - Japan : Financial contribution to the IOM for the urgent needs of repatriated Haitians   Haiti - Economy : Strengthening cooperation in investment and entrepreneurial development   Haiti - Security crisis : High-level strategic meeting    **more news** | |  | | iciHaiti - Cap-Haitien : NOTICE to all merchants in the historic city center   iciHaiti - Agriculture : Presentation of sectoral priorities to the FAO   iciHaiti - Environment : Official Launch of the National Program «Konbit Haïti Zéro Déchet»   iciHaiti - Infrastructure : RN6 Road Resurfacing Work : 52 km Already Completed   iciHaiti - Saint-Marc : 75 kg of marijuana seized    **more news** | |  | |  | iciHaiti - Agriculture : Presentation of sectoral priorities to the FAO 19/03/2026 10:01:02    |  |  | | --- | --- | |  |  |   On March 17, Marcelin Aubourg, the new Minister of Agriculture, Natural Resources and Rural Development (MARNDR) had his first meeting with Pierre Vauthier, Representative of the Food and Agriculture Organization of the United Nations (FAO) in Haiti. https://www.icihaiti.com/en/news-47098-icihaiti-agriculture-presentation-of-sectoral-priorities-to-the-fao.html

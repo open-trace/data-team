@@ -1,0 +1,125 @@
+---
+id: 03cc8b8adc5b2910
+url: https://news.google.com/rss/articles/CBMipgFBVV95cUxPMXlNMWVBV2VxdktFU0tqTkpXNEZ2Rl9mNjBjZ21zVklBRWZYaDMtWFc3ZGhGdXdCeFhnSU5Gd3VIQ2VxQnJFM1EweXZ4X0d1Q0N6cHJ1NXcwUkZHOGhOeXNJZ2x0WFM0aE1wQ1hMR21DNnFPd3IyV09sS2ktc0k1SExmbjVWeE55QUVKMmV6Y2ZWOXU1d2huOU84SGd4bUphS2FXUHdB?oc=5
+rss_url: https://news.google.com/rss/articles/CBMipgFBVV95cUxPMXlNMWVBV2VxdktFU0tqTkpXNEZ2Rl9mNjBjZ21zVklBRWZYaDMtWFc3ZGhGdXdCeFhnSU5Gd3VIQ2VxQnJFM1EweXZ4X0d1Q0N6cHJ1NXcwUkZHOGhOeXNJZ2x0WFM0aE1wQ1hMR21DNnFPd3IyV09sS2ktc0k1SExmbjVWeE55QUVKMmV6Y2ZWOXU1d2huOU84SGd4bUphS2FXUHdB?oc=5
+title: Richart named outstanding senior by College of Agricultural Sciences - Penn
+  State University
+country: Ghana
+domain: agriculture
+domain_score: 16
+info_type: news_article
+published_at: '2020-05-13T00:00:00+00:00'
+published_at_source: rss
+published_at_confidence: 0.95
+published_at_raw: '2020-05-13'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:18:36+00:00'
+extracted_at: '2026-03-24T16:18:34+00:00'
+feed_name: Google News — Ghana agriculture [2020-05-12]
+source: rss
+body_source: tavily_search
+phase1_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMipgFBVV95cUxPMXlNMWVBV2VxdktFU0tqTkpXNEZ2Rl9mNjBjZ21zVklBRWZYaDMtWFc3ZGhGdXdCeFhnSU5Gd3VIQ2VxQnJFM1EweXZ4X0d1Q0N6cHJ1NXcwUkZHOGhOeXNJZ2x0WFM0aE1wQ1hMR21DNnFPd3IyV09sS2ktc0k1SExmbjVWeE55QUVKMmV6Y2ZWOXU1d2huOU84SGd4bUphS2FXUHdB?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49Ann4MXpQ3UQX7ulNwgRUDvB_Kfukq1cyX9GfYH4IULI1gCA5opWPTugucqBRNZQGIwmAG_RoaGsd59xWAi2KC8Qm7IiiYH
+article_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMipgFBVV95cUxPMXlNMWVBV2VxdktFU0tqTkpXNEZ2Rl9mNjBjZ21zVklBRWZYaDMtWFc3ZGhGdXdCeFhnSU5Gd3VIQ2VxQnJFM1EweXZ4X0d1Q0N6cHJ1NXcwUkZHOGhOeXNJZ2x0WFM0aE1wQ1hMR21DNnFPd3IyV09sS2ktc0k1SExmbjVWeE55QUVKMmV6Y2ZWOXU1d2huOU84SGd4bUphS2FXUHdB?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49Ann4MXpQ3UQX7ulNwgRUDvB_Kfukq1cyX9GfYH4IULI1gCA5opWPTugucqBRNZQGIwmAG_RoaGsd59xWAi2KC8Qm7IiiYH
+enriched: true
+enrichment_used: tavily_search
+dedupe_id: 017208a7f2ea1890
+cluster_id: 545c46ec462f3471
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- agricultural
+- farmer
+- farm
+- harvest
+domain_scores:
+  agriculture: 16
+  economics: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMipgFBVV95cUxPMXlNMWVBV2VxdktFU0tqTkpXNEZ2Rl9mNjBjZ21zVklBRWZYaDMtWFc3ZGhGdXdCeFhnSU5Gd3VIQ2VxQnJFM1EweXZ4X0d1Q0N6cHJ1NXcwUkZHOGhOeXNJZ2x0WFM0aE1wQ1hMR21DNnFPd3IyV09sS2ktc0k1SExmbjVWeE55QUVKMmV6Y2ZWOXU1d2huOU84SGd4bUphS2FXUHdB?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49Ann4MXpQ3UQX7ulNwgRUDvB_Kfukq1cyX9GfYH4IULI1gCA5opWPTugucqBRNZQGIwmAG_RoaGsd59xWAi2KC8Qm7IiiYH
+---
+
+Nebraska Farmer wins 2026 Outstanding Service Award for agricultural excellence - Farm Progress # Nebraska Farmer wins 2026 Outstanding Service Award for agricultural excellence. Left to right: Curt Arens, Nebraska Farmer senior editor; Elizabeth Hodges, Farm Progress staff writer; and Brad Lubben, Nebraska Extension policy specialist.Ryan Evans, UNL Ag Econ Department. (March 19, 2026) — The University of Nebraska-Lincoln (UNL) Department of Agricultural Economics has awarded Nebraska Farmer magazine, a Farm Progress publication, the prestigious 2026 Outstanding Service Award. The award recognizes Nebraska Farmer’s long-standing commitment to supporting Nebraska’s agricultural community. Nebraska Farmer’s collaboration with the Department of Agricultural Economics spans decades. Known as the world’s largest totally irrigated working farm show, Husker Harvest Days was founded in 1978 by Nebraska Farmer, in partnership with the Agricultural Institute of Nebraska and volunteers in Grand Island and Hall County. Husker Harvest Days, the world's largest totally irrigated working farm show, takes place annually in Grand Island, Nebraska. https://www.farmprogress.com/names-in-the-news/nebraska-farmer-wins-2026-outstanding-service-award-for-agricultural-excellence
+
+McKenna, Augustine among 10 Hobey Baker candidates - NHL.com McKenna, No. 1 on NHL Central Scouting's midterm ranking of North American skaters eligible for the 2026 NHL Draft, ranks second in NCAA men's ice hockey with 51 points (15 goals, 36 assists) and a 1.50 points-per game average as a freshman at Penn State University. Playing wing for most of the season, the 19-year-old sophomore has 22 points (12 goals, 10 assists) in a 13-game point streak that started with two points (one goal, one assist) in a 4-1 win at rival Boston University on Jan. 30. The 24-year-old senior forward is tied for third in the NCAA with 50 points (19 goals, 31 assists) in 36 games this season. The 18-year-old forward is the first Penn State ice hockey player to earn Big Ten scoring champion honors, scoring 38 points (11 goals, 27 assists) in 24 conference games. The senior center, who played his first two college seasons at the University of Wisconsin before joining Michigan State in 2024-25, is tied for 12th in NCAA hockey with 44 points (19 goals, 25 assists) in 35 games. https://www.nhl.com/news/topic/prospects/2026-hoby-baker-award-candidates-announced
+
+Mercury CEO Josh Medow Named "Rising Star" in 2026 Pros to Know Awards by Supply & Demand Chain Executive - The Providence Journal # Mercury CEO Josh Medow Named “Rising Star” in 2026 Pros to Know Awards by Supply & Demand Chain Executive. ***The 2026 Pros to Know Awards recognizes outstanding executives who serve as an example for other leaders looking to leverage supply chain for competitive advantage.***. **COLUMBUS, OH / ACCESS Newswire / March 18, 2026 /** Josh Medow, CEO of Mercury, a healthcare and life sciences logistics company specializing in international cold-chain shipping, has been named a Rising Star in the 2026 Pros to Know Awards by *Supply & Demand Chain Executive*, the only publication covering the entire global supply chain. *IRONMARKETS*, formerly known as *AC Business Media*, is a leading business-to-business media and buyer engagement platform with a portfolio of renowned brands in heavy construction, asphalt, concrete, paving, rental, sustainability, landscape, manufacturing, logistics, and supply chain markets. ### Mercury CEO Josh Medow Named “Rising Star” in 2026 Pros to Know Awards by Supply & Demand Chain Executive. ### SGS launches SGS Nexus – a new global food intelligence platform. https://www.providencejournal.com/press-release/story/44902/mercury-ceo-josh-medow-named-rising-star-in-2026-pros-to-know-awards-by-supply-demand-chain-executive/

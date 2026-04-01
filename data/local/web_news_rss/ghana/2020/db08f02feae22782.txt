@@ -1,0 +1,114 @@
+---
+id: db08f02feae22782
+url: https://news.google.com/rss/articles/CBMiugFBVV95cUxNU1MwbDY5VEtmSkI3REk0eW9pM0s0ci12QzIyYzlmQ08xTFUtaUFPaHBoR2NvQ29iWlRpTmF2NkxQejBGb0VBZGFNRXlzUENVVXdNeTdYckpzWWFOWUE5QkFjYS1nQ2p1QlB5SFd3Zjc3RnN2R1owcFZHTUstczItQ3lpSUZBd0NXNWR0cHpCUERURHVNS0wzMlBfMVkzTDYyNl91OGhERmFmSFItcG9oMEtpVDdfcDBrVkE?oc=5
+rss_url: https://news.google.com/rss/articles/CBMiugFBVV95cUxNU1MwbDY5VEtmSkI3REk0eW9pM0s0ci12QzIyYzlmQ08xTFUtaUFPaHBoR2NvQ29iWlRpTmF2NkxQejBGb0VBZGFNRXlzUENVVXdNeTdYckpzWWFOWUE5QkFjYS1nQ2p1QlB5SFd3Zjc3RnN2R1owcFZHTUstczItQ3lpSUZBd0NXNWR0cHpCUERURHVNS0wzMlBfMVkzTDYyNl91OGhERmFmSFItcG9oMEtpVDdfcDBrVkE?oc=5
+title: CBP Agriculture Specialists intercept several invasive pests on the northern
+  border - U.S. Customs and Border Protection (.gov)
+country: Ghana
+domain: agriculture
+domain_score: 13
+info_type: news_article
+published_at: '2020-05-06T00:00:00+00:00'
+published_at_source: rss
+published_at_confidence: 0.95
+published_at_raw: '2020-05-06'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:18:33+00:00'
+extracted_at: '2026-03-24T16:18:32+00:00'
+feed_name: Google News — Ghana agriculture [2020-05-05]
+source: rss
+body_source: tavily_search
+phase1_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMiugFBVV95cUxNU1MwbDY5VEtmSkI3REk0eW9pM0s0ci12QzIyYzlmQ08xTFUtaUFPaHBoR2NvQ29iWlRpTmF2NkxQejBGb0VBZGFNRXlzUENVVXdNeTdYckpzWWFOWUE5QkFjYS1nQ2p1QlB5SFd3Zjc3RnN2R1owcFZHTUstczItQ3lpSUZBd0NXNWR0cHpCUERURHVNS0wzMlBfMVkzTDYyNl91OGhERmFmSFItcG9oMEtpVDdfcDBrVkE?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49BbSlBGJlAi6-92SIyDuvv4DIrZKhqgM2TJtMSgELF00yF0JTr4sVhyn68dG8DJWVI4zD32JrCU1IwbyL8_YRn2IAFz6Cyu
+article_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMiugFBVV95cUxNU1MwbDY5VEtmSkI3REk0eW9pM0s0ci12QzIyYzlmQ08xTFUtaUFPaHBoR2NvQ29iWlRpTmF2NkxQejBGb0VBZGFNRXlzUENVVXdNeTdYckpzWWFOWUE5QkFjYS1nQ2p1QlB5SFd3Zjc3RnN2R1owcFZHTUstczItQ3lpSUZBd0NXNWR0cHpCUERURHVNS0wzMlBfMVkzTDYyNl91OGhERmFmSFItcG9oMEtpVDdfcDBrVkE?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49BbSlBGJlAi6-92SIyDuvv4DIrZKhqgM2TJtMSgELF00yF0JTr4sVhyn68dG8DJWVI4zD32JrCU1IwbyL8_YRn2IAFz6Cyu
+enriched: true
+enrichment_used: tavily_search
+dedupe_id: 49034425853df066
+cluster_id: bcc01fcd8622a69e
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- agriculture
+- agricultural
+- farmer
+- crops
+- soil
+domain_scores:
+  agriculture: 13
+  economics: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMiugFBVV95cUxNU1MwbDY5VEtmSkI3REk0eW9pM0s0ci12QzIyYzlmQ08xTFUtaUFPaHBoR2NvQ29iWlRpTmF2NkxQejBGb0VBZGFNRXlzUENVVXdNeTdYckpzWWFOWUE5QkFjYS1nQ2p1QlB5SFd3Zjc3RnN2R1owcFZHTUstczItQ3lpSUZBd0NXNWR0cHpCUERURHVNS0wzMlBfMVkzTDYyNl91OGhERmFmSFItcG9oMEtpVDdfcDBrVkE?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49BbSlBGJlAi6-92SIyDuvv4DIrZKhqgM2TJtMSgELF00yF0JTr4sVhyn68dG8DJWVI4zD32JrCU1IwbyL8_YRn2IAFz6Cyu
+---
+
+Dozens of live pythons found on truck attempting to cross Mexican border - New York Post # Dozens of live pythons found on truck attempting to cross Mexican border. US Customs and Border Protection (CBP) officers uncovered a shocking discovery while conducting routine services at the Texas-Mexico border. According to a press release from CPB, on March 5, officers encountered a tractor-trailer trying to travel into Mexico at the World Trade Bridge — but there was a slithering surprise onboard. Officers selected the driver for inspection and discovered 39 pythons hidden inside the tractor, just after the operator denied the vehicle contained any prohibited goods. “The interception of live pythons at the World Trade Bridge highlights the vigilance and dedication of our CBP officers in enforcing laws that protect both our borders and our environment,” Port Director Alberto Flores, of Laredo Port of Entry, said. Thankfully, border officers were able to intercept and prevent these reptiles from enduring further harm, thanks to officials’ quick action. https://nypost.com/2026/03/17/us-news/dozens-of-live-pythons-found-on-truck-attempting-to-cross-mexican-border/
+
+State Dept. of Agriculture asking for help with invasive insect - WALB of Agriculture asking for help with invasive insect. ##### Officials say the spotted lanternfly is a statewide threat. ACROSS GEORGIA (WALB) - The Georgia Department of Agriculture is calling on all Georgians to stop the spread of an invasive insect, the spotted lanternfly. According to the U.S. Fish and Wildlife Service, these insects feed on more than 100 plant species, including major agriculture crops. The spotted lanternfly releases a sugary waste that creates a “black sooty mold.” That mold can damage trees and ruin agriculture products. The Georgia Department of Agriculture says if you see a spotted lanternfly, you should kill it. Spotted lanternflies also create their egg masses on trees. If you see one of these spotted lanternflies or their egg masses, the Department of Agriculture says you should also take a picture and report it. For more South Georgia news, download the WALB News app from the* *Apple Store* *or* *Google Play**.*. ###### WALB presents half-hour ‘Proud to be a Georgia Farmer’ special. https://www.walb.com/2026/03/23/state-dept-agriculture-asking-help-with-invasive-insect/
+
+For Texas Ranchers Fighting Invasive Brush, XAG Drones Are Changing the Odds - global-agriculture.com # For Texas Ranchers Fighting Invasive Brush, XAG Drones Are Changing the Odds. Agricultural drones are changing that equation, offering a more practical way to deliver herbicide treatments in dense brush and hard-to-reach areas without damaging the soil or grass underneath. That challenge is creating growing demand for brush control specialists like Curtis Schramm, owner of Texas Agridrone Services. “A lot of my work is a fix to poor management practices from decades, even lifetimes of ranchers and landowners mismanaging property,” says Schramm, “Letting native brush and other invasive species come in and take over.”. Brush work comes with a different set of demands than open-field spraying. “The way it quickly adjusts… it makes me laugh every time,” he says. “It killed everything but the grass,” Schramm says, recalling the landowner calling him out to come see it. For Schramm, the work has always been about more than brush. https://www.global-agriculture.com/mechanization-technology/for-texas-ranchers-fighting-invasive-brush-xag-drones-are-changing-the-odds/

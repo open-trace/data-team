@@ -1,0 +1,72 @@
+---
+id: 9dbb1f2095f66cfd
+url: https://news.google.com/rss/articles/CBMipgFBVV95cUxNaWNibG00bGViaGlNQmRIUWt1SVI2a3NsREJBZHYxcElBRXlaOWcxRGhFQVBEeUt3TS1maUp1TC1aaUtUd0dqd0lNNTN6VlBQV1o2WkF0UlhEeW53VHZlYkZaRXpORG5GczJ1YTNjazBKcDlGTlpDVUIwdHpFdUlCOEpsX2xUWkxweEFULTlKUTBWWHhHMmhORlN5Q1RaazRGX29xT1Jn?oc=5
+rss_url: https://news.google.com/rss/articles/CBMipgFBVV95cUxNaWNibG00bGViaGlNQmRIUWt1SVI2a3NsREJBZHYxcElBRXlaOWcxRGhFQVBEeUt3TS1maUp1TC1aaUtUd0dqd0lNNTN6VlBQV1o2WkF0UlhEeW53VHZlYkZaRXpORG5GczJ1YTNjazBKcDlGTlpDVUIwdHpFdUlCOEpsX2xUWkxweEFULTlKUTBWWHhHMmhORlN5Q1RaazRGX29xT1Jn?oc=5
+title: 'A/R: Sekyere South farmers appeal for support to boost rice production - CitiNewsroom.com'
+country: Ghana
+domain: agriculture
+domain_score: 35
+info_type: news_article
+published_at: '2020-05-04T00:00:00+00:00'
+published_at_source: rss
+published_at_confidence: 0.95
+published_at_raw: '2020-05-04'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:18:25+00:00'
+extracted_at: '2026-03-24T16:18:23+00:00'
+feed_name: Google News — Ghana agriculture [2020-05-03]
+source: rss
+body_source: tavily_search
+phase1_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMipgFBVV95cUxNaWNibG00bGViaGlNQmRIUWt1SVI2a3NsREJBZHYxcElBRXlaOWcxRGhFQVBEeUt3TS1maUp1TC1aaUtUd0dqd0lNNTN6VlBQV1o2WkF0UlhEeW53VHZlYkZaRXpORG5GczJ1YTNjazBKcDlGTlpDVUIwdHpFdUlCOEpsX2xUWkxweEFULTlKUTBWWHhHMmhORlN5Q1RaazRGX29xT1Jn?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49D4H2JHyaVaHeFk9fOCZN-E41xtsmDAZxhwLksdRYAQLIkzU-JjindAGR4x3D6XB7ZQ6dhNuLRQo18Tks5Twn7QJmUSSfbY
+article_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMipgFBVV95cUxNaWNibG00bGViaGlNQmRIUWt1SVI2a3NsREJBZHYxcElBRXlaOWcxRGhFQVBEeUt3TS1maUp1TC1aaUtUd0dqd0lNNTN6VlBQV1o2WkF0UlhEeW53VHZlYkZaRXpORG5GczJ1YTNjazBKcDlGTlpDVUIwdHpFdUlCOEpsX2xUWkxweEFULTlKUTBWWHhHMmhORlN5Q1RaazRGX29xT1Jn?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49D4H2JHyaVaHeFk9fOCZN-E41xtsmDAZxhwLksdRYAQLIkzU-JjindAGR4x3D6XB7ZQ6dhNuLRQo18Tks5Twn7QJmUSSfbY
+enriched: true
+enrichment_used: tavily_search
+dedupe_id: f6abba274c2344d1
+cluster_id: a30af7b9b0b6f05b
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- agriculture
+- farmer
+- farmers
+- farming
+- farm
+- food security
+- rice
+- commodity
+- grain
+domain_scores:
+  agriculture: 35
+  economics: 2
+domain_labels:
+- agriculture
+- economics
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMipgFBVV95cUxNaWNibG00bGViaGlNQmRIUWt1SVI2a3NsREJBZHYxcElBRXlaOWcxRGhFQVBEeUt3TS1maUp1TC1aaUtUd0dqd0lNNTN6VlBQV1o2WkF0UlhEeW53VHZlYkZaRXpORG5GczJ1YTNjazBKcDlGTlpDVUIwdHpFdUlCOEpsX2xUWkxweEFULTlKUTBWWHhHMmhORlN5Q1RaazRGX29xT1Jn?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49D4H2JHyaVaHeFk9fOCZN-E41xtsmDAZxhwLksdRYAQLIkzU-JjindAGR4x3D6XB7ZQ6dhNuLRQo18Tks5Twn7QJmUSSfbY
+---
+
+Grain Farmers Warn Of Deepening Profitability Crisis - African Farming *South Africa’s grain farmers are facing increasing pressure, with urgent warning signs emerging. At the Grain SA Congress 2026, producers, policymakers and industry leaders confronted a sobering reality: Rising input costs, declining commodity prices and persistent policy uncertainty are pushing farm profitability to its limits. The message from this gathering was clear: Without profitable farmers, South Africa’s food security is at risk. Despite the pressures, South Africa’s grain farmers remain committed to producing food, supporting rural economies and contributing to national growth. #### **Also read:** **Ukukhula Conference and Day of Celebration – a historic milestone for black grain farmers in South Africa**. Established in 2020, African Farming aims to support black commercial farming in South Africa by providing informative and inspiring content and creating communication and education channels to help farmers develop and grow. Its initiatives include African Farming information days and workshops, which empower farmers – whether new or experienced – to build profitable and sustainable farming enterprises. https://www.africanfarming.com/2026/03/21/grain-farmers-warn-of-deepening-profitability-crisis/
+
+Q&A: Farm Policy and National Agriculture Week - Tama-Toledo News Chronicle # Q&A: Farm Policy and National Agriculture Week. From my seat on the Senate Agriculture Committee, I’m leading a bipartisan call to boost consumption of American farm products and lower input costs. From the U.S. Senate, I’ll continue pushing to deliver a farm bill that brings certainty to farm country, protects natural resources, boosts research, expands markets and empowers the people who grow the nation’s food to earn a living and pass on their livelihoods from one generation to the next. A: U.S. Secretary of Agriculture Brooke Rollins unveiled USDA’s modernized “One Farmer, One File” initiative that’s designed to serve America’s farmers more effectively and efficiently. Importantly, farmers needing in-person support or preferring paper applications and traditional acreage reporting may continue to do so at their local Farm Service Agency county office. Sen. Grassley is honored to represent the family farmer and champion Iowa’s farm economy that ranks No. 1 in corn, pig, egg and biofuels production.*. https://www.tamatoledonews.com/opinion/editorials/2026/03/20/qa-farm-policy-and-national-agriculture-week/
+
+From Our Editor: More Than Just Meat – Who Will Guard The Knowledge? - African Farming ### From our editor: More than just meat – who will guard the knowledge? ### New Fusion Meat programme promises to boost profits for South African red meat farmers. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Dr Lerato Matsaunyane. ### From our editor: More than just meat – who will guard the knowledge? ### New Fusion Meat programme promises to boost profits for South African red meat farmers. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Dr Lerato Matsaunyane. # From our editor: More than just meat – who will guard the knowledge? Established in 2020, African Farming aims to support black commercial farming in South Africa by providing informative and inspiring content and creating communication and education channels to help farmers develop and grow. Its initiatives include African Farming information days and workshops, which empower farmers – whether new or experienced – to build profitable and sustainable farming enterprises. https://www.africanfarming.com/2026/03/19/from-our-editor-more-than-just-meat-who-will-guard-the-knowledge/

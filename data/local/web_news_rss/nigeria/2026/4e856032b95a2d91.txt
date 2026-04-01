@@ -1,0 +1,166 @@
+---
+id: 4e856032b95a2d91
+url: https://www.trade.gov/country-commercial-guides/nigeria-market-overview
+rss_url: https://www.trade.gov/country-commercial-guides/nigeria-market-overview
+title: Nigeria - Market Overview
+country: Nigeria
+domain: agriculture
+domain_score: 8
+info_type: news_article
+published_at: '2026-03-24T13:53:36+00:00'
+published_at_source: inferred
+published_at_confidence: 0.5
+published_at_raw: '2026-03-24T13:53:36+00:00'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T13:53:36+00:00'
+extracted_at: '2026-03-24T13:53:36+00:00'
+feed_name: Tavily discovery — International Trade (Exports & Imports)
+source: rss
+body_source: fetched_html
+phase1_fetch_url: https://www.trade.gov/country-commercial-guides/nigeria-market-overview
+article_fetch_url: https://www.trade.gov/country-commercial-guides/nigeria-market-overview
+enriched: false
+enrichment_used: null
+dedupe_id: bfd9118b472385a2
+cluster_id: 4ae09295308e8f03
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- agriculture
+- farming
+- poultry
+- crops
+- irrigation
+- seeds
+- rice
+- cocoa
+- arable
+- commodity
+domain_scores:
+  agriculture: 8
+  economics: 2
+  International Trade (Exports & Imports): 0
+  Environmental & Climate: 0
+  Land Use & Soil Health: 1
+  Investment Readiness & Enterprise: 0
+  Technology & Innovation: 2
+  Market Access & Infrastructure: 0
+  Production & Yield: 0
+  Policy & Institutional: 0
+  Gender, Youth & Inclusion: 0
+  Nutrition & Food Security: 0
+  Food Systems & Value Chain: 0
+  Humanitarian & Agricultural Emergency: 0
+domain_labels:
+- agriculture
+- economics
+- Technology & Innovation
+- Land Use & Soil Health
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+---
+
+Nigeria, the most populous country in Africa with an estimated 227 million people, is undergoing significant socioeconomic change. Following the 2023-2024 devaluation of its currency, the naira, the IMF projected that Nigeria’s GDP would decline to $253 billion in 2024, making it the fourth-largest economy on the continent, behind Algeria, Egypt, and South Africa. The country’s labor costs remain significantly lower than many high- and middle-income nations, creating a competitive environment for businesses. In addition to its vast labor force, Nigeria is rich in natural resources, including oil, solid minerals, and precious stones, and has a vibrant digital and creative economy.
+Nigeria held general elections in February 2023, resulting in Bola Tinubu, former Governor of Lagos State, winning the presidency with 37 percent of the vote. During his inauguration speech in August 2023, President Tinubu introduced two major economic reforms: floating the naira against the dollar and removing a costly fuel subsidy. While international economists praised these reforms, the naira’s value had plummeted from N400/$1 to N1700/$1 by November 2024, drastically increasing the cost of living for Nigerians. Nigeria is heavily dependent on imports of many finished goods, processed food items, and refined oil to meet the country’s demand, so these imports have become even more expensive.
+In response to these economic challenges, the Central Bank of Nigeria (CBN) Governor Olayemi Cardoso raised interest rates by a total of 875 basis points to 27.50 percent in 2024, where it has remained since November 2024. The CBN successfully cleared a foreign exchange backlog of nearly $4.2 billion, with another $2.7 billion under review for its validity, and closely aligned the official and parallel exchange rates for the naira. However, the removal of the fuel subsidy led to a steep increase in fuel prices, rising from N198 to N1100 per liter (~$2.45/gallon) by October 2024. These reforms also resulted in sharp hikes in commodity prices, pushing core food inflation to 32.7 percent by September 2024. Despite the high fuel costs, supply remains erratic, with frequently long fuel queues in cities such as Lagos and Abuja often causing significant traffic congestion.
+Under these challenging macroeconomic conditions, Nigeria witnessed the exit of several multinational companies. In December 2023, U.S. consumer goods multinational Procter & Gamble (P&G) announced that it would stop local manufacturing and restructure its Nigeria operation to focus exclusively on imports. Other multinationals like Unilever, PZ Cussons, GlaxoSmithKline (GSK), and Sanofi cited foreign exchange challenges brought on by the steep devaluation of the naira, high inflation, and an erosion of consumer purchasing power as reasons for exiting the market. Additional significant impediments to doing businesses in Nigeria include often inadequate power supply, deficient transportation infrastructure, a slow and ineffective judicial system, and endemic public sector corruption.
+However, despite these headwinds, opportunities remain for companies willing to enter and remain in the market in the long run. Reforms are beginning to show improvement on Nigeria’s macroeconomic outlook: foreign exchange reserves rose from $32.9 billion at the end of 2023 to more than $40 billion by mid-December 2024. The Government’s fiscal deficit also narrowed from 6.2 percent in the first half of 2023 to 4.4 percent through the first half of 2024, according to an October report from the World Bank.
+In 2023, Nigeria ranked 55th among the United States’ trade partners. U.S. exports of goods and services to Nigeria were $4.8 billion, down 9.3 percent from 2022, and imports from Nigeria were $6.4 billion, up 18.4 percent from 2022. Two-way trade increased to $11.2 billion. While oil continues to be a key player, contributing 5.7 percent to Nigeria’s GDP in Q2 2024, the country has been making efforts to reduce its dependency on oil revenue, which now accounts for 29 percent of government revenues, down from previous years. Nigeria’s non-oil sectors, including agriculture, solid minerals, and manufacturing, are experiencing growth, with agriculture leading the shift through a surge in exports such as sesame seeds and cocoa. Non-oil sectors like solid minerals and manufacturing also saw substantial gains.
+In 2024, Nigeria’s digital economy accounted for nearly 20 percent of GDP in Q2, almost four times oil’s contribution. The government’s strategic emphasis on expanding the digital economy is positioning Nigeria to diversify away from oil reliance. The growth in the digital economy aligns with Nigeria’s goals to boost technological infrastructure and upskill its youth population, which are central to its future economic plans. Furthermore, the Nigerian government has been pushing reforms and investment in areas such as rural infrastructure and energy supply to support diversification efforts. As non-oil sectors continue to expand, Nigeria’s economy is moving toward a more balanced, resilient model that capitalizes on its diverse natural resources, exploding youth population, and technological innovation.
+The United States and Nigeria have a bilateral Trade and Investment Framework Agreement (TIFA), and Nigeria is eligible for preferential trade benefits under the African Growth and Opportunity Act (AGOA). Nigeria also historically has received significant development assistance from many U.S. government agencies. Throughout 2024, the U.S. government demonstrated sustained focus on the bilateral relationship and placed strategic importance on Nigeria. In January 2024, then-Secretary of State Anthony Blinken visited Abuja and Lagos and cemented a renewal of confidence in the bilateral relationship with Nigeria. In May, the United States Senate confirmed Ambassador Richard Mills, Jr. to lead the U.S. Mission.
+In July 2024, the U.S. Department of Commerce and Nigeria’s Ministry of Industry, Trade and Investment signed the U.S.-Nigeria Commercial and Investment Partnership (CIP). The CIP focuses on deepening bilateral trade and investment and removing barriers to trade in agriculture, the digital economy, and infrastructure. Simultaneously, the U.S. Department of Commerce released a Joint Statement on Harnessing Artificial Intelligence with Nigeria’s Ministry of Communications, Innovation, and Digital Economy. In September, the U.S. government chose Lagos to host its second-ever Global Inclusivity on Artificial Intelligence: Africa (GIAA) Conference, which brought ten U.S. government agencies and 400 pan-African stakeholders to discuss the safe deployment of this critical and emerging technology. This sustained engagement demonstrates the importance of Nigeria as a regional center of democracy, business, and stability on the African continent.
+Nigeria plays an important leadership role in both West Africa and on the African continent. The headquarters of the Economic Community of West African States (ECOWAS) is in Nigeria’s capital of Abuja. Nigeria represents roughly 70 percent of the 15-country ECOWAS GDP and over half of the ECOWAS region’s population. In 2019, Nigeria signed the African Continental Free Trade Agreement (AfCFTA) aimed at creating intra-African trade and a $3.4 trillion economic bloc across Sub-Saharan Africa. Nigeria signed the AfCFTA agreement in 2019, but full implementation has been slow. Nigeria’s concerns include protecting local industries, inadequate infrastructure, and a need for comprehensive policy reforms to ensure Nigeria can maximize the benefits of AfCFTA.
+Nigeria can be a lucrative market for companies that can learn to navigate a complex, opaque, and evolving business environment. The Tinubu Administration has as a key objective improving the business environment, and the economy is showing signs of improving in the medium term. Established multinationals have deciphered operating in this challenging regulatory environment and have even doubled down on investments with a look to the medium and long term. These companies can make substantial profits despite the country’s low level of income and logistical difficulties. Foreign capital flows into all major sectors of the economy with the Netherlands, the United Kingdom, United States, South Africa, and China as the main sources.
+Oil and Gas
+Nigeria’s oil, gas, and mining sectors in 2024 present a dynamic mix of challenges and opportunities for U.S. companies. As a leading African oil producer, Nigeria is actively seeking foreign investment to boost production and enhance its oil and gas infrastructure, underpinned by reforms like the Petroleum Industry Act of 2021. Significant opportunities exist in liquified natural gas (LNG) production, exemplified by the $10 billion Nigeria LNG Train 7 project, as well as upstream and downstream services, gas processing, and infrastructure development. The mining sector also offers promising potential, particularly in solid minerals like lithium, gold, and zinc, bolstered by regulatory reforms and infrastructure initiatives. However, companies must navigate hurdles such as security issues, foreign exchange controls, host community relations, pipeline vandalism and other crimes of opportunity, and environmental concerns. With the government prioritizing transparency, private investment, and sustainability, Nigeria offers a lucrative yet complex environment for U.S. firms in extractive industries.
+Power Sector
+In 2024, Nigeria’s power sector continued to face challenges in meeting demand and delivering reliable electricity, with an installed generation capacity of 12,910 MW across 23 grid-connected plants, but an available generation averaging only 4,500 MW—far below the estimated demand of 40,000 MW for a population exceeding 200 million. Large hydro projects account for about 20 percent of grid-connected generation, while transmission losses and revenue collection inefficiencies persist. Additionally, electricity transmission towers in northern states are targets for terrorists. To address these issues, the government is pursuing ambitious targets to increase electricity access from 45 percent to 90 percent by 2030 and achieve 30,000 MW of generation capacity, with 30 percent from renewable energy sources. Key initiatives include reforms to attract private investment, improve sector efficiency, and reduce transmission losses. Nigeria’s Renewable Electrification Action Program (REAP) highlights its vast renewable energy potential in hydro, biomass, wind, solar, and geothermal resources, with solar, wind, and biomass prioritized for expanding green energy. The Nigerian Electricity Regulatory Commission (NERC) has introduced renewable energy feed-in tariffs for wind, solar, small hydro, and biomass/biodiesel, deemed attractive to investors. Additionally, the government’s Sustainable Energy for All Action Agenda (SEforAll) targets a 19 percent contribution of solar energy to the electricity mix by 2030, reflecting a strong commitment to a sustainable energy transition.
+Transportation
+Nigeria’s transportation infrastructure remains a bottleneck for economic growth. Of the 50,000 kilometers of roads, only about 20 percent are paved, with many in disrepair. To address funding gaps, initiatives such as the Road Infrastructure Tax Credit Scheme allow private sector involvement in road development in exchange for tax credits, while sukuk (Sharia-compliant) bonds fund road projects. The railway network, spanning just over 2,000 miles, requires significant modernization and expansion. Major airports in Lagos, Abuja, Kano, Port Harcourt, and Enugu handle international flights, while the Lagos Lekki-Epe International Airport, a $900 million public-private partnership, is under development. China remains Nigeria’s largest infrastructure partner, with ongoing investments in roads, rail, power, and ports, including the $2.59 billion Badagry Deep Sea Port. InfraCredit, a $2 billion infrastructure firm, focuses on attracting critical investments to address infrastructure deficiencies.
+Services
+Nigeria’s services sector ranks fifth in Africa and includes a robust but underpenetrated financial industry. Only half of the adult population has access to formal financial services, hindered by high transaction bureaucracy. The government is driving reforms in insurance and pensions to increase sector penetration. Private equity is growing, with Nigeria accounting for more than half of West Africa’s private equity deals. The capital market remains active, with over 161 listed companies and a market capitalization of $64 billion in 2023. However, economic volatility and macroeconomic headwinds challenge the sector’s growth.
+Consumer Products
+Nigeria’s growing consumer market includes an emerging middle class of nearly 50 million people, though inflation pressures have constrained their purchasing power. The consumer goods sector faces hurdles such as protectionist trade policies, weak intellectual property rights enforcement, and foreign exchange restrictions, which make importing goods and inputs more costly. Despite these challenges, Nigeria remains a strategic market for consumer products in Africa.
+Information and Communications Technology (ICT)
+Nigeria leads Africa’s ICT market, contributing 82 percent of the continent’s ICT value and 29 percent of its internet usage. It is a major tech/startup hub, attracting significant foreign investment across various sectors including fintech, healthtech, e-commerce, transport/logistics tech, agtech, and edtech. With over 210 million active mobile subscribers and a broadband penetration rate exceeding 40 percent, Nigeria is expanding its digital infrastructure. Recently 5G licenses have been awarded, with MTN and MAFAB launching services. Fiberoptic networks are growing in cities like Lagos and Abuja, though rural expansion is constrained by right-of-way challenges. The government targets 90 percent broadband penetration by 2025, reinforcing the sector’s role as a growth driver.
+Agriculture
+Agriculture employs nearly 70 percent of Nigeria’s population and contributes 24 percent of GDP. The sector benefits from vast arable land and a favorable climate for crops such as grains, tubers, and fruits. Most farming remains subsistence-based, relying on manual labor and limited mechanization. Import restrictions, including bans on staples like poultry, pork, rice, and tomatoes, aim to promote local production but often lead to market inefficiency. The sector has significant potential for modernization, irrigation, and mechanization to boost productivity and economic impact.
+Political Environment
+Visit the State Department’s website for background on Nigeria’s political and economic environment.

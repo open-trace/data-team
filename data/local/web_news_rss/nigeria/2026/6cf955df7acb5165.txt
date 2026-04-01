@@ -1,0 +1,134 @@
+---
+id: 6cf955df7acb5165
+url: https://africa.businessinsider.com/local/markets/nigeria-loses-up-to-dollar33-billion-in-food-waste-as-cold-chain-gaps-deepen-crisis/mwpqvn7
+rss_url: https://africa.businessinsider.com/local/markets/nigeria-loses-up-to-dollar33-billion-in-food-waste-as-cold-chain-gaps-deepen-crisis/mwpqvn7
+title: Nigeria loses up to $3.3 billion in food waste as cold chain gaps deepen crisis
+country: Nigeria
+domain: Market Access & Infrastructure
+domain_score: 8
+info_type: news_article
+published_at: '2026-02-24T09:18:52+00:00'
+published_at_source: html
+published_at_confidence: 0.85
+published_at_raw: '2026-02-24T09:18:52+00:00'
+html_published_at: '2026-02-24T09:18:52+00:00'
+html_published_raw: 2026-02-24 10:18:52+0100
+article_updated_at: '2026-02-24T09:18:52+00:00'
+html_updated_raw: 2026-02-24 10:18:52+0100
+ingested_at: '2026-03-24T13:53:30+00:00'
+extracted_at: '2026-03-24T13:53:30+00:00'
+feed_name: Tavily discovery — Food Systems & Value Chain
+source: rss
+body_source: fetched_html
+phase1_fetch_url: https://africa.businessinsider.com/local/markets/nigeria-loses-up-to-dollar33-billion-in-food-waste-as-cold-chain-gaps-deepen-crisis/mwpqvn7
+article_fetch_url: https://africa.businessinsider.com/local/markets/nigeria-loses-up-to-dollar33-billion-in-food-waste-as-cold-chain-gaps-deepen-crisis/mwpqvn7
+enriched: false
+enrichment_used: null
+dedupe_id: 7530e4ee2f2f8231
+cluster_id: 658da31fd62ee0c5
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- agriculture
+- agricultural
+- farmer
+- farmers
+- harvest
+- food security
+- post-harvest
+- value chain
+- dairy
+domain_scores:
+  agriculture: 7
+  economics: 2
+  International Trade (Exports & Imports): 0
+  Environmental & Climate: 0
+  Land Use & Soil Health: 0
+  Investment Readiness & Enterprise: 0
+  Technology & Innovation: 0
+  Market Access & Infrastructure: 8
+  Production & Yield: 0
+  Policy & Institutional: 0
+  Gender, Youth & Inclusion: 0
+  Nutrition & Food Security: 2
+  Food Systems & Value Chain: 1
+  Humanitarian & Agricultural Emergency: 0
+domain_labels:
+- Market Access & Infrastructure
+- agriculture
+- economics
+- Nutrition & Food Security
+- Food Systems & Value Chain
+best_domain: Market Access & Infrastructure
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+---
+
+- Nigeria lost between $2.3 billion and $3.3 billion to post-harvest inefficiencies in 2025.
+- Industry leaders say up to 40 million metric tonnes of food were wasted.
+- Poor cold storage and logistics remain the primary drivers of the losses.
+- Experts urge urgent national investment to protect farmer income and food security.
+Nigeria forfeited between roughly $2.3bn and $3.3bn to post-harvest losses in 2025, underscoring deep structural weaknesses in the country’s agricultural logistics and storage systems, according to industry estimates.
+Recommended articles
+The disclosure came from the Organisation for Technology Advancement of Cold Chain in West Africa, whose president, Alexander Isong, said the country lost an estimated 30 to 40 million metric tonnes of food across major value chains during the year.
+Speaking in an interview with the News Agency of Nigeria, Isong said the losses, valued at between ₦3.5tn and ₦5tn, reflected produce that had already been cultivated and transported but ultimately wasted due to systemic gaps.
+“In 2025, Nigeria lost an estimated 30 to 40 million metric tonnes of food to post-harvest inefficiencies across major value chains,” he said, highlighting tomatoes, fruits, vegetables, dairy, meat, and fish among the worst-hit categories.
+The financial toll is significant for Africa’s most populous nation, where food inflation and supply disruptions remain persistent economic pressures. Using prevailing exchange rates, the naira losses translate to approximately $2.3bn to $3.3bn.
+“Post-harvest loss is not just an agricultural problem; it is an infrastructure and economic challenge,” he said, noting that farmers had already invested heavily in inputs and logistics before the waste occurred.
+He added that without certified cold chain systems, the country would continue to face elevated food prices, squeezed farmer incomes, and weak export competitiveness.
+Isong, who also serves as Nigeria's country director for the World Agriculture Forum, described cold chain infrastructure as the missing link between agricultural output and economic value.
+Industry stakeholders are increasingly calling for coordinated national investment in refrigerated transport, aggregation hubs, and modular cold storage facilities.
+Analysts say closing the cold chain gap could unlock billions in retained value for Nigeria’s food economy while improving food security across the region.

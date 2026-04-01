@@ -19,16 +19,18 @@ fi
 [ -n "$SAVE_LOCAL_DB_URL" ] && export LOCAL_DB_URL="$SAVE_LOCAL_DB_URL"
 [ -n "$SAVE_GOOGLE_APPLICATION_CREDENTIALS" ] && export GOOGLE_APPLICATION_CREDENTIALS="$SAVE_GOOGLE_APPLICATION_CREDENTIALS"
 
-echo "=== 1. Creating tables from BigQuery schemas ==="
+echo "=== 1. Creating tables from BigQuery schemas (bronze, silver, gold) ==="
 python data/local/scripts/bq_schema_to_local_pg.py
 
 echo ""
 echo "=== 2. Syncing data into local tables ==="
-python data/local/scripts/sync_all_bronze_tables.py
+python data/local/scripts/sync_all_tables.py --dataset bronze
+python data/local/scripts/sync_all_tables.py --dataset silver
+python data/local/scripts/sync_all_tables.py --dataset gold
 
 echo ""
 echo "=== 3. Loading GIS CSV into local DB ==="
 python data/ingestion/satellite/gis_data_ingestion.py
 
 echo ""
-echo "Done. Check your local DB (e.g. datateam_local) for the bronze tables and world_country_usa_states_latlong."
+echo "Done. Check your local DB (e.g. datateam_local) for bronze, silver, gold tables and world_country_usa_states_latlong."

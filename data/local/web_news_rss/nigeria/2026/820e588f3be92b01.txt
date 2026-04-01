@@ -1,0 +1,68 @@
+---
+id: 820e588f3be92b01
+url: https://www.youtube.com/watch?v=KnMBtPW5LZk
+rss_url: https://www.youtube.com/watch?v=KnMBtPW5LZk
+title: 'Women Rise in Agriculture: Conference in Kaduna Highlights Mechanized Farming
+  Growth'
+country: Nigeria
+domain: agriculture
+domain_score: 4
+info_type: news_article
+published_at: '2026-03-24T15:34:10+00:00'
+published_at_source: inferred
+published_at_confidence: 0.5
+published_at_raw: '2026-03-24T15:34:10+00:00'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T15:34:10+00:00'
+extracted_at: '2026-03-24T15:34:10+00:00'
+feed_name: Tavily discovery — Agricultural Gender, Youth & Inclusion
+source: rss
+body_source: fetched_html
+phase1_fetch_url: https://www.youtube.com/watch?v=KnMBtPW5LZk
+article_fetch_url: https://www.youtube.com/watch?v=KnMBtPW5LZk
+enriched: false
+enrichment_used: null
+dedupe_id: 66c3d4ecb5cbac3c
+cluster_id: 640242e53c66b8fe
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- agriculture
+- farming
+domain_scores:
+  agriculture: 4
+  Land Use & Soil Health: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+---
+
+Women Rise in Agriculture: Conference in Kaduna Highlights Mechanized Farming Growth - YouTube About Press Copyright Contact us Creators Advertise Developers Cancel Memberships Terms Privacy Policy & Safety How YouTube works Test new features © 2026 Google LLC

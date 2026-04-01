@@ -1,0 +1,252 @@
+---
+id: a793c4083ea61b8d
+url: https://wits.worldbank.org/countrysnapshot/NGA/textview
+rss_url: https://wits.worldbank.org/countrysnapshot/NGA/textview
+title: Nigeria Trade
+country: Nigeria
+domain: agriculture
+domain_score: 1
+info_type: news_article
+published_at: '2026-03-24T13:54:19+00:00'
+published_at_source: inferred
+published_at_confidence: 0.5
+published_at_raw: '2026-03-24T13:54:19+00:00'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T13:54:19+00:00'
+extracted_at: '2026-03-24T13:54:19+00:00'
+feed_name: Tavily discovery — International Trade (Exports & Imports)
+source: rss
+body_source: fetched_html
+phase1_fetch_url: https://wits.worldbank.org/CountrySnapshot/en/NGA/textview
+article_fetch_url: https://wits.worldbank.org/CountrySnapshot/en/NGA/textview
+enriched: false
+enrichment_used: null
+dedupe_id: cc3100ffe775c2e4
+cluster_id: 4b299d88d76b1ac1
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- cocoa
+domain_scores:
+  agriculture: 1
+  economics: 0
+  International Trade (Exports & Imports): 0
+  Environmental & Climate: 0
+  Land Use & Soil Health: 0
+  Investment Readiness & Enterprise: 0
+  Technology & Innovation: 0
+  Market Access & Infrastructure: 0
+  Production & Yield: 0
+  Policy & Institutional: 0
+  Gender, Youth & Inclusion: 0
+  Nutrition & Food Security: 0
+  Food Systems & Value Chain: 0
+  Humanitarian & Agricultural Emergency: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+fetch_url: https://wits.worldbank.org/CountrySnapshot/en/NGA/textview
+---
+
+Overall Exports and Imports for Nigeria 2023
+- The total value of exports
+- The total value of imports
+- At the HS6 digit level, 633 products are exported to 125 countries and 3,949 products are imported from 194 countries.
+Top 5 Products exports imports at HS 6 digit level 2023
+The top five exported HS 6 digit level products to world by Nigeria along with trade value are:
+- Nigeria exported Petroleum oils and oils obtained from bituminou , worth 52,520,992.08 (US$ Thousands).
+- Nigeria exported Natural gas, liquefied , worth 5,965,547.90 (US$ Thousands).
+- Nigeria exported Urea , worth 1,067,751.90 (US$ Thousands).
+- Nigeria exported Cocoa beans, whole or broken, raw or roasted , worth 669,988.56 (US$ Thousands).
+- Nigeria exported Petroleum gases and other gaseous hydrocarbons , worth 653,969.47 (US$ Thousands).
+Nigeria top 5 Export and Import partners 2023
+The top five countries to which Nigeria exported along with the partner share in percentage are:
+- Nigeria exports to Netherlands worth US$ 8,179 million, with a partner share of 12.56 percent.
+- Nigeria exports to Spain worth US$ 6,133 million, with a partner share of 9.42 percent.
+- Nigeria exports to India worth US$ 5,447 million, with a partner share of 8.36 percent.
+- Nigeria exports to United States worth US$ 4,860 million, with a partner share of 7.46 percent.
+- Nigeria exports to Indonesia worth US$ 4,262 million, with a partner share of 6.54 percent.
+Nigeria Exports and Imports of Product Groups 2023
+Exports and imports of products by stages of processing in 2023 are below along with their corresponding Product Shareas percent of total export or import.
+- Nigeria Raw materials exports are worth US$ 54,668 million, product share of 83.94%.
+- Nigeria Raw materials imports are worth US$ 3,382 million, product share of 5.20%.
+- Nigeria Intermediate goods exports are worth US$ 2,658 million, product share of 4.08%.
+- Nigeria Intermediate goods imports are worth US$ 10,064 million, product share of 15.47%.
+- Nigeria Consumer goods exports are worth US$ 7,465 million, product share of 11.46%.
+- Nigeria Consumer goods imports are worth US$ 29,797 million, product share of 45.81%.
+- Nigeria Capital goods exports are worth US$ 331 million, product share of 0.51%.
+- Nigeria Capital goods imports are worth US$ 20,084 million, product share of 30.88%.

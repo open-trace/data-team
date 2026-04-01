@@ -1,0 +1,15 @@
+---
+id: 5d3a9704d0b426a7
+url: https://www.newtimes.co.rw
+title: The New Times
+country: Rwanda
+domain: agriculture
+domain_score: 2
+info_type: news_article
+published_at: '2025-11-12'
+feed_name: Google News — Rwanda agriculture
+source: rss
+body_source: fetched_html
+---
+
+Politics RPF youth cadres challenged to use social media responsibly The Secretary General of RPF-Inkotanyi, Amb Christophe Bazivamo, has called on youth to use technology and social media responsibly, stressing that these tools can play an important role in Politics RPF Youth League elects new committee members Spotlight New dairy board set to streamline milk industry Israel Mbonyi thrills worshipers in first Musanze show Robin Hobbies wins maiden Sprint Enduro racing in Shyorongi

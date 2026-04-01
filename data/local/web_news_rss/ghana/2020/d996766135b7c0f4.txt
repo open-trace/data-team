@@ -1,0 +1,88 @@
+---
+id: d996766135b7c0f4
+url: https://news.google.com/rss/articles/CBMieEFVX3lxTE1HRGYtMmZvbW02eXRxUzZUTFoybEtwaWpkSmhud0FDYVFMRndDYVE1SWNCNmNTcE4wd3labVFRQm4ybkxMcUY1eWE3WTVmdGV2R0tpc3JiUVRGZDZROXlZbDZEZm9xNjduVlRLLXo4WVZNQzhsbElJLQ?oc=5
+rss_url: https://news.google.com/rss/articles/CBMieEFVX3lxTE1HRGYtMmZvbW02eXRxUzZUTFoybEtwaWpkSmhud0FDYVFMRndDYVE1SWNCNmNTcE4wd3labVFRQm4ybkxMcUY1eWE3WTVmdGV2R0tpc3JiUVRGZDZROXlZbDZEZm9xNjduVlRLLXo4WVZNQzhsbElJLQ?oc=5
+title: Ghana's cocoa production relies on the environment, which needs better protection
+  - Phys.org
+country: Ghana
+domain: agriculture
+domain_score: 1
+info_type: news_article
+published_at: '2020-04-06T00:00:00+00:00'
+published_at_source: rss
+published_at_confidence: 0.95
+published_at_raw: '2020-04-06'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:17:36+00:00'
+extracted_at: '2026-03-24T16:17:35+00:00'
+feed_name: Google News — Ghana agriculture [2020-04-05]
+source: rss
+body_source: tavily_search
+phase1_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMieEFVX3lxTE1HRGYtMmZvbW02eXRxUzZUTFoybEtwaWpkSmhud0FDYVFMRndDYVE1SWNCNmNTcE4wd3labVFRQm4ybkxMcUY1eWE3WTVmdGV2R0tpc3JiUVRGZDZROXlZbDZEZm9xNjduVlRLLXo4WVZNQzhsbElJLQ?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49AIdw6eWWt0mwII4d77EgQ90Tz1ov7uw_wDUTCzd3JbrySgtB6YvIhu2epCkM7cNS86mkNyjgHwGGNddjolls56b2oCiKd_
+article_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMieEFVX3lxTE1HRGYtMmZvbW02eXRxUzZUTFoybEtwaWpkSmhud0FDYVFMRndDYVE1SWNCNmNTcE4wd3labVFRQm4ybkxMcUY1eWE3WTVmdGV2R0tpc3JiUVRGZDZROXlZbDZEZm9xNjduVlRLLXo4WVZNQzhsbElJLQ?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49AIdw6eWWt0mwII4d77EgQ90Tz1ov7uw_wDUTCzd3JbrySgtB6YvIhu2epCkM7cNS86mkNyjgHwGGNddjolls56b2oCiKd_
+enriched: true
+enrichment_used: tavily_search
+dedupe_id: b5267726db7f4199
+cluster_id: 384b3b9e42ed6379
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- cocoa
+domain_scores:
+  agriculture: 1
+  economics: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMieEFVX3lxTE1HRGYtMmZvbW02eXRxUzZUTFoybEtwaWpkSmhud0FDYVFMRndDYVE1SWNCNmNTcE4wd3labVFRQm4ybkxMcUY1eWE3WTVmdGV2R0tpc3JiUVRGZDZROXlZbDZEZm9xNjduVlRLLXo4WVZNQzhsbElJLQ?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49AIdw6eWWt0mwII4d77EgQ90Tz1ov7uw_wDUTCzd3JbrySgtB6YvIhu2epCkM7cNS86mkNyjgHwGGNddjolls56b2oCiKd_
+---
+
+Mining in Ghana: E&P Enhances Tarkwa Operations with 30 New Dump Trucks - Modern Ghana | 22.03.2026 | CitiTV Mining in Ghana: E&P Enhances Tarkwa Operations with 30 New Dump Trucks |. Mining in Ghana: E&P Enhances Tarkwa Operations with 30 New Dump Trucks. Fight Against Illegal Mining: Lands Minister Urges Depoliticization. Road Crisis in Garu: MP Dr. Thomas Anaba Reacts to Residents’ Demands. Shatta Wale gives $100K, Stonebwoy pledges $81K at Black Stars World Cup fundraising | News Review. 2026 FIFA World Cup: PUMA Unveils New Ghana Jersey for Mundial. Managing Kidney Disease in Ghana | Renal Diet Explained | Sunday Breakfast. Ghana's World Cup opponents England name squad for March friendlies; What can Otto Addo learn? Healthy Smile, Healthy Life – Oral Health on Sunday Breakfast. **Govt won’t use public funds to fly fans to 2026 World Cup – Mahama**. **Fitch scores Ghana 75.5 in digital readiness index**. **Ghana's High Commissioner To United Kingdom meets UK's Speaker of House of Commo...**. **Brazil backs Ghana’s UN push to declare slave trade a crime against humanity**. https://www.modernghana.com/videonews/cititv/1/627265/
+
+After years of delays, Ghana enters global lithium race to help replace China in U.S. supply chains - Business Insider Africa Ghana has entered the global lithium market after Parliament approved a major mining lease, positioning the country as a potential supplier to U.S. battery supply chains seeking alternatives to China. Ghana has formally entered the global lithium market after Parliament ratified the Ewoyaa Lithium Project mining lease on March 19, 2026, ending nearly three years of regulatory uncertainty that had delayed investment and raised concerns about the country’s competitiveness in the fast-growing battery minerals sector. A view of Atlantic Lithium’s Ewoyaa project site in Ghana’s Central Region, where the country’s first lithium mine is being developed to tap into growing global demand for battery minerals. Ghana’s move reflects a broader shift across Africa, where countries such as Zimbabwe, Namibia and the Democratic Republic of Congo are expanding lithium and other battery mineral projects to capture greater value within global supply chains. The Ewoyaa mine is expected to produce about 3.6 million tonnes of spodumene concentrate over 12 years, making it one of Africa’s largest lithium projects currently under development, according to the company. https://africa.businessinsider.com/local/markets/after-years-of-delays-ghana-enters-global-lithium-race-to-help-replace-china-in-us/84x9h6v
+
+China spent $120 billion to lock down critical minerals overseas - Report - GhanaWeb China has invested more than $120 billion in overseas mining and upstream processing since 2023, accelerating a state-backed push to secure the raw materials underpinning the global energy transition, says Australian think tank Climate Energy Finance (CEF). The CEF research also finds that China’s outbound investment in mining is only one piece of a much larger industrial strategy. Chinese firms are increasingly partnering with host governments to build in-country processing facilities, infrastructure such as railways, ports and power systems, and local industrial capacity, in exchange for long-term supply agreements, says CEF founder Tim Buckley, who co-authored the report. By combining mining, processing and manufacturing, Beijing is strengthening its ability to influence pricing, availability and technology pathways in critical minerals markets, the CEF report notes, emphasizing that the trajectory remains one of expansion, not retreat, as China adapts its strategy to changing political and economic conditions. Home News Sports Business Entertainment Africa GhanaWeb TV Opinions Cartoon Say It loud. https://www.ghanaweb.com/GhanaHomePage/business/China-spent-120-billion-to-lock-down-critical-minerals-overseas-Report-2027119

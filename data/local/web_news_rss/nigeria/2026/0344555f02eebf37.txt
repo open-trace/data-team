@@ -1,0 +1,190 @@
+---
+id: 0344555f02eebf37
+url: https://www.unocha.org/nigeria
+rss_url: https://www.unocha.org/nigeria
+title: Nigeria - OCHA
+country: Nigeria
+domain: Nutrition & Food Security
+domain_score: 5
+info_type: news_article
+published_at: '2026-03-24T13:53:32+00:00'
+published_at_source: inferred
+published_at_confidence: 0.5
+published_at_raw: '2026-03-24T13:53:32+00:00'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T13:53:32+00:00'
+extracted_at: '2026-03-24T13:53:32+00:00'
+feed_name: Tavily discovery — Humanitarian & Agricultural Emergency
+source: rss
+body_source: fetched_html
+phase1_fetch_url: https://www.unocha.org/nigeria
+article_fetch_url: https://www.unocha.org/nigeria
+enriched: false
+enrichment_used: null
+dedupe_id: 8d61ffe63c058672
+cluster_id: f7371a019b1edc4c
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- food security
+- malnutrition
+domain_scores:
+  agriculture: 0
+  economics: 0
+  International Trade (Exports & Imports): 0
+  Environmental & Climate: 0
+  Land Use & Soil Health: 0
+  Investment Readiness & Enterprise: 0
+  Technology & Innovation: 0
+  Market Access & Infrastructure: 0
+  Production & Yield: 0
+  Policy & Institutional: 0
+  Gender, Youth & Inclusion: 0
+  Nutrition & Food Security: 5
+  Food Systems & Value Chain: 0
+  Humanitarian & Agricultural Emergency: 0
+domain_labels:
+- Nutrition & Food Security
+best_domain: Nutrition & Food Security
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+---
+
+Please refer to the attached Infographic.
+Sixteen years of armed conflict, devastating flooding, disease outbreaks, the lack of access to basic services and poverty are making millions of Nigerians profoundly vulnerable.
+Severe food insecurity and malnutrition are endemic. Nearly 35 million Nigerians are likely to face acute food insecurity during the 2026 lean season (period between harvests) - 5.8 million of them in Borno, Adamawa and Yobe (BAY) states in the northeast.
+Malnutrition is a devastating challenge nationwide. In northeastern Nigeria, the malnutrition crisis is particularly acute, where it is estimated that at least 75 children face death every single day if they do not receive urgent therapeutic care.
+Non-state armed groups have increased attacks on the military but are also increasingly targeting civilians. Civilians across the BAY states continue to face a protection crisis marked by abductions, gender-based violence, forced recruitment, extortion, widespread exposure to improvised explosive devices, and other grave violations.
+In 2026, about 3 million children under five in Nigeria are projected to suffer from life-threatening severe acute malnutrition —1 million of these children are in the BAY States.
+The Government of Nigeria and humanitarian partners are urgently appealing for US$516 million to respond to the most critical needs of 2.5 million people in the BAY states in north-east Nigeria. Women and children make up 8 out of every 10 people in immediate need. The response will focus on providing lifesaving food, nutrition, healthcare, water, sanitation, and services to protect people.
+Overview of humanitarian response in Nigeria
+- Total Population
+- 237.5M 2026
+- People in need
+- 5.9M 2026
+- People to be covered by assistance
+- 2.5M 2026
+- Total requirements (USD)
+- 516.4M 2026
+- Funding coverage (%)
+- 33.62 2026
+- Funding gap (USD)
+- 342.8M 2026
+- Not specified
+- $139.7 million
+- Nutrition
+- $8.5 million
+- Protection
+- $7.7 million
+- Food Security
+- $2.9 million
+- Education
+- $2.6 million
+The Nigeria Humanitarian Fund
+The Nigeria Humanitarian Fund (NHF) which was established in February 2017, is a rapid and flexible funding mechanism supporting national and international non-governmental organizations and UN agencies, to respond to the most pressing or critical emergencies in a fast-changing environment. Under the leadership of the Humanitarian Coordinator for Nigeria, the NHF supports the timely allocation and disbursement of donor resources to the most critical humanitarian needs defined in the Nigeria Humanitarian Needs Response Plan.
+- United States
+- $125 million (paid)
+- Germany
+- $3.6 million (paid)
+- Switzerland
+- $0.8 million (paid)
+- Canada
+- $0.5 million (pledged)
+- Thailand
+- $0 million (pledged)
+Funding for OCHA Nigeria
+- Total requirements (USD)
+- 4.1M 2026
+- Opening balance (USD)
+- 0 2026
+- Earmarked funding (USD)
+- 984.6K 2026
+- Total (USD)
+- 984.6K 2026
+- Private Contributions
+- $0.4 million
+- Australia
+- Belgium
+- Denmark
+- Estonia
+- Finland
+- Iceland
+- Ireland
+- Luxembourg
+- Monaco
+- Netherlands
+- New Zealand
+- Norway
+- Qatar
+- Sweden
+Unearmarked contributions (or commitments) are those for which the donor does not require the funds to be used for a specific project, sector, crisis or country, leaving OCHA to decide how to allocate the funds.
+Opening balance may include unearmarked and earmarked funding with implementation dates beyond the calendar year, and excludes miscellaneous income (e.g. adjustments, gain/losses on exchange rate etc.)
+Funding information from the OCHA Contributions Tracking System.
+Subscribe to the OCHA Nigeria newsletter
+Receive all of the latest news, humanitarian tools and other information products from OCHA's Nigeria operations.

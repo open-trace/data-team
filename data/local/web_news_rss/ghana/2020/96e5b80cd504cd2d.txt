@@ -1,0 +1,80 @@
+---
+id: 96e5b80cd504cd2d
+url: https://news.google.com/rss/articles/CBMizgFBVV95cUxPMG9RLXBLWW9SLTRTV2dZVlNsbjdmdkVmS21zS2xWVU80NWJKRFBOTGQ2U1RkbDJETHdYTmR3aXZnV3lBUVBKVzNpeTV1MTBackh1ME1HdkVxcEhaU1NIMmw5Z1p3WDIyWktzYUVlV3VPeFMyTlZpSC1FbzQ4eTZRQmdPQVp0Vkg5TER0b241OVFEazh6WmxXT094QzdLeFlrb2J2UVZmRldqUWpJQ2pZbnItMnZoTE1tMzJIdE9ESF85dzJ2azB0dzd0c3ZtQQ?oc=5
+rss_url: https://news.google.com/rss/articles/CBMizgFBVV95cUxPMG9RLXBLWW9SLTRTV2dZVlNsbjdmdkVmS21zS2xWVU80NWJKRFBOTGQ2U1RkbDJETHdYTmR3aXZnV3lBUVBKVzNpeTV1MTBackh1ME1HdkVxcEhaU1NIMmw5Z1p3WDIyWktzYUVlV3VPeFMyTlZpSC1FbzQ4eTZRQmdPQVp0Vkg5TER0b241OVFEazh6WmxXT094QzdLeFlrb2J2UVZmRldqUWpJQ2pZbnItMnZoTE1tMzJIdE9ESF85dzJ2azB0dzd0c3ZtQQ?oc=5
+title: This Aspiring Doctor Turned Drone Entrepreneur Is Making Farming Better In
+  Ghana - Forbes
+country: Ghana
+domain: agriculture
+domain_score: 46
+info_type: news_article
+published_at: '2020-02-10T00:00:00+00:00'
+published_at_source: rss
+published_at_confidence: 0.95
+published_at_raw: '2020-02-10'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:15:32+00:00'
+extracted_at: '2026-03-24T16:15:31+00:00'
+feed_name: Google News — Ghana agriculture [2020-02-09]
+source: rss
+body_source: tavily_search
+phase1_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMizgFBVV95cUxPMG9RLXBLWW9SLTRTV2dZVlNsbjdmdkVmS21zS2xWVU80NWJKRFBOTGQ2U1RkbDJETHdYTmR3aXZnV3lBUVBKVzNpeTV1MTBackh1ME1HdkVxcEhaU1NIMmw5Z1p3WDIyWktzYUVlV3VPeFMyTlZpSC1FbzQ4eTZRQmdPQVp0Vkg5TER0b241OVFEazh6WmxXT094QzdLeFlrb2J2UVZmRldqUWpJQ2pZbnItMnZoTE1tMzJIdE9ESF85dzJ2azB0dzd0c3ZtQQ?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49C1AepZdu7Vw4NckXrlLKKbOL6g30rfhlBEByZtQDDQFpYFzu1PgYedoBzFvrpWWc3d4ij3SDoS-nYvXXtNTNSEQOEmzvi4
+article_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMizgFBVV95cUxPMG9RLXBLWW9SLTRTV2dZVlNsbjdmdkVmS21zS2xWVU80NWJKRFBOTGQ2U1RkbDJETHdYTmR3aXZnV3lBUVBKVzNpeTV1MTBackh1ME1HdkVxcEhaU1NIMmw5Z1p3WDIyWktzYUVlV3VPeFMyTlZpSC1FbzQ4eTZRQmdPQVp0Vkg5TER0b241OVFEazh6WmxXT094QzdLeFlrb2J2UVZmRldqUWpJQ2pZbnItMnZoTE1tMzJIdE9ESF85dzJ2azB0dzd0c3ZtQQ?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49C1AepZdu7Vw4NckXrlLKKbOL6g30rfhlBEByZtQDDQFpYFzu1PgYedoBzFvrpWWc3d4ij3SDoS-nYvXXtNTNSEQOEmzvi4
+enriched: true
+enrichment_used: tavily_search
+dedupe_id: 658145e581f84501
+cluster_id: 89a568db4e6009e0
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- farmer
+- farmers
+- farming
+- livestock
+- cattle
+domain_scores:
+  agriculture: 46
+  economics: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMizgFBVV95cUxPMG9RLXBLWW9SLTRTV2dZVlNsbjdmdkVmS21zS2xWVU80NWJKRFBOTGQ2U1RkbDJETHdYTmR3aXZnV3lBUVBKVzNpeTV1MTBackh1ME1HdkVxcEhaU1NIMmw5Z1p3WDIyWktzYUVlV3VPeFMyTlZpSC1FbzQ4eTZRQmdPQVp0Vkg5TER0b241OVFEazh6WmxXT094QzdLeFlrb2J2UVZmRldqUWpJQ2pZbnItMnZoTE1tMzJIdE9ESF85dzJ2azB0dzd0c3ZtQQ?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49C1AepZdu7Vw4NckXrlLKKbOL6g30rfhlBEByZtQDDQFpYFzu1PgYedoBzFvrpWWc3d4ij3SDoS-nYvXXtNTNSEQOEmzvi4
+---
+
+23 March | Vox Weather’s Daily Forecast - African Farming ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Rodrigo Lopes de Almeida. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Leeko Makoene-Motsuenyane. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Dr Lerato Matsaunyane. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Louw van Reenen. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Rodrigo Lopes de Almeida. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Leeko Makoene-Motsuenyane. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Dr Lerato Matsaunyane. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Leeko Makoene-Motsuenyane. Established in 2020, African Farming aims to support black commercial farming in South Africa by providing informative and inspiring content and creating communication and education channels to help farmers develop and grow. Its initiatives include African Farming information days and workshops, which empower farmers – whether new or experienced – to build profitable and sustainable farming enterprises. https://www.africanfarming.com/2026/03/22/23-march-vox-weathers-daily-forecast/
+
+African Farming Agri-Development Imbizo 2026 – Meet the speakers: Rodrigo Lopes de Almeida - African Farming ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Rodrigo Lopes de Almeida. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Leeko Makoene-Motsuenyane. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Dr Lerato Matsaunyane. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Louw van Reenen. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Rodrigo Lopes de Almeida. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Leeko Makoene-Motsuenyane. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Dr Lerato Matsaunyane. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Louw van Reenen. # African Farming Agri-Development Imbizo 2026 – Meet the speakers: Rodrigo Lopes de Almeida. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Leeko Makoene-Motsuenyane. African Farming Agri-Development Imbizo 2026 – Meet the speakers: Louw van Reenen. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Rodrigo Lopes de Almeida. https://www.africanfarming.com/2026/03/22/african-farming-agri-development-imbizo-2026-meet-the-speakers-rodrigo-lopes-de-almeida/
+
+Former Female Teacher Now Herds Over 200 Beefmaster Cattle - African Farming ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Dr Lerato Matsaunyane. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Caiphas Muyambo. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Dr Lerato Matsaunyane. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Caiphas Muyambo. The recognition of her livestock success came at the Phezukomkhono Female Farmer Awards recently, where Nozuko Farming won the export category prize of R100 000, plus the overall winner award of R100 000, totalling R200 000 in recognition. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Dr Lerato Matsaunyane. Established in 2020, African Farming aims to support black commercial farming in South Africa by providing informative and inspiring content and creating communication and education channels to help farmers develop and grow. Its initiatives include African Farming information days and workshops, which empower farmers – whether new or experienced – to build profitable and sustainable farming enterprises. https://www.africanfarming.com/2026/03/20/former-female-teacher-now-herds-over-200-beefmaster-cattle/

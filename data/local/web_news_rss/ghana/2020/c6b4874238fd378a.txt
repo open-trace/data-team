@@ -1,0 +1,88 @@
+---
+id: c6b4874238fd378a
+url: https://news.google.com/rss/articles/CBMiyAFBVV95cUxQbzZIVjI0RmVKRkhVWkY5ZGVzNTM5T2poYjh3YnBlN3BNWjl5MFlleEZETXZ6Y3JyendDM0lxc2pScnRyZ0lfcU9DOXhnWmdlakJfaW9LdWUwaGltZ1ZuU0hlQzBTMEItWnhKTVhUUS1NaWFkbUowMlcyWm9UQnFoOHFiSVJzOXBqanBaLW5oX0JWSjFFZzc3U0xGcUI4d0V5RDNWUk83SHh6S21jY1hzR1F2Q3FjeVl1c1JUU3JlZVF0SVk4ckhvWA?oc=5
+rss_url: https://news.google.com/rss/articles/CBMiyAFBVV95cUxQbzZIVjI0RmVKRkhVWkY5ZGVzNTM5T2poYjh3YnBlN3BNWjl5MFlleEZETXZ6Y3JyendDM0lxc2pScnRyZ0lfcU9DOXhnWmdlakJfaW9LdWUwaGltZ1ZuU0hlQzBTMEItWnhKTVhUUS1NaWFkbUowMlcyWm9UQnFoOHFiSVJzOXBqanBaLW5oX0JWSjFFZzc3U0xGcUI4d0V5RDNWUk83SHh6S21jY1hzR1F2Q3FjeVl1c1JUU3JlZVF0SVk4ckhvWA?oc=5
+title: Ghana rice farmers still grappling with myriad of challenges - AATF Study -
+  GhanaWeb
+country: Ghana
+domain: agriculture
+domain_score: 29
+info_type: news_article
+published_at: '2020-07-03T00:00:00+00:00'
+published_at_source: rss
+published_at_confidence: 0.95
+published_at_raw: '2020-07-03'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:20:43+00:00'
+extracted_at: '2026-03-24T16:20:42+00:00'
+feed_name: Google News — Ghana agriculture [2020-07-02]
+source: rss
+body_source: tavily_search
+phase1_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMiyAFBVV95cUxQbzZIVjI0RmVKRkhVWkY5ZGVzNTM5T2poYjh3YnBlN3BNWjl5MFlleEZETXZ6Y3JyendDM0lxc2pScnRyZ0lfcU9DOXhnWmdlakJfaW9LdWUwaGltZ1ZuU0hlQzBTMEItWnhKTVhUUS1NaWFkbUowMlcyWm9UQnFoOHFiSVJzOXBqanBaLW5oX0JWSjFFZzc3U0xGcUI4d0V5RDNWUk83SHh6S21jY1hzR1F2Q3FjeVl1c1JUU3JlZVF0SVk4ckhvWA?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49AEzbfTO8RYrNzc39bHxZDi0RZq7SwMB-l8MqrNvHqobcByV48Rj6pfOnq2HYWIHzuDIWIeLt9hWIrK0VAEA1q68HSBZcsx
+article_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMiyAFBVV95cUxQbzZIVjI0RmVKRkhVWkY5ZGVzNTM5T2poYjh3YnBlN3BNWjl5MFlleEZETXZ6Y3JyendDM0lxc2pScnRyZ0lfcU9DOXhnWmdlakJfaW9LdWUwaGltZ1ZuU0hlQzBTMEItWnhKTVhUUS1NaWFkbUowMlcyWm9UQnFoOHFiSVJzOXBqanBaLW5oX0JWSjFFZzc3U0xGcUI4d0V5RDNWUk83SHh6S21jY1hzR1F2Q3FjeVl1c1JUU3JlZVF0SVk4ckhvWA?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49AEzbfTO8RYrNzc39bHxZDi0RZq7SwMB-l8MqrNvHqobcByV48Rj6pfOnq2HYWIHzuDIWIeLt9hWIrK0VAEA1q68HSBZcsx
+enriched: true
+enrichment_used: tavily_search
+dedupe_id: 71b0d9e1a57f828d
+cluster_id: 6c80b0806ba35f2a
+is_duplicate: true
+duplicate_of: 1c12744b62960021
+agrifood_signal: true
+agrifood_signals:
+- agriculture
+- agribusiness
+- agrifood
+- farmer
+- farmers
+- farming
+- farm
+- food security
+- rice
+- arable
+- commodity
+- grain
+domain_scores:
+  agriculture: 29
+  economics: 2
+domain_labels:
+- agriculture
+- economics
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMiyAFBVV95cUxQbzZIVjI0RmVKRkhVWkY5ZGVzNTM5T2poYjh3YnBlN3BNWjl5MFlleEZETXZ6Y3JyendDM0lxc2pScnRyZ0lfcU9DOXhnWmdlakJfaW9LdWUwaGltZ1ZuU0hlQzBTMEItWnhKTVhUUS1NaWFkbUowMlcyWm9UQnFoOHFiSVJzOXBqanBaLW5oX0JWSjFFZzc3U0xGcUI4d0V5RDNWUk83SHh6S21jY1hzR1F2Q3FjeVl1c1JUU3JlZVF0SVk4ckhvWA?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49AEzbfTO8RYrNzc39bHxZDi0RZq7SwMB-l8MqrNvHqobcByV48Rj6pfOnq2HYWIHzuDIWIeLt9hWIrK0VAEA1q68HSBZcsx
+---
+
+Ghana has arable lands, we have no excuse to fail in agriculture – Kpebu - 3News # Ghana has arable lands, we have no excuse to fail in agriculture – Kpebu. ##### Follow Us. Laud Nartey is a current affairs editor with the MG News team at Media General, serving TV3 Ghana, 3News, Onua TV and more platforms. #### There is no reason why we can’t produce tomatoes in Ghana – Bentil. #### We need better agric policies in Ghana – Bentil in ban on tomatoes by B. #### Burkina Faso’s ban on tomato export poses national security risk to Ghana – Akosua Manu. #### Burkina Faso’s ban on tomato export should motivate Ghana to step up Agric – Kpebu. ### LIVE: The KeyPoints- Fuel price hikes, SIM registration and Bank of Ghana’s gold sale policy. ### LIVE: Ghana Tonight || 20-03-2026. ### Chamber of Agribusiness Ghana urges Government to roll out a national tomato emergency strategy. ### Comments (0). Please sign in to leave a comment. By commenting, you agree to ourcommunity guidelines. https://3news.com/news/ghana-has-arable-lands-we-have-no-excuse-to-fail-in-agriculture-kpebu
+
+Grain Farmers Warn Of Deepening Profitability Crisis - African Farming *South Africa’s grain farmers are facing increasing pressure, with urgent warning signs emerging. At the Grain SA Congress 2026, producers, policymakers and industry leaders confronted a sobering reality: Rising input costs, declining commodity prices and persistent policy uncertainty are pushing farm profitability to its limits. The message from this gathering was clear: Without profitable farmers, South Africa’s food security is at risk. Despite the pressures, South Africa’s grain farmers remain committed to producing food, supporting rural economies and contributing to national growth. #### **Also read:** **Ukukhula Conference and Day of Celebration – a historic milestone for black grain farmers in South Africa**. Established in 2020, African Farming aims to support black commercial farming in South Africa by providing informative and inspiring content and creating communication and education channels to help farmers develop and grow. Its initiatives include African Farming information days and workshops, which empower farmers – whether new or experienced – to build profitable and sustainable farming enterprises. https://www.africanfarming.com/2026/03/21/grain-farmers-warn-of-deepening-profitability-crisis/
+
+Closing The Gender Gap In Agrifood Systems Can Help Reduce Food Insecurity And Boost Global GDP: FAO Gender Experts - global-agriculture.com ****21** March 2026, ****Rome****:** The United Nations-designated The International Year of the Woman Farmer (IYWF 2026),  shines a spotlight on the essential yet often overlooked roles women play across agrifood systems – from production to trade. To reverse this trend, FAO has called for scaled-up and coordinated action towards women’s empowerment in agrifood systems, including increased and targeted investments, gender-transformative agrifood policies and programs, better data, meaningful participation of women farmers in decision-making, and sustained political commitment and actions. During the International Year of the Woman Farmer 2026, FAO will lead global efforts and events to raise awareness of women farmers’ essential roles and the challenges they face, while mobilizing commitment, policy action and investment to close gender gaps in agrifood systems. FAO emphasizes that the International Year should serve as a vital catalyst to empower women farmers and close gender gaps in agrifood systems, igniting a transformative movement for global action. https://www.global-agriculture.com/faq-in-global-agriculture/closing-the-gender-gap-in-agrifood-systems-can-help-reduce-food-insecurity-and-boost-global-gdp-fao-gender-experts/

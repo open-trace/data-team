@@ -1,0 +1,15 @@
+---
+id: e25e303305082db2
+url: https://africa.businessinsider.com
+title: Business Insider Africa
+country: Nigeria
+domain: agriculture
+domain_score: 2
+info_type: news_article
+published_at: '2024-01-31'
+feed_name: Google News — Nigeria agriculture [2024-01-30]
+source: rss
+body_source: fetched_html
+---
+
+ADVERTISEMENT Meet the award-winning filmmaker commanding the most streaming audience attention in Nigeria 10 African countries with the highest debt to the International Monetary Fund in March 2026 Chinese mining giant accused of poisoning Congo in toxic mine scandal linked to BMW, Mercedes, Peugeot, Volkswagen Meet the founders who raised over $10 million from palm processing and the waste it leaves behind ADVERTISEMENT Latest Beyond payments: Why the next generation of African tech is building the intelligence layer for the creative class Meet the award-winning filmmaker commanding the most streaming audience attention in Nigeria 10 African countries with the highest debt to the International Monetary Fund in March 2026 Chinese mining giant accused of poisoning Congo in toxic mine scandal linked to BMW, Mercedes, Peugeot, Volkswagen End of an era as CEO of 110-year-old South African company steps down Meet the founders who raised over $10 million from palm processing and the waste it leaves behind in Africa ADVERTISEMENT Markets 10 African countries with the highest debt to the International Monetary Fund in March 2026 Chinese mining giant accused of poisoning Congo in toxic mine scandal linked to BMW, Mercedes, Peugeot, Volkswagen Concerns raised about The Trans-Kalahari Railway’s future after Trump ‘Visa Bond’ decision Read More >> ADVERTISEMENT Leaders Meet the award-winning filmmaker commanding the most streaming audience attention in Nigeria End of an era as CEO of 110-year-old South African company steps down Meet the founders who raised over $10 million from palm processing and the waste it leaves behind in Africa Read More >> ADVERTISEMENT Careers 5 Tech leaders reveal biggest opportunities for women in Africa’s tech sector Is the US a realistic career option for African professionals in 2026? Counder Conference 2026 brings African legends, OpenAI and 500 global leaders to Cape Town Read More >> ADVERTISEMENT Lifestyle Beyond payments: Why the next generation of African tech is building the intelligence layer for the creative class U.S. MQ-9 Reaper drones now active in Nigeria as 200 troops provide military support Africa’s longest monorail line begins operations as Egypt opens 56.5km Cairo route Read More >> ADVERTISEMENT ADVERTISEMENT Trending Top 10 best airports in Africa for 2026 according to latest ranking Ibrahim Traore's govt begins computer recycling to boost digital inclusion in Burkina Faso Africa’s largest university becomes first on the continent to own an Airport Africa’s biggest airline opens $50m terminal as it moves to handle travel surge

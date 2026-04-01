@@ -1,0 +1,179 @@
+---
+id: 282d8ffa12d218a1
+url: https://news.google.com/rss/articles/CBMimgFBVV95cUxQb2ItRV9aTF9JalV1blU2anFicWpndDNHdGl6cVl0MlZZM2dEY2xPSGZ4d0d5NXNMcWU2ODJFZU9YQi1FQVN3eEVmQm5zRE0wVzB0Qks1X01YQ3R5MlFMU0Zsd0FQYlZobkJDZU94eDdMLTZuT3B1MmFubjF2WjV0QlFvSlEzNmRLdU83bGtLV3NwX0tfclJZaTZR0gGYAUFVX3lxTE5xVXd5V3c3aHpUdU44eEdjVHlYM0NOY2otWXpBWE5BckZaT3JSSHVnQTR3NUFQZW9QT1dPSXBvU1hveVJuV20zYUNRTmtvbmdxWU0xQ0FhZFdRbUluVVRmeEREcHlCaTRGUF9hTDdQUVEyT2tEMncyUjlqQVdlV1BoQUEtdmx4ZXNIV1dSNUs3bENHQmtwc3FJ?oc=5
+rss_url: https://news.google.com/rss/articles/CBMimgFBVV95cUxQb2ItRV9aTF9JalV1blU2anFicWpndDNHdGl6cVl0MlZZM2dEY2xPSGZ4d0d5NXNMcWU2ODJFZU9YQi1FQVN3eEVmQm5zRE0wVzB0Qks1X01YQ3R5MlFMU0Zsd0FQYlZobkJDZU94eDdMLTZuT3B1MmFubjF2WjV0QlFvSlEzNmRLdU83bGtLV3NwX0tfclJZaTZR0gGYAUFVX3lxTE5xVXd5V3c3aHpUdU44eEdjVHlYM0NOY2otWXpBWE5BckZaT3JSSHVnQTR3NUFQZW9QT1dPSXBvU1hveVJuV20zYUNRTmtvbmdxWU0xQ0FhZFdRbUluVVRmeEREcHlCaTRGUF9hTDdQUVEyT2tEMncyUjlqQVdlV1BoQUEtdmx4ZXNIV1dSNUs3bENHQmtwc3FJ?oc=5
+title: Twifo-Attimokwa Assembly Distribute 50,000 Hybrid Oil Palm Seedlings To Farmers
+  - Modern Ghana
+country: Ghana
+domain: agriculture
+domain_score: 11
+info_type: news_article
+published_at: '2020-05-25T00:00:00+00:00'
+published_at_source: rss
+published_at_confidence: 0.95
+published_at_raw: '2020-05-25'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:18:45+00:00'
+extracted_at: '2026-03-24T16:18:43+00:00'
+feed_name: Google News — Ghana agriculture [2020-05-24]
+source: rss
+body_source: tavily_search
+phase1_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMimgFBVV95cUxQb2ItRV9aTF9JalV1blU2anFicWpndDNHdGl6cVl0MlZZM2dEY2xPSGZ4d0d5NXNMcWU2ODJFZU9YQi1FQVN3eEVmQm5zRE0wVzB0Qks1X01YQ3R5MlFMU0Zsd0FQYlZobkJDZU94eDdMLTZuT3B1MmFubjF2WjV0QlFvSlEzNmRLdU83bGtLV3NwX0tfclJZaTZR0gGYAUFVX3lxTE5xVXd5V3c3aHpUdU44eEdjVHlYM0NOY2otWXpBWE5BckZaT3JSSHVnQTR3NUFQZW9QT1dPSXBvU1hveVJuV20zYUNRTmtvbmdxWU0xQ0FhZFdRbUluVVRmeEREcHlCaTRGUF9hTDdQUVEyT2tEMncyUjlqQVdlV1BoQUEtdmx4ZXNIV1dSNUs3bENHQmtwc3FJ?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49CD7IdwTXL_HXCCpeuzd8qEPl8f9Zq_YPz-TeBjq8LCE45GIjpmu0Geqezppue_db4NySicOpJSNpsVLf6DKouIN9sUJYYs
+article_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMimgFBVV95cUxQb2ItRV9aTF9JalV1blU2anFicWpndDNHdGl6cVl0MlZZM2dEY2xPSGZ4d0d5NXNMcWU2ODJFZU9YQi1FQVN3eEVmQm5zRE0wVzB0Qks1X01YQ3R5MlFMU0Zsd0FQYlZobkJDZU94eDdMLTZuT3B1MmFubjF2WjV0QlFvSlEzNmRLdU83bGtLV3NwX0tfclJZaTZR0gGYAUFVX3lxTE5xVXd5V3c3aHpUdU44eEdjVHlYM0NOY2otWXpBWE5BckZaT3JSSHVnQTR3NUFQZW9QT1dPSXBvU1hveVJuV20zYUNRTmtvbmdxWU0xQ0FhZFdRbUluVVRmeEREcHlCaTRGUF9hTDdQUVEyT2tEMncyUjlqQVdlV1BoQUEtdmx4ZXNIV1dSNUs3bENHQmtwc3FJ?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49CD7IdwTXL_HXCCpeuzd8qEPl8f9Zq_YPz-TeBjq8LCE45GIjpmu0Geqezppue_db4NySicOpJSNpsVLf6DKouIN9sUJYYs
+enriched: true
+enrichment_used: tavily_search
+dedupe_id: 3433059c260fa48e
+cluster_id: 6b2a395e51f66fcf
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- farmers
+- farming
+domain_scores:
+  agriculture: 11
+  economics: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMimgFBVV95cUxQb2ItRV9aTF9JalV1blU2anFicWpndDNHdGl6cVl0MlZZM2dEY2xPSGZ4d0d5NXNMcWU2ODJFZU9YQi1FQVN3eEVmQm5zRE0wVzB0Qks1X01YQ3R5MlFMU0Zsd0FQYlZobkJDZU94eDdMLTZuT3B1MmFubjF2WjV0QlFvSlEzNmRLdU83bGtLV3NwX0tfclJZaTZR0gGYAUFVX3lxTE5xVXd5V3c3aHpUdU44eEdjVHlYM0NOY2otWXpBWE5BckZaT3JSSHVnQTR3NUFQZW9QT1dPSXBvU1hveVJuV20zYUNRTmtvbmdxWU0xQ0FhZFdRbUluVVRmeEREcHlCaTRGUF9hTDdQUVEyT2tEMncyUjlqQVdlV1BoQUEtdmx4ZXNIV1dSNUs3bENHQmtwc3FJ?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49CD7IdwTXL_HXCCpeuzd8qEPl8f9Zq_YPz-TeBjq8LCE45GIjpmu0Geqezppue_db4NySicOpJSNpsVLf6DKouIN9sUJYYs
+---
+
+Fuel Supply Stable For Now Despite Global Oil Turbulence, Says Department - African Farming ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Dr Lerato Matsaunyane. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Dr Lerato Matsaunyane. *The Department of Mineral and Petroleum Resources* *has reassured South Africans that the country’s fuel supply remains stable in the short term, despite rising volatility on global energy markets linked to escalating geopolitical tensions in the Middle East.*. The department warned that sustained increases in global oil prices, coupled with exchange rate fluctuations, are likely to translate into higher domestic fuel prices in the months ahead, adding further pressure on farmers and agribusinesses already grappling with rising input costs,” said the department. Established in 2020, African Farming aims to support black commercial farming in South Africa by providing informative and inspiring content and creating communication and education channels to help farmers develop and grow. Its initiatives include African Farming information days and workshops, which empower farmers – whether new or experienced – to build profitable and sustainable farming enterprises. https://www.africanfarming.com/2026/03/21/fuel-supply-stable-for-now-despite-global-oil-turbulence-says-department/
+
+Macro shot of brushless electric motor components, rotor with embedded magnets, stator coils clearly visible, gloved hands inspecting assembly, workshop tools softly blurred in bac - Mining.com Silver Futures $ 76.455 / ozt  1.45%. Micro Gold Futures $ 4866.1 / ozt  0.78%. Micro Silver Futures $ 76.45 / ozt  1.45%. Platinum $ 2022.8 / ozt  -0.08%. Gold Futures $ 4865.6 / ozt  0.78%. Copper $ 5.5183 / lb  0.54%. Brent Crude Oil $ 111.32 / bbl  1.51%. Crude Oil $ 96.12 / bbl  -1.98%. Silver Futures $ 76.455 / ozt  1.45%. Micro Gold Futures $ 4866.1 / ozt  0.78%. Micro Silver Futures $ 76.45 / ozt  1.45%. Gold Futures $ 4865.6 / ozt  0.78%. Copper $ 5.5183 / lb  0.54%. Brent Crude Oil $ 111.32 / bbl  1.51%. Crude Oil $ 96.12 / bbl  -1.98%. Silver Futures $ 76.455 / ozt  1.45%. # Macro shot of brushless electric motor components, rotor with embedded magnets, stator coils clearly visible, gloved hands inspecting assembly, workshop tools softly blurred in bac. Jackson Chen | March 18, 2026 | 10:35 am. https://stock.adobe.com/ca/images/macro-shot-of-brushless-electric-motor-components-rotor-with-embedded-magnets-stator-coils-clearly-visible-gloved-hands-inspecting-assembly-workshop-tools-softly-blurred-in-bac/1905751187? March 18, 2026 | 01:13 pm. ## Copper. https://www.mining.com/web/japan-union-chief-says-china-rare-earth-curbs-hitting-wage-talks/macro-shot-of-brushless-electric-motor-components-rotor-with-embedded-magnets-stator-coils-clearly-visible-gloved-hands-inspecting-assembly-workshop-tools-softly-blurred-in-bac/
+
+Mining in Ghana: E&P Enhances Tarkwa Operations with 30 New Dump Trucks - Modern Ghana | 22.03.2026 | CitiTV Mining in Ghana: E&P Enhances Tarkwa Operations with 30 New Dump Trucks |. Mining in Ghana: E&P Enhances Tarkwa Operations with 30 New Dump Trucks. Fight Against Illegal Mining: Lands Minister Urges Depoliticization. Road Crisis in Garu: MP Dr. Thomas Anaba Reacts to Residents’ Demands. Shatta Wale gives $100K, Stonebwoy pledges $81K at Black Stars World Cup fundraising | News Review. 2026 FIFA World Cup: PUMA Unveils New Ghana Jersey for Mundial. Managing Kidney Disease in Ghana | Renal Diet Explained | Sunday Breakfast. Ghana's World Cup opponents England name squad for March friendlies; What can Otto Addo learn? Healthy Smile, Healthy Life – Oral Health on Sunday Breakfast. **Govt won’t use public funds to fly fans to 2026 World Cup – Mahama**. **Fitch scores Ghana 75.5 in digital readiness index**. **Ghana's High Commissioner To United Kingdom meets UK's Speaker of House of Commo...**. **Brazil backs Ghana’s UN push to declare slave trade a crime against humanity**. https://www.modernghana.com/videonews/cititv/1/627265/

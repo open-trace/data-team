@@ -1,0 +1,22 @@
+# Silver tables to sync to local DB. One table name per line.
+# Add table IDs from your BigQuery silver dataset, e.g.:
+# my_silver_table
+Silver_raw_data
+africa_cropland_summary_2019
+africa_nasa_power_silver
+fao_fbs
+fao_fbs_view
+fao_qcl
+fao_qcl_1
+fao_qi
+fao_qv
+fao_rhn
+fao_rl_landuse
+fao_rp_pesticides
+fao_tcl_crop_and_pest
+fao_ti_trade_indices
+fews_net_food_security_master_alldata_silver
+fews_net_food_security_master_silver
+isda_soil_bulk_refined
+openaire_data_sources_silver
+yield_raw_data_silver

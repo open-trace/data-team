@@ -1,0 +1,62 @@
+---
+id: 46876e5bab04bff1
+url: https://news.google.com/rss/articles/CBMiaEFVX3lxTE43UGl4c1hhT0lRQ3pCa3NtYm94VzhzM1lzaXVLME8tMGRTOEtvc3NqTkgyaTlfOE8wSmFZVmI5Qnd4TlZ1TVQwU2FlN0x6ZTRLNklWaEEyNlJXS0VLbk0zNVRHQk5QdEpO?oc=5
+rss_url: https://news.google.com/rss/articles/CBMiaEFVX3lxTE43UGl4c1hhT0lRQ3pCa3NtYm94VzhzM1lzaXVLME8tMGRTOEtvc3NqTkgyaTlfOE8wSmFZVmI5Qnd4TlZ1TVQwU2FlN0x6ZTRLNklWaEEyNlJXS0VLbk0zNVRHQk5QdEpO?oc=5
+title: 'Bolstering Cooperation in the Field of Agriculture in the Middle East: The
+  Minister of Agriculture, Knesset Member Avi Dichter, signed a declaration of intent
+  with his Moroccan counterpart, in favor of agricultural cooperation between the
+  two countries - Gov.il'
+country: Ghana
+domain: agriculture
+domain_score: 6
+info_type: news_article
+published_at: '2023-09-28T00:00:00+00:00'
+published_at_source: rss
+published_at_confidence: 0.95
+published_at_raw: '2023-09-28'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T17:00:01+00:00'
+extracted_at: '2026-03-24T17:00:01+00:00'
+feed_name: Google News — Ghana agriculture [2023-09-27]
+source: rss
+body_source: rss_summary_google_gate
+phase1_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMiaEFVX3lxTE43UGl4c1hhT0lRQ3pCa3NtYm94VzhzM1lzaXVLME8tMGRTOEtvc3NqTkgyaTlfOE8wSmFZVmI5Qnd4TlZ1TVQwU2FlN0x6ZTRLNklWaEEyNlJXS0VLbk0zNVRHQk5QdEpO?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49A3DhO1dwtT84M8h4m6D9rsW32iFbCEFJbTZLDu1JtiuFgqm7NQeEYANUbaAP5i2y59QxhGop3ECAeh_gufbp1S1-PsOQhI
+article_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMiaEFVX3lxTE43UGl4c1hhT0lRQ3pCa3NtYm94VzhzM1lzaXVLME8tMGRTOEtvc3NqTkgyaTlfOE8wSmFZVmI5Qnd4TlZ1TVQwU2FlN0x6ZTRLNklWaEEyNlJXS0VLbk0zNVRHQk5QdEpO?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49A3DhO1dwtT84M8h4m6D9rsW32iFbCEFJbTZLDu1JtiuFgqm7NQeEYANUbaAP5i2y59QxhGop3ECAeh_gufbp1S1-PsOQhI
+enriched: false
+enrichment_used: null
+dedupe_id: 3cb7d8d63d57337d
+cluster_id: 01c05b45456e9138
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- agriculture
+- agricultural
+- minister of agriculture
+domain_scores:
+  agriculture: 6
+  economics: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMiaEFVX3lxTE43UGl4c1hhT0lRQ3pCa3NtYm94VzhzM1lzaXVLME8tMGRTOEtvc3NqTkgyaTlfOE8wSmFZVmI5Qnd4TlZ1TVQwU2FlN0x6ZTRLNklWaEEyNlJXS0VLbk0zNVRHQk5QdEpO?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49A3DhO1dwtT84M8h4m6D9rsW32iFbCEFJbTZLDu1JtiuFgqm7NQeEYANUbaAP5i2y59QxhGop3ECAeh_gufbp1S1-PsOQhI
+---
+
+Bolstering Cooperation in the Field of Agriculture in the Middle East: The Minister of Agriculture, Knesset Member Avi Dichter, signed a declaration of intent with his Moroccan counterpart, in favor of agricultural cooperation between the two countries Gov.il

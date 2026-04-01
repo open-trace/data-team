@@ -1,0 +1,348 @@
+---
+id: 91b3b990b90f24d2
+url: https://phys.org/news/2020-08-africa-food-yields.html
+rss_url: https://phys.org/news/2020-08-africa-food-yields.html
+title: Africa food organization 'fails to deliver on promise to double yields'
+country: Ghana
+domain: agriculture
+domain_score: 37
+info_type: news_article
+published_at: '2026-03-24T16:22:24+00:00'
+published_at_source: inferred
+published_at_confidence: 0.5
+published_at_raw: '2026-03-24T16:22:24+00:00'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:22:24+00:00'
+extracted_at: '2026-03-24T16:22:24+00:00'
+feed_name: Tavily discovery — production & yield
+source: rss
+body_source: fetched_html
+phase1_fetch_url: https://phys.org/news/2020-08-africa-food-yields.html
+article_fetch_url: https://phys.org/news/2020-08-africa-food-yields.html
+enriched: false
+enrichment_used: null
+dedupe_id: eab2a90f5f4f26ab
+cluster_id: 40b6905ccf0be7c5
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- agriculture
+- agricultural
+- farmer
+- farmers
+- farming
+- smallholder
+- crop
+- crops
+- harvest
+- seed
+- seeds
+- soil
+- hectare
+- food security
+- maize
+- millet
+- sorghum
+- grain
+domain_scores:
+  agriculture: 37
+  economics: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+---
+
+Africa food organization 'fails to deliver on promise to double yields'
+Large agricultural development programs have done little to reduce hunger while pushing farmers into debt, food security experts say, as they warn that such schemes risk failure if they do not move away from industrial fertilizers and seeds.
+A range of critical voices have spoken out against the Alliance for a Green Revolution in Africa (AGRA), an organization launched in 2006 with the aim of delivering high-yield intensive agriculture to Africa via access to markets and credit, high quality seeds, and better soil health and agricultural policies.
+False Promises, a report from a coalition of international development organizations, argues that AGRA missed its 2015 goal to double the productivity and incomes of 30 million small-scale food producers by this year, saying that AGRA's initial goals were to double incomes for 20 million farming households while halving food insecurity in 20 countries by 2020.
+The report is based on a study by Tufts University researchers, who say AGRA declined requests to provide internal monitoring and outcomes evaluation data. Instead, researchers used country-level production, yield and land data to assess whether AGRA programs had significantly raised agricultural productivity.
+AGRA's 2017-2021 strategy states it will "contribute" to doubling the yields and incomes of 30 million smallholder households—nine million directly and 21 million indirectly.
+In a statement to SciDev.Net, AGRA says it reached 4.7 million farmers in 2019.
+The alliance disputes accusations that its approach is failing Africa's farmers.
+Hunger vs yields
+From AGRA's launch to 2018, the number of people suffering undernourishment increased by 30 percent across the organization's 13 focus countries, the report's data shows. Farmers also reported going into debt when buying the seeds and fertilizers eligible for AGRA financial support.
+AGRA says that hunger has been increasing globally since 2014 and rises in Africa are "due to factors that are beyond AGRA's control".
+"These include fragile security situations, the impact of climate change and now, of course, the COVID-19 pandemic," Aggie Asiimwe Konde, AGRA program innovation and delivery vice president, tells SciDev.Net.
+Roman Herre, expert for agricultural sciences at the Rosa Luxemburg Foundation, which helped coordinate the False Promises study, tells SciDev.Net that AGRA's major shortcoming is its attempt to increase crop yields through methods used by large-scale industrial farms in wealthy countries.
+"The idea that a small-scale farmer with double yield has twice as much money in her pocket is simply rubbish," he says. "Even if you harvested twice the amount, much of the money needs to go back to the agricultural corporations."
+AGRA is funded through philanthropic donors—the Bill & Melinda Gates Foundation had given US$661 million by 2018—international governments and the African Development Bank. Its main countries of operation include Ethiopia, Ghana, Mali, Nigeria, Kenya, Tanzania and Mozambique.
+Timothy Wise, senior advisor at the Institute for Agriculture and Trade Policy think tank, is scathing about the fact that much of the yield gains touted by AGRA were achieved by expanding the amount of land under cultivation, not by boosting yields per hectare.
+Wise's working paper, Failing Africa's Farmers, which informed the False Promises report, notes that maize production in AGRA focus countries increased 87 percent in the 12 years to 2018, but this was largely due to a 45 percent increase in area harvested—meaning productivity increased 29 percent, short of the promised 100 percent.
+Local loss
+The overreliance on industrial seeds can lead to the loss of local, more climate-resilient crops such as millet, nuts, sorghum and tubers, according to the False Promises report. These commercially bred hybrid varieties yield even less if farmers use kernels from their harvest, Wise points out.
+"So not only do farmers have to pay for the new seeds, they have to do so every year," he tells SciDev.Net. "They often buy such inputs on credit and if they get a bad harvest they have no money to pay off the loans."
+Claims that farmers are being pushed into debt are "simply untrue", Konde says.
+"There is no evidence behind the suggestion that AGRA's approach forces farmers to go into debt, not least as AGRA does not lend money to farmers," she says.
+"AGRA believes above all in farmer choice and opportunity, and rejects the view—often coming from outside the continent—that farmers should not be given access to the things they need and wish to use to improve their farms and livelihoods."
+Farmer input
+Farmers are not consulted on the design and execution of these large-scale agricultural programs, says Susan Nakacwa, a program coordinator for the small farmer support organization GRAIN.
+"They are treated as mere consumers of the seeds and services that the programs and their partner companies provide, even though these programs depend on the biodiversity and knowledge that farmers have developed over generations," she tells SciDev.Net.
+"The companies can only profit when farmer seed systems and local food systems are destroyed and when small farms are pushed out by large industrial farms. This is simply a dead end for Africa."
+Konde says AGRA engages farmers directly and via national governments, which develop agricultural priorities for their own territories.
+"We are able to work at scale and reach a large number of farmers—in 2019 we reached 4.7 million—and receive very strong feedback and direction from farmers across all our countries of operation," Konde says.
+"We hear farmer and [small and medium enterprise] voices through our village-based advisor system, and work closely with farmers' organizations and cooperatives to meet the needs of diverse local communities across Africa."
+Wise says that large-scale programs have a role in providing funding and support at a scale many poorer nations cannot provide on their own.
+But, he says that investment needs to go towards affordable and sustainable practices.
+Nakacwa agrees. "An entirely new approach is required," she says. "One based on agroecology and food sovereignty."
+Provided by SciDev.Net

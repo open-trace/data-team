@@ -1,0 +1,186 @@
+---
+id: 2a8086e7cfb9e524
+url: http://kenya.shafaqna.com/EN/AL/101936
+rss_url: http://kenya.shafaqna.com/EN/AL/101936
+title: 404 Not Found
+country: Nigeria
+domain: agriculture
+domain_score: 6
+info_type: news_article
+published_at: '2026-03-24T13:53:29+00:00'
+published_at_source: inferred
+published_at_confidence: 0.5
+published_at_raw: '2026-03-24T13:53:29+00:00'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T13:53:29+00:00'
+extracted_at: '2026-03-24T13:53:29+00:00'
+feed_name: Tavily discovery — Humanitarian & Agricultural Emergency
+source: rss
+body_source: rss_summary_fallback
+phase1_fetch_url: http://kenya.shafaqna.com/EN/AL/101936
+article_fetch_url: http://kenya.shafaqna.com/EN/AL/101936
+enriched: false
+enrichment_used: null
+dedupe_id: 8dcada78ce7dcf96
+cluster_id: bf6bdfb592162e62
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- agricultural
+- farmers
+- crop
+domain_scores:
+  agriculture: 6
+  economics: 0
+  International Trade (Exports & Imports): 0
+  Environmental & Climate: 0
+  Land Use & Soil Health: 0
+  Investment Readiness & Enterprise: 0
+  Technology & Innovation: 0
+  Market Access & Infrastructure: 0
+  Production & Yield: 0
+  Policy & Institutional: 0
+  Gender, Youth & Inclusion: 0
+  Nutrition & Food Security: 0
+  Food Systems & Value Chain: 0
+  Humanitarian & Agricultural Emergency: 1
+domain_labels:
+- agriculture
+- Humanitarian & Agricultural Emergency
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+---
+
+Kenya News
+
+Sunday 22 March 2026
+
+Home      All news      Contact us      RSS
+
+allafrica - 1 month ago
+
+# Nigeria: Govt Declares Emergency Over Tomato, Sugarcane Pests
+
+[Daily Trust] The Federal Government has declared a national agricultural emergency following outbreak of two destructive pests threatening tomato and sugarcane production across the country.  
+  
+
+Read on the original site
+
+  
+
+ Latest News
+
+## Kenya: Kenya, Uganda Open Rail Extension Burdened By Chinese Debt
+
+- allafrica
+
+## West Africa: How a Disinformation Network Is Destabilising the Alliance of Sahel States
+
+- allafrica
+
+## Namibia: Powering the Future of the U.S.-Africa Energy Partnership - Remarks at the Powering Africa Summit
+
+- allafrica
+
+## South Africa: Chief Justice Tops New Pay List At R3.3-Million a Year [...] ## Colombia: Baby grey titi monkey gets cuddly ‘mum’ ahead of return to wild - africanews
+
+ ## Vihiga referral hospital reforms aim to improve services - Kneya News Agency
+
+ ## Kericho man charged with murder of his 100-year-old mother - Kneya News Agency
+
+ ## Kiambu appoints new board members to strengthen water services - Kneya News Agency
+
+ ## Agroecology in Muranga improves diets, fights chronic diseases - Kneya News Agency
+
+ ## Iran: Mass funeral in Tehran for Larijani and other officials killed in strikes - africanews
+
+ ## African football body president defends decision to strip Senegal of AFCON title - africanews
+
+ ## Nigerian VP vows full peace after deadly Maiduguri bombing kills 23 - africanews
+
+ ## Nyandarua farmers receive inputs to boost crop production - Kneya News Agency [...] - Kneya News Agency
+
+Hashtags:
+
+#### Nigeria
+
+ |
+
+#### Declares
+
+ |
+
+#### Emergency
+
+ |
+
+#### Tomato
+
+ |
+
+#### Sugarcane
+
+ |
+
+#### Pests
+
+ |
+
+Africa: All of Africa Today - March 6, 2026  
+## Africa: All of Africa Today - March 6, 2026 - allafrica
+
+Senegal PM Sonko threatens exit from government amid rift with President Faye  
+## Senegal PM Sonko threatens exit from government amid rift with President Faye - africanews
+
+Residents of Ethiopia s Tigray region start to flee amid fears of renewed civil war  
+## Residents of Ethiopia s Tigray region start to flee amid fears of renewed civil war - africanews
+
+Iran war oil price shock threatens to disrupt African economies  
+## Iran war oil price shock threatens to disrupt African economies - africanews

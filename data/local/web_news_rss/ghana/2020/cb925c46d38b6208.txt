@@ -1,0 +1,122 @@
+---
+id: cb925c46d38b6208
+url: https://news.google.com/rss/articles/CBMitwFBVV95cUxQMERDMklodGlxbURDMTh3VmdleE1BRjVWVUY4ZG1QaDMxLXdSY1FMS0l0MzVrZlNJM0FVeHZIMzhtb3JtNjEzM1NaeWY1NktaUWVRaU1zeTFrTFBnWHFKdnFmQnU4ZlA1U3VOdU10LUVVeDN6azRlczR2ZzBSR2xNWW93SXU5UWMwZ2NLRVRsOXJYYzYzWXFvMkE3RS1jaTdWTXZTRHl6bjE5bV9wWGwxTUJMYW5ET0U?oc=5
+rss_url: https://news.google.com/rss/articles/CBMitwFBVV95cUxQMERDMklodGlxbURDMTh3VmdleE1BRjVWVUY4ZG1QaDMxLXdSY1FMS0l0MzVrZlNJM0FVeHZIMzhtb3JtNjEzM1NaeWY1NktaUWVRaU1zeTFrTFBnWHFKdnFmQnU4ZlA1U3VOdU10LUVVeDN6azRlczR2ZzBSR2xNWW93SXU5UWMwZ2NLRVRsOXJYYzYzWXFvMkE3RS1jaTdWTXZTRHl6bjE5bV9wWGwxTUJMYW5ET0U?oc=5
+title: The Agricultural and Agroprocessing Sector in Uganda by Brian Rwabwogo of Reco
+  Industries - MarcoPolis
+country: Ghana
+domain: agriculture
+domain_score: 18
+info_type: news_article
+published_at: '2020-03-09T00:00:00+00:00'
+published_at_source: rss
+published_at_confidence: 0.95
+published_at_raw: '2020-03-09'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:16:34+00:00'
+extracted_at: '2026-03-24T16:16:32+00:00'
+feed_name: Google News — Ghana agriculture [2020-03-08]
+source: rss
+body_source: tavily_search
+phase1_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMitwFBVV95cUxQMERDMklodGlxbURDMTh3VmdleE1BRjVWVUY4ZG1QaDMxLXdSY1FMS0l0MzVrZlNJM0FVeHZIMzhtb3JtNjEzM1NaeWY1NktaUWVRaU1zeTFrTFBnWHFKdnFmQnU4ZlA1U3VOdU10LUVVeDN6azRlczR2ZzBSR2xNWW93SXU5UWMwZ2NLRVRsOXJYYzYzWXFvMkE3RS1jaTdWTXZTRHl6bjE5bV9wWGwxTUJMYW5ET0U?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49DLrGWfwU4axnlvBNwL4azWCsxd97j0giO-FTmZkjkEGamFCM38tOjor9j8V-kFgXNJPWxGoEW8tmGzN8d1uRt04RxUUwtH
+article_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMitwFBVV95cUxQMERDMklodGlxbURDMTh3VmdleE1BRjVWVUY4ZG1QaDMxLXdSY1FMS0l0MzVrZlNJM0FVeHZIMzhtb3JtNjEzM1NaeWY1NktaUWVRaU1zeTFrTFBnWHFKdnFmQnU4ZlA1U3VOdU10LUVVeDN6azRlczR2ZzBSR2xNWW93SXU5UWMwZ2NLRVRsOXJYYzYzWXFvMkE3RS1jaTdWTXZTRHl6bjE5bV9wWGwxTUJMYW5ET0U?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49DLrGWfwU4axnlvBNwL4azWCsxd97j0giO-FTmZkjkEGamFCM38tOjor9j8V-kFgXNJPWxGoEW8tmGzN8d1uRt04RxUUwtH
+enriched: true
+enrichment_used: tavily_search
+dedupe_id: ad8e8abd5a76bb27
+cluster_id: c261fe0ae2b37c25
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- agriculture
+- agricultural
+- farmers
+- farming
+- seed
+domain_scores:
+  agriculture: 18
+  economics: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMitwFBVV95cUxQMERDMklodGlxbURDMTh3VmdleE1BRjVWVUY4ZG1QaDMxLXdSY1FMS0l0MzVrZlNJM0FVeHZIMzhtb3JtNjEzM1NaeWY1NktaUWVRaU1zeTFrTFBnWHFKdnFmQnU4ZlA1U3VOdU10LUVVeDN6azRlczR2ZzBSR2xNWW93SXU5UWMwZ2NLRVRsOXJYYzYzWXFvMkE3RS1jaTdWTXZTRHl6bjE5bV9wWGwxTUJMYW5ET0U?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49DLrGWfwU4axnlvBNwL4azWCsxd97j0giO-FTmZkjkEGamFCM38tOjor9j8V-kFgXNJPWxGoEW8tmGzN8d1uRt04RxUUwtH
+---
+
+dfcu Bank, Meta Plant & Equipment Strengthen Agricultural Productivity with Expanded Vehicle and Asset Financing Solutions - ChimpReports # dfcu Bank, Meta Plant & Equipment Strengthen Agricultural Productivity with Expanded Vehicle and Asset Financing Solutions. dfcu Bank has entered a strategic partnership with Meta Plant & Equipment Uganda Limited to expand access to vehicle and asset financing and accelerate agricultural mechanisation across Uganda. “Through our partnership with Meta, we are bringing financing closer to where decisions are made, enabling farmers and agribusinesses to access the equipment they need to improve productivity, reduce losses and grow sustainably.”. Gloria Ssuuna Namutebi, Senior Manager of Vehicle and Asset Finance at dfcu Bank, added: “Through this partnership, dfcu is making asset financing more accessible by lowering the upfront burden for customers. By linking financing with high-quality equipment and reliable aftersales support, dfcu Bank and Meta Plant & Equipment aim to address a critical productivity gap in Uganda’s agricultural sector, improve efficiency, and strengthen participation in both domestic and regional markets. https://chimpreports.com/dfcu-bank-meta-plant-equipment-strengthen-agricultural-productivity-with-expanded-vehicle-and-asset-financing-solutions/
+
+This founder's company was breached by Iranian hackers. His new startup raised $11 million to stop it happening again. - Business Insider * Onit Security has raised $11 million for AI that spots and fixes security vulnerabilities. Israeli startup Onit Security has raised $11 million to identify and fix cybersecurity vulnerabilities with AI agents. Ben Meir, the CEO of Onit, told Business Insider that AI agents running autonomously in the background have changed the game for businesses, such as Anthropic's Claude Code for building and managing software. AI agents are becoming an increasingly competitive part of the cybersecurity market, with startups such as Safe Security, Reco, and Bold deploying them in various ways to protect organizations. Onit's "fleet" of AI agents performs different tasks autonomously, such as collecting threat intelligence, understanding business context, like who owns an internal asset, and providing solutions, Ben Meir said. Onit said it plans to use the new funding to expand product development and go-to-market efforts as the company targets additional industries. ## Onit Security aims to free up human cybersecurity workers' time with AI. https://www.businessinsider.com/onit-security-funding-seed-ai-agents-vulnerabilities-pitch-deck-2026-3
+
+Brian’s journey through CAFRE’s Level 2 Agriculture Apprenticeship - Farming Life # Brian’s journey through CAFRE’s Level 2 Agriculture Apprenticeship. Brian Casey, from Crossmaglen began his agricultural journey with the College of Agriculture, Food and Rural Enterprise (CAFRE) as a Level 2 Agriculture Apprentice, combining his early passion for farming with structured training that helped him build the skills and confidence needed for the industry. CAFRE’s Agriculture Apprenticeship Level 2 programme’s one-day-a-week model gave Brian a strong balance of learning and doing. After successfully completing the Level 2 Apprenticeship, Brian progressed onto the Level 3 Apprenticeship programme in Agriculture, continuing to build on the foundation he had already established. Brian is currently in the final year of his Level 3 Apprenticeship and is thriving as he continues his agricultural career. “I can see every day how the skills I learned at CAFRE help me make better decisions on the job,” Brian says. His journey shows how CAFRE’s Apprenticeship programme supports learners from Level 2 onwards, helping them grow their careers while continuing to work and earn. https://www.farminglife.com/business/brians-journey-through-cafres-level-2-agriculture-apprenticeship-6046622

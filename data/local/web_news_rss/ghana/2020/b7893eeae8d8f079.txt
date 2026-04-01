@@ -1,0 +1,160 @@
+---
+id: b7893eeae8d8f079
+url: https://news.google.com/rss/articles/CBMivgFBVV95cUxPV2NVYXM4X1lpYTlRNGVuaFQwS1ZkNkhrYVYwVEx2dnhWN2cxNXhGSGxYRGRrVDBaSHFGZExYcWx4aWNCUXZDM2xKRF80eEJSTWFONkJweC1GelZDYUVUaDdOdGNEbXhyMzJqR292Ml9MZ2RWNFZHdkx3TnF6Q2VWdTNTZURoSE9ZVmZxeHY1emNLRGF3b3F6MDJ2OTZHSWR5bE5BU0lnYkhOeG1henA2NFV1azBRYVVVeXZpaEdB?oc=5
+rss_url: https://news.google.com/rss/articles/CBMivgFBVV95cUxPV2NVYXM4X1lpYTlRNGVuaFQwS1ZkNkhrYVYwVEx2dnhWN2cxNXhGSGxYRGRrVDBaSHFGZExYcWx4aWNCUXZDM2xKRF80eEJSTWFONkJweC1GelZDYUVUaDdOdGNEbXhyMzJqR292Ml9MZ2RWNFZHdkx3TnF6Q2VWdTNTZURoSE9ZVmZxeHY1emNLRGF3b3F6MDJ2OTZHSWR5bE5BU0lnYkhOeG1henA2NFV1azBRYVVVeXZpaEdB?oc=5
+title: 'Nana Oforiwaa Koranteng: Post Covid-19 - A silver lining for modernising the
+  agriculture sector - MyJoyOnline'
+country: Ghana
+domain: agriculture
+domain_score: 33
+info_type: news_article
+published_at: '2020-06-09T00:00:00+00:00'
+published_at_source: rss
+published_at_confidence: 0.95
+published_at_raw: '2020-06-09'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:19:42+00:00'
+extracted_at: '2026-03-24T16:19:40+00:00'
+feed_name: Google News — Ghana agriculture [2020-06-08]
+source: rss
+body_source: tavily_search
+phase1_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMivgFBVV95cUxPV2NVYXM4X1lpYTlRNGVuaFQwS1ZkNkhrYVYwVEx2dnhWN2cxNXhGSGxYRGRrVDBaSHFGZExYcWx4aWNCUXZDM2xKRF80eEJSTWFONkJweC1GelZDYUVUaDdOdGNEbXhyMzJqR292Ml9MZ2RWNFZHdkx3TnF6Q2VWdTNTZURoSE9ZVmZxeHY1emNLRGF3b3F6MDJ2OTZHSWR5bE5BU0lnYkhOeG1henA2NFV1azBRYVVVeXZpaEdB?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49D46LTHEvQtc34dbVw1Ammrv5uZOVRLQDOVOKfViz1pkxMd4cpQ3J8Kuly6zNSwhg5uqY62LmiN0PV_ksUqT28Uynq_mmO6
+article_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMivgFBVV95cUxPV2NVYXM4X1lpYTlRNGVuaFQwS1ZkNkhrYVYwVEx2dnhWN2cxNXhGSGxYRGRrVDBaSHFGZExYcWx4aWNCUXZDM2xKRF80eEJSTWFONkJweC1GelZDYUVUaDdOdGNEbXhyMzJqR292Ml9MZ2RWNFZHdkx3TnF6Q2VWdTNTZURoSE9ZVmZxeHY1emNLRGF3b3F6MDJ2OTZHSWR5bE5BU0lnYkhOeG1henA2NFV1azBRYVVVeXZpaEdB?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49D46LTHEvQtc34dbVw1Ammrv5uZOVRLQDOVOKfViz1pkxMd4cpQ3J8Kuly6zNSwhg5uqY62LmiN0PV_ksUqT28Uynq_mmO6
+enriched: true
+enrichment_used: tavily_search
+dedupe_id: f4bfe7864f42b10e
+cluster_id: f1bc20bf4c9bfa32
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- agriculture
+- agricultural
+- agro-
+- farmers
+- farming
+- crop
+- fertiliser
+- fisheries
+- ministry of agriculture
+domain_scores:
+  agriculture: 33
+  economics: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMivgFBVV95cUxPV2NVYXM4X1lpYTlRNGVuaFQwS1ZkNkhrYVYwVEx2dnhWN2cxNXhGSGxYRGRrVDBaSHFGZExYcWx4aWNCUXZDM2xKRF80eEJSTWFONkJweC1GelZDYUVUaDdOdGNEbXhyMzJqR292Ml9MZ2RWNFZHdkx3TnF6Q2VWdTNTZURoSE9ZVmZxeHY1emNLRGF3b3F6MDJ2OTZHSWR5bE5BU0lnYkhOeG1henA2NFV1azBRYVVVeXZpaEdB?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49D46LTHEvQtc34dbVw1Ammrv5uZOVRLQDOVOKfViz1pkxMd4cpQ3J8Kuly6zNSwhg5uqY62LmiN0PV_ksUqT28Uynq_mmO6
+---
+
+Mahama tours Nobi Agriculture Project in Afram Plains - MyJoyOnline # Mahama tours Nobi Agriculture Project in Afram Plains. President John Dramani Mahama on Saturday visited Nobi Agriculture, a private farming project located at Sikasu in the Afram Plains. He was accompanied by the Minister for Food and Agriculture, Eric Opoku, and received by the project’s founder, Kwame Awuah-Darko. Discussions during the tour touched on how agricultural projects can contribute to supply chains, agro-processing and employment, particularly in rural areas. The Afram Plains area, where the project is located, is considered one of Ghana’s key agricultural zones due to its land availability and farming potential. * Mahama to lead Ghana’s delegation to UN special session on reparatory justice. * Afram Plains youth rally behind Mahama’s Farmers’ Service Centre initiative. * Mahama announces free fertiliser for farmers. * Mahama was right, Ghana’s economy is showing signs of resilience – Edem Agbana. * Burkina Faso tomato ban exposes Ghana’s dangerous food dependency. * Mahama tours Nobi Agriculture Project in Afram Plains. https://www.myjoyonline.com/mahama-tours-nobi-agriculture-project-in-afram-plains/
+
+MAFF sets five objectives to modernise agriculture in 2026 - Khmer Times The Ministry of Agriculture, Forestry, and Fisheries (MAFF) has outlined five priority directions to further promote Cambodia’s agricultural sector, aiming to make it more modern, diversified, and resilient. These priorities were announced by Agriculture, Forestry and Fisheries Minister Dith Tina during the ministry’s 2025 annual review and 2026 planning meeting held on Thursday afternoon. The ministry stated that, in terms of its contribution to the national economy and exports, the agricultural sector accounted for approximately 16.1 percent of gross domestic product in 2025, with an annual growth rate of 1.2 percent, bringing the sector’s total value added to over $8.3 billion. Secretary of State at the MAFF Yang Saing Koma said in a social media post on Friday that in 2025, the agricultural sector continued to grow significantly, contributing strongly to the national economy and society, with notable increases in both agricultural production and fisheries output. * Kong Chanvasana, Secretary of State at the Ministry of Agriculture, Forestry and Fisheries, holds a key meeting to review the progress in the province’s agriculture sector in Sihanoukville, on Monday. https://www.khmertimeskh.com/501866210/maff-sets-five-objectives-to-modernise-agriculture-in-2026/
+
+A Food And Feed Safety Omnibus That Works For Farmers’ Real Needs - global-agriculture.com # A Food And Feed Safety Omnibus That Works For Farmers’ Real Needs. The European Commission’s Food and Feed Safety Omnibus proposal is an important opportunity to address one of the most persistent shortcomings in the current system: the way Article 4.7 of Regulation 1107/2009 works in practice. Predictable transition timelines are essential for farmers planning cropping seasons, managing stocks and adapting crop protection strategies responsibly. Done right, the Food and Feed Safety Omnibus can help deliver a regulatory system that is predictable, science‑based and aligned with real farming conditions. * Food and Feed Safety Omnibus: Modernising EU Rules…. * Modernising EU Food & Feed Safety Rules: A Chance to…. 1. Food and Feed Safety Omnibus: Modernising EU Rules So Innovation Reaches Farmers Faster. 2. Modernising EU Food & Feed Safety Rules: A Chance to Deliver for Farmers and for Europe. 3. EU Pushes for Faster Biopesticide Approvals as Food and Feed Safety Rules Get a Reset. https://www.global-agriculture.com/crop-protection/a-food-and-feed-safety-omnibus-that-works-for-farmers-real-needs/

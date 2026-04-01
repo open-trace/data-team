@@ -1,0 +1,15 @@
+---
+id: a82b55ee9305c0fd
+url: https://rmi.org
+title: RMI
+country: Nigeria
+domain: agriculture
+domain_score: 2
+info_type: news_article
+published_at: '2024-01-24'
+feed_name: Google News — Nigeria agriculture [2024-01-23]
+source: rss
+body_source: fetched_html
+---
+
+Drilling Down on Methane Loss Texas oil and gas operators self-report methane waste. How much do their numbers differ from reality? RMI is transforming the global energy system to secure a clean, prosperous, zero-carbon future for all. Our Work We work with businesses, policymakers, and communities to scale renewable energy solutions, reduce energy waste, and boost access to affordable clean energy. Learn More Latest Insights Article | Global South Redefining Rooftop Solar Through Community Action Article | Industry From Roadmap to Reality: A New Interactive Hub for Tracking Global Progress on Carbon Dioxide Removal Report | Electricity A Smarter Approach to Cost Trackers to Support Affordability Report | Global South Catalysing Energy Storage in India News / Announcement | Industry SAFc Registry Surpasses 500,000 Metric Tons of CO₂e Abated Report | Industry Book and Claim for Cement and Concrete See More Spotlight: Reality Check Busting Myths Misconceptions about the energy transition abound. Our “Reality Check” articles distinguish fact from fiction. Reality Check

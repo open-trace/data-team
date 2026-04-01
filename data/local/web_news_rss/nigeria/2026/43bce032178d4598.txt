@@ -1,0 +1,113 @@
+---
+id: 43bce032178d4598
+url: https://www.zawya.com/en/economy/africa/nigeria-fg-emphasises-strategic-market-systems-to-strengthen-agricultural-value-chains-lkwndh0s
+rss_url: https://www.zawya.com/en/economy/africa/nigeria-fg-emphasises-strategic-market-systems-to-strengthen-agricultural-value-chains-lkwndh0s
+title: 'Nigeria: FG emphasises strategic market systems to strengthen agricultural
+  value chains'
+country: Nigeria
+domain: agriculture
+domain_score: 18
+info_type: news_article
+published_at: '2026-03-24T13:53:25+00:00'
+published_at_source: inferred
+published_at_confidence: 0.5
+published_at_raw: '2026-03-24T13:53:25+00:00'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T13:53:25+00:00'
+extracted_at: '2026-03-24T13:53:25+00:00'
+feed_name: Tavily discovery — Food Systems & Value Chain
+source: rss
+body_source: fetched_html
+phase1_fetch_url: https://www.zawya.com/en/economy/africa/nigeria-fg-emphasises-strategic-market-systems-to-strengthen-agricultural-value-chains-lkwndh0s
+article_fetch_url: https://www.zawya.com/en/economy/africa/nigeria-fg-emphasises-strategic-market-systems-to-strengthen-agricultural-value-chains-lkwndh0s
+enriched: false
+enrichment_used: null
+dedupe_id: d6e79e557c22f0db
+cluster_id: c5a70aebbd1895c7
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- agriculture
+- agricultural
+- agribusiness
+- farmer
+- farmers
+- farming
+- farm
+- smallholder
+- poultry
+- food security
+- extension service
+- ministry of agriculture
+- minister of agriculture
+- value chain
+domain_scores:
+  agriculture: 18
+  economics: 0
+  International Trade (Exports & Imports): 0
+  Environmental & Climate: 0
+  Land Use & Soil Health: 0
+  Investment Readiness & Enterprise: 0
+  Technology & Innovation: 1
+  Market Access & Infrastructure: 1
+  Production & Yield: 0
+  Policy & Institutional: 1
+  Gender, Youth & Inclusion: 0
+  Nutrition & Food Security: 2
+  Food Systems & Value Chain: 0
+  Humanitarian & Agricultural Emergency: 0
+domain_labels:
+- agriculture
+- Nutrition & Food Security
+- Technology & Innovation
+- Market Access & Infrastructure
+- Policy & Institutional
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+---
+
+PHOTO
+The Federal Government has reiterated the importance of strategic market systems in transforming Nigeria’s agricultural sector from subsistence farming to profitable and competitive value chains.
+Minister of Agriculture and Food Security, Abubakar Kyari, stated this during a visit by a delegation from Heifer International led by its president and Chief Executive Officer, Surita Sandosham, in Abuja.
+Kyari explained that well-designed market systems could connect smallholder farmers to higher-value markets, thereby boosting their incomes and strengthening economic resilience.
+He said, effective market strategies would also attract greater private sector investment in agricultural services, reduce reliance on aid and help establish sustainable, self-reinforcing markets across the sector.
+The minister noted that digital platforms and improved market information systems could empower farmers to negotiate better prices for their produce while reducing exploitation by intermediaries.
+He added that research has consistently identified market access, value addition and stronger linkages as key drivers of value chain competitiveness.
+Kyari cited several agribusiness initiatives—including Extension Africa, Pullus Africa, Nimsy Agro, Vet Konnect and Thrive Agric—as examples of how catalytic support can scale innovation in the sector, expand farmer access to services and strengthen agricultural value chains.
+The minister also acknowledged Heifer International’s longstanding support for Nigeria’s agricultural development, noting that the organisation’s interventions have helped nurture innovative agribusinesses and improve rural livelihoods.
+He further highlighted a mechanisation initiative being implemented by Heifer International in collaboration with the Bank of Agriculture. Under the arrangement, the organisation is supporting the deployment of trackers and a digital platform to monitor tractor utilisation, servicing and maintenance schedules.
+According to Kyari, the platform, offered to the bank through a loan arrangement alongside technical support, would enhance accountability and extend the lifespan of mechanisation assets while strengthening institutional capacity.
+Speaking earlier, Sandosham said Heifer International aims to align its programmes with Nigeria’s national priorities, with a target of supporting two million Nigerian households to achieve a sustainable living income by 2030.
+She noted that the organisation is working with the Federal Ministry of Agriculture and Food Security and the International Fund for Agricultural Development (IFAD) to harmonise the National Digital Farmers’ Registry.
+Sandosham explained that the initiative would replace fragmented records with a unified technology-driven database linked to the National Identification Number, enabling more transparent and effective delivery of government interventions.
+She said the integration of geo-referencing and advanced data mapping would ensure that agricultural support—from subsidised inputs to extension services—reaches verified farmers on their actual farmlands.
+The Heifer International CEO also highlighted the success of a partnership in Edo State involving the state government and Amo Farm through the In-Power Her project, which integrates women and youth into the poultry value chain.
+According to her, the initiative demonstrates how market systems development can create dignified and profitable employment opportunities in rural communities when public and private sector actors collaborate effectively.
+Copyright © 2026 Nigerian Tribune Provided by SyndiGate Media Inc. (Syndigate.info).

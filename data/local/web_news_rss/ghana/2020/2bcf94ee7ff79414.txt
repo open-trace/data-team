@@ -1,0 +1,62 @@
+---
+id: 2bcf94ee7ff79414
+url: https://news.google.com/rss/articles/CBMi3wFBVV95cUxPbjlwZ3ExMHJsVFFnb2FxZ2VibnJHOE1CaUx5UW9GWFc2M0t2R2xSTGlhdGJjOTZ0Y2dCOTRYMmlqOGFqWVJBSm1pQmMyRmJDNzZ5NHI3NzNqS3l1ZTNWcG5XRWFvc3kxVXFRa0s0Wm9vR0lidDJyZEVZZTJmRXQ5S2szTjY3U0p5Y1lVd0FJVUE1b1RsdlU3UTBDdDhEc1JYR0hxbldCN2tEQW1HU2RnT3hFOU5OY0l0VnJSNmduYjJfd0RKM2dqb3lEbE1neG0yNHpmT05YRTBLSHpNbVVZ?oc=5
+rss_url: https://news.google.com/rss/articles/CBMi3wFBVV95cUxPbjlwZ3ExMHJsVFFnb2FxZ2VibnJHOE1CaUx5UW9GWFc2M0t2R2xSTGlhdGJjOTZ0Y2dCOTRYMmlqOGFqWVJBSm1pQmMyRmJDNzZ5NHI3NzNqS3l1ZTNWcG5XRWFvc3kxVXFRa0s0Wm9vR0lidDJyZEVZZTJmRXQ5S2szTjY3U0p5Y1lVd0FJVUE1b1RsdlU3UTBDdDhEc1JYR0hxbldCN2tEQW1HU2RnT3hFOU5OY0l0VnJSNmduYjJfd0RKM2dqb3lEbE1neG0yNHpmT05YRTBLSHpNbVVZ?oc=5
+title: '#Ethiopia: #GIZ, Agriculture Ministry launch a $9M joint project German Development
+  Cooperation and Ethiopian Ministry of Agriculture launched a 9 Million US Dollars
+  joint project on Thursday. The Project entitled “Support Responsible Agricultural
+  Investmen - facebook.com'
+country: Ghana
+domain: agriculture
+domain_score: 6
+info_type: news_article
+published_at: '2020-11-20T00:00:00+00:00'
+published_at_source: rss
+published_at_confidence: 0.95
+published_at_raw: '2020-11-20'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:25:07+00:00'
+extracted_at: '2026-03-24T16:25:07+00:00'
+feed_name: Google News — Ghana agriculture [2020-11-19]
+source: rss
+body_source: rss_summary_google_gate
+phase1_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMi3wFBVV95cUxPbjlwZ3ExMHJsVFFnb2FxZ2VibnJHOE1CaUx5UW9GWFc2M0t2R2xSTGlhdGJjOTZ0Y2dCOTRYMmlqOGFqWVJBSm1pQmMyRmJDNzZ5NHI3NzNqS3l1ZTNWcG5XRWFvc3kxVXFRa0s0Wm9vR0lidDJyZEVZZTJmRXQ5S2szTjY3U0p5Y1lVd0FJVUE1b1RsdlU3UTBDdDhEc1JYR0hxbldCN2tEQW1HU2RnT3hFOU5OY0l0VnJSNmduYjJfd0RKM2dqb3lEbE1neG0yNHpmT05YRTBLSHpNbVVZ?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49CS3MzoMzzdUKD6ZJ-1UEIBJdg0mPp-0AKuV_7OH_Nf6jmHD6iboK8-3axnEKXi8N8mOyI_Vi4149CdBpjIIF3EF65SQmGN
+article_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMi3wFBVV95cUxPbjlwZ3ExMHJsVFFnb2FxZ2VibnJHOE1CaUx5UW9GWFc2M0t2R2xSTGlhdGJjOTZ0Y2dCOTRYMmlqOGFqWVJBSm1pQmMyRmJDNzZ5NHI3NzNqS3l1ZTNWcG5XRWFvc3kxVXFRa0s0Wm9vR0lidDJyZEVZZTJmRXQ5S2szTjY3U0p5Y1lVd0FJVUE1b1RsdlU3UTBDdDhEc1JYR0hxbldCN2tEQW1HU2RnT3hFOU5OY0l0VnJSNmduYjJfd0RKM2dqb3lEbE1neG0yNHpmT05YRTBLSHpNbVVZ?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49CS3MzoMzzdUKD6ZJ-1UEIBJdg0mPp-0AKuV_7OH_Nf6jmHD6iboK8-3axnEKXi8N8mOyI_Vi4149CdBpjIIF3EF65SQmGN
+enriched: false
+enrichment_used: null
+dedupe_id: 5e4127528fc23d81
+cluster_id: 4d7725142c3af9b9
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- agriculture
+- agricultural
+- ministry of agriculture
+domain_scores:
+  agriculture: 6
+  economics: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMi3wFBVV95cUxPbjlwZ3ExMHJsVFFnb2FxZ2VibnJHOE1CaUx5UW9GWFc2M0t2R2xSTGlhdGJjOTZ0Y2dCOTRYMmlqOGFqWVJBSm1pQmMyRmJDNzZ5NHI3NzNqS3l1ZTNWcG5XRWFvc3kxVXFRa0s0Wm9vR0lidDJyZEVZZTJmRXQ5S2szTjY3U0p5Y1lVd0FJVUE1b1RsdlU3UTBDdDhEc1JYR0hxbldCN2tEQW1HU2RnT3hFOU5OY0l0VnJSNmduYjJfd0RKM2dqb3lEbE1neG0yNHpmT05YRTBLSHpNbVVZ?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49CS3MzoMzzdUKD6ZJ-1UEIBJdg0mPp-0AKuV_7OH_Nf6jmHD6iboK8-3axnEKXi8N8mOyI_Vi4149CdBpjIIF3EF65SQmGN
+---
+
+#Ethiopia: #GIZ, Agriculture Ministry launch a $9M joint project German Development Cooperation and Ethiopian Ministry of Agriculture launched a 9 Million US Dollars joint project on Thursday. The Project entitled “Support Responsible Agricultural Investmen facebook.com

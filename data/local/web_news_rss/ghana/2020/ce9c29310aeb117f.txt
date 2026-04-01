@@ -1,0 +1,103 @@
+---
+id: ce9c29310aeb117f
+url: https://news.google.com/rss/articles/CBMirgFBVV95cUxNWmhCeEhqOVk2Z1F3aUZwY25naHJtRVgzUVZGbEZIVWZ5YXFVY2VrdjZnSldJR3N3MlVWMHFueWZOS0w4X1BFVHltYUJ0c09NOW90WEUtYWgyVVJ2ZlJYLWtQbVRleVZsUlU0WE00MUxrTUlTOFNzOWZpVWpMSF83THUtMGE2UE9FdkN4MnMzZ0c1YXluVWd2QTJ1c1BuMjhmWmdablllVXFweDUwalE?oc=5
+rss_url: https://news.google.com/rss/articles/CBMirgFBVV95cUxNWmhCeEhqOVk2Z1F3aUZwY25naHJtRVgzUVZGbEZIVWZ5YXFVY2VrdjZnSldJR3N3MlVWMHFueWZOS0w4X1BFVHltYUJ0c09NOW90WEUtYWgyVVJ2ZlJYLWtQbVRleVZsUlU0WE00MUxrTUlTOFNzOWZpVWpMSF83THUtMGE2UE9FdkN4MnMzZ0c1YXluVWd2QTJ1c1BuMjhmWmdablllVXFweDUwalE?oc=5
+title: 5 things COCOBOD can do differently to sustain Ghana’s cocoa sector post Covid-19
+  - MyJoyOnline
+country: Ghana
+domain: agriculture
+domain_score: 14
+info_type: news_article
+published_at: '2020-04-08T00:00:00+00:00'
+published_at_source: rss
+published_at_confidence: 0.95
+published_at_raw: '2020-04-08'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:17:39+00:00'
+extracted_at: '2026-03-24T16:17:37+00:00'
+feed_name: Google News — Ghana agriculture [2020-04-07]
+source: rss
+body_source: tavily_search
+phase1_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMirgFBVV95cUxNWmhCeEhqOVk2Z1F3aUZwY25naHJtRVgzUVZGbEZIVWZ5YXFVY2VrdjZnSldJR3N3MlVWMHFueWZOS0w4X1BFVHltYUJ0c09NOW90WEUtYWgyVVJ2ZlJYLWtQbVRleVZsUlU0WE00MUxrTUlTOFNzOWZpVWpMSF83THUtMGE2UE9FdkN4MnMzZ0c1YXluVWd2QTJ1c1BuMjhmWmdablllVXFweDUwalE?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49CIZA8BIKOM3uUDVx8-Ped-NYBSOvCFA2I_UeRn__Z4L6B45tjkUNjl1ebTOWwS89R3rPXKYy0g_vzeGq_JSClEs-t_qtVc
+article_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMirgFBVV95cUxNWmhCeEhqOVk2Z1F3aUZwY25naHJtRVgzUVZGbEZIVWZ5YXFVY2VrdjZnSldJR3N3MlVWMHFueWZOS0w4X1BFVHltYUJ0c09NOW90WEUtYWgyVVJ2ZlJYLWtQbVRleVZsUlU0WE00MUxrTUlTOFNzOWZpVWpMSF83THUtMGE2UE9FdkN4MnMzZ0c1YXluVWd2QTJ1c1BuMjhmWmdablllVXFweDUwalE?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49CIZA8BIKOM3uUDVx8-Ped-NYBSOvCFA2I_UeRn__Z4L6B45tjkUNjl1ebTOWwS89R3rPXKYy0g_vzeGq_JSClEs-t_qtVc
+enriched: true
+enrichment_used: tavily_search
+dedupe_id: c3a92e09c39a8810
+cluster_id: 2d22792add3ff21f
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- agriculture
+- cocoa
+- ministry of agriculture
+- value chain
+domain_scores:
+  agriculture: 14
+  economics: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMirgFBVV95cUxNWmhCeEhqOVk2Z1F3aUZwY25naHJtRVgzUVZGbEZIVWZ5YXFVY2VrdjZnSldJR3N3MlVWMHFueWZOS0w4X1BFVHltYUJ0c09NOW90WEUtYWgyVVJ2ZlJYLWtQbVRleVZsUlU0WE00MUxrTUlTOFNzOWZpVWpMSF83THUtMGE2UE9FdkN4MnMzZ0c1YXluVWd2QTJ1c1BuMjhmWmdablllVXFweDUwalE?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49CIZA8BIKOM3uUDVx8-Ped-NYBSOvCFA2I_UeRn__Z4L6B45tjkUNjl1ebTOWwS89R3rPXKYy0g_vzeGq_JSClEs-t_qtVc
+---
+
+Ivorian agriculture minister says cocoa hardships will bring Côte d’Ivoire and Ghana closer - The Africa Report Join the top leaders who read *The Africa Report* every day. # Ivorian agriculture minister says cocoa hardships will bring Côte d’Ivoire and Ghana closer. For Ivorian minister Bruno Nabagné Koné, the priorities for the cocoa sector are to address financing and the competitiveness of its value chains. At the end of January, amid the cocoa crisis, Bruno Nabagné Koné left the Ministry of Housing in Côte d'Ivoire to head the Ministry of Agriculture, Rural Development and Food Production, succeeding Kobenan Kouassi Adjoumani. US-Africa Week Ahead: Trump summons Congo belligerents over stalled peace. Red Sea dynamics: How the Iran conflict is rewiring Horn of Africa diplomacy. Cocoa at a crossroads: Can Ghana reclaim control of its golden bean? ### Africa NextGen Economist Prize: and the finalists are …. ### Africa’s $155bn borrowing forecast threatened by Middle East war fallout. ### Africa and the Gulf in a fragmented world: Building the next growth corridor. https://www.theafricareport.com/412209/ivorian-agriculture-minister-says-cocoa-hardships-will-bring-cote-divoire-and-ghana-closer/
+
+After years of delays, Ghana enters global lithium race to help replace China in U.S. supply chains - Business Insider Africa Ghana has entered the global lithium market after Parliament approved a major mining lease, positioning the country as a potential supplier to U.S. battery supply chains seeking alternatives to China. Ghana has formally entered the global lithium market after Parliament ratified the Ewoyaa Lithium Project mining lease on March 19, 2026, ending nearly three years of regulatory uncertainty that had delayed investment and raised concerns about the country’s competitiveness in the fast-growing battery minerals sector. A view of Atlantic Lithium’s Ewoyaa project site in Ghana’s Central Region, where the country’s first lithium mine is being developed to tap into growing global demand for battery minerals. Ghana’s move reflects a broader shift across Africa, where countries such as Zimbabwe, Namibia and the Democratic Republic of Congo are expanding lithium and other battery mineral projects to capture greater value within global supply chains. The Ewoyaa mine is expected to produce about 3.6 million tonnes of spodumene concentrate over 12 years, making it one of Africa’s largest lithium projects currently under development, according to the company. https://africa.businessinsider.com/local/markets/after-years-of-delays-ghana-enters-global-lithium-race-to-help-replace-china-in-us/84x9h6v
+
+Future chocolate: Mondelēz, Lindt and Barry Callebaut reshape taste - FoodNavigator.com # Future chocolate: Mondelēz, Lindt and Barry Callebaut reshape taste. ## From Mondelēz and Barry Callebaut to Lindt, the future of chocolate is being defined by bold flavour innovation, smarter formulations and a refusal to compromise on indulgence. * Despite experimentation with cocoa alternatives, taste remains the top purchase driver as the global chocolate market approaches $147bn. While many chocolate manufacturers across the world are factoring cocoa alternatives into their NPD, there’s one country that refuses to join in. Barry Callebaut reports that the biggest chocolate trends for 2026 and beyond focus on ‘minorstone’ moments instead of big milestone occasions, global flavour inspiration, health-forward choices, functional benefits and multisensorial experiences. “As you may know we have different chocolate brands in different markets so the best way for us to scale is to find Innovation ideas that can be leveraged across a range of brands.”. New fillings and inclusions will continue to drive NPD in chocolate, but cocoa replacements and alternatives will undoubtedly be the stories that make the headlines. https://www.foodnavigator.com/Article/2026/03/18/future-chocolate-mondelez-lindt-and-barry-callebaut-adapt/

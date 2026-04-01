@@ -1,0 +1,139 @@
+---
+id: c38afe65997e44c6
+url: https://news.google.com/rss/articles/CBMihAFBVV95cUxQaDFuWmVuelJyX0tDbmVCTndLMmFjLU9sWFRrUm1qWnhfcUlRZ3NqbTVwSXhxTXZxTVp3VGV5cFNpRHZmbTVLeDVMdjV5UGJxNXRMeVZIZ0tjM1VmcURtcWF5QzRvOU9rZkVWTTB3YXRxcjRVSkdzV1lvTkJWa2F2RkJuRnI?oc=5
+rss_url: https://news.google.com/rss/articles/CBMihAFBVV95cUxQaDFuWmVuelJyX0tDbmVCTndLMmFjLU9sWFRrUm1qWnhfcUlRZ3NqbTVwSXhxTXZxTVp3VGV5cFNpRHZmbTVLeDVMdjV5UGJxNXRMeVZIZ0tjM1VmcURtcWF5QzRvOU9rZkVWTTB3YXRxcjRVSkdzV1lvTkJWa2F2RkJuRnI?oc=5
+title: Cocoa might not be forever, but a kingdom is working to make it so - ThinkLandscape
+country: Ghana
+domain: agriculture
+domain_score: 10
+info_type: news_article
+published_at: '2020-06-04T00:00:00+00:00'
+published_at_source: rss
+published_at_confidence: 0.95
+published_at_raw: '2020-06-04'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:19:39+00:00'
+extracted_at: '2026-03-24T16:19:38+00:00'
+feed_name: Google News — Ghana agriculture [2020-06-03]
+source: rss
+body_source: tavily_search
+phase1_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMihAFBVV95cUxQaDFuWmVuelJyX0tDbmVCTndLMmFjLU9sWFRrUm1qWnhfcUlRZ3NqbTVwSXhxTXZxTVp3VGV5cFNpRHZmbTVLeDVMdjV5UGJxNXRMeVZIZ0tjM1VmcURtcWF5QzRvOU9rZkVWTTB3YXRxcjRVSkdzV1lvTkJWa2F2RkJuRnI?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49D1dMGCjF-olw33Y8Q2Lk5aGjbjYdWrt6X3_LcbXD8vY8N11HEzUFerlcqE66oKbH8nlXzn_tJ05YL8o5NuYixHJcx8Mvt1
+article_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMihAFBVV95cUxQaDFuWmVuelJyX0tDbmVCTndLMmFjLU9sWFRrUm1qWnhfcUlRZ3NqbTVwSXhxTXZxTVp3VGV5cFNpRHZmbTVLeDVMdjV5UGJxNXRMeVZIZ0tjM1VmcURtcWF5QzRvOU9rZkVWTTB3YXRxcjRVSkdzV1lvTkJWa2F2RkJuRnI?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49D1dMGCjF-olw33Y8Q2Lk5aGjbjYdWrt6X3_LcbXD8vY8N11HEzUFerlcqE66oKbH8nlXzn_tJ05YL8o5NuYixHJcx8Mvt1
+enriched: true
+enrichment_used: tavily_search
+dedupe_id: 7c06478503b05083
+cluster_id: 91e2725bedd462d9
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- cocoa
+domain_scores:
+  agriculture: 10
+  economics: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMihAFBVV95cUxQaDFuWmVuelJyX0tDbmVCTndLMmFjLU9sWFRrUm1qWnhfcUlRZ3NqbTVwSXhxTXZxTVp3VGV5cFNpRHZmbTVLeDVMdjV5UGJxNXRMeVZIZ0tjM1VmcURtcWF5QzRvOU9rZkVWTTB3YXRxcjRVSkdzV1lvTkJWa2F2RkJuRnI?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49D1dMGCjF-olw33Y8Q2Lk5aGjbjYdWrt6X3_LcbXD8vY8N11HEzUFerlcqE66oKbH8nlXzn_tJ05YL8o5NuYixHJcx8Mvt1
+---
+
+Foreverland raises €6M to scale its cocoa-free chocolate ingredient across Europe - The Next Web # Foreverland raises €6M to scale its cocoa-free chocolate ingredient across Europe. *The Italian foodtech, which makes Choruba from Mediterranean carob and has already signed four European confectionery partnerships, now has €9.4M in total funding to push commercial expansion and develop an organic product line.*. Foreverland, the Italian startup making a carob-based alternative to chocolate, has raised €6 million in a new funding round, bringing its total capital raised to €9.4 million. *“With IFS Food certification in place and demand accelerating, we’re scaling commercial growth across Europe, strengthening key partnerships, and bringing in senior talent from the cocoa and chocolate industry to support manufacturers at scale,”* Sabatini said in a statement accompanying the announcement. The new capital will fund that hiring, specifically commercial talent with backgrounds in cocoa and confectionery, alongside the European expansion, deeper partnerships with major confectionery players, and the development of an organic cocoa-free line to address a growing segment of the market. https://thenextweb.com/news/foreverland-6m-choruba-cocoa-free-chocolate
+
+Future chocolate: Mondelēz, Lindt and Barry Callebaut reshape taste - FoodNavigator.com # Future chocolate: Mondelēz, Lindt and Barry Callebaut reshape taste. ## From Mondelēz and Barry Callebaut to Lindt, the future of chocolate is being defined by bold flavour innovation, smarter formulations and a refusal to compromise on indulgence. * Despite experimentation with cocoa alternatives, taste remains the top purchase driver as the global chocolate market approaches $147bn. While many chocolate manufacturers across the world are factoring cocoa alternatives into their NPD, there’s one country that refuses to join in. Barry Callebaut reports that the biggest chocolate trends for 2026 and beyond focus on ‘minorstone’ moments instead of big milestone occasions, global flavour inspiration, health-forward choices, functional benefits and multisensorial experiences. “As you may know we have different chocolate brands in different markets so the best way for us to scale is to find Innovation ideas that can be leveraged across a range of brands.”. New fillings and inclusions will continue to drive NPD in chocolate, but cocoa replacements and alternatives will undoubtedly be the stories that make the headlines. https://www.foodnavigator.com/Article/2026/03/18/future-chocolate-mondelez-lindt-and-barry-callebaut-adapt/
+
+TIME Names medmix as one of "World's Best Companies for Sustainable Growth 2026" - TradingView # TIME Names medmix as one of "World's Best Companies for Sustainable Growth 2026". **TIME names medmix as one of “World's Best Companies for Sustainable Growth 2026”**. - March 18, 2026) - medmix has been included in the 2026 edition of the “World’s Best Companies for Sustainable Growth”, a global ranking compiled by TIME Magazine in collaboration with data and research firm Statista. The list recognizes 500 companies worldwide that pair strong, profitable development with demonstrable progress in environmental performance. Out of more than 4'000 global companies evaluated across all industries that transparently disclose environmental performance data, only 500 made the final list. *"Being named one of TIME's World's Best Companies for Sustainable Growth 2026 is a strong confirmation of our strategy,"* said René Willi, CEO of medmix. By using post-consumer recycled materials, improving resource efficiency, and pursuing science-based emission reduction targets, medmix translates its environmental commitments into measurable progress and long-term business performance. These efforts highlight medmix’ ongoing commitment to sustainability across its operations and innovation pipeline. https://www.tradingview.com/news/tmx_newsfile:076e84f03094b:0-time-names-medmix-as-one-of-world-s-best-companies-for-sustainable-growth-2026/
