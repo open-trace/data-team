@@ -1,0 +1,33 @@
+{
+  "_comment": "Per-country RSS/Atom feed URLs. Replace with your trusted outlets; Google News RSS is a starting point only (check ToS/rate limits).",
+  "Nigeria": [
+    {
+      "name": "Google News — Nigeria agriculture",
+      "url": "https://news.google.com/rss/search?q=Nigeria+agriculture&hl=en&gl=NG&ceid=NG:en"
+    }
+  ],
+  "Rwanda": [
+    {
+      "name": "Google News — Rwanda agriculture",
+      "url": "https://news.google.com/rss/search?q=Rwanda+agriculture&hl=en&gl=RW&ceid=RW:en"
+    }
+  ],
+  "Sierra Leone": [
+    {
+      "name": "Google News — Sierra Leone agriculture",
+      "url": "https://news.google.com/rss/search?q=Sierra%20Leone+agriculture&hl=en&gl=SL&ceid=SL:en"
+    }
+  ],
+  "Ghana": [
+    {
+      "name": "Google News — Ghana agriculture",
+      "url": "https://news.google.com/rss/search?q=Ghana+agriculture&hl=en&gl=GH&ceid=GH:en"
+    }
+  ],
+  "Senegal": [
+    {
+      "name": "Google News — Senegal agriculture",
+      "url": "https://news.google.com/rss/search?q=Senegal+agriculture&hl=en&gl=SN&ceid=SN:en"
+    }
+  ]
+}

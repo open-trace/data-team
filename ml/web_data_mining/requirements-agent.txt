@@ -1,0 +1,9 @@
+# Optional: Tavily + LangChain tools layered on the RSS pipeline.
+# Install: pip install -r ml/web_data_mining/requirements-agent.txt
+# Env: TAVILY_API_KEY (https://app.tavily.com/sign-in)
+langchain-tavily>=0.2.0
+langchain-core>=0.3.0
+# Used by LangGraph mining agent (OpenAI chat); also listed in requirements-agent-graph.txt
+langchain-openai>=0.2.0
+
+# LangGraph deep-research loop: see requirements-agent-graph.txt

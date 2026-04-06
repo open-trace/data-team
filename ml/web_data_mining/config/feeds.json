@@ -1,0 +1,106 @@
+{
+  "_comment": "Country -> RSS sources. Keys starting with _ are ignored by the loader.",
+  "_historical_note": "Outlet RSS (Punch, Vanguard, etc.) only exposes recent items — not a full archive since 2000. For Google News rows, optional day-by-day backfill: run_pipeline --google-news-daily-slice with a date/year window; use --allow-large-google-slice for >93 days (slow, may be blocked).",
+  "Ghana": [
+    {
+      "name": "Graphic Online — features",
+      "url": "https://www.graphic.com.gh/features/features.feed?type=rss"
+    },
+    {
+      "name": "Citinewsroom",
+      "url": "https://citinewsroom.com/feed/"
+    },
+    {
+      "name": "MyJoyOnline",
+      "url": "https://www.myjoyonline.com/feed/"
+    },
+    {
+      "name": "GhanaWeb — news RSS",
+      "url": "https://www.ghanaweb.com/GhanaHomePage/rss/news.xml"
+    },
+    {
+      "name": "Google News — Ghana agriculture",
+      "url": "https://news.google.com/rss/search?q=Ghana+agriculture&hl=en&gl=GH&ceid=GH:en"
+    }
+  ],
+  "Nigeria": [
+    {
+      "name": "Punch — latest news",
+      "url": "https://rss.punchng.com/v1/category/latest_news"
+    },
+    {
+      "name": "Punch — business",
+      "url": "https://rss.punchng.com/v1/category/business"
+    },
+    {
+      "name": "Vanguard",
+      "url": "https://www.vanguardngr.com/feed/"
+    },
+    {
+      "name": "Business Day Nigeria",
+      "url": "https://businessday.ng/feed/"
+    },
+    {
+      "name": "Daily Trust",
+      "url": "https://dailytrust.com/feed/"
+    },
+    {
+      "name": "Premium Times",
+      "url": "https://www.premiumtimesng.com/feed/"
+    },
+    {
+      "name": "Nairametrics",
+      "url": "https://nairametrics.com/feed/"
+    },
+    {
+      "name": "Google News — Nigeria agriculture",
+      "url": "https://news.google.com/rss/search?q=Nigeria+agriculture&hl=en&gl=NG&ceid=NG:en"
+    },
+    {
+      "name": "Climate Home News (global)",
+      "url": "https://www.climatechangenews.com/feed/"
+    },
+    {
+      "name": "SciDev.Net (global)",
+      "url": "https://www.scidev.net/global/rss.xml"
+    }
+  ],
+  "Rwanda": [
+    {
+      "name": "The New Times — /rss",
+      "url": "https://www.newtimes.co.rw/rss"
+    },
+    {
+      "name": "KT Press",
+      "url": "https://www.ktpress.rw/feed/"
+    },
+    {
+      "name": "Google News — Rwanda agriculture",
+      "url": "https://news.google.com/rss/search?q=Rwanda+agriculture&hl=en&gl=RW&ceid=RW:en"
+    }
+  ],
+  "Senegal": [
+    {
+      "name": "Le Soleil",
+      "url": "https://lesoleil.sn/feed/"
+    },
+    {
+      "name": "Google News — Senegal agriculture",
+      "url": "https://news.google.com/rss/search?q=Senegal+agriculture&hl=en&gl=SN&ceid=SN:en"
+    }
+  ],
+  "Sierra Leone": [
+    {
+      "name": "Sierra Leone Telegraph",
+      "url": "https://www.thesierraleonetelegraph.com/feed/"
+    },
+    {
+      "name": "Global Times SL",
+      "url": "https://globaltimes-sl.com/feed/"
+    },
+    {
+      "name": "Google News — Sierra Leone agriculture",
+      "url": "https://news.google.com/rss/search?q=Sierra%20Leone+agriculture&hl=en&gl=SL&ceid=SL:en"
+    }
+  ]
+}

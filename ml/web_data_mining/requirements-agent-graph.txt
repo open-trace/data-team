@@ -1,0 +1,12 @@
+# LangGraph “deep research” mining agent (optional).
+# Install: pip install -r ml/web_data_mining/requirements-agent-graph.txt
+# Also install base Tavily tools: pip install -r ml/web_data_mining/requirements-agent.txt
+#
+# Env: TAVILY_API_KEY, OPENAI_API_KEY
+# Optional: MINING_RESEARCH_MODEL (default gpt-4o-mini)
+#
+# Pattern: https://github.com/langchain-ai/deep_research_from_scratch
+langgraph>=0.2.45,<0.4
+langchain-core>=0.3.0
+langchain-openai>=0.2.0
+langchain-tavily>=0.2.0

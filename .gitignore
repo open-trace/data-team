@@ -61,12 +61,15 @@ data/local/*.duckdb
 data/local/cache/
 data/local/partitions/
 
+
 # ML / Data (large or generated)
 *.parquet
 *.csv
 data/raw/
-data/processed/
+data/local/processed_chunks/
+data/local/web_news_rss/
 ml/models/
+ml/rag/Text Documents/
 *.pkl
 *.joblib
 *.h5
@@ -81,4 +84,3 @@ temp/
 
 # Composer / Airflow
 infra/composer/dags/__pycache__/
-data/local/pdf_chunks.jsonl
