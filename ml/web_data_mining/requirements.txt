@@ -1,0 +1,10 @@
+# Web mining (RSS pipeline)
+feedparser>=6.0.0
+requests>=2.31.0
+PyYAML>=6.0.0
+# Main-article extraction (strips nav/ads/aside better than naive html.parser)
+trafilatura>=1.8.0
+# Required with newer lxml (trafilatura → justext → lxml.html.clean split out)
+lxml_html_clean>=0.4.0
+# PDF text extraction for article links that are .pdf files
+pypdf>=5.0.0

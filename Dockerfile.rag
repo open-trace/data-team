@@ -1,0 +1,27 @@
+# RAG API for Hugging Face Spaces.
+# In a Space repo: use this as the root Dockerfile (or copy its contents to Dockerfile).
+# Build from repo root: docker build -f Dockerfile.rag -t rag-api .
+FROM python:3.11-slim
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY requirements.txt .
+COPY ml/rag/requirements.txt ml/rag/requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt -r ml/rag/requirements.txt
+
+COPY ml ./ml
+
+ENV PYTHONPATH=/app
+# Chroma path inside the container; bind-mount host vector_db here at runtime (do not COPY the index into the image).
+ENV RAG_VECTOR_DB_PATH=/app/data/local/vector_db
+
+# Optional: pass HF_API_TOKEN at build time (or set at runtime)
+ARG HF_API_TOKEN
+ENV HF_API_TOKEN=${HF_API_TOKEN}
+
+EXPOSE 7860
+CMD ["uvicorn", "ml.rag.api:app", "--host", "0.0.0.0", "--port", "7860"]

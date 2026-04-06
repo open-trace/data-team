@@ -1,0 +1,5434 @@
+{
+  "project": "opentrace-prod-5ga4",
+  "datasets": {
+    "landing": {
+      "dataset": "landing",
+      "tables": [
+        {
+          "table": "FEWS_NET_Food_insecure_population_estimates_data_series",
+          "columns": [
+            {
+              "name": "id",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "data_source_organization",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "data_source_document",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "fnid",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "admin_0",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "admin_1",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "admin_2",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "admin_3",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "admin_4",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "geographic_group",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "fewsnet_region",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "geographic_unit_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "geographic_unit_full_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "scenario_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "forecast_horizon",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "phase",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "first_period_date",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "last_period_date",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "datapoint_count",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "geographic_unit",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "scenario",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "datasourcedocument",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "datasourceorganization",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "specialization_type",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "data_usage_policy",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "start",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "end",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "created",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "modified",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "phase_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "description",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "FEWS_NET_Food_insecure_population_estimates_time_series_data",
+          "columns": [
+            {
+              "name": "source_organization",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "source_document",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "geographic_group",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "fewsnet_region",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "geographic_unit_full_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "geographic_unit_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "fnid",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "admin_0",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "admin_1",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "admin_2",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "admin_3",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "admin_4",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "phase",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "scenario_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "indicator_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "indicator_abbreviation",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "projection_start",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "projection_end",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "status",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "low_value",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "high_value",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "value",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "pct_phase3",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "pct_phase4",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "pct_phase5",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "id",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "datacollectionperiod",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "datacollection",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "scenario",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "geographic_unit",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "datasourceorganization",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "datasourcedocument",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "dataseries",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "dataseries_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "specialization_type",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "dataseries_specialization_type",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "data_usage_policy",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "created",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "modified",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "status_changed",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "collection_status",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "collection_status_changed",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "collection_schedule",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "reporting_date",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "phase_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "population_range",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "description",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "FEWS_NET_cross_border_Trade_time_series_data",
+          "columns": [
+            {
+              "name": "reporting_country",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "reporting_country_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "border_point",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "source",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "source_country_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "destination",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "destination_country_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "cpcv2",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "cpcv2_description",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "product",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "source_organization",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "source_document",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "collection_status",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "period_date",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "flow_type",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "trade_type",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "unit",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "unit_type",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "unit_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "status",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "value",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "common_unit",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "common_unit_quantity",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "reporting_country_geographic_group",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "reporting_country_fewsnet_region",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "source_geographic_group",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "source_fewsnet_region",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "destination_geographic_group",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "destination_fewsnet_region",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "start_date",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "id",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "datacollectionperiod",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "datacollection",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "datasourcedocument",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "datasourceorganization",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "border_point_id",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "dataseries",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "dataseries_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "dataseries_specialization_type",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "specialization_type",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "data_usage_policy",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "created",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "modified",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "status_changed",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "collection_status_changed",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "collection_schedule",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "FEWS_NET_cross_border_trade_data_series",
+          "columns": [
+            {
+              "name": "id",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "reporting_country",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "border_point_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "source",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "destination",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "cpcv2",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "product_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "unit",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "unit_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "flow_type",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "trade_type",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "data_source_document",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "data_source_organization",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "data_usage_policy",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "first_period_date",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "last_period_date",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "datapoint_count",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "datasourcedocument",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "datausagepolicy",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "reporting_country_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "source_country_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "destination_country_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "border_point",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "product",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "description",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "FEWS_NET_food_security_classifications_data_series",
+          "columns": [
+            {
+              "name": "id",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "data_source_organization",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "data_source_document",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "admin_0",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "admin_1",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "admin_2",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "admin_3",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "admin_4",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "geographic_group",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "fewsnet_region",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "fnid",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "geographic_unit_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "geographic_unit_full_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "scenario_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "forecast_horizon",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "first_period_date",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "last_period_date",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "datapoint_count",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "classification_scale",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "is_allowing_for_assistance",
+              "type": "BOOLEAN",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "geographic_unit",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "scenario",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "datasourcedocument",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "datasourceorganization",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "data_usage_policy",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "start",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "end",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "created",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "modified",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "description",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "FEWS_NET_food_security_classifications_time_series_data",
+          "columns": [
+            {
+              "name": "source_organization",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "source_document",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "geographic_group",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "fewsnet_region",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "geographic_unit_full_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "geographic_unit_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "unit_type",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "fnid",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "classification_scale",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "scenario_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "preference_rating",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "is_allowing_for_assistance",
+              "type": "BOOLEAN",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "projection_start",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "projection_end",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "status",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "value",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "pct_phase3",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "pct_phase4",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "pct_phase5",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "description",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "id",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "datacollectionperiod",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "datacollection",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "scenario",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "geographic_unit",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "datasourceorganization",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "datasourcedocument",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "dataseries",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "dataseries_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "specialization_type",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "dataseries_specialization_type",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "data_usage_policy",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "created",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "modified",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "status_changed",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "collection_status",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "collection_status_changed",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "collection_schedule",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "reporting_date",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "FEWS_NET_market_Prices_time_series_data",
+          "columns": [
+            {
+              "name": "geographic_group",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "fewsnet_region",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "fewsnet_region_code",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "admin_1",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "admin_2",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "market",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "cpcv2",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "cpcv2_description",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "product",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "source_organization",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "source_document",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "collection_status",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "period_date",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "price_type",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "product_source",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "unit",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "unit_type",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "currency",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "status",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "value",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "availability",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "availability_description",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "common_unit",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "common_currency",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "exchange_rate",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "common_unit_price",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "common_currency_price",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "value_one_month_ago",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "value_one_year_ago",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "value_two_years_ago",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "value_three_years_ago",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "value_four_years_ago",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "value_five_years_ago",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "value_one_year_ahead",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "two_year_average",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "five_year_average",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "pct_change_from_one_month_ago",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "pct_change_from_one_year_ago",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "pct_change_from_two_year_average",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "pct_change_from_five_year_average",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "start_date",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "id",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "datacollectionperiod",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "datacollection",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "datasourcedocument",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "datasourceorganization",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "market_id",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "dataseries",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "dataseries_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "dataseries_specialization_type",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "specialization_type",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "data_usage_policy",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "created",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "modified",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "status_changed",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "collection_status_changed",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "collection_schedule",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "longitude",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "latitude",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "is_staple_food",
+              "type": "BOOLEAN",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "FEWS_NET_market_prices_data_series",
+          "columns": [
+            {
+              "name": "id",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "fewsnet_region",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "geographic_group",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "fnid",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "market_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "cpcv2",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "product_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "unit",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "price_type",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "currency",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "product_source",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "is_staple_food",
+              "type": "BOOLEAN",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "data_source_document",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "data_source_organization",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "data_usage_policy",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "first_period_date",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "last_period_date",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "datapoint_count",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "datasourcedocument",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "market",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "product",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "description",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "scientific_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "aliases",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "WFP_VAMPIRE_Tool_global_food_prices",
+          "columns": [
+            {
+              "name": "adm0_id",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "adm0_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "adm1_id",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "adm1_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "mkt_id",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "mkt_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "cm_id",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "cm_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "cur_id",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "cur_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "pt_id",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "pt_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "um_id",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "um_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "mp_month",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "mp_year",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "mp_price",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "mp_commoditysource",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "africa_opendata_raw",
+          "columns": [
+            {
+              "name": "ingestion_id",
+              "type": "STRING",
+              "mode": "REQUIRED"
+            },
+            {
+              "name": "source",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "dataset_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "admin_region",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "fetched_at",
+              "type": "TIMESTAMP",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "payload",
+              "type": "JSON",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "status",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "ceda_climate_data",
+          "columns": [
+            {
+              "name": "type",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "id",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "properties_title",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "properties_identifier",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "properties_links_search",
+              "type": "RECORD",
+              "mode": "REPEATED"
+            },
+            {
+              "name": "properties_links_related",
+              "type": "RECORD",
+              "mode": "REPEATED"
+            },
+            {
+              "name": "properties_date",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "climatewatch_emission_pathways_raw",
+          "columns": [
+            {
+              "name": "id",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "location",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "iso_code2",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "model",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "scenario",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "category",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "subcategory",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "indicator",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "composite_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "unit",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "definition",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "emissions",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "gbif_occurrence_search",
+          "columns": [
+            {
+              "name": "gbifID",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "datasetKey",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "occurrenceID",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "kingdom",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "phylum",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "class",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "order",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "family",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "genus",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "species",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "infraspecificEpithet",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "taxonRank",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "scientificName",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "verbatimScientificName",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "verbatimScientificNameAuthorship",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "countryCode",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "locality",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "stateProvince",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "occurrenceStatus",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "individualCount",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "publishingOrgKey",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "decimalLatitude",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "decimalLongitude",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "coordinateUncertaintyInMeters",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "coordinatePrecision",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "elevation",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "elevationAccuracy",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "depth",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "depthAccuracy",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "eventDate",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "day",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "month",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "year",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "taxonKey",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "speciesKey",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "basisOfRecord",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "institutionCode",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "collectionCode",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "catalogNumber",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "recordNumber",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "identifiedBy",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "dateIdentified",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "license",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "rightsHolder",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "recordedBy",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "typeStatus",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "establishmentMeans",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "lastInterpreted",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "mediaType",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "issue",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "ingestion_state_fews_ipcphase",
+          "columns": [
+            {
+              "name": "last_page",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "updated_at",
+              "type": "TIMESTAMP",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "isda_africa_carbon_bulk",
+          "columns": [
+            {
+              "name": "latitude",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "longitude",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "carbon_value",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "isda_africa_nitrogen_bulk",
+          "columns": [
+            {
+              "name": "latitude",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "longitude",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "nitrogen_value",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "isda_africa_ph_bulk",
+          "columns": [
+            {
+              "name": "latitude",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "longitude",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "ph_value",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "isda_soil_bulk_master",
+          "columns": [
+            {
+              "name": "latitude",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "longitude",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "value",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "depth",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "property",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "isric_africa_soil_data",
+          "columns": [
+            {
+              "name": "latitude",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "longitude",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "fetched_at",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "bdod_0_5cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "bdod_5_15cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "bdod_15_30cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "bdod_30_60cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "bdod_60_100cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "cec_0_5cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "cec_5_15cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "cec_15_30cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "cec_30_60cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "cec_60_100cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "clay_0_5cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "clay_5_15cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "clay_15_30cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "clay_30_60cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "clay_60_100cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "nitrogen_0_5cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "nitrogen_5_15cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "nitrogen_15_30cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "nitrogen_30_60cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "nitrogen_60_100cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "phh2o_0_5cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "phh2o_5_15cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "phh2o_15_30cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "phh2o_30_60cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "phh2o_60_100cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "sand_0_5cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "sand_5_15cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "sand_15_30cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "sand_30_60cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "sand_60_100cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "silt_0_5cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "silt_5_15cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "silt_15_30cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "silt_30_60cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "silt_60_100cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "soc_0_5cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "soc_5_15cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "soc_15_30cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "soc_30_60cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "soc_60_100cm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "isric_full_metadata_catalog",
+          "columns": [
+            {
+              "name": "uri",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "identifier",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "title",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "abstract",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "issued_date",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "temporal_coverage",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "spatial_polygon",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "license",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "all_keywords",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "download_links",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "thumbnail_url",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "openaire_data_sources_raw",
+          "columns": [
+            {
+              "name": "ingestion_id",
+              "type": "STRING",
+              "mode": "REQUIRED"
+            },
+            {
+              "name": "source",
+              "type": "STRING",
+              "mode": "REQUIRED"
+            },
+            {
+              "name": "dataset",
+              "type": "STRING",
+              "mode": "REQUIRED"
+            },
+            {
+              "name": "endpoint",
+              "type": "STRING",
+              "mode": "REQUIRED"
+            },
+            {
+              "name": "page_offset",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "http_status",
+              "type": "INTEGER",
+              "mode": "REQUIRED"
+            },
+            {
+              "name": "fetched_at",
+              "type": "TIMESTAMP",
+              "mode": "REQUIRED"
+            },
+            {
+              "name": "payload",
+              "type": "STRING",
+              "mode": "REQUIRED"
+            },
+            {
+              "name": "status",
+              "type": "STRING",
+              "mode": "REQUIRED"
+            }
+          ]
+        },
+        {
+          "table": "openaire_organizations_raw",
+          "columns": [
+            {
+              "name": "ingestion_id",
+              "type": "STRING",
+              "mode": "REQUIRED"
+            },
+            {
+              "name": "source",
+              "type": "STRING",
+              "mode": "REQUIRED"
+            },
+            {
+              "name": "dataset",
+              "type": "STRING",
+              "mode": "REQUIRED"
+            },
+            {
+              "name": "endpoint",
+              "type": "STRING",
+              "mode": "REQUIRED"
+            },
+            {
+              "name": "http_status",
+              "type": "INTEGER",
+              "mode": "REQUIRED"
+            },
+            {
+              "name": "fetched_at",
+              "type": "TIMESTAMP",
+              "mode": "REQUIRED"
+            },
+            {
+              "name": "payload",
+              "type": "STRING",
+              "mode": "REQUIRED"
+            },
+            {
+              "name": "status",
+              "type": "STRING",
+              "mode": "REQUIRED"
+            }
+          ]
+        },
+        {
+          "table": "openaire_persons_raw",
+          "columns": [
+            {
+              "name": "person_id",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "given_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "family_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "alt_names",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "biography",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "coauthor_count",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "fetched_at",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "openaire_product_links_raw",
+          "columns": [
+            {
+              "name": "ingestion_id",
+              "type": "STRING",
+              "mode": "REQUIRED"
+            },
+            {
+              "name": "source_pair",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "payload",
+              "type": "STRING",
+              "mode": "REQUIRED"
+            },
+            {
+              "name": "fetched_at",
+              "type": "TIMESTAMP",
+              "mode": "REQUIRED"
+            },
+            {
+              "name": "status",
+              "type": "STRING",
+              "mode": "REQUIRED"
+            }
+          ]
+        },
+        {
+          "table": "openaire_projects_raw",
+          "columns": [
+            {
+              "name": "ingestion_id",
+              "type": "STRING",
+              "mode": "REQUIRED"
+            },
+            {
+              "name": "payload",
+              "type": "STRING",
+              "mode": "REQUIRED"
+            },
+            {
+              "name": "fetched_at",
+              "type": "TIMESTAMP",
+              "mode": "REQUIRED"
+            }
+          ]
+        },
+        {
+          "table": "raw_api_dump",
+          "columns": [
+            {
+              "name": "source",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "fetched_at",
+              "type": "TIMESTAMP",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "payload",
+              "type": "JSON",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "undp_download_log",
+          "columns": [
+            {
+              "name": "dataflow_id",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "time_period",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "undp_raw_dump",
+          "columns": [
+            {
+              "name": "dataflow_id",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "time_period",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "raw_json_data",
+              "type": "JSON",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "extracted_at",
+              "type": "TIMESTAMP",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "world_Human_development_index",
+          "columns": [
+            {
+              "name": "country",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "year",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "index",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "world_gdp_ppp",
+          "columns": [
+            {
+              "name": "country",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "alpha_3_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "year",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "gdp_per_capita",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            }
+          ]
+        }
+      ]
+    },
+    "bronze": {
+      "dataset": "bronze",
+      "tables": [
+        {
+          "table": "OECD_Food_data_Africa_NEW",
+          "columns": [
+            {
+              "name": "STRUCTURE_NAME",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "Reference area",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "Frequency of observation",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "COMMODITY_Code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "Commodity",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "Code_measure",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "Measure",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "UNIT_Short",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "Unit of measure",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "Version ID",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "TIME_PERIOD",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "OBS_VALUE",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "UNIT_MULT",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "Unit multiplier",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "DECIMALS",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "WFP_VAMPIRE_Tool_global_food_prices",
+          "columns": [
+            {
+              "name": "adm0_id",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "adm0_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "adm1_id",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "adm1_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "mkt_id",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "mkt_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "cm_id",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "cm_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "cur_id",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "cur_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "pt_id",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "pt_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "um_id",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "um_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "mp_month",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "mp_year",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "mp_price",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "mp_commoditysource",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "africa_Human_development_index",
+          "columns": [
+            {
+              "name": "country",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "alpha_3_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "year",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "index",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "africa_gdp_ppp",
+          "columns": [
+            {
+              "name": "country",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "alpha_3_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "year",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "gdp_per_capita",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "africa_nasa_power_bronze",
+          "columns": [
+            {
+              "name": "ingestion_id",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "admin_region",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "fetched_at",
+              "type": "TIMESTAMP",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "elevation_meters",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "par_solar_at_noon",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "shortwave_irradiance_at_noon",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "uva_radiation_at_noon",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "uvb_radiation_at_noon",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "processed_at",
+              "type": "TIMESTAMP",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "africa_soil_moisture",
+          "columns": [
+            {
+              "name": "time",
+              "type": "DATETIME",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "lat",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "lon",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "sm",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "climatewatch_emission_pathways",
+          "columns": [
+            {
+              "name": "id",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "location",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "iso_code2",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "model",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "scenario",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "category",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "subcategory",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "indicator",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "composite_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "unit",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "definition",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "year",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "value",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "ingested_at",
+              "type": "TIMESTAMP",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "cropland_area_summary_2019_africa",
+          "columns": [
+            {
+              "name": "tile_id",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "region_path",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "hectares",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "density_percent",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "s3_source",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "ingested_at",
+              "type": "DATETIME",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "fao_rfn",
+          "columns": [
+            {
+              "name": "domain_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "domain",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "area_code",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "area",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "element_code",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "element",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "item_code",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "item",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "year",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "unit",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "value",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "data_source",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "fao_rl",
+          "columns": [
+            {
+              "name": "domain_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "domain",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "area_code",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "area",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "element_code",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "element",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "item_code",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "item",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "year",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "unit",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "value",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "data_source",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "fao_rp",
+          "columns": [
+            {
+              "name": "domain_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "domain",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "area_code",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "area",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "element_code",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "element",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "item_code",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "item",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "year",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "unit",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "value",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "data_source",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "fao_tcl",
+          "columns": [
+            {
+              "name": "domain_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "domain",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "area_code",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "area",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "element_code",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "element",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "item_code",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "item",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "year",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "unit",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "value",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "data_source",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "fao_ti",
+          "columns": [
+            {
+              "name": "domain_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "domain",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "area_code",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "area",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "element_code",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "element",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "item_code",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "item",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "year",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "unit",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "value",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "data_source",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "fews_net_food_security_master",
+          "columns": [
+            {
+              "name": "country",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "geographic_unit_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "unit_type",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "ipc_phase_value",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "ipc_description",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "scenario_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "projection_start",
+              "type": "DATE",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "projection_end",
+              "type": "DATE",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "reporting_date",
+              "type": "DATE",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "created_at",
+              "type": "TIMESTAMP",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "ingested_at",
+              "type": "TIMESTAMP",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "gbif_occurrence_search",
+          "columns": [
+            {
+              "name": "gbif_id",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "datasetKey",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "occurrenceID",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "kingdom",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "phylum",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "class",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "order",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "family",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "genus",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "species",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "infraspecificEpithet",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "taxonRank",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "scientificName",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "verbatimScientificName",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "verbatimScientificNameAuthorship",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "countryCode",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "locality",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "stateProvince",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "occurrenceStatus",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "individual_count",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "publishingOrgKey",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "latitude",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "longitude",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "coordinate_uncertainty_m",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "elevation_m",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "depth_m",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "event_start_date",
+              "type": "DATE",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "event_end_date",
+              "type": "DATE",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "year",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "month",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "day",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "taxon_key",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "species_key",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "basisOfRecord",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "institutionCode",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "collectionCode",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "catalogNumber",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "recordNumber",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "identifiedBy",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "date_identified",
+              "type": "DATE",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "license",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "rightsHolder",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "recordedBy",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "typeStatus",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "establishmentMeans",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "last_interpreted",
+              "type": "TIMESTAMP",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "mediaType",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "issue",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "eventDate",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "ingested_at",
+              "type": "TIMESTAMP",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "ifpri_africa_bronze",
+          "columns": [
+            {
+              "name": "country",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "source_doi",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "filename",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "original_row_index",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "variable_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "value_raw",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "value_numeric",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "ingested_at",
+              "type": "TIMESTAMP",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "isda_soil_bulk_master",
+          "columns": [
+            {
+              "name": "latitude",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "longitude",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "value",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "depth",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "property",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "isda_soil_bulk_master_bronze",
+          "columns": [
+            {
+              "name": "latitude",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "longitude",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "value",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "depth",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "property",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "ingested_at",
+              "type": "TIMESTAMP",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "openaire_data_sources_bronze",
+          "columns": [
+            {
+              "name": "ingestion_id",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "fetched_at",
+              "type": "TIMESTAMP",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "openaire_id",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "official_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "english_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "website_url",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "type",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "compatibility",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "subjects",
+              "type": "JSON",
+              "mode": "REPEATED"
+            },
+            {
+              "name": "issn_online",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "issn_printed",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "openaire_full_bronze",
+          "columns": [
+            {
+              "name": "openaire_id",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "title",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "entity_type",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "pub_date",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "publisher",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "language",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "rel_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "target_id",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "target_type",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "fetched_at",
+              "type": "TIMESTAMP",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "openaire_organizations_bronze",
+          "columns": [
+            {
+              "name": "org_id",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "legal_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "short_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "website_url",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "alternative_names",
+              "type": "JSON",
+              "mode": "REPEATED"
+            },
+            {
+              "name": "pids",
+              "type": "JSON",
+              "mode": "REPEATED"
+            },
+            {
+              "name": "fetched_at",
+              "type": "TIMESTAMP",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "yield_raw_data",
+          "columns": [
+            {
+              "name": "fnid",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "admin_1",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "admin_2",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "product",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "season_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "planting_year",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "planting_month",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "harvest_year",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "harvest_month",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "crop_production_system",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "qc_flag",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "area",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "production",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "yield",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            }
+          ]
+        }
+      ]
+    },
+    "silver": {
+      "dataset": "silver",
+      "tables": [
+        {
+          "table": "Silver_raw_data",
+          "columns": [
+            {
+              "name": "country",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "product",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "season_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "planting_year",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "planting_month",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "harvest_year",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "harvest_month",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "area",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "production",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "yield",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "f0_",
+              "type": "TIMESTAMP",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "africa_cropland_summary_2019",
+          "columns": [
+            {
+              "name": "agroecological_zone",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "total_satellite_tiles",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "total_cultivated_hectares",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "avg_crop_intensity_percent",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "processed_at",
+              "type": "TIMESTAMP",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "data_origin",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "africa_nasa_power_silver",
+          "columns": [
+            {
+              "name": "country_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "admin_region",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "elevation_meters",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "par_solar_at_noon",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "shortwave_irradiance_at_noon",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "uva_radiation_at_noon",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "uvb_radiation_at_noon",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "fao_fbs",
+          "columns": [
+            {
+              "name": "area_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "area",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "element_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "element",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "item_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "item",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "year",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "unit",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "value",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "fao_fbs_view",
+          "columns": [
+            {
+              "name": "area_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "area",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "element_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "element",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "item_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "item",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "year",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "unit",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "value",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "fao_qcl",
+          "columns": [
+            {
+              "name": "area_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "area",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "element_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "element",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "item_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "item",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "year",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "unit",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "value",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "f0_",
+              "type": "TIMESTAMP",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "fao_qcl_1",
+          "columns": [
+            {
+              "name": "area_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "area",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "element_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "element",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "item_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "item",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "year",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "unit",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "value",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "f0_",
+              "type": "TIMESTAMP",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "fao_qi",
+          "columns": [
+            {
+              "name": "area_code",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "area",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "element_code",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "element",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "item_code",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "item",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "year",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "unit",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "value",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "f0_",
+              "type": "TIMESTAMP",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "fao_qv",
+          "columns": [
+            {
+              "name": "area_code",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "area",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "element_code",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "element",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "item_code",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "item",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "year",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "unit",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "value",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "f0_",
+              "type": "TIMESTAMP",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "fao_rhn",
+          "columns": [
+            {
+              "name": "area_code",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "area",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "element_code",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "element",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "item_code",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "item",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "year",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "unit",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "value",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "f0_",
+              "type": "TIMESTAMP",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "fao_rl_landuse",
+          "columns": [
+            {
+              "name": "area_code",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "area",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "element_code",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "element",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "item_code",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "item",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "year",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "unit",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "value",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "f0_",
+              "type": "TIMESTAMP",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "fao_rp_pesticides",
+          "columns": [
+            {
+              "name": "area_code",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "area",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "element_code",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "element",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "item_code",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "item",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "year",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "unit",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "value",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "f0_",
+              "type": "TIMESTAMP",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "fao_tcl_crop_and_pest",
+          "columns": [
+            {
+              "name": "area_code",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "area",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "element_code",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "element",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "item_code",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "item",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "year",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "unit",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "value",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "f0_",
+              "type": "TIMESTAMP",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "fao_ti_trade_indices",
+          "columns": [
+            {
+              "name": "area_code",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "area",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "element_code",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "element",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "item_code",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "item",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "year",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "unit",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "value",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "f0_",
+              "type": "TIMESTAMP",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "fews_net_food_security_master_alldata_silver",
+          "columns": [
+            {
+              "name": "country",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "geographic_unit_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "unit_type",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "ipc_phase_value",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "ipc_description",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "scenario_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "projection_start",
+              "type": "DATE",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "projection_end",
+              "type": "DATE",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "reporting_date",
+              "type": "DATE",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "created_at",
+              "type": "TIMESTAMP",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "ingested_at",
+              "type": "TIMESTAMP",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "fews_net_food_security_master_silver",
+          "columns": [
+            {
+              "name": "country",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "geographic_unit_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "unit_type",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "ipc_phase_value",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "ipc_description",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "scenario_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "projection_start",
+              "type": "DATE",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "projection_end",
+              "type": "DATE",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "reporting_date",
+              "type": "DATE",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "created_at",
+              "type": "TIMESTAMP",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "ingested_at",
+              "type": "TIMESTAMP",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "isda_soil_bulk_refined",
+          "columns": [
+            {
+              "name": "latitude",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "longitude",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "depth",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "property_slug",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "calculated_value",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "unit",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "bronze_ingestion_time",
+              "type": "TIMESTAMP",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "silver_processed_at",
+              "type": "TIMESTAMP",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "openaire_data_sources_silver",
+          "columns": [
+            {
+              "name": "openaire_id",
+              "type": "STRING",
+              "mode": "REQUIRED"
+            },
+            {
+              "name": "official_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "website_url",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "issn_online",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "issn_printed",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "subjects",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            }
+          ]
+        },
+        {
+          "table": "yield_raw_data_silver",
+          "columns": [
+            {
+              "name": "fnid",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "country_code",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "admin_1",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "admin_2",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "product",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "season_name",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "planting_year",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "planting_month",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "harvest_year",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "harvest_month",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "crop_production_system",
+              "type": "STRING",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "qc_flag",
+              "type": "INTEGER",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "area",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "production",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            },
+            {
+              "name": "yield",
+              "type": "FLOAT",
+              "mode": "NULLABLE"
+            }
+          ]
+        }
+      ]
+    },
+    "gold": {
+      "dataset": "gold",
+      "tables": []
+    }
+  }
+}
