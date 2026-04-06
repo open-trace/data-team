@@ -1,0 +1,39 @@
+# dbt project: OpenTrace data team (bronze → silver → gold).
+# Dataset names are dynamic via env: BQ_DATASET_LANDING, BQ_DATASET_BRONZE, BQ_DATASET_SILVER, BQ_DATASET_GOLD.
+# Run with: dbt run --target bronze | silver | gold
+
+name: open_trace
+version: "1.0.0"
+config-version: 2
+profile: open_trace
+
+model-paths: ["models"]
+analysis-paths: ["analyses"]
+test-paths: ["tests"]
+seed-paths: ["seeds"]
+macro-paths: ["macros"]
+snapshot-paths: ["snapshots"]
+
+target-path: "target"
+clean-targets:
+  - "target"
+  - "dbt_packages"
+
+vars:
+  # Datasets (from env; defaults for local dev)
+  landing_dataset: "{{ env_var('BQ_DATASET_LANDING', 'landing') }}"
+  bronze_dataset: "{{ env_var('BQ_DATASET_BRONZE', 'bronze') }}"
+  silver_dataset: "{{ env_var('BQ_DATASET_SILVER', 'silver') }}"
+  gold_dataset: "{{ env_var('BQ_DATASET_GOLD', 'gold') }}"
+
+models:
+  open_trace:
+    bronze:
+      +schema: "{{ env_var('BQ_DATASET_BRONZE', 'bronze') }}"
+      +database: "{{ env_var('BQ_PROJECT', 'your-gcp-project-id') }}"
+    silver:
+      +schema: "{{ env_var('BQ_DATASET_SILVER', 'silver') }}"
+      +database: "{{ env_var('BQ_PROJECT', 'your-gcp-project-id') }}"
+    gold:
+      +schema: "{{ env_var('BQ_DATASET_GOLD', 'gold') }}"
+      +database: "{{ env_var('BQ_PROJECT', 'your-gcp-project-id') }}"

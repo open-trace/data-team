@@ -1,0 +1,11 @@
+# Gold models: read from silver/gold; write to gold dataset.
+# Access: silver, gold. Run with: dbt run --target gold
+
+version: 2
+
+models:
+  - name: gold_example
+    description: "Example gold model. Replace with aggregations and ML-ready logic."
+    columns:
+      - name: id
+        description: "Primary key"

@@ -1,0 +1,54 @@
+# OpenTrace dbt — BigQuery. Default: OAuth (each dev uses their own Google identity).
+# For Docker/CI use _sa targets with GOOGLE_APPLICATION_CREDENTIALS set.
+# Run: cd dbt && DBT_PROFILES_DIR=. dbt run --target bronze
+
+open_trace:
+  target: "{{ env_var('DBT_TARGET', 'bronze') }}"
+  outputs:
+    # --- OAuth (default for local): run gcloud auth application-default login; no key file ---
+    bronze:
+      type: bigquery
+      method: oauth
+      project: "{{ env_var('BQ_PROJECT', 'your-gcp-project-id') }}"
+      dataset: "{{ env_var('BQ_DATASET_BRONZE', 'bronze') }}"
+      location: "{{ env_var('DBT_BIGQUERY_LOCATION', 'europe-west3') }}"
+      threads: 4
+    silver:
+      type: bigquery
+      method: oauth
+      project: "{{ env_var('BQ_PROJECT', 'your-gcp-project-id') }}"
+      dataset: "{{ env_var('BQ_DATASET_SILVER', 'silver') }}"
+      location: "{{ env_var('DBT_BIGQUERY_LOCATION', 'europe-west3') }}"
+      threads: 4
+    gold:
+      type: bigquery
+      method: oauth
+      project: "{{ env_var('BQ_PROJECT', 'your-gcp-project-id') }}"
+      dataset: "{{ env_var('BQ_DATASET_GOLD', 'gold') }}"
+      location: "{{ env_var('DBT_BIGQUERY_LOCATION', 'europe-west3') }}"
+      threads: 4
+    # --- Service account (Docker/CI): set GOOGLE_APPLICATION_CREDENTIALS, then --target bronze_sa ---
+    bronze_sa:
+      type: bigquery
+      method: service-account
+      project: "{{ env_var('BQ_PROJECT', 'your-gcp-project-id') }}"
+      dataset: "{{ env_var('BQ_DATASET_BRONZE', 'bronze') }}"
+      keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS', '') }}"
+      location: "{{ env_var('DBT_BIGQUERY_LOCATION', 'europe-west3') }}"
+      threads: 4
+    silver_sa:
+      type: bigquery
+      method: service-account
+      project: "{{ env_var('BQ_PROJECT', 'your-gcp-project-id') }}"
+      dataset: "{{ env_var('BQ_DATASET_SILVER', 'silver') }}"
+      keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS', '') }}"
+      location: "{{ env_var('DBT_BIGQUERY_LOCATION', 'europe-west3') }}"
+      threads: 4
+    gold_sa:
+      type: bigquery
+      method: service-account
+      project: "{{ env_var('BQ_PROJECT', 'your-gcp-project-id') }}"
+      dataset: "{{ env_var('BQ_DATASET_GOLD', 'gold') }}"
+      keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS', '') }}"
+      location: "{{ env_var('DBT_BIGQUERY_LOCATION', 'europe-west3') }}"
+      threads: 4

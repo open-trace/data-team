@@ -1,0 +1,16 @@
+# Bronze models: read from landing and bronze sources; write to bronze dataset.
+# Sources: source('landing', '...') and source('bronze', '...'). Tables and columns are in models/sources.yml.
+# Run with: dbt run --target bronze (or dbt run --target bronze --select bronze.*)
+
+version: 2
+
+models:
+  - name: stg_example
+    description: "Example staging model. Replace with real logic reading from source('landing', '...') or source('bronze', '...')."
+    columns:
+      - name: id
+        description: "Placeholder primary key"
+      - name: layer
+        description: "Pipeline layer (bronze)"
+      - name: _loaded_at
+        description: "Load timestamp"
