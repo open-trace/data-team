@@ -1,0 +1,103 @@
+---
+id: c2733113f3021f91
+url: https://news.google.com/rss/articles/CBMiogFBVV95cUxNc0gycTRjWkhkdU1fVEl0a09UMU9MR3NWd1R4MmRuN2ZyR1NRXy1sNkZXTlU2aVhXLWNMSXM4UHMxSHk1aDM2VnBTX0VVLVAtRjVrOXN3RGNfa2xBS3ZkWElwNXJRUXUxSWc3b2dHaXd1TzdUYXBEZU10ak8zVExzYUxwbFFyMHlJRDROWkN3eVRxT2d2dTJ5VVgyREhtOXRfbFE?oc=5
+rss_url: https://news.google.com/rss/articles/CBMiogFBVV95cUxNc0gycTRjWkhkdU1fVEl0a09UMU9MR3NWd1R4MmRuN2ZyR1NRXy1sNkZXTlU2aVhXLWNMSXM4UHMxSHk1aDM2VnBTX0VVLVAtRjVrOXN3RGNfa2xBS3ZkWElwNXJRUXUxSWc3b2dHaXd1TzdUYXBEZU10ak8zVExzYUxwbFFyMHlJRDROWkN3eVRxT2d2dTJ5VVgyREhtOXRfbFE?oc=5
+title: 'Agricultural Innovation and the Protection of Traditional Rice Varieties:
+  Kerala a Case Study - Frontiers'
+country: Ghana
+domain: agriculture
+domain_score: 23
+info_type: news_article
+published_at: '2020-01-07T00:00:00+00:00'
+published_at_source: rss
+published_at_confidence: 0.95
+published_at_raw: '2020-01-07'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:14:28+00:00'
+extracted_at: '2026-03-24T16:14:27+00:00'
+feed_name: Google News — Ghana agriculture [2020-01-06]
+source: rss
+body_source: tavily_search
+phase1_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMiogFBVV95cUxNc0gycTRjWkhkdU1fVEl0a09UMU9MR3NWd1R4MmRuN2ZyR1NRXy1sNkZXTlU2aVhXLWNMSXM4UHMxSHk1aDM2VnBTX0VVLVAtRjVrOXN3RGNfa2xBS3ZkWElwNXJRUXUxSWc3b2dHaXd1TzdUYXBEZU10ak8zVExzYUxwbFFyMHlJRDROWkN3eVRxT2d2dTJ5VVgyREhtOXRfbFE?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49Bi4eQgX_7kl4Ze5oOYxy4OYMNhrtv13FmTfiniY6qqrVx1S3WeO9x13K9Ml3XOfxHHsA5k-PB1qVOcn8JL9IZ6J2HPd-Hf
+article_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMiogFBVV95cUxNc0gycTRjWkhkdU1fVEl0a09UMU9MR3NWd1R4MmRuN2ZyR1NRXy1sNkZXTlU2aVhXLWNMSXM4UHMxSHk1aDM2VnBTX0VVLVAtRjVrOXN3RGNfa2xBS3ZkWElwNXJRUXUxSWc3b2dHaXd1TzdUYXBEZU10ak8zVExzYUxwbFFyMHlJRDROWkN3eVRxT2d2dTJ5VVgyREhtOXRfbFE?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49Bi4eQgX_7kl4Ze5oOYxy4OYMNhrtv13FmTfiniY6qqrVx1S3WeO9x13K9Ml3XOfxHHsA5k-PB1qVOcn8JL9IZ6J2HPd-Hf
+enriched: true
+enrichment_used: tavily_search
+dedupe_id: 82a738fb88cbd555
+cluster_id: 0362ba3ecc3de4b4
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- agriculture
+- agricultural
+- crop
+- seed
+- food security
+- malnutrition
+- rice
+- sorghum
+domain_scores:
+  agriculture: 23
+  economics: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMiogFBVV95cUxNc0gycTRjWkhkdU1fVEl0a09UMU9MR3NWd1R4MmRuN2ZyR1NRXy1sNkZXTlU2aVhXLWNMSXM4UHMxSHk1aDM2VnBTX0VVLVAtRjVrOXN3RGNfa2xBS3ZkWElwNXJRUXUxSWc3b2dHaXd1TzdUYXBEZU10ak8zVExzYUxwbFFyMHlJRDROWkN3eVRxT2d2dTJ5VVgyREhtOXRfbFE?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49Bi4eQgX_7kl4Ze5oOYxy4OYMNhrtv13FmTfiniY6qqrVx1S3WeO9x13K9Ml3XOfxHHsA5k-PB1qVOcn8JL9IZ6J2HPd-Hf
+---
+
+Madagascar Shows Why the Future of Agricultural Innovation Must Be Integrated - global-agriculture.com # Madagascar Shows Why the Future of Agricultural Innovation Must Be Integrated. ****20** March 2026, **US**:** In Madagascar today, the stakes for agricultural transformation could not be higher. Food insecurity and malnutrition are widespread in Madagascar, with a large share of households experiencing periodic food shortages, particularly in rural areas dependent on rainfed agriculture (WFP, World Bank). It is emerging as an important testing ground for a new model of agricultural innovation—one that connects science, policy, capacity strengthening, and prioritizing agricultural investment in ways that are more integrated, collaborative, and responsive to real-world complexity. Madagascar can be model of how international and national research systems and development finance institutions can work together to translate innovation into large-scale agricultural transformation. * Agricultural Innovation Will Drive Solutions For Our…. 1. Bayer Confident in China’s Agricultural Future, Eyes Sustainability and Innovation. 2. Agricultural Innovation Will Drive Solutions For Our Future Food Security Needs With New Value-chain Cooperation, Says CropLife International CEO. https://www.global-agriculture.com/ag-tech-research-news/madagascar-shows-why-the-future-of-agricultural-innovation-must-be-integrated/
+
+From Rome to the World: Working Together to Protect Crop Diversity - global-agriculture.com # From Rome to the World: Working Together to Protect Crop Diversity. ****18** March 2026, **Rome**:** On a spring evening in Rome, leaders interested in global food security gathered for the German Embassy’s Climate Talks to discuss the very foundation of food – crop diversity. He underscored that crop diversity underpins the global food system and that seed collections can spark innovation in agriculture. The caterer grows many ingredients in a garden just outside Rome, bringing global crop diversity and local food production together on the same plate. * Together For The Future Of Food: Crop Diversity Day 2025. * Devex: Why Crop Diversity Is Key For The Future Of Food. 1. Africa Must Act To Protect Crop Diversity Critical For Food Security And Nutrition. 2. Geoffrey Hawtin: Crop Diversity Pioneer Who Won the World Food Prize. 3. Cary Fowler: Crop Diversity Visionary and World Food Prize Laureate. 4. Geoffrey Hawtin and Cary Fowler to Receive the 2024 World Food Prize for Safeguarding Crop Diversity. https://www.global-agriculture.com/seed-industry/from-rome-to-the-world-working-together-to-protect-crop-diversity/
+
+Agriculture In-depth– USDA NRCS offering new program focusing on regenerative approach to conservation management - DRGNews Agriculture In-depth-- USDA NRCS offering new program focusing on regenerative approach to conservation managementPierre Area Chamber of Commerce Agri-Interest Committee Scholarships available; Application deadline is MondayU.S. Government Providing $1 Billion to Study Impact of Crop Protection ToolsCheyenne River, Crow Creek, Lower Brule among Great Sioux Nation Tribes establishing historic co-stewardship agreement with U.S. Forest Service for Black Elk WildernessCity officials from Platte, Wagner re-elected to district offices for SD Municipal LeagueRhoden signs budget bills into lawStanley County falls to Clark-Willow Lake in State A first roundRhoden part of group of governors urging Thune and Schumer to support SAVE America ActJackley supporting U.S. Senate passage of SAVE America ActVaden: Supportive Biofuel Regulations Coming SoonTrade Associations Ask for Finalized RFSU.S. sorghum crop graded at No. 1 certification for seventh consecutive yearTiger Talk Episode 25 NCAA Tournament SpecialPierre sealing cracks in streets to help prevent damage, extend life of roadway surfaceNational Ag Day 2026 set for Tuesday, March 24Big Dakota Conference boys basketball team announced; Stanley County & Cheynne-Eagle Butte see three each on listLabor Department offering Apprenticeship Knowledge Series on Youth Apprenticeships March 19; Registration is requiredWeekly Corn and Soybean Export Inspections IncreaseAg Retailers Outline 2026 Policy PrioritiesFarm Broadcasting Loses a Legend. # Agriculture In-depth– USDA NRCS offering new program focusing on regenerative approach to conservation management. https://drgnews.com/2026/03/20/agriculture-in-depth-usda-nrcs-offering-new-program-focusing-on-regenerative-approach-to-conservation-management/

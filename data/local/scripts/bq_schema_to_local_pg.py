@@ -1,15 +1,15 @@
 #!/usr/bin/env python3
 """
-Fetch BigQuery table schemas for bronze tables and generate PostgreSQL DDL.
-Writes one .sql file per table to data/local/schema/bronze/ and optionally
+Fetch BigQuery table schemas for bronze, silver, and gold and generate PostgreSQL DDL.
+Writes one .sql file per table to data/local/schema/{bronze,silver,gold}/ and optionally
 creates the tables on the local DB when LOCAL_DB_URL is set.
 
 Usage:
-  Set BQ_PROJECT, BQ_DATASET; optionally LOCAL_DB_URL. Table list from
-  data/local/scripts/bronze_tables.txt or env BQ_BRONZE_TABLES (comma-separated).
+  Set BQ_PROJECT; optionally BQ_DATASET_BRONZE, BQ_DATASET_SILVER, BQ_DATASET_GOLD, LOCAL_DB_URL.
+  Table lists from data/local/scripts/{bronze,silver,gold}_tables.txt.
   python bq_schema_to_local_pg.py [--write-only] [--execute-only]
   --write-only: only write .sql files (default: write + execute if LOCAL_DB_URL set)
-  --execute-only: only execute DDL on local DB (skip writing files)
+  --execute-only: only execute DDL on local DB (skip writing files; runs all existing .sql in schema/*/)
 
 Requires: GOOGLE_APPLICATION_CREDENTIALS or gcloud auth for BigQuery.
 """
@@ -22,10 +22,17 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 SCRIPTS_DIR = Path(__file__).resolve().parent
-SCHEMA_BRONZE_DIR = REPO_ROOT / "data" / "local" / "schema" / "bronze"
+SCHEMA_DIR = REPO_ROOT / "data" / "local" / "schema"
 if str(SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPTS_DIR))
 from engine_connector import get_engine  # noqa: E402
+
+# Layer -> (env var for dataset id, table list file name)
+LAYERS = {
+    "bronze": ("BQ_DATASET_BRONZE", "bronze_tables.txt"),
+    "silver": ("BQ_DATASET_SILVER", "silver_tables.txt"),
+    "gold": ("BQ_DATASET_GOLD", "gold_tables.txt"),
+}
 
 # BigQuery type -> PostgreSQL type
 BQ_TO_PG = {
@@ -48,12 +55,14 @@ BQ_TO_PG = {
 }
 
 
-def load_bronze_table_list() -> list[str]:
-    """Load bronze table IDs from bronze_tables.txt or BQ_BRONZE_TABLES env."""
-    env_list = os.environ.get("BQ_BRONZE_TABLES", "").strip()
+def load_table_list(layer: str) -> list[str]:
+    """Load table IDs from {layer}_tables.txt or env BQ_{LAYER}_TABLES (comma-separated)."""
+    _, filename = LAYERS[layer]
+    env_key = f"BQ_{layer.upper()}_TABLES"
+    env_list = os.environ.get(env_key, "").strip()
     if env_list:
         return [t.strip() for t in env_list.split(",") if t.strip()]
-    path = SCRIPTS_DIR / "bronze_tables.txt"
+    path = SCRIPTS_DIR / filename
     if not path.exists():
         return []
     return [
@@ -104,16 +113,15 @@ def build_create_table(table_id: str, schema_fields: list) -> str:
 def main() -> None:
     import argparse
 
-    parser = argparse.ArgumentParser(description="Generate PostgreSQL DDL from BigQuery bronze schemas")
+    parser = argparse.ArgumentParser(description="Generate PostgreSQL DDL from BigQuery schemas (bronze, silver, gold)")
     parser.add_argument("--write-only", action="store_true", help="Only write .sql files")
     parser.add_argument("--execute-only", action="store_true", help="Only execute DDL on local DB (requires existing .sql)")
     args = parser.parse_args()
 
     project = os.environ.get("BQ_PROJECT", "").strip()
-    dataset = os.environ.get("BQ_DATASET", "").strip()
     local_db_url = os.environ.get("LOCAL_DB_URL", "").strip()
-    if not project or not dataset:
-        print("Set BQ_PROJECT and BQ_DATASET (e.g. in .env)", file=sys.stderr)
+    if not project:
+        print("Set BQ_PROJECT (e.g. in .env)", file=sys.stderr)
         sys.exit(1)
 
     write_files = not args.execute_only
@@ -126,25 +134,21 @@ def main() -> None:
         execute_ddl = False
 
     if args.execute_only:
-        if not execute_ddl:
+        if not execute_ddl or engine is None:
             print("--execute-only requires LOCAL_DB_URL", file=sys.stderr)
             sys.exit(1)
-        if not SCHEMA_BRONZE_DIR.exists():
-            print(f"No schema dir {SCHEMA_BRONZE_DIR}", file=sys.stderr)
-            sys.exit(1)
         from sqlalchemy import text
-        for sql_path in sorted(SCHEMA_BRONZE_DIR.glob("*.sql")):
-            ddl = sql_path.read_text(encoding="utf-8")
-            with engine.begin() as conn:
-                conn.execute(text(ddl))
-            print(f"Executed {sql_path.name}")
+        for layer in LAYERS:
+            schema_layer_dir = SCHEMA_DIR / layer
+            if not schema_layer_dir.exists():
+                continue
+            for sql_path in sorted(schema_layer_dir.glob("*.sql")):
+                ddl = sql_path.read_text(encoding="utf-8")
+                with engine.begin() as conn:
+                    conn.execute(text(ddl))
+                print(f"Executed {layer}/{sql_path.name}")
         print("Done.")
         return
-
-    table_ids = load_bronze_table_list()
-    if not table_ids:
-        print("No tables found in bronze_tables.txt or BQ_BRONZE_TABLES", file=sys.stderr)
-        sys.exit(1)
 
     try:
         from google.cloud import bigquery
@@ -152,37 +156,50 @@ def main() -> None:
         print("Install: pip install google-cloud-bigquery", file=sys.stderr)
         raise SystemExit(1) from e
 
-    client = bigquery.Client(project=project)
-    SCHEMA_BRONZE_DIR.mkdir(parents=True, exist_ok=True)
-
     from google.cloud.bigquery import DatasetReference, TableReference
+    client = bigquery.Client(project=project)
 
-    for table_id in table_ids:
-        table_id = table_id.strip()
-        if not table_id:
+    any_tables = False
+    for layer, (dataset_env, _) in LAYERS.items():
+        dataset_id = (os.environ.get(dataset_env) or "").strip()
+        if not dataset_id and layer == "bronze":
+            dataset_id = (os.environ.get("BQ_DATASET") or "bronze").strip()
+        if not dataset_id:
+            dataset_id = layer
+        table_ids = load_table_list(layer)
+        if not table_ids:
             continue
-        try:
-            dataset_ref = DatasetReference(project, dataset)
-            table_ref = TableReference(dataset_ref, table_id)
-            table = client.get_table(table_ref)
-        except Exception as e:
-            print(f"Skip {table_id}: {e}", file=sys.stderr)
-            continue
-        schema_fields = list(table.schema)
-        ddl = build_create_table(table_id, schema_fields)
+        any_tables = True
+        schema_layer_dir = SCHEMA_DIR / layer
+        schema_layer_dir.mkdir(parents=True, exist_ok=True)
+        dataset_ref = DatasetReference(project, dataset_id)
+        for table_id in table_ids:
+            table_id = table_id.strip()
+            if not table_id:
+                continue
+            try:
+                table_ref = TableReference(dataset_ref, table_id)
+                table = client.get_table(table_ref)
+            except Exception as e:
+                print(f"Skip {layer}.{table_id}: {e}", file=sys.stderr)
+                continue
+            schema_fields = list(table.schema)
+            ddl = build_create_table(table_id, schema_fields)
 
-        if write_files:
-            fname = safe_filename(table_id) + ".sql"
-            out_path = SCHEMA_BRONZE_DIR / fname
-            out_path.write_text(ddl + "\n", encoding="utf-8")
-            print(f"Wrote {out_path.relative_to(REPO_ROOT)}")
+            if write_files:
+                fname = safe_filename(table_id) + ".sql"
+                out_path = schema_layer_dir / fname
+                out_path.write_text(ddl + "\n", encoding="utf-8")
+                print(f"Wrote {out_path.relative_to(REPO_ROOT)}")
 
-        if execute_ddl and engine is not None:
-            from sqlalchemy import text
-            with engine.begin() as conn:
-                conn.execute(text(ddl))
-            print(f"Created table {quote_ident(table_id)} on local DB")
+            if execute_ddl and engine is not None:
+                from sqlalchemy import text
+                with engine.begin() as conn:
+                    conn.execute(text(ddl))
+                print(f"Created table {quote_ident(table_id)} on local DB ({layer})")
 
+    if not any_tables:
+        print("No tables found in bronze_tables.txt, silver_tables.txt, or gold_tables.txt. Add table names to sync.", file=sys.stderr)
     print("Done.")
 
 

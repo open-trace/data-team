@@ -1,0 +1,15 @@
+---
+id: 40ca6860f5b9809e
+url: https://www.freshplaza.com
+title: 'FreshPlaza: Global Fresh Produce and Banana News'
+country: Nigeria
+domain: agriculture
+domain_score: 2
+info_type: news_article
+published_at: '2024-01-18'
+feed_name: Google News — Nigeria agriculture [2024-01-17]
+source: rss
+body_source: fetched_html
+---
+
+FreshPlaza: Global Fresh Produce and Banana News Sign up for our daily Newsletter and stay up to date with all the latest news! Subscribe I am already a subscriber You are receiving this pop-up because this is the first time you are visiting our site. If you keep getting this message, please enable cookies in your browser. You are using software which is blocking our advertisements (adblocker). As we provide the news for free, we are relying on revenues from our banners. So please disable your adblocker and reload the page to continue using this site. Thanks! Click here for a guide on disabling your adblocker. Sign up for our daily Newsletter and stay up to date with all the latest news! Subscribe I am already a subscriber You are receiving this pop-up because this is the first time you are visiting our site. If you keep getting this message, please enable cookies in your browser. ✕ FreshPublishers Open in the app OPEN

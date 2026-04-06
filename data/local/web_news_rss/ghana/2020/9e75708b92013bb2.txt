@@ -1,0 +1,174 @@
+---
+id: 9e75708b92013bb2
+url: https://news.google.com/rss/articles/CBMiywFBVV95cUxPckoyT2ZpNmxyZFJZUE9HNDQwdFFzcmhBSC1QOER2ZGpFNDBWUm1ydFp5S2NFbkFCRE5YdVM0NmF0ckR4SW5JRkU1cXpla1ZhNExHaXRQVkxDT21mNzA5dUJkUmFOR0Y0eWVsOGFyYmk2QmM2NjRGZ2FHZXliUllXWFhYN2JLeXFVN19xZVFYX3NUSGE2Mk5peHUzQ1NGNUhsMTlMY0FRY3Y0U1V4alZldkNuanIyeVQ2aE5FaXpFR1ZTMENuTDJWOFFRWQ?oc=5
+rss_url: https://news.google.com/rss/articles/CBMiywFBVV95cUxPckoyT2ZpNmxyZFJZUE9HNDQwdFFzcmhBSC1QOER2ZGpFNDBWUm1ydFp5S2NFbkFCRE5YdVM0NmF0ckR4SW5JRkU1cXpla1ZhNExHaXRQVkxDT21mNzA5dUJkUmFOR0Y0eWVsOGFyYmk2QmM2NjRGZ2FHZXliUllXWFhYN2JLeXFVN19xZVFYX3NUSGE2Mk5peHUzQ1NGNUhsMTlMY0FRY3Y0U1V4alZldkNuanIyeVQ2aE5FaXpFR1ZTMENuTDJWOFFRWQ?oc=5
+title: French Agricultural Research Centre, CIRAD, wants to restart cooperation with
+  Togo - Togo First
+country: Ghana
+domain: agriculture
+domain_score: 19
+info_type: news_article
+published_at: '2020-01-20T00:00:00+00:00'
+published_at_source: rss
+published_at_confidence: 0.95
+published_at_raw: '2020-01-20'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:14:37+00:00'
+extracted_at: '2026-03-24T16:14:36+00:00'
+feed_name: Google News — Ghana agriculture [2020-01-19]
+source: rss
+body_source: tavily_search
+phase1_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMiywFBVV95cUxPckoyT2ZpNmxyZFJZUE9HNDQwdFFzcmhBSC1QOER2ZGpFNDBWUm1ydFp5S2NFbkFCRE5YdVM0NmF0ckR4SW5JRkU1cXpla1ZhNExHaXRQVkxDT21mNzA5dUJkUmFOR0Y0eWVsOGFyYmk2QmM2NjRGZ2FHZXliUllXWFhYN2JLeXFVN19xZVFYX3NUSGE2Mk5peHUzQ1NGNUhsMTlMY0FRY3Y0U1V4alZldkNuanIyeVQ2aE5FaXpFR1ZTMENuTDJWOFFRWQ?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49ALGJ67hkewf6buqfAOu0rEB-yLXygf9XCCw1G-hO5esd9GB-p6oI3nIxXXsyIbySAhNpJI2x9Da_FI_KQ1CIhZ8Cq_w6Bd
+article_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMiywFBVV95cUxPckoyT2ZpNmxyZFJZUE9HNDQwdFFzcmhBSC1QOER2ZGpFNDBWUm1ydFp5S2NFbkFCRE5YdVM0NmF0ckR4SW5JRkU1cXpla1ZhNExHaXRQVkxDT21mNzA5dUJkUmFOR0Y0eWVsOGFyYmk2QmM2NjRGZ2FHZXliUllXWFhYN2JLeXFVN19xZVFYX3NUSGE2Mk5peHUzQ1NGNUhsMTlMY0FRY3Y0U1V4alZldkNuanIyeVQ2aE5FaXpFR1ZTMENuTDJWOFFRWQ?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49ALGJ67hkewf6buqfAOu0rEB-yLXygf9XCCw1G-hO5esd9GB-p6oI3nIxXXsyIbySAhNpJI2x9Da_FI_KQ1CIhZ8Cq_w6Bd
+enriched: true
+enrichment_used: tavily_search
+dedupe_id: 45167bd88d4bce23
+cluster_id: 99e502f72d121010
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- agriculture
+- agricultural
+- food security
+- malnutrition
+- minister of agriculture
+domain_scores:
+  agriculture: 19
+  economics: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMiywFBVV95cUxPckoyT2ZpNmxyZFJZUE9HNDQwdFFzcmhBSC1QOER2ZGpFNDBWUm1ydFp5S2NFbkFCRE5YdVM0NmF0ckR4SW5JRkU1cXpla1ZhNExHaXRQVkxDT21mNzA5dUJkUmFOR0Y0eWVsOGFyYmk2QmM2NjRGZ2FHZXliUllXWFhYN2JLeXFVN19xZVFYX3NUSGE2Mk5peHUzQ1NGNUhsMTlMY0FRY3Y0U1V4alZldkNuanIyeVQ2aE5FaXpFR1ZTMENuTDJWOFFRWQ?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49ALGJ67hkewf6buqfAOu0rEB-yLXygf9XCCw1G-hO5esd9GB-p6oI3nIxXXsyIbySAhNpJI2x9Da_FI_KQ1CIhZ8Cq_w6Bd
+---
+
+iciHaiti - Brazil : Strengthening cooperation in the agricultural sector - iciHaiti.com |  | |  | | --- | |  | |  | |  | |  | | Haiti - Tripartite Agreement : Master's Degree in Land Use Planning   Haiti - Oral Health : The Ministry Launches a Call for National Mobilization   Haiti - Cap-Haitien : The City Hall continues to take measures to support the affected merchants of the Cluny market   Haiti - FLASH : Plane goes off-runway at Antoine-Simon Airport in Les Cayes   Haiti - FLASH : 5 departments on Yellow Alert    **more news** | |  | | iciHaiti - Brazil : Strengthening cooperation in the agricultural sector   iciHaiti - Sports : «Ti Mondyal 2026» Project   iciHaiti - Politic : The MJSAC and UN Women strengthen their partnership   iciHaiti - Politic : Inspection Tour of Sports Parks   Haiti - Cap-Haitien : Presentation of the Boulevard development project    **more news** | |  | |  | iciHaiti - Brazil : Strengthening cooperation in the agricultural sector 21/03/2026 10:10:59    |  |  | | --- | --- | |  |  |   On Friday, March 20, 2026, Agronomist Marcelin Aubourg, Minister of Agriculture, Natural Resources, and Rural Development, received the Ambassador of Brazil to Haiti, Luis Guilherme Da Silva. https://www.icihaiti.com/en/news-47115-icihaiti-brazil-strengthening-cooperation-in-the-agricultural-sector.html
+
+Vincent Bollore To Stand Trial On Political Corruption Charges 03/23/2026 - MediaPost #### While other MediaPost newsletters and articles remain free to all ... Subscribe today to gain access to every *Research Intelligencer* article we publish as well as the exclusive daily newsletter, full access to *The MediaPost Cases*, first-look research and daily insights from Joe Mandese, Editor in Chief. # Vincent Bollore To Stand Trial On Political Corruption Charges. Bollore Group controlling shareholder Vincent Bollore. will stand trial on corruption charges related to election campaigns in Togo and Guinea from 2009 to 2011, according to Reuters which cited a statement from the French financial. While Vincent Bollore stepped down. as Chairman and CEO at Bollore Group in 2022, he is said to remain a major influence at the firm through his control of an entity called Financière. His son Cyrille succeeded him as Chairman and CEO at Bollore Group. holding company Havas, which Bollore Group has controlling stakes in, are both headed by another son, Yannick Bollore. Representatives from Havas and Bollore had not responded to requests for. https://www.mediapost.com/publications/article/413646/vincent-bollore-to-stand-trial-on-political-corrup.html
+
+Madagascar Shows Why the Future of Agricultural Innovation Must Be Integrated - global-agriculture.com # Madagascar Shows Why the Future of Agricultural Innovation Must Be Integrated. ****20** March 2026, **US**:** In Madagascar today, the stakes for agricultural transformation could not be higher. Food insecurity and malnutrition are widespread in Madagascar, with a large share of households experiencing periodic food shortages, particularly in rural areas dependent on rainfed agriculture (WFP, World Bank). It is emerging as an important testing ground for a new model of agricultural innovation—one that connects science, policy, capacity strengthening, and prioritizing agricultural investment in ways that are more integrated, collaborative, and responsive to real-world complexity. Madagascar can be model of how international and national research systems and development finance institutions can work together to translate innovation into large-scale agricultural transformation. * Agricultural Innovation Will Drive Solutions For Our…. 1. Bayer Confident in China’s Agricultural Future, Eyes Sustainability and Innovation. 2. Agricultural Innovation Will Drive Solutions For Our Future Food Security Needs With New Value-chain Cooperation, Says CropLife International CEO. https://www.global-agriculture.com/ag-tech-research-news/madagascar-shows-why-the-future-of-agricultural-innovation-must-be-integrated/

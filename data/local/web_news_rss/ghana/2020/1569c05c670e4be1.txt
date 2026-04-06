@@ -1,0 +1,81 @@
+---
+id: 1569c05c670e4be1
+url: https://news.google.com/rss/articles/CBMixAFBVV95cUxQNUtWNDFXVGVqWFJiSzhIdnBrcjZuaXJLelhWS3ZiREEzLXVGTmNrMkdYbU9NclBvNUowQmNjV25XVnZ5aU12OFRXeGJXVFZCMUxmNndjdnNPTGYwckNNTXVSUEU4THUzNHU3dEVHQ280TnhCeXYzRVBVLUt6S3c5bDdkQlAzYzl5WC1pc3lHMFBwNHJzWFdaVHRweElaVHB0bEhhbUZRZnZnbGtEbXZ1ZlFCa2xlNkhfOHBfbU94UGtJaEVP?oc=5
+rss_url: https://news.google.com/rss/articles/CBMixAFBVV95cUxQNUtWNDFXVGVqWFJiSzhIdnBrcjZuaXJLelhWS3ZiREEzLXVGTmNrMkdYbU9NclBvNUowQmNjV25XVnZ5aU12OFRXeGJXVFZCMUxmNndjdnNPTGYwckNNTXVSUEU4THUzNHU3dEVHQ280TnhCeXYzRVBVLUt6S3c5bDdkQlAzYzl5WC1pc3lHMFBwNHJzWFdaVHRweElaVHB0bEhhbUZRZnZnbGtEbXZ1ZlFCa2xlNkhfOHBfbU94UGtJaEVP?oc=5
+title: Africa’s smallholder farmers need support to build resiliency and sustainability
+  - Genetic Literacy Project
+country: Ghana
+domain: agriculture
+domain_score: 38
+info_type: news_article
+published_at: '2020-05-05T00:00:00+00:00'
+published_at_source: rss
+published_at_confidence: 0.95
+published_at_raw: '2020-05-05'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:18:27+00:00'
+extracted_at: '2026-03-24T16:18:25+00:00'
+feed_name: Google News — Ghana agriculture [2020-05-04]
+source: rss
+body_source: tavily_search
+phase1_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMixAFBVV95cUxQNUtWNDFXVGVqWFJiSzhIdnBrcjZuaXJLelhWS3ZiREEzLXVGTmNrMkdYbU9NclBvNUowQmNjV25XVnZ5aU12OFRXeGJXVFZCMUxmNndjdnNPTGYwckNNTXVSUEU4THUzNHU3dEVHQ280TnhCeXYzRVBVLUt6S3c5bDdkQlAzYzl5WC1pc3lHMFBwNHJzWFdaVHRweElaVHB0bEhhbUZRZnZnbGtEbXZ1ZlFCa2xlNkhfOHBfbU94UGtJaEVP?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49BVEN7GaIn3USVk0Ij9mSEAGC5vlZwyMdk6tTX4Oe3pQkkVM5eNAQlujxlGd3cjPnhU8jL6cqSi2MruCdIrQvZ_S0r9w-KX
+article_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMixAFBVV95cUxQNUtWNDFXVGVqWFJiSzhIdnBrcjZuaXJLelhWS3ZiREEzLXVGTmNrMkdYbU9NclBvNUowQmNjV25XVnZ5aU12OFRXeGJXVFZCMUxmNndjdnNPTGYwckNNTXVSUEU4THUzNHU3dEVHQ280TnhCeXYzRVBVLUt6S3c5bDdkQlAzYzl5WC1pc3lHMFBwNHJzWFdaVHRweElaVHB0bEhhbUZRZnZnbGtEbXZ1ZlFCa2xlNkhfOHBfbU94UGtJaEVP?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49BVEN7GaIn3USVk0Ij9mSEAGC5vlZwyMdk6tTX4Oe3pQkkVM5eNAQlujxlGd3cjPnhU8jL6cqSi2MruCdIrQvZ_S0r9w-KX
+enriched: true
+enrichment_used: tavily_search
+dedupe_id: e68ac9531d5a33dd
+cluster_id: 15319800d72f18fa
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- agricultural
+- farmers
+- farming
+- smallholder
+- livestock
+- poultry
+domain_scores:
+  agriculture: 38
+  economics: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMixAFBVV95cUxQNUtWNDFXVGVqWFJiSzhIdnBrcjZuaXJLelhWS3ZiREEzLXVGTmNrMkdYbU9NclBvNUowQmNjV25XVnZ5aU12OFRXeGJXVFZCMUxmNndjdnNPTGYwckNNTXVSUEU4THUzNHU3dEVHQ280TnhCeXYzRVBVLUt6S3c5bDdkQlAzYzl5WC1pc3lHMFBwNHJzWFdaVHRweElaVHB0bEhhbUZRZnZnbGtEbXZ1ZlFCa2xlNkhfOHBfbU94UGtJaEVP?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49BVEN7GaIn3USVk0Ij9mSEAGC5vlZwyMdk6tTX4Oe3pQkkVM5eNAQlujxlGd3cjPnhU8jL6cqSi2MruCdIrQvZ_S0r9w-KX
+---
+
+From Our Editor: More Than Just Meat – Who Will Guard The Knowledge? - African Farming ### From our editor: More than just meat – who will guard the knowledge? ### New Fusion Meat programme promises to boost profits for South African red meat farmers. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Dr Lerato Matsaunyane. ### From our editor: More than just meat – who will guard the knowledge? ### New Fusion Meat programme promises to boost profits for South African red meat farmers. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Dr Lerato Matsaunyane. # From our editor: More than just meat – who will guard the knowledge? Established in 2020, African Farming aims to support black commercial farming in South Africa by providing informative and inspiring content and creating communication and education channels to help farmers develop and grow. Its initiatives include African Farming information days and workshops, which empower farmers – whether new or experienced – to build profitable and sustainable farming enterprises. https://www.africanfarming.com/2026/03/19/from-our-editor-more-than-just-meat-who-will-guard-the-knowledge/
+
+WATCH | Synergy’s Feed Additives And Buffer Products For Livestock Health - African Farming ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Rodrigo Lopes de Almeida. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Dr Lerato Matsaunyane. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Louw van Reenen. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Rodrigo Lopes de Almeida. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Dr Lerato Matsaunyane. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Louw van Reenen. These solutions specifically address heat stress, acidosis and help mitigate foot-and-mouth disease impacts in animals, representing critical support for South African farmers facing ongoing agricultural challenges. Established in 2020, African Farming aims to support black commercial farming in South Africa by providing informative and inspiring content and creating communication and education channels to help farmers develop and grow. Its initiatives include African Farming information days and workshops, which empower farmers – whether new or experienced – to build profitable and sustainable farming enterprises. https://www.africanfarming.com/2026/03/23/watch-synergys-feed-additives-and-buffer-products-for-livestock-health/
+
+Empowering Tomorrow’s Farmers: SA School’s Poultry Project Prepares Youth For Real Careers - African Farming *In a groundbreaking collaboration between the private sector and education authorities, Skurweberg Secondary School in Ceres has received a substantial donation of 2 000 broiler chicks and a complete feeding cycle, marking the beginning of what could become a model for sustainable school-based agricultural projects across South Africa.*. Students at Skurweberg Secondary School are learning biosecurity protocols, growth monitoring techniques, feed management, financial planning and market preparation, which are skills that form the foundation of successful agricultural enterprises. If successful, the project could serve as a template for similar initiatives across the Western Cape and potentially throughout South Africa, offering schools a pathway to greater financial independence while providing students with valuable practical skills. Established in 2020, African Farming aims to support black commercial farming in South Africa by providing informative and inspiring content and creating communication and education channels to help farmers develop and grow. https://www.africanfarming.com/2026/03/20/empowering-tomorrows-farmers-sa-schools-poultry-project-prepares-youth-for-real-careers/

@@ -1,0 +1,15 @@
+---
+id: ca38459ac1cd294f
+url: https://primeprogressng.com
+title: Home - Prime Progress NG
+country: Nigeria
+domain: agriculture
+domain_score: 4
+info_type: news_article
+published_at: '2025-12-15'
+feed_name: Google News — Nigeria agriculture
+source: rss
+body_source: fetched_html
+---
+
+By Bonface Orucho New industry data suggests Africa’s hotel development momentum is increasingly shifting eastward. While North Africa still dominates the size of the continent’s... Prime progress March 16, 2026

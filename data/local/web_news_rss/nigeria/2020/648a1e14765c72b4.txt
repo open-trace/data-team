@@ -1,0 +1,232 @@
+---
+id: 648a1e14765c72b4
+url: https://prnigeria.com/2020/01/07/foundation-train-youths-agribusiness/
+rss_url: https://prnigeria.com/2020/01/07/foundation-train-youths-agribusiness/
+title: Foundation to train 500 youths on Agri-business - PRNigeria News
+country: Nigeria
+domain: agriculture
+domain_score: 12
+info_type: news_article
+published_at: '2020-01-07T17:00:59+00:00'
+published_at_source: html
+published_at_confidence: 0.85
+published_at_raw: '2020-01-07T17:00:59+00:00'
+html_published_at: '2020-01-07T17:00:59+00:00'
+html_published_raw: '2020-01-07T17:00:59+00:00'
+article_updated_at: '2020-02-19T14:31:59+00:00'
+html_updated_raw: '2020-02-19T14:31:59+00:00'
+ingested_at: '2026-03-24T13:54:15+00:00'
+extracted_at: '2026-03-24T13:54:15+00:00'
+feed_name: Tavily discovery — agriculture
+source: rss
+body_source: fetched_html
+phase1_fetch_url: https://prnigeria.com/2020/01/07/foundation-train-youths-agribusiness/
+article_fetch_url: https://prnigeria.com/2020/01/07/foundation-train-youths-agribusiness/
+enriched: false
+enrichment_used: null
+dedupe_id: 4482bd4993946053
+cluster_id: dbcf1555602dccef
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- agriculture
+- agricultural
+- farmer
+- farmers
+- farming
+domain_scores:
+  agriculture: 12
+  economics: 0
+  International Trade (Exports & Imports): 0
+  Environmental & Climate: 0
+  Land Use & Soil Health: 0
+  Investment Readiness & Enterprise: 0
+  Technology & Innovation: 0
+  Market Access & Infrastructure: 0
+  Production & Yield: 0
+  Policy & Institutional: 0
+  Gender, Youth & Inclusion: 0
+  Nutrition & Food Security: 0
+  Food Systems & Value Chain: 0
+  Humanitarian & Agricultural Emergency: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+---
+
+Foundation to train 500 youths on Agri-business
+GIZ-Skills Development for Youth Employment, SKYE, in partnership with a non-governmental agricultural and developmental organization, FarmAgric, will train 500 young Nigerians on modern agriculture practice in Abuja.
+A press statement by GIZ-SKYE disclosed that the program will feature training on the basics of modern agricultural practices, agri-business and farmer corporative methods.
+The statement quoted the Executive Director of FarmAgric Foundation for Agriculture, Veronica Valentine as saying that, “the project which is tagged ASAP {Agricultural Skill Acquisition Program} was borne out of the need to sustain agriculture by efficiently equipping the next generation of farmers with all the necessary tools to thrive in our fast evolving society”.
+The ED further noted that outstanding trainees would be given some financial support.
+“The objectives of the ASAP are to efficiently train young people on contemporary agricultural techniques, create awareness on standardized farming practices and make financial aid available to outstanding trainees,” Ms Valentine added.
+Read Also:
+The organizers also noted that the 500 youths would be equipped with requisite skills and knowledge through theoretical and practical agricultural trainings; in order to create employment opportunities for themselves.
+While commenting on the ASAP initiative, the program manager, Alli-Bob Cinwon said, “I am very excited at the level of commitment the German Corporation has demonstrated towards investing in Nigerian youths.
+“The positive ripple effect this would have on youth engagement, youth empowerment and the economy will be far reaching. This is an opportunity that every young person with interests in agriculture should not miss”.
+According to him, intending participants can apply by following this link www.farmagricfoundation.org/asap/
+The program manager added that application for the program is open till January 10, 2020 to youths within the ages of 18-35 who reside within the FCT.
+“Sessions will commence in Abuja on the 13th January 2020 and will end on the 4th December 2020,” he added.
+PRNigeria reports that the SKYE is a four-year programme funded by the German Federal Ministry for Economic Cooperation and Development, BMZ, and implemented by Deutsche Gesellschaft für Internationale Zusammenarbeit (GIZ) GmbH.
+By PRNigeria

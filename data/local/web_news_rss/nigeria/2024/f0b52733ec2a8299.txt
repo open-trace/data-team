@@ -1,0 +1,15 @@
+---
+id: f0b52733ec2a8299
+url: https://www.legit.ng
+title: Legit News - Latest Nigeria News, Naija News and Breaking News Today on Legit.ng
+country: Nigeria
+domain: agriculture
+domain_score: 2
+info_type: news_article
+published_at: '2024-01-03'
+feed_name: Google News — Nigeria agriculture [2024-01-02]
+source: rss
+body_source: fetched_html
+---
+
+Breaking Breaking Just in: Tension as bandits attack church during service, kidnap worshippers Armed bandits attacked a branch of the Evangelical Church Winning All (ECWA) in Kwara State, abducting worshippers during Sunday service on March 22, 2026.

@@ -1,0 +1,152 @@
+---
+id: e58583b40547f2f0
+url: https://news.google.com/rss/articles/CBMiwAFBVV95cUxOcDZNc2drYkZleGVNVGdBUzRrbV9tNkNSaGV1YWVsV2RXTkUwRTQtRU05dG90Q2FjUEVxYWVlMDRhaU5sb3RtUFVvbTRQS2g5aHlpV3hjZjVXaUVnSU9DTC1nVjM0c1ZLX2VwdFc5QTIzTmZlN1dwZHlWOHJQdFRXSWdsY0FKeXdtUFFmS2UwUTVNQ3RETEpwc1JVamp4TUo1YThVQW5LMDZIb1k0dlU1djN4cEFINUMxN2duOWo3bXE?oc=5
+rss_url: https://news.google.com/rss/articles/CBMiwAFBVV95cUxOcDZNc2drYkZleGVNVGdBUzRrbV9tNkNSaGV1YWVsV2RXTkUwRTQtRU05dG90Q2FjUEVxYWVlMDRhaU5sb3RtUFVvbTRQS2g5aHlpV3hjZjVXaUVnSU9DTC1nVjM0c1ZLX2VwdFc5QTIzTmZlN1dwZHlWOHJQdFRXSWdsY0FKeXdtUFFmS2UwUTVNQ3RETEpwc1JVamp4TUo1YThVQW5LMDZIb1k0dlU1djN4cEFINUMxN2duOWo3bXE?oc=5
+title: Joy News’ Joseph Opoku Gakpo wins International Award for Leadership in Agricultural
+  Journalism - MyJoyOnline
+country: Ghana
+domain: agriculture
+domain_score: 29
+info_type: news_article
+published_at: '2020-05-18T00:00:00+00:00'
+published_at_source: rss
+published_at_confidence: 0.95
+published_at_raw: '2020-05-18'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:18:39+00:00'
+extracted_at: '2026-03-24T16:18:37+00:00'
+feed_name: Google News — Ghana agriculture [2020-05-17]
+source: rss
+body_source: tavily_search
+phase1_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMiwAFBVV95cUxOcDZNc2drYkZleGVNVGdBUzRrbV9tNkNSaGV1YWVsV2RXTkUwRTQtRU05dG90Q2FjUEVxYWVlMDRhaU5sb3RtUFVvbTRQS2g5aHlpV3hjZjVXaUVnSU9DTC1nVjM0c1ZLX2VwdFc5QTIzTmZlN1dwZHlWOHJQdFRXSWdsY0FKeXdtUFFmS2UwUTVNQ3RETEpwc1JVamp4TUo1YThVQW5LMDZIb1k0dlU1djN4cEFINUMxN2duOWo3bXE?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49BHTyeiCgkO_TLB_d-4s4wWc3_qpGJYHpsypf-X6simDaXSaa6w-lRS3R6veJKCTq_wkoxA9NvTx03BmBQDljuECaYhq3NY
+article_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMiwAFBVV95cUxOcDZNc2drYkZleGVNVGdBUzRrbV9tNkNSaGV1YWVsV2RXTkUwRTQtRU05dG90Q2FjUEVxYWVlMDRhaU5sb3RtUFVvbTRQS2g5aHlpV3hjZjVXaUVnSU9DTC1nVjM0c1ZLX2VwdFc5QTIzTmZlN1dwZHlWOHJQdFRXSWdsY0FKeXdtUFFmS2UwUTVNQ3RETEpwc1JVamp4TUo1YThVQW5LMDZIb1k0dlU1djN4cEFINUMxN2duOWo3bXE?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49BHTyeiCgkO_TLB_d-4s4wWc3_qpGJYHpsypf-X6simDaXSaa6w-lRS3R6veJKCTq_wkoxA9NvTx03BmBQDljuECaYhq3NY
+enriched: true
+enrichment_used: tavily_search
+dedupe_id: 06be2a4b840f17fb
+cluster_id: a4ebfd9401bc5d1a
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- agriculture
+- agricultural
+- agro-
+- farmer
+- farmers
+- farming
+- farm
+- harvest
+- fertiliser
+domain_scores:
+  agriculture: 29
+  economics: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMiwAFBVV95cUxOcDZNc2drYkZleGVNVGdBUzRrbV9tNkNSaGV1YWVsV2RXTkUwRTQtRU05dG90Q2FjUEVxYWVlMDRhaU5sb3RtUFVvbTRQS2g5aHlpV3hjZjVXaUVnSU9DTC1nVjM0c1ZLX2VwdFc5QTIzTmZlN1dwZHlWOHJQdFRXSWdsY0FKeXdtUFFmS2UwUTVNQ3RETEpwc1JVamp4TUo1YThVQW5LMDZIb1k0dlU1djN4cEFINUMxN2duOWo3bXE?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49BHTyeiCgkO_TLB_d-4s4wWc3_qpGJYHpsypf-X6simDaXSaa6w-lRS3R6veJKCTq_wkoxA9NvTx03BmBQDljuECaYhq3NY
+---
+
+Mahama tours Nobi Agriculture Project in Afram Plains - MyJoyOnline # Mahama tours Nobi Agriculture Project in Afram Plains. President John Dramani Mahama on Saturday visited Nobi Agriculture, a private farming project located at Sikasu in the Afram Plains. He was accompanied by the Minister for Food and Agriculture, Eric Opoku, and received by the project’s founder, Kwame Awuah-Darko. Discussions during the tour touched on how agricultural projects can contribute to supply chains, agro-processing and employment, particularly in rural areas. The Afram Plains area, where the project is located, is considered one of Ghana’s key agricultural zones due to its land availability and farming potential. * Mahama to lead Ghana’s delegation to UN special session on reparatory justice. * Afram Plains youth rally behind Mahama’s Farmers’ Service Centre initiative. * Mahama announces free fertiliser for farmers. * Mahama was right, Ghana’s economy is showing signs of resilience – Edem Agbana. * Burkina Faso tomato ban exposes Ghana’s dangerous food dependency. * Mahama tours Nobi Agriculture Project in Afram Plains. https://www.myjoyonline.com/mahama-tours-nobi-agriculture-project-in-afram-plains/
+
+Transfer rumors, news: Liverpool eye Gordon to replace Gakpo - ESPN ## ESPN. Transfer rumors, news: Liverpool eye Newcastle's Gordon to replace Gakpo. 1dAndy Davies, Special to ESPN. # Transfer rumors, news: Liverpool eye Gordon to replace Gakpo. Liverpool are considering Newcastle United's **Anthony Gordon** as an upgrade on **Cody Gakpo**, while Roma's defender **Wesley França** is a target for Arsenal. Join us for the latest transfer news and rumors from around the globe. - Liverpool could replace **Cody Gakpo** with Newcastle United winger **Anthony Gordon** in the summer, according to TEAMtalk. Gakpo has been offered to clubs in the Premier League, including Tottenham Hotspur, and around Europe as Liverpool attempt to gauge interest in the Netherlands international through third-party representatives. Gakpo's departure could make way Gordon who continues to impress Reds' officials, though Newcastle have made no secret of their intention to keep the 25-year-old on Tyneside. The Gunners are also monitoring Newcastle's **Tino Livramento**, Eintracht Frankfurt's **Nnamdi Collins** and Monaco's **Vanderson**. https://www.espn.com/soccer/story/_/id/48276985/transfer-rumors-news-liverpool-eye-newcastle-united-anthony-gordon-replace-cody-gakpo
+
+Nebraska Farmer wins 2026 Outstanding Service Award for agricultural excellence - Farm Progress # Nebraska Farmer wins 2026 Outstanding Service Award for agricultural excellence. Left to right: Curt Arens, Nebraska Farmer senior editor; Elizabeth Hodges, Farm Progress staff writer; and Brad Lubben, Nebraska Extension policy specialist.Ryan Evans, UNL Ag Econ Department. (March 19, 2026) — The University of Nebraska-Lincoln (UNL) Department of Agricultural Economics has awarded Nebraska Farmer magazine, a Farm Progress publication, the prestigious 2026 Outstanding Service Award. The award recognizes Nebraska Farmer’s long-standing commitment to supporting Nebraska’s agricultural community. Nebraska Farmer’s collaboration with the Department of Agricultural Economics spans decades. Known as the world’s largest totally irrigated working farm show, Husker Harvest Days was founded in 1978 by Nebraska Farmer, in partnership with the Agricultural Institute of Nebraska and volunteers in Grand Island and Hall County. Husker Harvest Days, the world's largest totally irrigated working farm show, takes place annually in Grand Island, Nebraska. https://www.farmprogress.com/names-in-the-news/nebraska-farmer-wins-2026-outstanding-service-award-for-agricultural-excellence

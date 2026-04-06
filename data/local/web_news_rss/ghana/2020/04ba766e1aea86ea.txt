@@ -1,0 +1,83 @@
+---
+id: 04ba766e1aea86ea
+url: https://news.google.com/rss/articles/CBMikgFBVV95cUxNaGxVbTNkUWFhLV9XSzFraF9wUVl1azFCZ3hjbzk3RnNrNmFUeld5ZkpnRkprS3JoRVdEVjdHLTYxRmkzemp4U1pzdVplUElySFpZTEdOYTVyemc4VDhfYUczMWNvZDRpNnVCdmo4VGUtajRkS3MtMFJ3bHRxZG0xbjJWQThfMk1yMmNYcDZrNzlEZw?oc=5
+rss_url: https://news.google.com/rss/articles/CBMikgFBVV95cUxNaGxVbTNkUWFhLV9XSzFraF9wUVl1azFCZ3hjbzk3RnNrNmFUeld5ZkpnRkprS3JoRVdEVjdHLTYxRmkzemp4U1pzdVplUElySFpZTEdOYTVyemc4VDhfYUczMWNvZDRpNnVCdmo4VGUtajRkS3MtMFJ3bHRxZG0xbjJWQThfMk1yMmNYcDZrNzlEZw?oc=5
+title: Revving up yam production, farmers’ profit with technologies - The Guardian
+  Nigeria News
+country: Ghana
+domain: agriculture
+domain_score: 25
+info_type: news_article
+published_at: '2020-08-06T00:00:00+00:00'
+published_at_source: rss
+published_at_confidence: 0.95
+published_at_raw: '2020-08-06'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:21:49+00:00'
+extracted_at: '2026-03-24T16:21:48+00:00'
+feed_name: Google News — Ghana agriculture [2020-08-05]
+source: rss
+body_source: tavily_search
+phase1_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMikgFBVV95cUxNaGxVbTNkUWFhLV9XSzFraF9wUVl1azFCZ3hjbzk3RnNrNmFUeld5ZkpnRkprS3JoRVdEVjdHLTYxRmkzemp4U1pzdVplUElySFpZTEdOYTVyemc4VDhfYUczMWNvZDRpNnVCdmo4VGUtajRkS3MtMFJ3bHRxZG0xbjJWQThfMk1yMmNYcDZrNzlEZw?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49CivotO70lm8OWFh69hQCIih-pBB5xUT4nD3nuZCLSnX6M0QLdwssRO-1ctlWyJRBL8oNnEClqch3Yc-e5hG9zQdxzCt4Dp
+article_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMikgFBVV95cUxNaGxVbTNkUWFhLV9XSzFraF9wUVl1azFCZ3hjbzk3RnNrNmFUeld5ZkpnRkprS3JoRVdEVjdHLTYxRmkzemp4U1pzdVplUElySFpZTEdOYTVyemc4VDhfYUczMWNvZDRpNnVCdmo4VGUtajRkS3MtMFJ3bHRxZG0xbjJWQThfMk1yMmNYcDZrNzlEZw?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49CivotO70lm8OWFh69hQCIih-pBB5xUT4nD3nuZCLSnX6M0QLdwssRO-1ctlWyJRBL8oNnEClqch3Yc-e5hG9zQdxzCt4Dp
+enriched: true
+enrichment_used: tavily_search
+dedupe_id: 5abdb02e77917841
+cluster_id: 1b9c4523f5285647
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- agriculture
+- agricultural
+- farmer
+- farmers
+- farming
+- farm
+- smallholder
+- irrigation
+- seed
+- yam
+domain_scores:
+  agriculture: 25
+  economics: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMikgFBVV95cUxNaGxVbTNkUWFhLV9XSzFraF9wUVl1azFCZ3hjbzk3RnNrNmFUeld5ZkpnRkprS3JoRVdEVjdHLTYxRmkzemp4U1pzdVplUElySFpZTEdOYTVyemc4VDhfYUczMWNvZDRpNnVCdmo4VGUtajRkS3MtMFJ3bHRxZG0xbjJWQThfMk1yMmNYcDZrNzlEZw?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49CivotO70lm8OWFh69hQCIih-pBB5xUT4nD3nuZCLSnX6M0QLdwssRO-1ctlWyJRBL8oNnEClqch3Yc-e5hG9zQdxzCt4Dp
+---
+
+Expert urges faster solar adoption - The Nation Newspaper Monday, March 23, 2026 Advertise With Us E-paper. March 23, 2026 by  The Nation. # Expert urges faster solar adoption. Falling technology costs are also accelerating adoption. Oye said the declining cost of solar technology marks a turning point for African economies, particularly Nigeria’s manufacturing and small business sectors. * Expert seeks year biofuel production. Oye pointed to Germany as an example of how renewable energy integration can strengthen industrial competitiveness. ## Read Also: Adeyanju hails court ruling allowing Nigerians record police officers. We buy too much, forget what we have, or change our minds,” he said. BREAKING: Nigerians are now approved to earn in US Dollars. Acquire premium domains for as low as ₦2.5 million and profit up to ₦17 million to ₦25 million, paid in US Dollars. ##### Oil exports: Nigeria, others to benefit from rising crude oil prices, says IMF 1 minute ago. https://thenationonlineng.net/expert-urges-faster-solar-adoption/
+
+Govt seeks investment to boost climate-smart agriculture - Punch Newspapers The Federal Government has called on investors to collaborate with Nigeria in harnessing its agricultural potential while tackling the growing impact of climate change on food production and security. According to the statement, “The Federal Government has called on investors, financial institutions, and development partners to collaborate with Nigeria in its vision of building a resilient food system, climate-smart farming, and expanding sustainable agricultural production, as well as unlocking the enormous potential of Africa’s largest agricultural market.”. The minister further listed key initiatives introduced by the government, including the distribution of solar-powered irrigation pumps to smallholder farmers, the development of climate-resilient seed systems, and the National Agricultural Mechanization Programme, which has procured 2,000 tractors and over 9,000 farm implements. Kyari noted that institutions such as the Bank of Agriculture, the Nigeria Agricultural Development Fund, and the National Agricultural Insurance Corporation are being strengthened to attract private investment and reduce risks in the sector. https://punchng.com/govt-seeks-investment-to-boost-climate-smart-agriculture/
+
+UP Agriculture Overhaul Under Yogi Govt: Surya Pratap Shahi - Rediff MoneyWiz Home  » Market News » UP Agriculture Overhaul Under Yogi Govt: Surya Pratap Shahi. Surya Pratap Shahi highlights major reforms in Uttar Pradesh agriculture under Yogi Adityanath, boosting farmer income and production. Lucknow/Deoria (UP), Mar 21 (PTI) Uttar Pradesh Agriculture Minister Surya Pratap Shahi on Saturday said the state has seen a significant transformation in the agriculture sector during the nine years of Yogi Adityanath government, driven by wide-ranging reforms. Shahi said that through wide-ranging reforms, direct benefits to farmers, expansion of irrigation, increased production and technological interventions, Uttar Pradesh has emerged as a new agricultural model. "After coming to power in 2017, Chief Minister Yogi Adityanath took a major decision to waive Rs 36,000 crore in bank loans of 86 lakh farmers. This was implemented transparently to provide financial relief and prevent extreme distress like suicides, while giving farmers a fresh start," Shahi said. He said the Yogi Adityanath government has transformed UP from 'BIMARU' state to a leading producer of foodgrains, sugar and milk. https://money.rediff.com/news/market/up-agriculture-overhaul-under-yogi-govt-surya-pratap-shahi/43986720260321

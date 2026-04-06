@@ -1,0 +1,88 @@
+---
+id: 604cc4022621ccc8
+url: https://news.google.com/rss/articles/CBMiwAFBVV95cUxOZDRONTJTQ0pUelB6U1F0WVd4SzRoZG04MmJJaHNSOS1ESEZDbWI5MVktYm03OW5hNjZodU55UDhONUJ4ZWlkYlNrdlpfWHZDT2RFUTZQMlE4a3p6M285TDRiSnI5MjVwelpZZ3IxN3RuNWtCNmp4SlZ3M3J6ZTdiSG45VEoyUEYxa1pFNWJkYmVtOG9UTm5fWXdBTzVpV2FIUDkyaEh4YTFiQzh4cExkaFRFdmNYZUdHeWw4ZjQ3dlk?oc=5
+rss_url: https://news.google.com/rss/articles/CBMiwAFBVV95cUxOZDRONTJTQ0pUelB6U1F0WVd4SzRoZG04MmJJaHNSOS1ESEZDbWI5MVktYm03OW5hNjZodU55UDhONUJ4ZWlkYlNrdlpfWHZDT2RFUTZQMlE4a3p6M285TDRiSnI5MjVwelpZZ3IxN3RuNWtCNmp4SlZ3M3J6ZTdiSG45VEoyUEYxa1pFNWJkYmVtOG9UTm5fWXdBTzVpV2FIUDkyaEh4YTFiQzh4cExkaFRFdmNYZUdHeWw4ZjQ3dlk?oc=5
+title: 'COVID19: Work in shifts, researchers advise yam seed producers, farmers -
+  Premium Times Nigeria'
+country: Ghana
+domain: agriculture
+domain_score: 36
+info_type: news_article
+published_at: '2020-06-10T00:00:00+00:00'
+published_at_source: rss
+published_at_confidence: 0.95
+published_at_raw: '2020-06-10'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:19:32+00:00'
+extracted_at: '2026-03-24T16:19:30+00:00'
+feed_name: Google News — Ghana agriculture [2020-06-09]
+source: rss
+body_source: tavily_search
+phase1_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMiwAFBVV95cUxOZDRONTJTQ0pUelB6U1F0WVd4SzRoZG04MmJJaHNSOS1ESEZDbWI5MVktYm03OW5hNjZodU55UDhONUJ4ZWlkYlNrdlpfWHZDT2RFUTZQMlE4a3p6M285TDRiSnI5MjVwelpZZ3IxN3RuNWtCNmp4SlZ3M3J6ZTdiSG45VEoyUEYxa1pFNWJkYmVtOG9UTm5fWXdBTzVpV2FIUDkyaEh4YTFiQzh4cExkaFRFdmNYZUdHeWw4ZjQ3dlk?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49CpVZ__PSMPYjoxCIdNRqPm93htpPHaNBniUZQGQcTPPJ5XUqCBj49lc2798tDnduI19LXoBg3uJGJsXstPLewv2jqy65M2
+article_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMiwAFBVV95cUxOZDRONTJTQ0pUelB6U1F0WVd4SzRoZG04MmJJaHNSOS1ESEZDbWI5MVktYm03OW5hNjZodU55UDhONUJ4ZWlkYlNrdlpfWHZDT2RFUTZQMlE4a3p6M285TDRiSnI5MjVwelpZZ3IxN3RuNWtCNmp4SlZ3M3J6ZTdiSG45VEoyUEYxa1pFNWJkYmVtOG9UTm5fWXdBTzVpV2FIUDkyaEh4YTFiQzh4cExkaFRFdmNYZUdHeWw4ZjQ3dlk?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49CpVZ__PSMPYjoxCIdNRqPm93htpPHaNBniUZQGQcTPPJ5XUqCBj49lc2798tDnduI19LXoBg3uJGJsXstPLewv2jqy65M2
+enriched: true
+enrichment_used: tavily_search
+dedupe_id: dfcef7ab05e62499
+cluster_id: 5e9ed3674374b4a6
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- agriculture
+- agricultural
+- farmers
+- farming
+- farm
+- crop
+- crops
+- harvest
+- planting
+- seed
+- wheat
+- yam
+- sorghum
+domain_scores:
+  agriculture: 36
+  economics: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMiwAFBVV95cUxOZDRONTJTQ0pUelB6U1F0WVd4SzRoZG04MmJJaHNSOS1ESEZDbWI5MVktYm03OW5hNjZodU55UDhONUJ4ZWlkYlNrdlpfWHZDT2RFUTZQMlE4a3p6M285TDRiSnI5MjVwelpZZ3IxN3RuNWtCNmp4SlZ3M3J6ZTdiSG45VEoyUEYxa1pFNWJkYmVtOG9UTm5fWXdBTzVpV2FIUDkyaEh4YTFiQzh4cExkaFRFdmNYZUdHeWw4ZjQ3dlk?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49CpVZ__PSMPYjoxCIdNRqPm93htpPHaNBniUZQGQcTPPJ5XUqCBj49lc2798tDnduI19LXoBg3uJGJsXstPLewv2jqy65M2
+---
+
+Revolutionize your rotation: Why farmers are turning to canola and forages - Farm Progress By looking to crops like forage sorghum to market to a local feedlot, producers might be able to find more profitability from their acres. With a new canola seed crushing facility now open in the area, farmers have an opportunity to save water and help with profit margins. By investigating new markets and having a forward-thinking approach, farmers can benefit from adding new specialty crops to their rotation. “I would not have even ventured into canola before the crush facility opened because there's no local market,” he said. For any specialty crop, looking to local markets helps reduce transport costs and find more profitability. Adding a crop to your rotation begs the question, “Do you have the right resources to plant and harvest?” Koehn said that when he added canola into his rotation, he already had the right equipment from planting wheat. Simon encourages farmers who are trying something new on the farm to talk to others who are growing that crop, as well as Extension professionals. https://www.farmprogress.com/forage/revolutionize-your-rotation-why-farmers-are-turning-to-canola-and-forages
+
+Push For Strong Funding to Advance Agriculture Research - Farms.com # Push For Strong Funding to Advance Agriculture Research | Farms.com. Image 8: Alberta Seed GuideImage 9: Better FarmingImage 10: Better PorkImage 11: Farms.com Risk ManagementImage 12: Farms.com Precision Agriculture Digital Digest. # Push For Strong Funding to Advance Agriculture Research. Image 26: Push For Strong Funding to Advance Agriculture Research. A broad coalition of scientific groups, research institutions, and agricultural stakeholders is calling for increased investment in advanced research programs to support the farming sector. Overall, increased support for advanced agricultural research is seen as a critical step toward building a stronger, more resilient farming future. Innovation Takes Center Stage at Canada’s Farm...›. Farm Equipment Continues Trade Values & Trends Con...›. Top Farming Tips for Strong Crops 2026›. Image 30: MSU Extension to Host Healthy Animals, Strong Farms Biosecurity Webinar for Small Farms and Agricultural Service Providers. Image 37: Alberta Seed GuideImage 38: Better FarmingImage 39: Better PorkImage 40: Farms.com Risk ManagementImage 41: Farms.com Precision Agriculture Digital Digest. https://www.farms.com/ag-industry-news/push-for-strong-funding-to-advance-agriculture-research-716.aspx
+
+Iowa State University Extension and Outreach Celebrates National Agriculture Day - Mix 107.3 KIOW # Iowa State University Extension and Outreach Celebrates National Agriculture Day. With a fundamental role in teaching, research and extension, Iowa State University Extension and Outreach reflects this year’s National Agriculture Day theme, “Agriculture: Together We Grow.” All year long, ISU Extension and Outreach provides research-based information and resources to engage Iowa’s farmers, producers and agribusinesses in educational opportunities that support both profitability and sustainability. Specialists with ISU Extension and Outreach work alongside farmers, landowners and agribusinesses to address emerging challenges, improve decision-making and strengthen the future of Iowa agriculture. Jay Harmon, associate dean in the College of Agriculture and Life Sciences and director for agriculture and natural resources with ISU Extension and Outreach, emphasized extension’s role in supporting the state’s agricultural workforce. In 2025, ISU Extension and Outreach Agriculture and Natural Resources:. To learn more about how ISU Extension and Outreach supports Iowa agriculture, read the 2025 Agriculture and Natural Resources Impact Report, which highlights work in:. https://kiow.com/2026/03/23/iowa-state-university-extension-and-outreach-celebrates-national-agriculture-day/

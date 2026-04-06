@@ -1,0 +1,69 @@
+---
+id: 9a3e91d9ef2dc71d
+url: https://news.google.com/rss/articles/CBMilAFBVV95cUxNc2pVQjlHeHRjbVRYa01oWVM5VXl1cThUUDdmMzlORGJUQVZKYUdQOVBKY0lSNV9IR0YtY1BXbFZNSGgtWEhFeWFJdWRpZk1uN3FMLVFKS0JDcXVVcTdiX0I2eVdQVWxtUGJKU3VuVFJKcnlzeXlmM0ppWjhwc0lLcHQzRmJVSXRDbnAtSVVFV1pMdlA10gGTAUFVX3lxTFB3cGVEVGFsdkdUUWtjQW1yU1VIa3FCNkRsVlJSckwwME1jMUZGaElzQmpmcFhxVk1FNkpfaFN2Q19fTHF2TG05UlVlRURuckRCX1dyeV9iVEplSzR2ZndNZmVObEJHN3hFYWFzVktGdnFSUGRPZ0I1dXlaVC1ackRWelJrZ05sNVRPQWQ4bVJueEdMUQ?oc=5
+rss_url: https://news.google.com/rss/articles/CBMilAFBVV95cUxNc2pVQjlHeHRjbVRYa01oWVM5VXl1cThUUDdmMzlORGJUQVZKYUdQOVBKY0lSNV9IR0YtY1BXbFZNSGgtWEhFeWFJdWRpZk1uN3FMLVFKS0JDcXVVcTdiX0I2eVdQVWxtUGJKU3VuVFJKcnlzeXlmM0ppWjhwc0lLcHQzRmJVSXRDbnAtSVVFV1pMdlA10gGTAUFVX3lxTFB3cGVEVGFsdkdUUWtjQW1yU1VIa3FCNkRsVlJSckwwME1jMUZGaElzQmpmcFhxVk1FNkpfaFN2Q19fTHF2TG05UlVlRURuckRCX1dyeV9iVEplSzR2ZndNZmVObEJHN3hFYWFzVktGdnFSUGRPZ0I1dXlaVC1ackRWelJrZ05sNVRPQWQ4bVJueEdMUQ?oc=5
+title: 'COVID-19: Association Of Farmers And Fishermen Support Farming Communities
+  In Eastern Region - Modern Ghana'
+country: Ghana
+domain: agriculture
+domain_score: 45
+info_type: news_article
+published_at: '2020-04-15T00:00:00+00:00'
+published_at_source: rss
+published_at_confidence: 0.95
+published_at_raw: '2020-04-15'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:17:32+00:00'
+extracted_at: '2026-03-24T16:17:30+00:00'
+feed_name: Google News — Ghana agriculture [2020-04-14]
+source: rss
+body_source: tavily_search
+phase1_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMilAFBVV95cUxNc2pVQjlHeHRjbVRYa01oWVM5VXl1cThUUDdmMzlORGJUQVZKYUdQOVBKY0lSNV9IR0YtY1BXbFZNSGgtWEhFeWFJdWRpZk1uN3FMLVFKS0JDcXVVcTdiX0I2eVdQVWxtUGJKU3VuVFJKcnlzeXlmM0ppWjhwc0lLcHQzRmJVSXRDbnAtSVVFV1pMdlA10gGTAUFVX3lxTFB3cGVEVGFsdkdUUWtjQW1yU1VIa3FCNkRsVlJSckwwME1jMUZGaElzQmpmcFhxVk1FNkpfaFN2Q19fTHF2TG05UlVlRURuckRCX1dyeV9iVEplSzR2ZndNZmVObEJHN3hFYWFzVktGdnFSUGRPZ0I1dXlaVC1ackRWelJrZ05sNVRPQWQ4bVJueEdMUQ?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49CpwBunO7uSRNb8cHvFWpg-QM79aj4QB-ZwGMkXaK0mr-oQOdoTvVwSETWOUCRbTzeK5wfnGzrwRDygfTWN5rMCrEYLuf3G
+article_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMilAFBVV95cUxNc2pVQjlHeHRjbVRYa01oWVM5VXl1cThUUDdmMzlORGJUQVZKYUdQOVBKY0lSNV9IR0YtY1BXbFZNSGgtWEhFeWFJdWRpZk1uN3FMLVFKS0JDcXVVcTdiX0I2eVdQVWxtUGJKU3VuVFJKcnlzeXlmM0ppWjhwc0lLcHQzRmJVSXRDbnAtSVVFV1pMdlA10gGTAUFVX3lxTFB3cGVEVGFsdkdUUWtjQW1yU1VIa3FCNkRsVlJSckwwME1jMUZGaElzQmpmcFhxVk1FNkpfaFN2Q19fTHF2TG05UlVlRURuckRCX1dyeV9iVEplSzR2ZndNZmVObEJHN3hFYWFzVktGdnFSUGRPZ0I1dXlaVC1ackRWelJrZ05sNVRPQWQ4bVJueEdMUQ?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49CpwBunO7uSRNb8cHvFWpg-QM79aj4QB-ZwGMkXaK0mr-oQOdoTvVwSETWOUCRbTzeK5wfnGzrwRDygfTWN5rMCrEYLuf3G
+enriched: true
+enrichment_used: tavily_search
+dedupe_id: 2ae9d86051873975
+cluster_id: 3b1784c5ca831293
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- farmer
+- farmers
+- farming
+- farm
+- livestock
+- cattle
+domain_scores:
+  agriculture: 45
+  economics: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMilAFBVV95cUxNc2pVQjlHeHRjbVRYa01oWVM5VXl1cThUUDdmMzlORGJUQVZKYUdQOVBKY0lSNV9IR0YtY1BXbFZNSGgtWEhFeWFJdWRpZk1uN3FMLVFKS0JDcXVVcTdiX0I2eVdQVWxtUGJKU3VuVFJKcnlzeXlmM0ppWjhwc0lLcHQzRmJVSXRDbnAtSVVFV1pMdlA10gGTAUFVX3lxTFB3cGVEVGFsdkdUUWtjQW1yU1VIa3FCNkRsVlJSckwwME1jMUZGaElzQmpmcFhxVk1FNkpfaFN2Q19fTHF2TG05UlVlRURuckRCX1dyeV9iVEplSzR2ZndNZmVObEJHN3hFYWFzVktGdnFSUGRPZ0I1dXlaVC1ackRWelJrZ05sNVRPQWQ4bVJueEdMUQ?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49CpwBunO7uSRNb8cHvFWpg-QM79aj4QB-ZwGMkXaK0mr-oQOdoTvVwSETWOUCRbTzeK5wfnGzrwRDygfTWN5rMCrEYLuf3G
+---
+
+Former Female Teacher Now Herds Over 200 Beefmaster Cattle - African Farming ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Dr Lerato Matsaunyane. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Caiphas Muyambo. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Dr Lerato Matsaunyane. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Caiphas Muyambo. The recognition of her livestock success came at the Phezukomkhono Female Farmer Awards recently, where Nozuko Farming won the export category prize of R100 000, plus the overall winner award of R100 000, totalling R200 000 in recognition. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Dr Lerato Matsaunyane. Established in 2020, African Farming aims to support black commercial farming in South Africa by providing informative and inspiring content and creating communication and education channels to help farmers develop and grow. Its initiatives include African Farming information days and workshops, which empower farmers – whether new or experienced – to build profitable and sustainable farming enterprises. https://www.africanfarming.com/2026/03/20/former-female-teacher-now-herds-over-200-beefmaster-cattle/
+
+Farmer Scientist Network awarded grant funding to support more farms - Harrogate Informer # Farmer Scientist Network awarded grant funding to support more farms. Farm businesses across Yorkshire are to be offered fresh support from the Farmer Scientist Network to embrace artificial intelligence and sustainable farming practices. A series of events and training opportunities for farmers and rural businesses will be available throughout 2026, thanks to a £7,500 grant awarded to the Farmer Scientist Network by Anglo-American as part of its Thriving Communities programme. The Network’s first event funded by Anglo-American, and specifically for farmers and rural business owners, will explain how artificial intelligence (AI) can support day-to-day farming operations and will share advice on how to protect farm and rural businesses from cybersecurity risks. In total, more than 100 farmers are expected to benefit directly from the programme of events and activities organised by the Farmer Scientist Network this year with funding from Anglo-American. ### Farmer Scientist Network awarded grant funding to support more farms. https://www.harrogate-news.co.uk/2026/03/23/farmer-scientist-network-awarded-grant-funding-to-support-more-farms/
+
+African Farming Agri-Development Imbizo 2026 – Meet the speakers: Leeko Makoene-Motsuenyane - African Farming ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Leeko Makoene-Motsuenyane. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Dr Lerato Matsaunyane. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Louw van Reenen. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Caiphas Muyambo. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Leeko Makoene-Motsuenyane. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Dr Lerato Matsaunyane. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Louw van Reenen. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Caiphas Muyambo. # African Farming Agri-Development Imbizo 2026 – Meet the speakers: Leeko Makoene-Motsuenyane. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Leeko Makoene-Motsuenyane. Established in 2020, African Farming aims to support black commercial farming in South Africa by providing informative and inspiring content and creating communication and education channels to help farmers develop and grow. https://www.africanfarming.com/2026/03/21/african-farming-agri-development-imbizo-2026-meet-the-speakers-leeko-makoene-motsuenyane/

@@ -1,0 +1,15 @@
+---
+id: be4a9407de81ad52
+url: https://www.thesierraleonetelegraph.com
+title: The Sierra Leone Telegraph
+country: Senegal
+domain: agriculture
+domain_score: 2
+info_type: news_article
+published_at: '2025-06-23'
+feed_name: Google News — Senegal agriculture
+source: rss
+body_source: fetched_html
+---
+
+In Focus Sierra Leone Telegraph: 20 March 2026: Today Friday 20th March 2026, marks the end of thirty days of fasting for Muslims all over the world, with prayers and celebrations. And in the capital of Sierra Leone – Freetown, where today has been declared a public holiday, the capital’s Mayor Yvonne [Read More]

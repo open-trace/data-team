@@ -1,0 +1,15 @@
+---
+id: 9cbaf087b11f52a5
+url: https://www.eurekalert.org
+title: EurekAlert! Science News Service from AAAS
+country: Senegal
+domain: Gender, Youth & Inclusion
+domain_score: 4
+info_type: news_article
+published_at: '2024-04-04'
+feed_name: Google News — Senegal agriculture
+source: rss
+body_source: fetched_html
+---
+
+EurekAlert! Science News Releases Trending News Releases View More News View More News Featured Sites ACS Spring 2026 American Chemical Society Chinese Academy of Sciences Tsinghua University Press World Premier International Research Center Initiative, Japan Science Partner Journals In the Spotlight Cancer Research Marine Science Climate Change

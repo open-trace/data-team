@@ -1,0 +1,327 @@
+---
+id: 751ded9b34133406
+url: https://www.thebrenthurstfoundation.org/news/ghanas-great-agricultural-opportunity/
+rss_url: https://www.thebrenthurstfoundation.org/news/ghanas-great-agricultural-opportunity/
+title: Ghana's Great Agricultural Opportunity | The Brenthurst Foundation
+country: Ghana
+domain: agriculture
+domain_score: 63
+info_type: news_article
+published_at: '2026-03-24T16:22:22+00:00'
+published_at_source: inferred
+published_at_confidence: 0.5
+published_at_raw: '2026-03-24T16:22:22+00:00'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:22:22+00:00'
+extracted_at: '2026-03-24T16:22:22+00:00'
+feed_name: Tavily discovery — production & yield
+source: rss
+body_source: fetched_html
+phase1_fetch_url: https://www.thebrenthurstfoundation.org/news/ghanas-great-agricultural-opportunity/
+article_fetch_url: https://www.thebrenthurstfoundation.org/news/ghanas-great-agricultural-opportunity/
+enriched: false
+enrichment_used: null
+dedupe_id: 089674a667c13106
+cluster_id: add49e1de0b67cf6
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- agriculture
+- agricultural
+- farmers
+- farming
+- smallholder
+- crop
+- crops
+- fertiliser
+- seed
+- seeds
+- hectare
+- hectares
+- food security
+- rice
+- cocoa
+- extension service
+- farmland
+- arable
+- value chain
+- commodity
+domain_scores:
+  agriculture: 63
+  economics: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+---
+
+News
+Ghana's Great Agricultural Opportunity
+Agriculture might be the great missed opportunity for growth in Ghana. This is what could be done to fix that
+Africa's path to building prosperity is at the core of the continent's development narrative. For over half a century, we have been trying to figure our way out of poverty and underdevelopment. There have been many missed opportunities. Agriculture is one of them.
+Africa remains a net importer of food, although it has 874 million hectares of arable farmland, and almost 60% of the world's uncultivated land. In the book Making Africa Work, this picture is quite bleakly demonstrated: only 43 per cent of Africa's arable land is in use, fertiliser use per hectare is just 13 per cent of the global average, and Africa's farmers have an estimated one tractor per 868 hectares. As its population has doubled overall and tripled in urban areas in the past 30 years, agricultural production and food security have struggled to keep pace.
+Africa's issues with agriculture are not for a lack of ideas. Too often, we squash brave policy decisions like a game of Whac-A-Mole, with the player's scores going to political self-interest rather than the advancement of our countries. Politics and choices matter in dealing with poverty. Until we make big bold long-term policy decisions, and corrective reforms, in the overall national interest, our tune of underdevelopment is unlikely to change.
+The narrative is not much different in Ghana. Take cocoa for instance.
+Ghana, the world's second-largest producer of cocoa, accounts for some 20% percent of world cocoa production, or 850,000 metric tonnes, from 800,000 smallholder farmers working on plots of two-three hectares on average, and generating $3 billion annually in foreign exchange. Roughly a third of which occurs in the Western North Region — the most acidic region in Ghana. Cocoa accounts for up to 8% of GDP, 25% of export earnings, and support some six million people who depend on it directly or indirectly for their livelihood.
+The export of raw cocoa beans has been a crucial source of government revenue since independence, but there is untapped potential in processed and value-added cocoa products. Eighty percent of exported cocoa is sold in its raw form to be processed elsewhere**.** 'Cocoa is a major staple of the Ghanaian economy,' one Ghanaian economic expert remarked, 'yet its story has essentially been the same for decades. There's been virtually no advancement in the way the sector operates. We must aim to do better'.
+Ghana's success with cocoa is a result of the high-quality cocoa bean seeds preferred by many international cocoa brands abroad. Thanks to regulations by COCOBOD and its peripheral agencies, the minimum quality standards exceed international benchmarks and the assurance of offtake gives farmers the relative predictability that they need. Sales of Ghana's cocoa is largely managed by COCOBOD, the state parastatal with sole permission to sell some 70% of Ghana's cocoa production to the rest of the world through the futures market, after fixing the price of beans for the full crop year.
+Historically, the COCOBOD has been a safety net for cocoa farmers, shielding them when countries with fully liberalised cocoa marketing were drowning, Cote D'Ivoire for instance. Yet, last year, COCOBOD held some GHc6 billion (US$1,1 billion) in long term debt for its activities supporting cocoa farmers. The question around innovating around our existing cocoa market structure should be on the table for discussion. If something worked for you at a point, it doesn't mean it will always work. Today, farmers' survey conducted by IMANI revealed that 94% of farmers are dissatisfied with the current producer price and 70 % believe that COCOBOD does not serve their interest. When there is a gap between its operations and outcomes to the main constituency, there is a strong basis for action, especially if it is a drain on state coffers.
+A challenge with Ghana's cocoa offering, apart from COCOBOD inefficiencies, is the reliance on raw cocoa beans.
+Globally, the cocoa beans market is worth an estimated US$9 billion, compared to an intermediate products market of US$28 billion and a final consumer goods market of US$87 billion. Ghana today captures some 20% of the cocoa beans market but only a negligible share of the intermediate and final products markets, processing a mere 15% of the beans it produces into limited semi-processed goods (such as cocoa butter and powder) as opposed to final-stage consumer products.
+To succeed, cocoa needs to be viewed less as a reliable financial commodity (and a source of reliable export revenue in the short term) and more as a basis for industrial growth. The success of artisanal companies like 57 Chocolates should provide an impetus for the government to create more space for more entrepreneurial activity in cocoa processing and value-addition.
+Broadly, the characteristics of cocoa farming cut across Ghana's agriculture sector: smallholder farmers, exporting largely raw produce, minuscule processing, and relatively low yields. As a consequence, Ghana has unrealised potential in the food industry. Realising Ghana, and Africa's, agriculture potential necessitates a range of integrated actions — a value chain approach.
+The policies needed for greater agricultural yields are no mystery. Many can rattle off the need to introduce land reform, introduce improved seed varieties, deliver better extension services, make investments in skills and basic infrastructure, develop rural finance options, and assure some predictability in pricing and offtake, among others.
+And yet, although these requirements are understood, the reforms needed still do not occur. Why? It depends. With cocoa for instance, apart from the contribution to state revenue, a significant portion of the electorate is in cocoa farming. As such, the political economy around cocoa farming makes it a sensitive electoral issue.
+Thus, realizing cocoa's agricultural potential, and more broadly agriculture, really may have more to do with politics and the choices that Ghanaian politicians make.
+Nevertheless, rethinking how we have done things in the past is needed. Cocoa farming, and the business of agriculture, has so much more to offer Ghanaians. Government must investigate, perhaps, a quasi-liberalised approach where it pursues progressive and incremental reforms to encourage private sector involvement, while maintaining a fixed minimum price to protect farmers.
+Evidently, addressing these issues will require an element of political will and policy granularity as the book Making Africa Work suggests. To realize its agriculture potential, the old 'business-as-usual' approach has to change. Ghana needs to be more supportive of enterprise rather than personalised and patronage-ridden systems. The private sector needs to be more active in and encouraged to occupy spaces like agriculture to develop a more competitive and prosperous sector.
+As a result of the current pandemic, food security — domestic and regional — should underpin the need to strengthen production and productivity in Ghana's agriculture sector. Cocoa needs reform but so do cashews, tomatoes, rice, pineapples, sugar, and soybean, to name a few. All of Ghana's neighbours (Togo, Burkina Faso, and Cote d'Ivoire) are net food importers by volume. In Burkina Faso, Ghana's Northern neighbour, around 1.6m people are severely food insecure with the COVID-19 crisis meant to escalate this to 2.1m by July 2020 alone. The region's increasing food insecurity and massively growing population amongst successive waves of floods and droughts indicate a growing demand for basic food crops, many of which Ghana can supply. But only if we open to trying new ideas and making some tough choices.

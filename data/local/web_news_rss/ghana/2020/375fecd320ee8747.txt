@@ -1,0 +1,156 @@
+---
+id: 375fecd320ee8747
+url: https://news.google.com/rss/articles/CBMinwFBVV95cUxORkpqTGNpdy1HNkpHYnhTNEtaWlg1NHBCVE5iQW14YVN2M0JSbks4UDdLZ25XX2dPSHBPcmQxYWZfdXh3OTZOQ3R1R281REZpNDdNSWtmbElrQjRldEljWHhDT0MxZ1duRE1WVVBISVdrTEtob0JRc1FESFJYOFpsbDlPZVdabklWbWItRVhOSTZrUVJNZUFqMFA2d0xpMDjSAaIBQVVfeXFMTlR6RUQzZEM0Tko1dlhwN1FvWUI3OUxnX1NLWnplMVpyTkZObFhlaERiNm5ZU1Z0Y2N5Qzc1ak91M1VQeWdGTWhxRC1kV2VhU3YwSzEyRmJ2b3I0NkZUVUtndXd1MmJLa1QzeERwRHFKNDE1QzZnRkd0VmFaSEZCYkkzX1pOZU5FcEpGbmtQdWwzakFMN0pXUzAzWXNtWVNuUkpR?oc=5
+rss_url: https://news.google.com/rss/articles/CBMinwFBVV95cUxORkpqTGNpdy1HNkpHYnhTNEtaWlg1NHBCVE5iQW14YVN2M0JSbks4UDdLZ25XX2dPSHBPcmQxYWZfdXh3OTZOQ3R1R281REZpNDdNSWtmbElrQjRldEljWHhDT0MxZ1duRE1WVVBISVdrTEtob0JRc1FESFJYOFpsbDlPZVdabklWbWItRVhOSTZrUVJNZUFqMFA2d0xpMDjSAaIBQVVfeXFMTlR6RUQzZEM0Tko1dlhwN1FvWUI3OUxnX1NLWnplMVpyTkZObFhlaERiNm5ZU1Z0Y2N5Qzc1ak91M1VQeWdGTWhxRC1kV2VhU3YwSzEyRmJ2b3I0NkZUVUtndXd1MmJLa1QzeERwRHFKNDE1QzZnRkd0VmFaSEZCYkkzX1pOZU5FcEpGbmtQdWwzakFMN0pXUzAzWXNtWVNuUkpR?oc=5
+title: Ghanaian Farmers Work Together for Organic Certification - VOA - Voice of America
+  English News
+country: Ghana
+domain: agriculture
+domain_score: 26
+info_type: news_article
+published_at: '2020-07-14T00:00:00+00:00'
+published_at_source: rss
+published_at_confidence: 0.95
+published_at_raw: '2020-07-14'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:20:55+00:00'
+extracted_at: '2026-03-24T16:20:54+00:00'
+feed_name: Google News — Ghana agriculture [2020-07-13]
+source: rss
+body_source: tavily_search
+phase1_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMinwFBVV95cUxORkpqTGNpdy1HNkpHYnhTNEtaWlg1NHBCVE5iQW14YVN2M0JSbks4UDdLZ25XX2dPSHBPcmQxYWZfdXh3OTZOQ3R1R281REZpNDdNSWtmbElrQjRldEljWHhDT0MxZ1duRE1WVVBISVdrTEtob0JRc1FESFJYOFpsbDlPZVdabklWbWItRVhOSTZrUVJNZUFqMFA2d0xpMDjSAaIBQVVfeXFMTlR6RUQzZEM0Tko1dlhwN1FvWUI3OUxnX1NLWnplMVpyTkZObFhlaERiNm5ZU1Z0Y2N5Qzc1ak91M1VQeWdGTWhxRC1kV2VhU3YwSzEyRmJ2b3I0NkZUVUtndXd1MmJLa1QzeERwRHFKNDE1QzZnRkd0VmFaSEZCYkkzX1pOZU5FcEpGbmtQdWwzakFMN0pXUzAzWXNtWVNuUkpR?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49D6uQTsuEvc6b2MUmojlfuV_Nmh4N-kV_c_-l3TBj41m5WhUW3r6hMFlQz9TfVGJ5nVhOSJrSid5t7MBhwQEm4L2Mfv4X_Y
+article_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMinwFBVV95cUxORkpqTGNpdy1HNkpHYnhTNEtaWlg1NHBCVE5iQW14YVN2M0JSbks4UDdLZ25XX2dPSHBPcmQxYWZfdXh3OTZOQ3R1R281REZpNDdNSWtmbElrQjRldEljWHhDT0MxZ1duRE1WVVBISVdrTEtob0JRc1FESFJYOFpsbDlPZVdabklWbWItRVhOSTZrUVJNZUFqMFA2d0xpMDjSAaIBQVVfeXFMTlR6RUQzZEM0Tko1dlhwN1FvWUI3OUxnX1NLWnplMVpyTkZObFhlaERiNm5ZU1Z0Y2N5Qzc1ak91M1VQeWdGTWhxRC1kV2VhU3YwSzEyRmJ2b3I0NkZUVUtndXd1MmJLa1QzeERwRHFKNDE1QzZnRkd0VmFaSEZCYkkzX1pOZU5FcEpGbmtQdWwzakFMN0pXUzAzWXNtWVNuUkpR?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49D6uQTsuEvc6b2MUmojlfuV_Nmh4N-kV_c_-l3TBj41m5WhUW3r6hMFlQz9TfVGJ5nVhOSJrSid5t7MBhwQEm4L2Mfv4X_Y
+enriched: true
+enrichment_used: tavily_search
+dedupe_id: 21663f3e71815de4
+cluster_id: 7e6b9d5723358b08
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- agriculture
+- agribusiness
+- farmers
+- farming
+- livestock
+- crops
+- seed
+- cocoa
+- ministry of agriculture
+- arable
+- value chain
+domain_scores:
+  agriculture: 26
+  economics: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMinwFBVV95cUxORkpqTGNpdy1HNkpHYnhTNEtaWlg1NHBCVE5iQW14YVN2M0JSbks4UDdLZ25XX2dPSHBPcmQxYWZfdXh3OTZOQ3R1R281REZpNDdNSWtmbElrQjRldEljWHhDT0MxZ1duRE1WVVBISVdrTEtob0JRc1FESFJYOFpsbDlPZVdabklWbWItRVhOSTZrUVJNZUFqMFA2d0xpMDjSAaIBQVVfeXFMTlR6RUQzZEM0Tko1dlhwN1FvWUI3OUxnX1NLWnplMVpyTkZObFhlaERiNm5ZU1Z0Y2N5Qzc1ak91M1VQeWdGTWhxRC1kV2VhU3YwSzEyRmJ2b3I0NkZUVUtndXd1MmJLa1QzeERwRHFKNDE1QzZnRkd0VmFaSEZCYkkzX1pOZU5FcEpGbmtQdWwzakFMN0pXUzAzWXNtWVNuUkpR?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49D6uQTsuEvc6b2MUmojlfuV_Nmh4N-kV_c_-l3TBj41m5WhUW3r6hMFlQz9TfVGJ5nVhOSJrSid5t7MBhwQEm4L2Mfv4X_Y
+---
+
+Organic farming brings variety and challenges for Olsons - marshallindependent.com “We have been farming together since 1988,” Olson said. “I got asked on some food-grade soybeans, ‘Are these organic?’ And we had no idea what that meant,” Olson said. Raising organic crops means following a lot of different rules, Olson said. Part of the work of organic farming includes undergoing inspections, and keeping documentation for inspectors, Olson said. “So the soybeans and the small grains that we grow, they are for seed production,” Olson said. Marketing organic crops is also a different process, Olson said. “Marketing for organics is much more relational,” and involves meeting with potential buyers, Olson said. A variety of factors can impact the market for organic grains, including consumer demand and animal health concerns for livestock producers, Olson said. The number of farmers who have tried organic farming has ebbed and flowed over the years, Olson said. While organic farming is a lot of hard work, Carolyn Olson said she and Jonathan enjoy it. Jonathan and I still enjoy farming together,” Olson said. https://www.marshallindependent.com/news/local-news/2026/03/organic-farming-brings-variety-and-challenges-for-olsons/
+
+Ghana has arable lands, we have no excuse to fail in agriculture – Kpebu - 3News # Ghana has arable lands, we have no excuse to fail in agriculture – Kpebu. ##### Follow Us. Laud Nartey is a current affairs editor with the MG News team at Media General, serving TV3 Ghana, 3News, Onua TV and more platforms. #### There is no reason why we can’t produce tomatoes in Ghana – Bentil. #### We need better agric policies in Ghana – Bentil in ban on tomatoes by B. #### Burkina Faso’s ban on tomato export poses national security risk to Ghana – Akosua Manu. #### Burkina Faso’s ban on tomato export should motivate Ghana to step up Agric – Kpebu. ### LIVE: The KeyPoints- Fuel price hikes, SIM registration and Bank of Ghana’s gold sale policy. ### LIVE: Ghana Tonight || 20-03-2026. ### Chamber of Agribusiness Ghana urges Government to roll out a national tomato emergency strategy. ### Comments (0). Please sign in to leave a comment. By commenting, you agree to ourcommunity guidelines. https://3news.com/news/ghana-has-arable-lands-we-have-no-excuse-to-fail-in-agriculture-kpebu
+
+Ivorian agriculture minister says cocoa hardships will bring Côte d’Ivoire and Ghana closer - The Africa Report Join the top leaders who read *The Africa Report* every day. # Ivorian agriculture minister says cocoa hardships will bring Côte d’Ivoire and Ghana closer. For Ivorian minister Bruno Nabagné Koné, the priorities for the cocoa sector are to address financing and the competitiveness of its value chains. At the end of January, amid the cocoa crisis, Bruno Nabagné Koné left the Ministry of Housing in Côte d'Ivoire to head the Ministry of Agriculture, Rural Development and Food Production, succeeding Kobenan Kouassi Adjoumani. US-Africa Week Ahead: Trump summons Congo belligerents over stalled peace. Red Sea dynamics: How the Iran conflict is rewiring Horn of Africa diplomacy. Cocoa at a crossroads: Can Ghana reclaim control of its golden bean? ### Africa NextGen Economist Prize: and the finalists are …. ### Africa’s $155bn borrowing forecast threatened by Middle East war fallout. ### Africa and the Gulf in a fragmented world: Building the next growth corridor. https://www.theafricareport.com/412209/ivorian-agriculture-minister-says-cocoa-hardships-will-bring-cote-divoire-and-ghana-closer/

@@ -1,0 +1,89 @@
+---
+id: 9a28ca182217abdf
+url: https://news.google.com/rss/articles/CBMitAFBVV95cUxPQTcwQkt6NnJNMEhqU3lzMkFwT0VXVFRpNUdZREhEdkdwYzFOcTFvaGxON1VDcHJxUnk0TlR3ZURIb253MEFQWWRqb3MzQ1NfS0pTNlZMOFZSdnhoeDBHLWUyc2JKVEI3NWNXb0w2ZHJ5R0h5d2N6bDh5dXJMZldNVzA2eVh3V3ZwaExsRjJVUG1ZYk5hbTNvQ2NzSlI2dk53SUc1cFV6WVdVeHduVndIQVhjOXY?oc=5
+rss_url: https://news.google.com/rss/articles/CBMitAFBVV95cUxPQTcwQkt6NnJNMEhqU3lzMkFwT0VXVFRpNUdZREhEdkdwYzFOcTFvaGxON1VDcHJxUnk0TlR3ZURIb253MEFQWWRqb3MzQ1NfS0pTNlZMOFZSdnhoeDBHLWUyc2JKVEI3NWNXb0w2ZHJ5R0h5d2N6bDh5dXJMZldNVzA2eVh3V3ZwaExsRjJVUG1ZYk5hbTNvQ2NzSlI2dk53SUc1cFV6WVdVeHduVndIQVhjOXY?oc=5
+title: How Israel became a world leader in agriculture and water management - The
+  Jerusalem Post
+country: Ghana
+domain: agriculture
+domain_score: 16
+info_type: news_article
+published_at: '2020-03-01T00:00:00+00:00'
+published_at_source: rss
+published_at_confidence: 0.95
+published_at_raw: '2020-03-01'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:16:30+00:00'
+extracted_at: '2026-03-24T16:16:29+00:00'
+feed_name: Google News — Ghana agriculture [2020-03-01]
+source: rss
+body_source: tavily_search
+phase1_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMitAFBVV95cUxPQTcwQkt6NnJNMEhqU3lzMkFwT0VXVFRpNUdZREhEdkdwYzFOcTFvaGxON1VDcHJxUnk0TlR3ZURIb253MEFQWWRqb3MzQ1NfS0pTNlZMOFZSdnhoeDBHLWUyc2JKVEI3NWNXb0w2ZHJ5R0h5d2N6bDh5dXJMZldNVzA2eVh3V3ZwaExsRjJVUG1ZYk5hbTNvQ2NzSlI2dk53SUc1cFV6WVdVeHduVndIQVhjOXY?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49BECxJmT2CuYdR7h-5ds6grh6uN-FZ7G63goAgoGGlbDRkZL4sJcNhpbpdHk5Na8zk0QHFIRzAPrDWTcG4IUOCmsQQSzw5R
+article_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMitAFBVV95cUxPQTcwQkt6NnJNMEhqU3lzMkFwT0VXVFRpNUdZREhEdkdwYzFOcTFvaGxON1VDcHJxUnk0TlR3ZURIb253MEFQWWRqb3MzQ1NfS0pTNlZMOFZSdnhoeDBHLWUyc2JKVEI3NWNXb0w2ZHJ5R0h5d2N6bDh5dXJMZldNVzA2eVh3V3ZwaExsRjJVUG1ZYk5hbTNvQ2NzSlI2dk53SUc1cFV6WVdVeHduVndIQVhjOXY?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49BECxJmT2CuYdR7h-5ds6grh6uN-FZ7G63goAgoGGlbDRkZL4sJcNhpbpdHk5Na8zk0QHFIRzAPrDWTcG4IUOCmsQQSzw5R
+enriched: true
+enrichment_used: tavily_search
+dedupe_id: 3f4a8b588b2e053b
+cluster_id: d06c34d56fb56b7a
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- agriculture
+- farmers
+- farming
+- food security
+domain_scores:
+  agriculture: 16
+  economics: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMitAFBVV95cUxPQTcwQkt6NnJNMEhqU3lzMkFwT0VXVFRpNUdZREhEdkdwYzFOcTFvaGxON1VDcHJxUnk0TlR3ZURIb253MEFQWWRqb3MzQ1NfS0pTNlZMOFZSdnhoeDBHLWUyc2JKVEI3NWNXb0w2ZHJ5R0h5d2N6bDh5dXJMZldNVzA2eVh3V3ZwaExsRjJVUG1ZYk5hbTNvQ2NzSlI2dk53SUc1cFV6WVdVeHduVndIQVhjOXY?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49BECxJmT2CuYdR7h-5ds6grh6uN-FZ7G63goAgoGGlbDRkZL4sJcNhpbpdHk5Na8zk0QHFIRzAPrDWTcG4IUOCmsQQSzw5R
+---
+
+Shira Singer pushes Israel’s water sector into a new technological era - The Jerusalem Post # Shira Singer pushes Israel’s water sector into a new technological era. Shira Singer, Head of Digital Customer Experience in the Technology Division at Mekorot, will participate in the upcoming Women Leaders Summit 2026 hosted by The Jerusalem Post, bringing a perspective shaped by one of Israel’s most vital and often overlooked sectors: water infrastructure. Shira Singer, Head of Digital Customer Experience in the Technology Division at Mekorot. “From the moment water reaches the tap, there’s almost no stage without technology,” Singer explains. “Infrastructure is a traditional sector,” Singer says, “but we’ve made a very significant leap forward.” Part of that transformation involves managing the balance between legacy systems and emerging technologies like artificial intelligence, an area Singer believes will only grow in importance. “In a world of systems and sensors, women provide the essential vision that breathes humanity into technology, ensuring our progress is measured not just in data points, but in the lives we empower,” she says. https://www.jpost.com/conferences/article-890890
+
+World Bank Report: Smarter Water Use in Agriculture Could Create 245 Million Jobs and Feed 10 Billion Sustainably - Devdiscourse # World Bank Report: Smarter Water Use in Agriculture Could Create 245 Million Jobs and Feed 10 Billion Sustainably. Rebalancing how water is used across global agriculture could unlock 245 million long-term jobs—mostly in Sub-Saharan Africa—while ensuring food security for a population expected to reach 10 billion by 2050, according to a new World Bank Group report. The report, *Nourish and Flourish: Water Solutions to Feed 10 Billion People on a Livable Planet*, warns that current water management practices are unsustainable and inefficient, threatening both future food production and economic stability. ### A New Global Framework for Water and Food. "The way we manage water for food will have profound implications for jobs, livelihoods, and economic growth," said Paschal Donohoe, Managing Director of the World Bank Group. As pressure mounts on both water and food systems, the choices made today will determine whether the world can achieve sustainable growth on a livable planet. https://www.devdiscourse.com/article/business/3844382-world-bank-report-smarter-water-use-in-agriculture-could-create-245-million-jobs-and-feed-10-billion-sustainably?amp
+
+World Water Day: Building resilience through smarter water management in agriculture - Bizcommunity # World Water Day: Building resilience through smarter water management in agriculture. World Water Day, held on 22 March, highlights the critical importance of freshwater resources and the need for responsible water management across all sectors. In South Africa, agriculture relies heavily on reliable water storage and efficient use to sustain food production and rural economies. Increasing climate variability and frequent droughts make it essential for farmers to strengthen water storage systems, optimise usage, and manage resources strategically to maintain productivity and resilience. Improving the performance of existing water infrastructure is one of the most effective ways to enhance resilience without increasing pressure on natural water sources. Water security requires collaboration between government, industry, agriculture, and communities. In agriculture, strengthening water storage systems is one of many practical steps that can contribute to broader national water resilience. Read more: South Africa, water security, World Water Day, water management, sustainable farming, agriculture industry, climate resilience, South Africa agriculture. ##### World Water Day: Building resilience through smarter water management in agriculture. https://www.bizcommunity.com/article/world-water-day-building-resilience-through-smarter-water-management-in-agriculture-955304a

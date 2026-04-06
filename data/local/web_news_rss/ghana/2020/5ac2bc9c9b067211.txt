@@ -1,0 +1,158 @@
+---
+id: 5ac2bc9c9b067211
+url: https://news.google.com/rss/articles/CBMimAFBVV95cUxQUzNUc1RkYW9Td0JfQkhrSmdoN3RYOFpKSGh6em1EOTE4cE84NkFzaFNJazIwTGFQME81Y3RKUVF0T3VzWU1UUVI4TGRBNnRVeDlGNVhNSmIzc0g3dFdON0RUeUN1c29LcDc3Y2hUWmFNQjJsODJKYUZkaTFLQ3JlTmlDLVNyWFdkZk9kV3FGbjh3aHh6NkZrSdIBlwFBVV95cUxOVExLNVNfTjJ0S09DdDBudTBrSWswWVBjUHBSVVlFMS1pWlRXeDdMRklWQVpnWGJCWko3RzhLSnJUX3dvMHFDeVVvVktiS25oa1VocHo3RlNXdU9yRlpxVzc0VlBVV3BMYnJNOU04ZUgyMU5FNUZZRkJWV3I3TTZQUnFEWkE1bThscXdMSmNMQzVoWGVKdWhF?oc=5
+rss_url: https://news.google.com/rss/articles/CBMimAFBVV95cUxQUzNUc1RkYW9Td0JfQkhrSmdoN3RYOFpKSGh6em1EOTE4cE84NkFzaFNJazIwTGFQME81Y3RKUVF0T3VzWU1UUVI4TGRBNnRVeDlGNVhNSmIzc0g3dFdON0RUeUN1c29LcDc3Y2hUWmFNQjJsODJKYUZkaTFLQ3JlTmlDLVNyWFdkZk9kV3FGbjh3aHh6NkZrSdIBlwFBVV95cUxOVExLNVNfTjJ0S09DdDBudTBrSWswWVBjUHBSVVlFMS1pWlRXeDdMRklWQVpnWGJCWko3RzhLSnJUX3dvMHFDeVVvVktiS25oa1VocHo3RlNXdU9yRlpxVzc0VlBVV3BMYnJNOU04ZUgyMU5FNUZZRkJWV3I3TTZQUnFEWkE1bThscXdMSmNMQzVoWGVKdWhF?oc=5
+title: 'Upper East: Man Defy Odds To Farm Cocoa In Bawku West; Sold Two Bags Of Beans
+  - Modern Ghana'
+country: Ghana
+domain: agriculture
+domain_score: 1
+info_type: news_article
+published_at: '2020-05-19T00:00:00+00:00'
+published_at_source: rss
+published_at_confidence: 0.95
+published_at_raw: '2020-05-19'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:18:42+00:00'
+extracted_at: '2026-03-24T16:18:40+00:00'
+feed_name: Google News — Ghana agriculture [2020-05-18]
+source: rss
+body_source: tavily_search
+phase1_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMimAFBVV95cUxQUzNUc1RkYW9Td0JfQkhrSmdoN3RYOFpKSGh6em1EOTE4cE84NkFzaFNJazIwTGFQME81Y3RKUVF0T3VzWU1UUVI4TGRBNnRVeDlGNVhNSmIzc0g3dFdON0RUeUN1c29LcDc3Y2hUWmFNQjJsODJKYUZkaTFLQ3JlTmlDLVNyWFdkZk9kV3FGbjh3aHh6NkZrSdIBlwFBVV95cUxOVExLNVNfTjJ0S09DdDBudTBrSWswWVBjUHBSVVlFMS1pWlRXeDdMRklWQVpnWGJCWko3RzhLSnJUX3dvMHFDeVVvVktiS25oa1VocHo3RlNXdU9yRlpxVzc0VlBVV3BMYnJNOU04ZUgyMU5FNUZZRkJWV3I3TTZQUnFEWkE1bThscXdMSmNMQzVoWGVKdWhF?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49Akvwe9LZhB_oZBVc50uGe1jZ9V77Du52QxIDYGB1GgEk072I7maU3TKDKj0oIUwHcqxpDYni7GmHohMKVQEmqol22_5km3
+article_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMimAFBVV95cUxQUzNUc1RkYW9Td0JfQkhrSmdoN3RYOFpKSGh6em1EOTE4cE84NkFzaFNJazIwTGFQME81Y3RKUVF0T3VzWU1UUVI4TGRBNnRVeDlGNVhNSmIzc0g3dFdON0RUeUN1c29LcDc3Y2hUWmFNQjJsODJKYUZkaTFLQ3JlTmlDLVNyWFdkZk9kV3FGbjh3aHh6NkZrSdIBlwFBVV95cUxOVExLNVNfTjJ0S09DdDBudTBrSWswWVBjUHBSVVlFMS1pWlRXeDdMRklWQVpnWGJCWko3RzhLSnJUX3dvMHFDeVVvVktiS25oa1VocHo3RlNXdU9yRlpxVzc0VlBVV3BMYnJNOU04ZUgyMU5FNUZZRkJWV3I3TTZQUnFEWkE1bThscXdMSmNMQzVoWGVKdWhF?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49Akvwe9LZhB_oZBVc50uGe1jZ9V77Du52QxIDYGB1GgEk072I7maU3TKDKj0oIUwHcqxpDYni7GmHohMKVQEmqol22_5km3
+enriched: true
+enrichment_used: tavily_search
+dedupe_id: 52dbf4f471d832b6
+cluster_id: 3ba0face69130e89
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- farm
+- seed
+- cocoa
+domain_scores:
+  agriculture: 1
+  economics: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMimAFBVV95cUxQUzNUc1RkYW9Td0JfQkhrSmdoN3RYOFpKSGh6em1EOTE4cE84NkFzaFNJazIwTGFQME81Y3RKUVF0T3VzWU1UUVI4TGRBNnRVeDlGNVhNSmIzc0g3dFdON0RUeUN1c29LcDc3Y2hUWmFNQjJsODJKYUZkaTFLQ3JlTmlDLVNyWFdkZk9kV3FGbjh3aHh6NkZrSdIBlwFBVV95cUxOVExLNVNfTjJ0S09DdDBudTBrSWswWVBjUHBSVVlFMS1pWlRXeDdMRklWQVpnWGJCWko3RzhLSnJUX3dvMHFDeVVvVktiS25oa1VocHo3RlNXdU9yRlpxVzc0VlBVV3BMYnJNOU04ZUgyMU5FNUZZRkJWV3I3TTZQUnFEWkE1bThscXdMSmNMQzVoWGVKdWhF?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49Akvwe9LZhB_oZBVc50uGe1jZ9V77Du52QxIDYGB1GgEk072I7maU3TKDKj0oIUwHcqxpDYni7GmHohMKVQEmqol22_5km3
+---
+
+Arizona vs. Utah State odds, March Madness predictions: 2026 NCAA Tournament picks from proven model - CBS Sports site: media | arena: general | pageType: stories | section: | slug: arizona-utah-state-odds-march-madness-predictions-2026-ncaa-tournament-picks | sport: other | route: article\_single.us | 6-keys: media/spln/other/reg/free/stories. # Arizona vs. Utah State odds, March Madness predictions: 2026 NCAA Tournament picks from proven model. ## SportsLine's model simulated Arizona Wildcats vs. Utah State Aggies and revealed its college basketball picks for this NCAA Tournament 2026 second-round matchup on Sunday. The 2026 NCAA Tournament continues with a must-see second-round contest on Sunday night, as the No. 1 seed Arizona Wildcats face the No. 9 Utah State Aggies in the West Region. Arizona picks, check out the Arizona vs. Now, the model has simulated Utah State vs. ## Top Arizona vs. After 10,000 simulations of Utah State vs. Utah State spread to back, all from the advanced model that just simulated this game 10,000 times, and find out.**. Iowa State odds, NCAA Tournament picks from 10,000 sims. Purdue odds, NCAA Tournament picks from 10,000 simulations. Utah State odds, NCAA Tournament picks from 10,000 sims. https://www.cbssports.com/general/news/arizona-utah-state-odds-march-madness-predictions-2026-ncaa-tournament-picks/
+
+Louisville vs. Michigan State odds, March Madness predictions: 2026 NCAA Tournament picks from proven model - CBS Sports site: media | arena: general | pageType: stories | section: | slug: louisville-michigan-state-odds-time-line-spread-march-madness-predictions-2026-ncaa-tournament-picks | sport: other | route: article\_single.us | 6-keys: media/spln/other/reg/free/stories. Michigan State odds, March Madness predictions: 2026 NCAA Tournament picks from proven model. ## SportsLine's model simulated Michigan State Spartans vs. The sixth-seeded Louisville Cardinals face the third-seeded Michigan State Spartans in the second round of the 2026 NCAA Tournament East Region on Saturday. Michigan State is a 4.5-point favorite in the latest Louisville vs. Michigan State picks, check out the Louisville vs. Here are several college basketball odds and college basketball lines for Michigan State vs. Michigan State picks: | See picks at SportsLine |. ## How to make Michigan State vs. Now, the model simulated every possession of Michigan State vs. Michigan State spread to back, all from the advanced model that just simulated this game 10,000 times, and find out.**. * ### Louisville-Michigan State odds, NCAA Tournament picks from 10,000 sims. https://www.cbssports.com/general/news/louisville-michigan-state-odds-time-line-spread-march-madness-predictions-2026-ncaa-tournament-picks/
+
+Miami vs. Purdue odds, March Madness predictions: 2026 NCAA Tournament picks from proven model - CBS Sports site: media | arena: general | pageType: stories | section: | slug: miami-purdue-odds-time-spread-march-madness-predictions-2026-ncaa-tournament-picks | sport: other | route: article\_single.us | 6-keys: media/spln/other/reg/free/stories. Purdue odds, March Madness predictions: 2026 NCAA Tournament picks from proven model. ## SportsLine's model simulated Miami Hurricanes vs. Purdue Boilermakers and revealed its college basketball picks for this NCAA Tournament 2026 second-round matchup on Sunday. The seventh-seeded Miami (Fla.) Hurricanes face the second-seeded Purdue Boilermakers in the second round of the NCAA Tournament West Region on Sunday. Purdue is a 7.5-point favorite in the latest Miami vs. Purdue picks, check out the Miami vs. Now, the model has simulated Miami vs. After 10,000 simulations of Miami vs. ## How to make Purdue vs. Now, the model simulated every possession of Miami vs. **So who wins Purdue vs. Purdue spread to back, all from the advanced model that just simulated this game 10,000 times, and find out.**. Purdue odds, NCAA Tournament picks from 10,000 simulations. https://www.cbssports.com/general/news/miami-purdue-odds-time-spread-march-madness-predictions-2026-ncaa-tournament-picks/

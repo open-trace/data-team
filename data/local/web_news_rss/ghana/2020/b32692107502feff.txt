@@ -1,0 +1,124 @@
+---
+id: b32692107502feff
+url: https://news.google.com/rss/articles/CBMimgFBVV95cUxOSkw1bG95YUtUbjJHQVhzeW1tM1BON2lsTzZhcVc5dUpqRkZuNVFxTWlSeXlVR0diRE55QUtoVXRhTDA4aXAtM2JFZ01WcWdnQ1dXWVhtRDNRdExEM3BXNWZ1Sks0VTBLSTk0clMzMzhyMThOWlZ5V0s2X255UDRUanRrU0lsV3JOMkFlQV9oa2RpNUFRc3ROZGlB0gGYAUFVX3lxTE9mcFdPdEJhR0MxNXhyWFE4Z1Qtdm5lT1VwVWtHUlFwalFwNDZVeHdvZzNPOEV6bXROTGo1RTVWQzBEZWNtYjJQMVlmdUg4NllPZVVaempHdWdZOURhRzh6MkVTb0FKMzhDWFpjcWFYRnhIaVIyU1JLRWFTRFdQS1gxV0FScHdMRUxBUXhhS2hCZjhVUHdER0Rj?oc=5
+rss_url: https://news.google.com/rss/articles/CBMimgFBVV95cUxOSkw1bG95YUtUbjJHQVhzeW1tM1BON2lsTzZhcVc5dUpqRkZuNVFxTWlSeXlVR0diRE55QUtoVXRhTDA4aXAtM2JFZ01WcWdnQ1dXWVhtRDNRdExEM3BXNWZ1Sks0VTBLSTk0clMzMzhyMThOWlZ5V0s2X255UDRUanRrU0lsV3JOMkFlQV9oa2RpNUFRc3ROZGlB0gGYAUFVX3lxTE9mcFdPdEJhR0MxNXhyWFE4Z1Qtdm5lT1VwVWtHUlFwalFwNDZVeHdvZzNPOEV6bXROTGo1RTVWQzBEZWNtYjJQMVlmdUg4NllPZVVaempHdWdZOURhRzh6MkVTb0FKMzhDWFpjcWFYRnhIaVIyU1JLRWFTRFdQS1gxV0FScHdMRUxBUXhhS2hCZjhVUHdER0Rj?oc=5
+title: Blazing The Trail Of Quail Farming; Filmmaker Ventures Into Farming For Export
+  - Modern Ghana
+country: Ghana
+domain: agriculture
+domain_score: 44
+info_type: news_article
+published_at: '2020-01-17T00:00:00+00:00'
+published_at_source: rss
+published_at_confidence: 0.95
+published_at_raw: '2020-01-17'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:14:32+00:00'
+extracted_at: '2026-03-24T16:14:30+00:00'
+feed_name: Google News — Ghana agriculture [2020-01-16]
+source: rss
+body_source: tavily_search
+phase1_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMimgFBVV95cUxOSkw1bG95YUtUbjJHQVhzeW1tM1BON2lsTzZhcVc5dUpqRkZuNVFxTWlSeXlVR0diRE55QUtoVXRhTDA4aXAtM2JFZ01WcWdnQ1dXWVhtRDNRdExEM3BXNWZ1Sks0VTBLSTk0clMzMzhyMThOWlZ5V0s2X255UDRUanRrU0lsV3JOMkFlQV9oa2RpNUFRc3ROZGlB0gGYAUFVX3lxTE9mcFdPdEJhR0MxNXhyWFE4Z1Qtdm5lT1VwVWtHUlFwalFwNDZVeHdvZzNPOEV6bXROTGo1RTVWQzBEZWNtYjJQMVlmdUg4NllPZVVaempHdWdZOURhRzh6MkVTb0FKMzhDWFpjcWFYRnhIaVIyU1JLRWFTRFdQS1gxV0FScHdMRUxBUXhhS2hCZjhVUHdER0Rj?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49CuStPr6ZjuYs7wj_461tr6D_mWy0qK820TqzKgG7W3ZcfjlpMnVQ95HtAtonCz1JcXfF_bC-Bf2eE-a91IbBYOBzXQ4y8J
+article_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMimgFBVV95cUxOSkw1bG95YUtUbjJHQVhzeW1tM1BON2lsTzZhcVc5dUpqRkZuNVFxTWlSeXlVR0diRE55QUtoVXRhTDA4aXAtM2JFZ01WcWdnQ1dXWVhtRDNRdExEM3BXNWZ1Sks0VTBLSTk0clMzMzhyMThOWlZ5V0s2X255UDRUanRrU0lsV3JOMkFlQV9oa2RpNUFRc3ROZGlB0gGYAUFVX3lxTE9mcFdPdEJhR0MxNXhyWFE4Z1Qtdm5lT1VwVWtHUlFwalFwNDZVeHdvZzNPOEV6bXROTGo1RTVWQzBEZWNtYjJQMVlmdUg4NllPZVVaempHdWdZOURhRzh6MkVTb0FKMzhDWFpjcWFYRnhIaVIyU1JLRWFTRFdQS1gxV0FScHdMRUxBUXhhS2hCZjhVUHdER0Rj?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49CuStPr6ZjuYs7wj_461tr6D_mWy0qK820TqzKgG7W3ZcfjlpMnVQ95HtAtonCz1JcXfF_bC-Bf2eE-a91IbBYOBzXQ4y8J
+enriched: true
+enrichment_used: tavily_search
+dedupe_id: d803abf1f29d00d3
+cluster_id: 28f64523d7322d75
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- agriculture
+- farmer
+- farmers
+- farming
+- livestock
+- cattle
+- poultry
+domain_scores:
+  agriculture: 44
+  economics: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMimgFBVV95cUxOSkw1bG95YUtUbjJHQVhzeW1tM1BON2lsTzZhcVc5dUpqRkZuNVFxTWlSeXlVR0diRE55QUtoVXRhTDA4aXAtM2JFZ01WcWdnQ1dXWVhtRDNRdExEM3BXNWZ1Sks0VTBLSTk0clMzMzhyMThOWlZ5V0s2X255UDRUanRrU0lsV3JOMkFlQV9oa2RpNUFRc3ROZGlB0gGYAUFVX3lxTE9mcFdPdEJhR0MxNXhyWFE4Z1Qtdm5lT1VwVWtHUlFwalFwNDZVeHdvZzNPOEV6bXROTGo1RTVWQzBEZWNtYjJQMVlmdUg4NllPZVVaempHdWdZOURhRzh6MkVTb0FKMzhDWFpjcWFYRnhIaVIyU1JLRWFTRFdQS1gxV0FScHdMRUxBUXhhS2hCZjhVUHdER0Rj?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49CuStPr6ZjuYs7wj_461tr6D_mWy0qK820TqzKgG7W3ZcfjlpMnVQ95HtAtonCz1JcXfF_bC-Bf2eE-a91IbBYOBzXQ4y8J
+---
+
+WATCH | Pasture-based Poultry System Keeps Chickens Moving And Thriving - African Farming ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Leeko Makoene-Motsuenyane. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Dr Lerato Matsaunyane. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Louw van Reenen. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Caiphas Muyambo. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Dr Lerato Matsaunyane. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Louw van Reenen. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Caiphas Muyambo. African Farming Agri-Development Imbizo 2026 – Meet the speakers: Louw van Reenen. Established in 2020, African Farming aims to support black commercial farming in South Africa by providing informative and inspiring content and creating communication and education channels to help farmers develop and grow. Its initiatives include African Farming information days and workshops, which empower farmers – whether new or experienced – to build profitable and sustainable farming enterprises. https://www.africanfarming.com/2026/03/22/watch-pasture-based-poultry-system-keeps-chickens-moving-and-thriving/
+
+Former Female Teacher Now Herds Over 200 Beefmaster Cattle - African Farming ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Dr Lerato Matsaunyane. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Caiphas Muyambo. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Dr Lerato Matsaunyane. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Caiphas Muyambo. The recognition of her livestock success came at the Phezukomkhono Female Farmer Awards recently, where Nozuko Farming won the export category prize of R100 000, plus the overall winner award of R100 000, totalling R200 000 in recognition. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Dr Lerato Matsaunyane. Established in 2020, African Farming aims to support black commercial farming in South Africa by providing informative and inspiring content and creating communication and education channels to help farmers develop and grow. Its initiatives include African Farming information days and workshops, which empower farmers – whether new or experienced – to build profitable and sustainable farming enterprises. https://www.africanfarming.com/2026/03/20/former-female-teacher-now-herds-over-200-beefmaster-cattle/
+
+Goat Farming Finds New Direction As Young Entrepreneur Builds Sustainable Livelihood - inews.zoombangla.com + বিজ্ঞান ও প্রযুক্তি. + প্রশ্ন ও উত্তর. # Goat Farming Finds New Direction As Young Entrepreneur Builds Sustainable Livelihood. That changed after marriage, when she began raising a small herd of goats, starting with just 15 to 20 animals. ## A gradual shift shaped by necessity and learning. Over time, her approach to farming shifted. What stands out in her journey is not rapid success, but a steady rethinking of what work can look like. Her message to others, particularly young women considering agriculture, is grounded in practicality. The story sits within a wider conversation about rural enterprise and self-reliance. As traditional employment pathways shift, cases like Khan’s suggest that agriculture continues to offer viable opportunities, provided there is patience and willingness to adapt. Stay updated with the trends shaping our world. agriculture farming success Fiji agriculture goat farming livestock business rural entrepreneurship women farmers. #### Microsoft Account Update Addresses Windows 11 Sign-In Failures After March Patch. https://inews.zoombangla.com/goat-farming-finds-new-direction-as-young-entrepreneur-builds-sustainable-livelihood/

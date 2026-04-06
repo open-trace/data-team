@@ -1,0 +1,130 @@
+---
+id: aeb3d930683aa959
+url: https://news.google.com/rss/articles/CBMixwFBVV95cUxNdnlPNzBuLUZWaWExSXRlZVp3S3JyY0JERldBMzI1Z3J0c0xFbEdhM2RZR1hjeGR5VGgyZzN6Zk5Qc25iX2V6TXlsa2ZzQ1N2RC14cUZraTZYVzhLTEtGRXdFOGtkTzIxUTkxdU5RNUVSR3l3eXJLcV9iWU1UN09sOVJRbkJtbm1UN21sWDYycTJfbGZmd05PcUF6enV6OWhKNHVyb24xRXZKdnU1Vi11R2d6NU9lU2dhS3JNNUxJM2N3NGFnbWd3?oc=5
+rss_url: https://news.google.com/rss/articles/CBMixwFBVV95cUxNdnlPNzBuLUZWaWExSXRlZVp3S3JyY0JERldBMzI1Z3J0c0xFbEdhM2RZR1hjeGR5VGgyZzN6Zk5Qc25iX2V6TXlsa2ZzQ1N2RC14cUZraTZYVzhLTEtGRXdFOGtkTzIxUTkxdU5RNUVSR3l3eXJLcV9iWU1UN09sOVJRbkJtbm1UN21sWDYycTJfbGZmd05PcUF6enV6OWhKNHVyb24xRXZKdnU1Vi11R2d6NU9lU2dhS3JNNUxJM2N3NGFnbWd3?oc=5
+title: Agricultural production in the North likely to suffer due to coronavirus -
+  GhanaWeb
+country: Ghana
+domain: agriculture
+domain_score: 24
+info_type: news_article
+published_at: '2020-07-07T00:00:00+00:00'
+published_at_source: rss
+published_at_confidence: 0.95
+published_at_raw: '2020-07-07'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:20:51+00:00'
+extracted_at: '2026-03-24T16:20:49+00:00'
+feed_name: Google News — Ghana agriculture [2020-07-06]
+source: rss
+body_source: tavily_search
+phase1_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMixwFBVV95cUxNdnlPNzBuLUZWaWExSXRlZVp3S3JyY0JERldBMzI1Z3J0c0xFbEdhM2RZR1hjeGR5VGgyZzN6Zk5Qc25iX2V6TXlsa2ZzQ1N2RC14cUZraTZYVzhLTEtGRXdFOGtkTzIxUTkxdU5RNUVSR3l3eXJLcV9iWU1UN09sOVJRbkJtbm1UN21sWDYycTJfbGZmd05PcUF6enV6OWhKNHVyb24xRXZKdnU1Vi11R2d6NU9lU2dhS3JNNUxJM2N3NGFnbWd3?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49ChP139wavXw8KnEbt3rEKjDL5b3-idpF5__PkdfaBviZmCgC1neHOzoB5rjHyPku6GNWYjcmQh_fMSh8JQATEBqhM8yZOR
+article_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMixwFBVV95cUxNdnlPNzBuLUZWaWExSXRlZVp3S3JyY0JERldBMzI1Z3J0c0xFbEdhM2RZR1hjeGR5VGgyZzN6Zk5Qc25iX2V6TXlsa2ZzQ1N2RC14cUZraTZYVzhLTEtGRXdFOGtkTzIxUTkxdU5RNUVSR3l3eXJLcV9iWU1UN09sOVJRbkJtbm1UN21sWDYycTJfbGZmd05PcUF6enV6OWhKNHVyb24xRXZKdnU1Vi11R2d6NU9lU2dhS3JNNUxJM2N3NGFnbWd3?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49ChP139wavXw8KnEbt3rEKjDL5b3-idpF5__PkdfaBviZmCgC1neHOzoB5rjHyPku6GNWYjcmQh_fMSh8JQATEBqhM8yZOR
+enriched: true
+enrichment_used: tavily_search
+dedupe_id: e75ba11f943f2e2a
+cluster_id: 522d5052568378be
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- agriculture
+- agricultural
+- farmers
+- farming
+- farm
+- food security
+- commodity
+- grain
+domain_scores:
+  agriculture: 24
+  economics: 2
+domain_labels:
+- agriculture
+- economics
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMixwFBVV95cUxNdnlPNzBuLUZWaWExSXRlZVp3S3JyY0JERldBMzI1Z3J0c0xFbEdhM2RZR1hjeGR5VGgyZzN6Zk5Qc25iX2V6TXlsa2ZzQ1N2RC14cUZraTZYVzhLTEtGRXdFOGtkTzIxUTkxdU5RNUVSR3l3eXJLcV9iWU1UN09sOVJRbkJtbm1UN21sWDYycTJfbGZmd05PcUF6enV6OWhKNHVyb24xRXZKdnU1Vi11R2d6NU9lU2dhS3JNNUxJM2N3NGFnbWd3?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49ChP139wavXw8KnEbt3rEKjDL5b3-idpF5__PkdfaBviZmCgC1neHOzoB5rjHyPku6GNWYjcmQh_fMSh8JQATEBqhM8yZOR
+---
+
+Idaho Agriculture Reaches Record $44.5 Billion Impact - National Today New University of Idaho report highlights growth in state's agricultural sector. According to a new report from the University of Idaho, Idaho's agricultural industry generated a record $44.5 billion in annual sales in 2024, accounting for 17.2% of the state's total economic output. The report highlights Idaho's status as a national leader in agricultural production across key commodities. The study, compiled by University of Idaho agricultural economist Philip Watson, found that total economic impact has increased significantly from $37.5 billion in 2022, while employment has also risen from 126,800 jobs. An agricultural economist at the University of Idaho who compiled the report. — Philip Watson, Agricultural economist, University of Idaho. The report is updated every three years and is often used to inform policymakers about the scale and importance of agriculture in Idaho's economy. Idaho's agricultural industry continues to be a major driver of the state's economy, generating record-high economic impact and employment. https://nationaltoday.com/us/id/moscow/news/2026/03/19/idaho-agriculture-reaches-record-44-5-billion-impact/
+
+Grain Farmers Warn Of Deepening Profitability Crisis - African Farming *South Africa’s grain farmers are facing increasing pressure, with urgent warning signs emerging. At the Grain SA Congress 2026, producers, policymakers and industry leaders confronted a sobering reality: Rising input costs, declining commodity prices and persistent policy uncertainty are pushing farm profitability to its limits. The message from this gathering was clear: Without profitable farmers, South Africa’s food security is at risk. Despite the pressures, South Africa’s grain farmers remain committed to producing food, supporting rural economies and contributing to national growth. #### **Also read:** **Ukukhula Conference and Day of Celebration – a historic milestone for black grain farmers in South Africa**. Established in 2020, African Farming aims to support black commercial farming in South Africa by providing informative and inspiring content and creating communication and education channels to help farmers develop and grow. Its initiatives include African Farming information days and workshops, which empower farmers – whether new or experienced – to build profitable and sustainable farming enterprises. https://www.africanfarming.com/2026/03/21/grain-farmers-warn-of-deepening-profitability-crisis/
+
+Ghanaian youth no longer prioritise condom usage – Survey - GhanaWeb Self Service Advert Sitemap Partners About Us. Home - NewsElection 2024TWI News | TVPollsPress ReleaseNews BlogsNews ArchiveCrime & PunishmentPolitics. # News. You are here: Home → News → 2026 03 24 → **Article 2027098**. Health News of Tuesday, 24 March 2026. Founder of Ikederb Medical Outreach, Isaac Amoah, has disclosed that a recent survey suggests that the majority of Ghanaian youth no longer prefer the use of condoms.‎. In reference to the survey, he indicated respondents said the condoms available in Ghana are small in size and feel very tight.‎. ‎“In a recent survey we conducted, respondents said condoms available in Ghana often feel too small, and many therefore avoid using them because they feel uncomfortably tight,” he revealed on Saturday, March 22, 2026.‎. ‎He highlighted that at least 15,000 people are infected with the virus each year, emphasising how widespread HIV remains.‎. Please use them to protect yourselves,” he said.‎. Home News Sports Business Entertainment Africa GhanaWeb TV Opinions Cartoon Say It loud. https://www.ghanaweb.com/GhanaHomePage/NewsArchive/Ghanaian-youth-no-longer-prioritise-condom-usage-Survey-2027098

@@ -1,0 +1,148 @@
+---
+id: d6242d6cfa5afd5a
+url: https://news.google.com/rss/articles/CBMiwAFBVV95cUxQQ3NaVFA1TjRTazNWYmZXczMtbV9YdGxMTUZPdnBZT0tmNjZoa29SUDVBVGJEMHMyQW5LMEpoRzUzdThSWU03eVgzU3dydmY1Z2ROQ2I2R0wwZ1J0bC15QVczNXcxMm1hdGM2ZVF2NWJqWWhNWXBsZm9Zd090UFhfemo0YS1LU0dsRmFXNWR4MTFFakxiQ0hMdlMtQTNOTi1vTzRDZkZ5VDkzejNCMEdIb1AtQ2NhX0tiX29JLXlqdFQ?oc=5
+rss_url: https://news.google.com/rss/articles/CBMiwAFBVV95cUxQQ3NaVFA1TjRTazNWYmZXczMtbV9YdGxMTUZPdnBZT0tmNjZoa29SUDVBVGJEMHMyQW5LMEpoRzUzdThSWU03eVgzU3dydmY1Z2ROQ2I2R0wwZ1J0bC15QVczNXcxMm1hdGM2ZVF2NWJqWWhNWXBsZm9Zd090UFhfemo0YS1LU0dsRmFXNWR4MTFFakxiQ0hMdlMtQTNOTi1vTzRDZkZ5VDkzejNCMEdIb1AtQ2NhX0tiX29JLXlqdFQ?oc=5
+title: Women, key forces for upscaling small-scale fish production in Africa - Food
+  and Agriculture Organization
+country: Ghana
+domain: agriculture
+domain_score: 21
+info_type: news_article
+published_at: '2020-03-19T00:00:00+00:00'
+published_at_source: rss
+published_at_confidence: 0.95
+published_at_raw: '2020-03-19'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:16:39+00:00'
+extracted_at: '2026-03-24T16:16:38+00:00'
+feed_name: Google News — Ghana agriculture [2020-03-18]
+source: rss
+body_source: tavily_search
+phase1_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMiwAFBVV95cUxQQ3NaVFA1TjRTazNWYmZXczMtbV9YdGxMTUZPdnBZT0tmNjZoa29SUDVBVGJEMHMyQW5LMEpoRzUzdThSWU03eVgzU3dydmY1Z2ROQ2I2R0wwZ1J0bC15QVczNXcxMm1hdGM2ZVF2NWJqWWhNWXBsZm9Zd090UFhfemo0YS1LU0dsRmFXNWR4MTFFakxiQ0hMdlMtQTNOTi1vTzRDZkZ5VDkzejNCMEdIb1AtQ2NhX0tiX29JLXlqdFQ?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49BeaV0Z33ka_qQXLUZMAXl9pCo2GmgY6egAfjTRijP5sBb83D4padu0J2DMs0RZsLNnXKroXxFw6nTUHJBDGp1gj8b377o3
+article_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMiwAFBVV95cUxQQ3NaVFA1TjRTazNWYmZXczMtbV9YdGxMTUZPdnBZT0tmNjZoa29SUDVBVGJEMHMyQW5LMEpoRzUzdThSWU03eVgzU3dydmY1Z2ROQ2I2R0wwZ1J0bC15QVczNXcxMm1hdGM2ZVF2NWJqWWhNWXBsZm9Zd090UFhfemo0YS1LU0dsRmFXNWR4MTFFakxiQ0hMdlMtQTNOTi1vTzRDZkZ5VDkzejNCMEdIb1AtQ2NhX0tiX29JLXlqdFQ?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49BeaV0Z33ka_qQXLUZMAXl9pCo2GmgY6egAfjTRijP5sBb83D4padu0J2DMs0RZsLNnXKroXxFw6nTUHJBDGp1gj8b377o3
+enriched: true
+enrichment_used: tavily_search
+dedupe_id: e3e7b31e7ba4c6ec
+cluster_id: 8f8c3258e8f3b588
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- agriculture
+- agricultural
+- agrifood
+- farmer
+- farmers
+- farming
+- food security
+domain_scores:
+  agriculture: 21
+  economics: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMiwAFBVV95cUxQQ3NaVFA1TjRTazNWYmZXczMtbV9YdGxMTUZPdnBZT0tmNjZoa29SUDVBVGJEMHMyQW5LMEpoRzUzdThSWU03eVgzU3dydmY1Z2ROQ2I2R0wwZ1J0bC15QVczNXcxMm1hdGM2ZVF2NWJqWWhNWXBsZm9Zd090UFhfemo0YS1LU0dsRmFXNWR4MTFFakxiQ0hMdlMtQTNOTi1vTzRDZkZ5VDkzejNCMEdIb1AtQ2NhX0tiX29JLXlqdFQ?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49BeaV0Z33ka_qQXLUZMAXl9pCo2GmgY6egAfjTRijP5sBb83D4padu0J2DMs0RZsLNnXKroXxFw6nTUHJBDGp1gj8b377o3
+---
+
+Closing The Gender Gap In Agrifood Systems Can Help Reduce Food Insecurity And Boost Global GDP: FAO Gender Experts - global-agriculture.com ****21** March 2026, ****Rome****:** The United Nations-designated The International Year of the Woman Farmer (IYWF 2026),  shines a spotlight on the essential yet often overlooked roles women play across agrifood systems – from production to trade. To reverse this trend, FAO has called for scaled-up and coordinated action towards women’s empowerment in agrifood systems, including increased and targeted investments, gender-transformative agrifood policies and programs, better data, meaningful participation of women farmers in decision-making, and sustained political commitment and actions. During the International Year of the Woman Farmer 2026, FAO will lead global efforts and events to raise awareness of women farmers’ essential roles and the challenges they face, while mobilizing commitment, policy action and investment to close gender gaps in agrifood systems. FAO emphasizes that the International Year should serve as a vital catalyst to empower women farmers and close gender gaps in agrifood systems, igniting a transformative movement for global action. https://www.global-agriculture.com/faq-in-global-agriculture/closing-the-gender-gap-in-agrifood-systems-can-help-reduce-food-insecurity-and-boost-global-gdp-fao-gender-experts/
+
+OCP Backs Efforts to Empower Women in African Agriculture at UN Event - Morocco World News Home > Africa > OCP Backs Efforts to Empower Women in African Agriculture at UN Event. # OCP Backs Efforts to Empower Women in African Agriculture at UN Event. Tantan – OCP Group has put a strong spotlight on the role of women in transforming Africa’s food systems during a high-level event held at the United Nations headquarters in New York. Organized by Morocco on the sidelines of the 70th session of the Commission on the Status of Women (CSW70), the event brought together senior officials, international organizations, and development partners to discuss food security and agricultural transformation across the continent. For OCP, these efforts are part of a wider vision to contribute to global food security while supporting the development of African agriculture. Participants concluded that empowering women and supporting farmers with the right tools and resources will be critical to building more resilient and sustainable food systems across Africa. https://www.moroccoworldnews.com/2026/03/283229/ocp-backs-efforts-to-empower-women-in-african-agriculture-at-un-event/
+
+How Community Food Gardens Are Solving Land Access Barriers For SA Women And Youth - African Farming From rural villages to township neighbourhoods, local food-growing initiatives are becoming spaces where new agricultural knowledge is built, leadership develops and livelihoods begin to take shape.*. These emerging growers are increasingly visible through initiatives such as the **Shoprite Act For Change Food Garden Competition**, which recently recognised six community-based projects for their contribution to local food production and skills development. Beyond the vegetables harvested, the food gardens highlight how grassroots agricultural initiatives are helping women and youth participate more actively in South Africa’s food economy. More broadly, initiatives like the Act For Change competition highlight the growing role that grassroots agriculture plays in South Africa’s broader food system. They show that the future of agriculture will not only be shaped on large commercial farms, but also in neighbourhood plots where women, young people and communities are developing the skills, confidence and leadership needed to sustain food production for generations to come. https://www.africanfarming.com/2026/03/19/how-community-food-gardens-are-solving-land-access-barriers-for-sa-women-and-youth/

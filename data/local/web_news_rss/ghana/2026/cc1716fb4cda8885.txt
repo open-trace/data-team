@@ -1,0 +1,464 @@
+---
+id: cc1716fb4cda8885
+url: https://www.modernghana.com/news/1022283/high-yielding-watermelon-seed-introduced-to-farmer.html
+rss_url: https://www.modernghana.com/news/1022283/high-yielding-watermelon-seed-introduced-to-farmer.html
+title: Just a moment...
+country: Ghana
+domain: agriculture
+domain_score: 17
+info_type: news_article
+published_at: '2026-03-24T16:22:20+00:00'
+published_at_source: inferred
+published_at_confidence: 0.5
+published_at_raw: '2026-03-24T16:22:20+00:00'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:22:20+00:00'
+extracted_at: '2026-03-24T16:22:19+00:00'
+feed_name: Tavily discovery — production & yield
+source: rss
+body_source: tavily_extract
+phase1_fetch_url: https://www.modernghana.com/news/1022283/high-yielding-watermelon-seed-introduced-to-farmer.html
+article_fetch_url: https://www.modernghana.com/news/1022283/high-yielding-watermelon-seed-introduced-to-farmer.html
+enriched: true
+enrichment_used: tavily_extract
+dedupe_id: 890be31df981880b
+cluster_id: 54909f6d435c76d0
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- farmers
+- farming
+- harvest
+- seed
+- seeds
+- extension officer
+- post-harvest
+domain_scores:
+  agriculture: 17
+  economics: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+---
+
+![ModernGhana logo](/assets/logo/site-logo.png)
+![ModernGhana logo](/assets/logo/site-logo2.png)
+![ModernGhana logo](/assets/logo/sticky-logo.png)
+![ModernGhana logo](/assets/logo/print-logo2.png)
+![body-container-line-1](/assets/categories-images/body-container-top-line.png)
+
+# High Yielding Watermelon Seed Introduced To Farmers
+
+![High Yielding Watermelon Seed Introduced To Farmers](https://cdn.modernghana.com/story_/926/499/811202044140-uypctgfsrm-1.18643211.jpg)
+
+**A high yielding watermelon seed known as ELGHALI has been introduced to some farmers to help boost their incomes and ensure nutrition for consumers.**
+
+ELGHALI is a hybrid watermelon with a beautiful round oval shape, with fruit weight of more than 12 kilogrammes, a large fruit size, crisp, very sweet, tasty, and highly preferred by farmers.
+
+Syngenta Vegetable Seeds, a leading vegetable company, took farmers and other stakeholders to a field of ELGHALI at Walewale in the West Mamprusi Municipality of the North East Region to introduce them to the seed.
+
+The field day brought together 70 farmers, input dealers, marketers, extension officers, processors and researchers to evaluate the performance of the watermelon variety.
+
+Mr Evans Sackey, Technical and Sales Representative of Syngenta Vegetable Seeds, Ghana, who spoke about the variety during the field visit, said it was a quality seed that could last up to two weeks after harvest.
+
+Mr Sackey said this would help reduce post-harvest losses, which has been a major challenge to watermelon farmers.
+
+Syngenta Vegetable Seeds provides good quality seeds of okra, onions, cabbage, tomatoes and watermelon and many other vegetable seeds to farmers in the country.
+
+Some farmers, who visited the field, were hopeful that they could make more money per acre of land, because of the size of the watermelon.
+
+Others said they had been passing-by the field and they noticed that while their varieties were getting rotten, those on the field seemed to last longer so they believed they could still sell even when market was not good because it could last more than a week without going bad.
+
+Farmers in the area predominantly go into dry season farming of watermelon and supply consumers through fruits and vegetables sellers in most areas in northern Ghana and export to the South.
+
+The farmers, however, are confronted with annual post-harvest challenges, especially quantities of watermelon getting rotten on farms and on sales point, hence the introduction of long spun variety of the fruit to Farmers in the area.
+
+---GNA
+
+[**Follow**](https://whatsapp.com/channel/0029Va89U0EKLaHnFoDFDr3p "ModernGhana Channel") our [**WhatsApp**](https://whatsapp.com/channel/0029Va89U0EKLaHnFoDFDr3p "ModernGhana Channel") channel for meaningful stories picked for your day.
+
+22 minutes ago
+
+[![We need to reclaim the dignity and humanity of Africans — Mahama on slave trade](/img/blank.png)
+**We need to reclaim the dignity and humanity of Africans — Mahama on slave trade**](/news/1480752/we-need-to-reclaim-the-dignity-and-humanity-of.html)
+
+[![We need to reclaim the dignity and humanity of Africans — Mahama on slave trade](/img/blank.png)
+**We need to reclaim the dignity and humanity of Africans — Mahama on slave trade**](/news/1480752/we-need-to-reclaim-the-dignity-and-humanity-of.html)
+
+[![We need to reclaim the dignity and humanity of Africans — Mahama on slave trade](/img/blank.png)
+**We need to reclaim the dignity and humanity of Africans — Mahama on slave trade**](/news/1480752/we-need-to-reclaim-the-dignity-and-humanity-of.html)
+
+![We need to reclaim the dignity and humanity of Africans — Mahama on slave trade](/img/blank.png)
+
+49 minutes ago
+
+[![Lincoln University should be ashamed — Sam George on withdrawal of Mahama’s honour](/img/blank.png)
+**'Lincoln University should be ashamed' — Sam George on withdrawal of Mahama’s ho...**](/news/1480733/lincoln-university-should-be-ashamed-sam-georg.html)
+
+[![Lincoln University should be ashamed — Sam George on withdrawal of Mahama’s honour](/img/blank.png)
+**'Lincoln University should be ashamed' — Sam George on withdrawal of Mahama’s ho...**](/news/1480733/lincoln-university-should-be-ashamed-sam-georg.html)
+
+[![Lincoln University should be ashamed — Sam George on withdrawal of Mahama’s honour](/img/blank.png)
+**'Lincoln University should be ashamed' — Sam George on withdrawal of Mahama’s ho...**](/news/1480733/lincoln-university-should-be-ashamed-sam-georg.html)
+
+![Lincoln University should be ashamed — Sam George on withdrawal of Mahama’s honour](/img/blank.png)
+
+49 minutes ago
+
+[![Lincoln University withdraws planned honorary doctorate for Mahama over his strong stance against LGBTQ+](/img/blank.png)
+**Lincoln University withdraws planned honorary doctorate for Mahama over his stro...**](/news/1480728/lincoln-university-withdraws-planned-honorary-doct.html)
+
+[![Lincoln University withdraws planned honorary doctorate for Mahama over his strong stance against LGBTQ+](/img/blank.png)
+**Lincoln University withdraws planned honorary doctorate for Mahama over his stro...**](/news/1480728/lincoln-university-withdraws-planned-honorary-doct.html)
+
+[![Lincoln University withdraws planned honorary doctorate for Mahama over his strong stance against LGBTQ+](/img/blank.png)
+**Lincoln University withdraws planned honorary doctorate for Mahama over his stro...**](/news/1480728/lincoln-university-withdraws-planned-honorary-doct.html)
+
+![Lincoln University withdraws planned honorary doctorate for Mahama over his strong stance against LGBTQ+](/img/blank.png)
+
+2 hours ago
+
+[![GIS manages2.8 million passenger smooth entries, exits in a year under Amadu Basintale-led reforms](/img/blank.png)
+**GIS manages 2.8 million passenger smooth entries, exits in a year under Amadu Ba...**](/news/1480717/gis-manages28-million-smooth-entries-exits-amid.html)
+
+[![GIS manages2.8 million passenger smooth entries, exits in a year under Amadu Basintale-led reforms](/img/blank.png)
+**GIS manages 2.8 million passenger smooth entries, exits in a year under Amadu Ba...**](/news/1480717/gis-manages28-million-smooth-entries-exits-amid.html)
+
+[![GIS manages2.8 million passenger smooth entries, exits in a year under Amadu Basintale-led reforms](/img/blank.png)
+**GIS manages 2.8 million passenger smooth entries, exits in a year under Amadu Ba...**](/news/1480717/gis-manages28-million-smooth-entries-exits-amid.html)
+
+![GIS manages2.8 million passenger smooth entries, exits in a year under Amadu Basintale-led reforms](/img/blank.png)
+
+2 hours ago
+
+[![The Comptroller-General of GIS, Samuel Basintale Amadu](/img/blank.png)
+**Ghana Immigration Service records GH¢546m revenue, major gains under Amadu Basin...**](/news/1480715/ghana-immigration-service-records-gh546m-revenue.html)
+
+[![The Comptroller-General of GIS, Samuel Basintale Amadu](/img/blank.png)
+**Ghana Immigration Service records GH¢546m revenue, major gains under Amadu Basin...**](/news/1480715/ghana-immigration-service-records-gh546m-revenue.html)
+
+[![The Comptroller-General of GIS, Samuel Basintale Amadu](/img/blank.png)
+**Ghana Immigration Service records GH¢546m revenue, major gains under Amadu Basin...**](/news/1480715/ghana-immigration-service-records-gh546m-revenue.html)
+
+![The Comptroller-General of GIS, Samuel Basintale Amadu](/img/blank.png)
+
+2 hours ago
+
+[![Minority caucus criticises NDC gov’t’s delay in reintroducing road tolls](/img/blank.png)
+**Minority caucus criticises NDC gov’t’s delay in reintroducing road tolls**](/news/1480681/minority-caucus-criticises-ndc-govts-delay-in.html)
+
+[![Minority caucus criticises NDC gov’t’s delay in reintroducing road tolls](/img/blank.png)
+**Minority caucus criticises NDC gov’t’s delay in reintroducing road tolls**](/news/1480681/minority-caucus-criticises-ndc-govts-delay-in.html)
+
+[![Minority caucus criticises NDC gov’t’s delay in reintroducing road tolls](/img/blank.png)
+**Minority caucus criticises NDC gov’t’s delay in reintroducing road tolls**](/news/1480681/minority-caucus-criticises-ndc-govts-delay-in.html)
+
+![Minority caucus criticises NDC gov’t’s delay in reintroducing road tolls](/img/blank.png)
+
+2 hours ago
+
+[![Fake Ghana Card numbers were accepted in previous SIM registration — Sam George](/img/blank.png)
+**Fake Ghana Card numbers were accepted in previous SIM registration — Sam George**](/news/1480680/fake-ghana-card-numbers-were-accepted-in-previous.html)
+
+[![Fake Ghana Card numbers were accepted in previous SIM registration — Sam George](/img/blank.png)
+**Fake Ghana Card numbers were accepted in previous SIM registration — Sam George**](/news/1480680/fake-ghana-card-numbers-were-accepted-in-previous.html)
+
+[![Fake Ghana Card numbers were accepted in previous SIM registration — Sam George](/img/blank.png)
+**Fake Ghana Card numbers were accepted in previous SIM registration — Sam George**](/news/1480680/fake-ghana-card-numbers-were-accepted-in-previous.html)
+
+![Fake Ghana Card numbers were accepted in previous SIM registration — Sam George](/img/blank.png)
+
+2 hours ago
+
+[![Most critics of upcoming SIM registration are victims of MoMo fraud — Sam George](/img/blank.png)
+**Most critics of upcoming SIM registration are victims of MoMo fraud — Sam George**](/news/1480673/most-critics-of-upcoming-sim-registration-are-vict.html)
+
+[![Most critics of upcoming SIM registration are victims of MoMo fraud — Sam George](/img/blank.png)
+**Most critics of upcoming SIM registration are victims of MoMo fraud — Sam George**](/news/1480673/most-critics-of-upcoming-sim-registration-are-vict.html)
+
+[![Most critics of upcoming SIM registration are victims of MoMo fraud — Sam George](/img/blank.png)
+**Most critics of upcoming SIM registration are victims of MoMo fraud — Sam George**](/news/1480673/most-critics-of-upcoming-sim-registration-are-vict.html)
+
+![Most critics of upcoming SIM registration are victims of MoMo fraud — Sam George](/img/blank.png)
+
+2 hours ago
+
+[![Economic policy analyst Senyo Hosi](/img/blank.png)
+**Stop charging young people recruitment fees – Senyo Hosi tells govt**](/news/1480722/stop-charging-young-people-recruitment-fees-seny.html)
+
+[![Economic policy analyst Senyo Hosi](/img/blank.png)
+**Stop charging young people recruitment fees – Senyo Hosi tells govt**](/news/1480722/stop-charging-young-people-recruitment-fees-seny.html)
+
+[![Economic policy analyst Senyo Hosi](/img/blank.png)
+**Stop charging young people recruitment fees – Senyo Hosi tells govt**](/news/1480722/stop-charging-young-people-recruitment-fees-seny.html)
+
+![Economic policy analyst Senyo Hosi](/img/blank.png)
+![Latest Photo Reports](https://cdn.modernghana.com/banners/80/50/Poster 15.jpg)
+
+[Advertise Here](/advertise/)
+
+![Ing. Felix Mensah](/img/img.png)
+
+[Agortime Akpokorfe farmers appeals for tomato factory, impro...](/news/1480664/agortime-akpokorfe-farmers-appeals-for-tomato-fact.html)
+
+![Human actions causing record warmth in Ghana — GMet](/img/img.png)
+
+[Human actions causing record warmth in Ghana — GMet](/news/1480498/human-actions-causing-record-warmth-in-ghana.html)
+
+![2024 was the warmest year ever recorded in Ghana — GMet](/img/img.png)
+
+[2024 was the warmest year ever recorded in Ghana — GMet](/news/1480497/2024-was-the-warmest-year-ever-recorded-in-ghana.html)
+
+![AP - Nick Ut](/img/img.png)
+
+[Nearly half of migratory species in decline as UN summit ope...](/news/1480481/nearly-half-of-migratory-species-in-decline-as.html)
+
+1992 Constitution: Indemnity clause, Ex-gratia, etc... Do we still need these?
+
+Started: 09-03-2026 | Ends: 30-06-2026
+
+![body-container-line](/assets/categories-images/body-container-line.png)
+
+All trademarks and copyrights on this page are owned by their respective owners.
+
+© 2026 ModernGhana

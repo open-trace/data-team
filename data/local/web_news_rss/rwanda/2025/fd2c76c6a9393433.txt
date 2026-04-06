@@ -1,0 +1,15 @@
+---
+id: fd2c76c6a9393433
+url: https://news.fundsforngos.org
+title: fundsforNGOs News - Grants and Resources for Sustainability
+country: Rwanda
+domain: agriculture
+domain_score: 2
+info_type: news_article
+published_at: '2025-10-01'
+feed_name: Google News — Rwanda agriculture
+source: rss
+body_source: fetched_html
+---
+
+The European Bank for Reconstruction and Development (EBRD) has approved a US$10 million (€8.6 million) financing programme for Texnomart, one of Uzbekistan’s leading retailers of consumer electronics and household appliances. The funding marks a further step in the EBRD’s cooperation with the company and is aimed at supporting its continued growth and modernization in the… [Read More]

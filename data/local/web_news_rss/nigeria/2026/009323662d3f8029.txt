@@ -1,0 +1,95 @@
+---
+id: 009323662d3f8029
+url: https://www.tvcnews.tv/fg-targets-six-million-youths-in-agriculture-drive-partners-iita/
+rss_url: https://www.tvcnews.tv/fg-targets-six-million-youths-in-agriculture-drive-partners-iita/
+title: FG Targets Six Million Youths in Agriculture Drive, Partners IITA - Trending
+  News
+country: Nigeria
+domain: agriculture
+domain_score: 9
+info_type: news_article
+published_at: '2026-02-27T07:14:41+00:00'
+published_at_source: html
+published_at_confidence: 0.85
+published_at_raw: '2026-02-27T07:14:41+00:00'
+html_published_at: '2026-02-27T07:14:41+00:00'
+html_published_raw: '2026-02-27T07:14:41+00:00'
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T15:34:12+00:00'
+extracted_at: '2026-03-24T15:34:12+00:00'
+feed_name: Tavily discovery — Agricultural Gender, Youth & Inclusion
+source: rss
+body_source: fetched_html
+phase1_fetch_url: https://www.tvcnews.tv/fg-targets-six-million-youths-in-agriculture-drive-partners-iita/
+article_fetch_url: https://www.tvcnews.tv/fg-targets-six-million-youths-in-agriculture-drive-partners-iita/
+enriched: false
+enrichment_used: null
+dedupe_id: 7075d809860c1edf
+cluster_id: 61e0273886d22a8c
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- agriculture
+- agricultural
+- agribusiness
+- food security
+domain_scores:
+  agriculture: 9
+  Land Use & Soil Health: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+---
+
+The Federal Government has unveiled plans to train more than six million young Nigerians in agriculture and agribusiness through a new partnership with the International Institute of Tropical Agriculture (IITA), in what officials described as one of the largest youth-focused agricultural empowerment drives in recent years.
+The initiative, spearheaded by the Federal Ministry of Youth Development, is aimed at expanding access to land, innovation and enterprise opportunities for young people across the country.
+Minister of Youth Development, Comrade Ayodele Olawande, announced the collaboration after receiving a detailed programme presentation from IITA.
+He described the initiative as a strategic intervention designed to unlock sustainable economic opportunities for youth nationwide, commending what he called the programme’s innovative structure and thorough preparation.
+According to him, the ministry is prioritising land access for young Nigerians through the activation of National Youth Development Centres across the country.
+The centres, he said, will serve as structured platforms for engaging young people in agriculture and agribusiness ventures.
+Olawande said the programme is designed as a multi-stakeholder effort, bringing together state governments, development partners and private sector actors to ensure broad-based impact.
+He noted that the scale of the target over six million youths reflects strengthened institutional collaboration in pursuit of national development goals.
+The minister also emphasised the role of the ministry’s youth database in identifying and mobilising participants, ensuring fair representation across the six geopolitical zones.
+On implementation, he called for swift action, stating that formal activities would commence immediately after the signing of a Memorandum of Understanding between the ministry and IITA. Technical teams from both sides, he added, would move in without delay.
+Olawande reiterated the ministry’s commitment to transparency, accountability and measurable outcomes, stressing that young Nigerians are eager for practical opportunities that promote job creation, enterprise development and food security.
+Permanent Secretary of the ministry, Dr. Maryam Ismaila Keshinro, said the initiative aligns with the Renewed Hope Agenda of Bola Tinubu, which places youth empowerment and food security at the centre of national development.
+She disclosed plans to transform selected National Youth Development Centres into integrated agricultural hubs focused on vocational training, climate-smart agriculture, digital innovation and improved market access.
+In her remarks, IITA Youth in Agribusiness Chief Executive Officer, Aline Mugisho, pointed to Nigeria’s demographic strength, noting that with over 60 per cent of the population made up of young people, agriculture remains a major driver of employment and enterprise growth.
+She observed that the sector is currently the country’s second-largest employer of labour and holds vast potential for inclusive economic expansion.
+The partnership, officials said, marks a significant step toward positioning Nigerian youth at the forefront of agricultural innovation and sustainable national development.

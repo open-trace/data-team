@@ -1,0 +1,15 @@
+---
+id: 8122328045d2abd6
+url: https://reliefweb.int
+title: ReliefWeb - Informing humanitarians worldwide
+country: Nigeria
+domain: agriculture
+domain_score: 2
+info_type: news_article
+published_at: '2025-12-17'
+feed_name: Google News — Nigeria agriculture
+source: rss
+body_source: fetched_html
+---
+
+ReliefWeb Annoucement Latest Headlines IOM calls on the international community to urgently increase support to meet immediate needs, strengthen preparedness, and prevent further deterioration of an already fragile situation. This year's Levels & Trends in Child Mortality report provides the clearest and most detailed picture yet of how many children, adolescents, and youth are dying. In 2026, 22.3 million people require assistance and protection. This includes 5.2 million IDPs, alongside migrants and refugees. Acute food insecurity is alarming, with 18.3 million people affected. The evacuation order for the northern border town of Akobo East, which forced thousands of people - including all aid agency staff – to leave at the weekend, has deepened catastrophic conditions. WFP estimates that almost 45 million more people could fall into acute food insecurity or worse (IPC3+) if the conflict does not end by mid-year, and if oil prices remain above $100 a barrel. Between 600,000 and one million households are now temporarily displaced, representing up to 3.2 million people. Most are fleeing major urban areas towards the north and rural areas to seek safety. Fifteen years into the conflict, food insecurity is threatening many of the country's youngest. Nearly 6.4 million under-fives suffer from acute malnutrition across the northern regions. MSF is calling for a massive scale-up of lifesaving aid and unhindered access amid the ongoing catastrophe in Gaza, where lives continue to be lost due to sustained violence and aid restrictions. Recent Disasters Most Read (last 24 hours) Latest Blog As 2025 began, the humanitarian system entered a year of profound reckoning. At the start of the year, the global humanitarian community set out to assist more than 180 million people affected by conflict, climate shocks and displacement. Almost immediately, however, those ambitions collided with unprecedented budget cuts across the humanitarian system, forcing painful trade-offs, reduced... Opportunities 967 Open jobs 1,298 Training programs

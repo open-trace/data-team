@@ -1,0 +1,16 @@
+---
+id: ffc6c3511504511b
+url: https://www.unesco.org
+title: 'UNESCO : Building Peace through Education, Science and Culture, communication
+  and information'
+country: Sierra Leone
+domain: agriculture
+domain_score: 2
+info_type: news_article
+published_at: '2025-11-03'
+feed_name: Google News — Sierra Leone agriculture
+source: rss
+body_source: fetched_html
+---
+
+©UNESCO Delivering for people in crisis Culture, education, science, and information are essential needs in times of turbulence and crisis. They are powerful drivers of social cohesion, resilience, and hope in a better future. UNESCO plays a vital role in safeguarding the social and cultural foundations that underpin stability, dignity, and recovery for communities affected by crises. By protecting these pillars, we help ensure that societies can rebuild not only infrastructure, but also trust, identity, and the collective capacity to move forward. Read more African women driving innovation: From barriers to breakthroughs Across Africa, women are reshaping the future of technology, not only by building businesses, but by designing solutions to some of the continent’s most pressing challenges. As International Women’s Day highlights the importance of rights, justice and action, stories like these remind us that equality in innovation must be sustained year-round. Read more © UNESCO - Ai movement (C2C) - Fondation OCP Empowering women for better water sciences When women are left out of water knowledge and decision-making, science itself is incomplete. The UN World Water Development Report 2026, at the core of this year's World Water Day, affirms that empowering women in water sciences is key to achieving truly effective and equitable water governance. Read more © Barun Rajgaria for Onewater Prepare the world for AI, Prepare AI for the world Since its founding at the dawn of the atomic age, UNESCO has helped societies navigate and manage the transformative power of technology – to the benefit of all. Today, in an era shaped by Artificial Intelligence (AI) and related breakthrough innovations, UNESCO continues the critical work of ensuring these emerging technologies are developed and deployed in service of equity, opportunity, and inclusivity, for the people. Read more © UNESCO Our impact in communities Discover how UNESCO drives change around the world. Palestine: supporting journalists in times of crisis

@@ -1,0 +1,136 @@
+---
+id: 8940f9f8f5c9bfc1
+url: https://news.google.com/rss/articles/CBMiogFBVV95cUxNN3V5c2JPMm9oTVMzVXV0eU1HakxEaF9PTmRLY2lCSGcxMFRwazg2bkZEaWpMZW9OYXV1NDhpYzhJRTdSd2JnT21wN0pRaDZhVDN2cmRFN2w3ZGg2QUgyQVd2aUdtQnRMUTJybnBNU1lRYkFFS3JaQUhtWDk2N01IT1FNbTh0WVZjaW5sa21qNmZSaUlPV3JNaWxDbnRrOUloREE?oc=5
+rss_url: https://news.google.com/rss/articles/CBMiogFBVV95cUxNN3V5c2JPMm9oTVMzVXV0eU1HakxEaF9PTmRLY2lCSGcxMFRwazg2bkZEaWpMZW9OYXV1NDhpYzhJRTdSd2JnT21wN0pRaDZhVDN2cmRFN2w3ZGg2QUgyQVd2aUdtQnRMUTJybnBNU1lRYkFFS3JaQUhtWDk2N01IT1FNbTh0WVZjaW5sa21qNmZSaUlPV3JNaWxDbnRrOUloREE?oc=5
+title: 'From Agroforestry to Agroindustry: Smallholder Access to Benefits From Oil
+  Palm in Ghana and the Implications for Sustainability Certification - Frontiers'
+country: Ghana
+domain: agriculture
+domain_score: 5
+info_type: news_article
+published_at: '2020-03-19T00:00:00+00:00'
+published_at_source: rss
+published_at_confidence: 0.95
+published_at_raw: '2020-03-19'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:16:37+00:00'
+extracted_at: '2026-03-24T16:16:35+00:00'
+feed_name: Google News — Ghana agriculture [2020-03-18]
+source: rss
+body_source: tavily_search
+phase1_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMiogFBVV95cUxNN3V5c2JPMm9oTVMzVXV0eU1HakxEaF9PTmRLY2lCSGcxMFRwazg2bkZEaWpMZW9OYXV1NDhpYzhJRTdSd2JnT21wN0pRaDZhVDN2cmRFN2w3ZGg2QUgyQVd2aUdtQnRMUTJybnBNU1lRYkFFS3JaQUhtWDk2N01IT1FNbTh0WVZjaW5sa21qNmZSaUlPV3JNaWxDbnRrOUloREE?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49Cx8Bg5vHMCX7MF6XYyE_J3bH8OqvgMvHVe1tAuLu2yb1I_17KewdCal_ZUZ3EeLrUgNuBzI18xeu96gg4CPnQy1Jc2DXqr
+article_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMiogFBVV95cUxNN3V5c2JPMm9oTVMzVXV0eU1HakxEaF9PTmRLY2lCSGcxMFRwazg2bkZEaWpMZW9OYXV1NDhpYzhJRTdSd2JnT21wN0pRaDZhVDN2cmRFN2w3ZGg2QUgyQVd2aUdtQnRMUTJybnBNU1lRYkFFS3JaQUhtWDk2N01IT1FNbTh0WVZjaW5sa21qNmZSaUlPV3JNaWxDbnRrOUloREE?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49Cx8Bg5vHMCX7MF6XYyE_J3bH8OqvgMvHVe1tAuLu2yb1I_17KewdCal_ZUZ3EeLrUgNuBzI18xeu96gg4CPnQy1Jc2DXqr
+enriched: true
+enrichment_used: tavily_search
+dedupe_id: c3d0cf9b5b2ca68a
+cluster_id: c8dd79d7303e7c85
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- farm
+- smallholder
+- livestock
+- planting
+- rice
+- greenhouse
+- dairy
+domain_scores:
+  agriculture: 5
+  economics: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMiogFBVV95cUxNN3V5c2JPMm9oTVMzVXV0eU1HakxEaF9PTmRLY2lCSGcxMFRwazg2bkZEaWpMZW9OYXV1NDhpYzhJRTdSd2JnT21wN0pRaDZhVDN2cmRFN2w3ZGg2QUgyQVd2aUdtQnRMUTJybnBNU1lRYkFFS3JaQUhtWDk2N01IT1FNbTh0WVZjaW5sa21qNmZSaUlPV3JNaWxDbnRrOUloREE?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49Cx8Bg5vHMCX7MF6XYyE_J3bH8OqvgMvHVe1tAuLu2yb1I_17KewdCal_ZUZ3EeLrUgNuBzI18xeu96gg4CPnQy1Jc2DXqr
+---
+
+Thousands of trees planted in 'unmatched' agroforestry project - Forestry Journal Borders environmental charity, Tweed Forum has planted the trees on a Peeblesshire farm in an innovative agroforestry project that’s being delivered on a scale believed to be unmatched anywhere else in Scotland. The planting, at Neidpath Farms near Peebles, integrates trees with livestock on the same land and will aid the farm business while delivering significant benefits for biodiversity and climate resilience. Supported by funding from The Woodland Trust and Destination Tweed, the agroforestry initiative includes the planting of 65 apple, pear, cherry and plum trees, which will produce high-quality organic fruit for local markets. Tweed Forum Project Manager, Hamish Robertson hopes that other farms in the upper Tweed catchment will take advantage of agroforestry funding packages available through The Woodland Trust to undertake introduce similar measures. Matt Griffin, manager at Neidpath Farms, said; “I’m thrilled to be part of this agroforestry journey, leaving a lasting legacy on the land that boosts biodiversity, provides essential shade and shelter and creates better grazing for livestock and healthy food for local people. https://www.forestryjournal.co.uk/news/25950076.thousands-trees-planted-unmatched-agroforestry-scheme/
+
+Is sustainability really sustainable? - Interplas Insights Home Plastics Industry Insights + Latest Plastics Industry Insights Is sustainability really sustainable? # Is sustainability really sustainable? **In a plastic world where things continuously evolve, sustainability has also moved with the times. But sustainability has moved on. Now it’s about carbon footprint, sustainable manufacturing, net zero targets, recycled content percentages, ISCC certification, traceability… and the list keeps growing. > Which is why I think the first question anyone should ask when requesting a “sustainable polymer” is simple: what do you mean by sustainable? There are hidden costs associated with sustainability, including paperwork, certification, educating end-users, staying up-to-date with constantly evolving regulations and additional manufacturing inputs. Ultimately, if sustainability goals are misunderstood or if the true costs remain hidden, there won’t be any sustainable manufacturing at all, because manufacturers won’t survive. Beyond manufacturing costs, do customers truly appreciate that sustainability itself has a cost that must be paid somewhere in the chain? https://interplasinsights.com/plastic-industry-insights/latest-plastics-industry-insights/is-sustainability-really-sustainable/
+
+DFI Reinforces Commitment to People, Products and Planet in 2025 Sustainability Disclosure - Financial Times | EQS Newswire / 23/03/2026 / 05:45 CET/CEST  HONG KONG SAR - Media OutReach Newswire - 23 March 2026 - DFI Retail Group (DFI or the Group) is pleased to announce its 2025 Sustainability Disclosure, highlighting the Group's continued progress and commitment to advancing sustainability across Asia. |  | | --- | | *DFI Retail Group Sustainability Disclosure 2025* |    In 2025, DFI delivered strong progress on key sustainability commitments:  * 22% reduction in Scope 1 and 2 greenhouse gas emissions compared to the 2021 baseline, with a target of 50% reduction by 2030. Initiatives included the launch of 380 tonnes of Low-Carbon Rice achieving a minimum 30% on-farm emissions reduction, sourcing 100% deforestation-free certified coffee beans for 7CAFÉ Hong Kong, Macau, and Singapore, and IKEA, and partnering with The Mills Fabrica to launch the DFI Sustainability Innovation Challenge to identify global solutions for beef and dairy emissions. https://markets.ft.com/data/announce/detail?dockey=600-202603230045DGAP____ASPR_____corporate_2295564_en-1

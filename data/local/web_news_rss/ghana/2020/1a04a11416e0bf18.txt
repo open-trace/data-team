@@ -1,0 +1,189 @@
+---
+id: 1a04a11416e0bf18
+url: https://news.google.com/rss/articles/CBMi2wFBVV95cUxORzFxT1VETlNtNjdYd3pCMEZfcURucDdjSlpSS25jTnlRYkJJb0F5N194WU5FcVYxYzZseXQyRmFjMGUyVkdXNHBwU3FYaUxQQzFlalpiWTlUWkFyU2Z2QURtanZjR1ZfX0dZNHFZbzZYVTZ2OTRzLVNPWmd2YWJmaWZLRkV0T1RfaE9ONW1KLWViLWgxQUl6bjBWSHJWM2ZIdDRUMzgyVUU1S3dYRkxjVDQ2YkV4ajNLc1BDN01Ob05JTlVfTzJoMFp3LUZDR1VYQVlmNnFRZjRxc0U?oc=5
+rss_url: https://news.google.com/rss/articles/CBMi2wFBVV95cUxORzFxT1VETlNtNjdYd3pCMEZfcURucDdjSlpSS25jTnlRYkJJb0F5N194WU5FcVYxYzZseXQyRmFjMGUyVkdXNHBwU3FYaUxQQzFlalpiWTlUWkFyU2Z2QURtanZjR1ZfX0dZNHFZbzZYVTZ2OTRzLVNPWmd2YWJmaWZLRkV0T1RfaE9ONW1KLWViLWgxQUl6bjBWSHJWM2ZIdDRUMzgyVUU1S3dYRkxjVDQ2YkV4ajNLc1BDN01Ob05JTlVfTzJoMFp3LUZDR1VYQVlmNnFRZjRxc0U?oc=5
+title: Africa’s producing more fertilizer, but it’s still not getting to all farmers
+  - Center for Public Integrity
+country: Ghana
+domain: agriculture
+domain_score: 9
+info_type: news_article
+published_at: '2020-01-22T00:00:00+00:00'
+published_at_source: rss
+published_at_confidence: 0.95
+published_at_raw: '2020-01-22'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:14:39+00:00'
+extracted_at: '2026-03-24T16:14:38+00:00'
+feed_name: Google News — Ghana agriculture [2020-01-21]
+source: rss
+body_source: tavily_search
+phase1_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMi2wFBVV95cUxORzFxT1VETlNtNjdYd3pCMEZfcURucDdjSlpSS25jTnlRYkJJb0F5N194WU5FcVYxYzZseXQyRmFjMGUyVkdXNHBwU3FYaUxQQzFlalpiWTlUWkFyU2Z2QURtanZjR1ZfX0dZNHFZbzZYVTZ2OTRzLVNPWmd2YWJmaWZLRkV0T1RfaE9ONW1KLWViLWgxQUl6bjBWSHJWM2ZIdDRUMzgyVUU1S3dYRkxjVDQ2YkV4ajNLc1BDN01Ob05JTlVfTzJoMFp3LUZDR1VYQVlmNnFRZjRxc0U?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49BHAPCqy9gi3KhaMP9R0w76LQodxfw-cymhjq8RiEBjNnJkXw0dxgmT1ueUBZwyv4N7W4k-tffiZG03sQ_EVwVgWfKiW6pX
+article_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMi2wFBVV95cUxORzFxT1VETlNtNjdYd3pCMEZfcURucDdjSlpSS25jTnlRYkJJb0F5N194WU5FcVYxYzZseXQyRmFjMGUyVkdXNHBwU3FYaUxQQzFlalpiWTlUWkFyU2Z2QURtanZjR1ZfX0dZNHFZbzZYVTZ2OTRzLVNPWmd2YWJmaWZLRkV0T1RfaE9ONW1KLWViLWgxQUl6bjBWSHJWM2ZIdDRUMzgyVUU1S3dYRkxjVDQ2YkV4ajNLc1BDN01Ob05JTlVfTzJoMFp3LUZDR1VYQVlmNnFRZjRxc0U?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49BHAPCqy9gi3KhaMP9R0w76LQodxfw-cymhjq8RiEBjNnJkXw0dxgmT1ueUBZwyv4N7W4k-tffiZG03sQ_EVwVgWfKiW6pX
+enriched: true
+enrichment_used: tavily_search
+dedupe_id: 045ddffbed501aa4
+cluster_id: 35143cd450f406c8
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- agriculture
+- agricultural
+- farmers
+- fertilizer
+- fertiliser
+- soil
+- food security
+- grain
+domain_scores:
+  agriculture: 9
+  economics: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMi2wFBVV95cUxORzFxT1VETlNtNjdYd3pCMEZfcURucDdjSlpSS25jTnlRYkJJb0F5N194WU5FcVYxYzZseXQyRmFjMGUyVkdXNHBwU3FYaUxQQzFlalpiWTlUWkFyU2Z2QURtanZjR1ZfX0dZNHFZbzZYVTZ2OTRzLVNPWmd2YWJmaWZLRkV0T1RfaE9ONW1KLWViLWgxQUl6bjBWSHJWM2ZIdDRUMzgyVUU1S3dYRkxjVDQ2YkV4ajNLc1BDN01Ob05JTlVfTzJoMFp3LUZDR1VYQVlmNnFRZjRxc0U?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49BHAPCqy9gi3KhaMP9R0w76LQodxfw-cymhjq8RiEBjNnJkXw0dxgmT1ueUBZwyv4N7W4k-tffiZG03sQ_EVwVgWfKiW6pX
+---
+
+Global Agriculture Braces for Impact: The 2026 Fertilizer Crisis and the Looming Shadow over 2027 - The Chronicle-Journal A convergence of geopolitical conflict in the Middle East and a "sulfur cascade" in the global supply chain has sent fertilizer prices soaring, leaving farmers in the Northern Hemisphere facing some of the most challenging economic conditions in a generation. This financial pressure is driving a massive shift in acreage away from corn and toward soybeans, a trend that could lead to significant imbalances in global grain supplies by the end of the year. Major producers in China and Morocco, who rely on these imports, have begun to curb exports of finished fertilizers to preserve domestic food security, further tightening global supply. Leveraging its position as a major North American producer with access to relatively stable domestic natural gas prices at the Henry Hub, CF has maintained high margins while capturing the "scarcity premium" in global markets. This shift is likely to lead to more regulatory interventions, such as export taxes or domestic price caps, which could further distort global market signals and lead to long-term inefficiencies in food production. http://markets.chroniclejournal.com/chroniclejournal/article/marketminute-2026-3-23-global-agriculture-braces-for-impact-the-2026-fertilizer-crisis-and-the-looming-shadow-over-2027
+
+Organic Fertilizers Market 2026 supporting eco-friendly agricultural practices - lincolnjournal.com LONDON, GREATER LONDON, UNITED KINGDOM, March 20, 2026 /EINPresswire.com/ -- "The organic fertilizers market is dominated by a mix of global agricultural input manufacturers and specialized soil nutrient solution firms. E96 @C82?:4 76CE:=:K6CD >2C<6E[ AC@G:56D 2 H:56 C2? 8 q:@[ t2CE9H@C> %649?@=@8:6D {{r[ |:C:>:49: vC66?]k^Am. EC2E65 xD %96 ~C82?:4 u6CE:=:K6CD |2C<6Enk^Am. kAm• %96 >2C<6E :D 7C28>6? 4][ vF;2C2E $E2E6 u6CE:=:K6CD U2>Aj r96>:42=D {E5][ '2=28C@ W$J? %:>FC[ #2D9EC:J2 r96>:42=D U2>Aj u6CE:=:K6CD {E5][ }6F5@C77 v>3w zv[ %] $E2? 4][ vF;2C2E $E2E6 u6CE:=:K6CD U2>Aj r96>:42=D {E5][ '2=28C@ W$J? 5 }6F5@C77 v>3w zv] 9@=5 ?@E23=6 >2C<6E D92C6D E9C@F89 5:G6CD:7:65 AC@5F4E A@CE7@=:@D[ DEC@? J {{r W`TXk^Am. kAm@ zZ$ pv W\_]dTXk^Am. 2= {:>:E65 W\_]cTXk^Am. 4] W\_]cTXk^Am. kAm@ vF;2C2E $E2E6 u6CE:=:K6CD U2>Aj r96>:42=D {E5] W\_]bTXk^Am. kAm@ '2=28C@ W$J? %:>FC W\_]bTXk^Am. kAm@ #2D9EC:J2 r96>:42=D U2>Aj u6CE:=:K6CD {E5] W\_]bTXk^Am. kAm@ }6F5@C77 v>3w zv W\_]bTXk^Am. kAm#6BF6DE p uC66 $2>A=6 ~7 %96 k2 9C67lQ9EEADi^^HHH]E963FD:? 46[ ~>6I p8C:7=F:5D {E5][ '2=28C@ $]A]p][ u6CE:D vC@FA[ u6CE:? C@5F4E:G:EJk^Am. kAmp446DD %96 s6E2:=65 ~C82?:4 u6CE:=:K6CD |2C<6E #6A@CE w6C6k^Am. J]4@>^C6A@CE^@C82?:4\76CE:=:K6CD\8=@32=\>2C<6E\C6A@CEnFE>0D@FC46ltx}! https://www.lincolnjournal.com/online_features/press_releases/organic-fertilizers-market-2026-supporting-eco-friendly-agricultural-practices/article_30d53456-632f-5519-9256-742200f8e5da.html
+
+Not just energy: How the Iran war could trigger a global food crisis - Al Jazeera *The crisis of a fertiliser shortage threatens global food security amid Iran war.*. Iran war hits US farmers: Disruptions to fertiliser supply impact producers. Nearly half of the world’s traded urea – the most widely used fertiliser – and large volumes of other fertilisers are exported from Gulf countries via the Strait of Hormuz, making global agriculture highly exposed to any disruption there. According to one shipping services company, the Signal Group, 20 percent of the world’s fertiliser originates in the Gulf, while 46 percent of global urea supply comes from the Gulf. Qatar Fertiliser Company (QAFCO), considered the world’s largest urea supplier, alone supplies 14 percent of the world’s urea. As of 2024, Asian countries were most heavily dependent on Gulf fertiliser exports, receiving 35 percent of Gulf urea exports, 53 percent of sulphur exports and 64 percent of ammonia exports, according to Kpler. Several of the biggest importers of Gulf fertilisers – including India, Brazil and China – are also among the world’s largest food producers. https://www.aljazeera.com/economy/2026/3/18/not-just-energy-how-the-iran-war-could-trigger-a-global-food-crisis

@@ -1,0 +1,15 @@
+---
+id: c366f27969809c5e
+url: https://blogs.lse.ac.uk
+title: LSE Blogs – Expert political and social debate
+country: Nigeria
+domain: Production & Yield
+domain_score: 2
+info_type: news_article
+published_at: '2024-01-12'
+feed_name: Google News — Nigeria agriculture [2024-01-11]
+source: rss
+body_source: fetched_html
+---
+
+LSE Blogs Expert commentary and analysis from LSE, the world-leading social science institution. Recent posts Europe’s Ukraine consensus still holds – but the far right is splitting over Russia LSE European Politics Should international law constrain the UK’s foreign policy on Iran? LSE British Politics Alternative or mainstream? The shifting media of the internet LSE Review of Books The US-UK special relationship will continue despite disagreements over Iran LSE United States Politics and Policy Disruption in the Strait of Hormuz is a global inflation and growth story LSE Business Review Berkay Ozcan: “Immigration is not a silver bullet for falling birth rates” LSE European Politics Is the economic tide turning for Africa? Africa at LSE Sleep is the next frontier for public health LSE Impact Italy’s referendum – is the Italian right as united as it seems? LSE European Politics Feminist financial influencers – a new “marriage” of feminism and capitalism LSE Business Review Travelling concepts – notes on “pickup artists” culture in China LSE Review of Books What impact is AI having on British jobs? LSE Business Review Shifting World Order US strikes have turned Iran from a state with nuclear capability into one with a nuclear grievance LSE United States Politics and Policy Is Donald Trump right about free-riding in NATO? LSE European Politics How geopolitics disrupts the business – and meaning – of sport LSE Business Review Trump’s Iran strikes signal that the US-UK special relationship is in the rear-view mirror LSE United States Politics and Policy AI, Technology and Society Big Tech competition risks trampling over human rights in Africa Africa at LSE Research integrity is locked into an arms race with agentic AI slop LSE Impact AIs are designed and trained – by men – to be sexist towards women LSE Business Review Will AI replace coders? How to read the next AI jobs hype cycle LSE Impact Expert political, economic and social analysis on LSE Blogs LSE Blogs has grown into one of the world’s primary digital knowledge exchange platforms for political , economic and social commentary on global affairs . Across 42 live blogs and over 100,000 articles, researchers, policymakers, politicians and business leaders provide evidence-based and accessible summaries of academic research to address urgent social science challenges. Learn more about LSE Blogs . Stay up to date by subscribing to the LSE Blogs newsletter . You can also find out more about LSE research via LSE Research for the World online magazine , or search our repository of publications via Research at LSE. To attend LSE events with world-leading experts, view our upcoming listings and catch up online .

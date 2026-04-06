@@ -1,0 +1,70 @@
+---
+id: 5bf86fd7c87363f9
+url: https://news.google.com/rss/articles/CBMikgJBVV95cUxPNGwtOUNwZ3AxczBBNEFxMjJqak02NWJYMi1uTGkyUE01TktJYVhuUWFRVlR3Qzl4SE9XZG01VHNUekw0Zk9KSi11b0FuNklDOXBKZG1iODZsNk9HVG1zYnR6eEtlTHVJR1BQTGVvQkpybU56QXBTaFd5TFR0YTRyRDNDN2RwdW51UTdIVVhNZHlLSXBocHI2OUZROU91TDJ5SVRTQk02RklBT2g0MG5qeU5oNlR1YjdYZEVkUFdKcWpSbGsxSmFXWXltUzNNRFBXWlQwZFhFMjJTcmluSk9NQ3REUlRqUTh2ZDA0NDhUcjVudHpKdENiVExHY3V3bWdRZlp3UHRUMlYtMTZ1c09zem53?oc=5
+rss_url: https://news.google.com/rss/articles/CBMikgJBVV95cUxPNGwtOUNwZ3AxczBBNEFxMjJqak02NWJYMi1uTGkyUE01TktJYVhuUWFRVlR3Qzl4SE9XZG01VHNUekw0Zk9KSi11b0FuNklDOXBKZG1iODZsNk9HVG1zYnR6eEtlTHVJR1BQTGVvQkpybU56QXBTaFd5TFR0YTRyRDNDN2RwdW51UTdIVVhNZHlLSXBocHI2OUZROU91TDJ5SVRTQk02RklBT2g0MG5qeU5oNlR1YjdYZEVkUFdKcWpSbGsxSmFXWXltUzNNRFBXWlQwZFhFMjJTcmluSk9NQ3REUlRqUTh2ZDA0NDhUcjVudHpKdENiVExHY3V3bWdRZlp3UHRUMlYtMTZ1c09zem53?oc=5
+title: Ghana Cocoa Board, African Development Bank and financial partners celebrate
+  first $200 million disbursement of loan to boost cocoa productivity in Ghana - Farmers
+  Review Africa
+country: Ghana
+domain: agriculture
+domain_score: 15
+info_type: news_article
+published_at: '2020-06-29T00:00:00+00:00'
+published_at_source: rss
+published_at_confidence: 0.95
+published_at_raw: '2020-06-29'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:19:30+00:00'
+extracted_at: '2026-03-24T16:19:28+00:00'
+feed_name: Google News — Ghana agriculture [2020-06-28]
+source: rss
+body_source: tavily_search
+phase1_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMikgJBVV95cUxPNGwtOUNwZ3AxczBBNEFxMjJqak02NWJYMi1uTGkyUE01TktJYVhuUWFRVlR3Qzl4SE9XZG01VHNUekw0Zk9KSi11b0FuNklDOXBKZG1iODZsNk9HVG1zYnR6eEtlTHVJR1BQTGVvQkpybU56QXBTaFd5TFR0YTRyRDNDN2RwdW51UTdIVVhNZHlLSXBocHI2OUZROU91TDJ5SVRTQk02RklBT2g0MG5qeU5oNlR1YjdYZEVkUFdKcWpSbGsxSmFXWXltUzNNRFBXWlQwZFhFMjJTcmluSk9NQ3REUlRqUTh2ZDA0NDhUcjVudHpKdENiVExHY3V3bWdRZlp3UHRUMlYtMTZ1c09zem53?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49ChSK3nLSb1jzFDQ_9iUXt3w5vT9b0gWZtrhtMXx65FXYp-0evzcTj-U7lidqW8oQ--3CPSUDw9cg7u6N2ZqqkmiySbyFTd
+article_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMikgJBVV95cUxPNGwtOUNwZ3AxczBBNEFxMjJqak02NWJYMi1uTGkyUE01TktJYVhuUWFRVlR3Qzl4SE9XZG01VHNUekw0Zk9KSi11b0FuNklDOXBKZG1iODZsNk9HVG1zYnR6eEtlTHVJR1BQTGVvQkpybU56QXBTaFd5TFR0YTRyRDNDN2RwdW51UTdIVVhNZHlLSXBocHI2OUZROU91TDJ5SVRTQk02RklBT2g0MG5qeU5oNlR1YjdYZEVkUFdKcWpSbGsxSmFXWXltUzNNRFBXWlQwZFhFMjJTcmluSk9NQ3REUlRqUTh2ZDA0NDhUcjVudHpKdENiVExHY3V3bWdRZlp3UHRUMlYtMTZ1c09zem53?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49ChSK3nLSb1jzFDQ_9iUXt3w5vT9b0gWZtrhtMXx65FXYp-0evzcTj-U7lidqW8oQ--3CPSUDw9cg7u6N2ZqqkmiySbyFTd
+enriched: true
+enrichment_used: tavily_search
+dedupe_id: 577685e531d7e81e
+cluster_id: e560f26e683f8bfd
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- agriculture
+- agricultural
+- farmers
+- cocoa
+- ministry of agriculture
+- value chain
+domain_scores:
+  agriculture: 15
+  economics: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMikgJBVV95cUxPNGwtOUNwZ3AxczBBNEFxMjJqak02NWJYMi1uTGkyUE01TktJYVhuUWFRVlR3Qzl4SE9XZG01VHNUekw0Zk9KSi11b0FuNklDOXBKZG1iODZsNk9HVG1zYnR6eEtlTHVJR1BQTGVvQkpybU56QXBTaFd5TFR0YTRyRDNDN2RwdW51UTdIVVhNZHlLSXBocHI2OUZROU91TDJ5SVRTQk02RklBT2g0MG5qeU5oNlR1YjdYZEVkUFdKcWpSbGsxSmFXWXltUzNNRFBXWlQwZFhFMjJTcmluSk9NQ3REUlRqUTh2ZDA0NDhUcjVudHpKdENiVExHY3V3bWdRZlp3UHRUMlYtMTZ1c09zem53?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49ChSK3nLSb1jzFDQ_9iUXt3w5vT9b0gWZtrhtMXx65FXYp-0evzcTj-U7lidqW8oQ--3CPSUDw9cg7u6N2ZqqkmiySbyFTd
+---
+
+Ivorian agriculture minister says cocoa hardships will bring Côte d’Ivoire and Ghana closer - The Africa Report Join the top leaders who read *The Africa Report* every day. # Ivorian agriculture minister says cocoa hardships will bring Côte d’Ivoire and Ghana closer. For Ivorian minister Bruno Nabagné Koné, the priorities for the cocoa sector are to address financing and the competitiveness of its value chains. At the end of January, amid the cocoa crisis, Bruno Nabagné Koné left the Ministry of Housing in Côte d'Ivoire to head the Ministry of Agriculture, Rural Development and Food Production, succeeding Kobenan Kouassi Adjoumani. US-Africa Week Ahead: Trump summons Congo belligerents over stalled peace. Red Sea dynamics: How the Iran conflict is rewiring Horn of Africa diplomacy. Cocoa at a crossroads: Can Ghana reclaim control of its golden bean? ### Africa NextGen Economist Prize: and the finalists are …. ### Africa’s $155bn borrowing forecast threatened by Middle East war fallout. ### Africa and the Gulf in a fragmented world: Building the next growth corridor. https://www.theafricareport.com/412209/ivorian-agriculture-minister-says-cocoa-hardships-will-bring-cote-divoire-and-ghana-closer/
+
+Top 10 African countries the United States made the most money from last year - Business Insider Africa **In 2025, numerous African countries increased their trading links with the United States, exporting a sizable number of goods despite tariff conflicts, economic challenges,** **sanctions****, and shifting U.S.-Africa trade policy debates.**. * In 2025, many African countries strengthened trade with the United States despite ongoing tariff disputes and economic obstacles. * U.S. tariff changes and policy shifts created uncertainty for African exporters, affecting market access and contract negotiations. Overall, African exports to the United States remained important in 2025, with oil, precious metals, cocoa, cotton, and agricultural items taking the lead. Nigeria, Angola, Ghana, Côte d'Ivoire, and South Africa were among the top African exporters to the United States, demonstrating a wide export basket that includes more than just crude oil. Despite these, some African countries were able to export more goods to the United States than others. With that said, here are the African countries that exported the most products to the United States in 2025, per the U.S.International Trade in Goods and Services report. https://africa.businessinsider.com/local/markets/top-10-african-countries-the-united-states-made-the-most-money-from-last-year/g1mw4yd
+
+Ghana weighs local bids for $1 billion revival of Gold Fields' Damang Mine - GhanaWeb # Ghana weighs local bids for $1 billion revival of Gold Fields' Damang Mine. Ghana is seeking to boost local ownership in its mining sector. Ghana is assessing three bids from local investors to take over Gold Fields’ Damang gold mine, which requires up to $1 billion of investment to revive, the mining regulator told Reuters, nearly a year after the government seized control of the asset. Ghana, which is seeking to boost local ownership in its mining sector, rejected Johannesburg-based Gold Fields’ lease‑renewal bid and took control of Damang Mine in April, breaking with years of automatic extensions. Isaac Tandoh, acting head of the Minerals Commission, Ghana’s mining regulator, told Reuters on Monday that Gold Fields’ Damang lease, which expires April 18, would not be renewed. Ghana, Africa’s top gold producer, is key to Gold Fields, with output from Tarkwa and Damang underpinning its strong 2025 earnings. Home News Sports Business Entertainment Africa GhanaWeb TV Opinions Cartoon Say It loud. https://www.ghanaweb.com/GhanaHomePage/business/Ghana-weighs-local-bids-for-1-billion-revival-of-Gold-Fields-Damang-Mine-2026300

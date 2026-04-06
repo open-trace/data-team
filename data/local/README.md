@@ -1,6 +1,6 @@
 # Local partition database (PostgreSQL)
 
-A **local PostgreSQL database** holds a **partition** (or sample) of the data that lives in the **bronze database** (and optionally silver/gold) in BigQuery. It is used to **curate and test** the ETL pipeline (bronze → silver → gold) in the IDE without running on full production data.
+A **local PostgreSQL database** holds a **partition** (or sample) of the data that lives in the **bronze, silver, and gold databases** in BigQuery. It is used to **curate and test** the ETL pipeline (bronze → silver → gold) in the IDE without running on full production data.
 
 We use **PostgreSQL** so the team’s local environment is close to BigQuery (full SQL, multiple connections, same mental model). SQLite remains supported if you prefer a file-based DB.
 
@@ -21,7 +21,7 @@ So: collaboration is smooth as long as everyone has their **own** database (or s
 
 When this repo is shared with the team, **everyone gets the same local DB setup**:
 
-- **Same schema:** The table list (`scripts/bronze_tables.txt`) and schema script (`bq_schema_to_local_pg.py`) are in the repo. When any team member runs the scripts, they create the **same tables** (same columns and types) in their local Postgres, using the same BigQuery project/dataset.
+- **Same schema:** The table lists (`scripts/bronze_tables.txt`, `scripts/silver_tables.txt`, `scripts/gold_tables.txt`) and schema script (`bq_schema_to_local_pg.py`) are in the repo. When any team member runs the scripts, they create the **same tables** (bronze, silver, gold) in their local Postgres, using the same BigQuery project and dataset names.
 - **Same workflow:** Everyone uses the same Docker Compose, same scripts, and the same `.env.example` as a template. Run `docker compose up -d`, create your DB, copy `.env.example` to `.env` and add your own BigQuery credentials and `LOCAL_DB_URL`, then run `bash data/local/scripts/populate_local_db.sh`.
 - **Your own data:** Each person’s local DB is **their own copy**. The rows in it are whatever they synced from BigQuery when they ran the sync. To get similar data across the team, use the same `BQ_PARTITION_LIMIT` and filters in `.env` (or document the recommended values in the repo).
 
@@ -35,22 +35,23 @@ So: same structure and process for everyone; each team member syncs their own da
 | **`scripts/`** | Scripts to sync a partition from a BigQuery **database** into the local DB (e.g. `bq_partition_to_local.py`). **`engine_connector.py`** is the single entry point for all DB connections: use it when reading, writing, or creating tables/datasets. |
 | **`.env.example`** | Example env vars for BQ and **PostgreSQL** `LOCAL_DB_URL` (do not commit `.env`). |
 
-## Creating bronze tables from BigQuery
+## Creating bronze, silver, and gold tables from BigQuery
 
-To recreate the bronze tables (from the list in `scripts/bronze_tables.txt`) on your local PostgreSQL database:
+To recreate the bronze, silver, and gold tables on your local PostgreSQL database:
 
-1. **Set env:** `BQ_PROJECT`, `BQ_DATASET`, and optionally `LOCAL_DB_URL` (to create tables directly on your local DB).
-2. **Generate DDL and create tables:**  
+1. **Set env:** `BQ_PROJECT`, `BQ_DATASET_BRONZE`, `BQ_DATASET_SILVER`, `BQ_DATASET_GOLD` (or rely on defaults `bronze`/`silver`/`gold`), and optionally `LOCAL_DB_URL` (to create tables directly on your local DB).
+2. **Table lists:** Add table names (one per line) to `scripts/bronze_tables.txt`, `scripts/silver_tables.txt`, and `scripts/gold_tables.txt` as needed.
+3. **Generate DDL and create tables:**  
    From repo root:
    ```bash
    python data/local/scripts/bq_schema_to_local_pg.py
    ```
-   This fetches each table’s schema from BigQuery, writes one `.sql` file per table under `schema/bronze/`, and (if `LOCAL_DB_URL` is set) runs the DDL so the tables exist locally. Use `--write-only` to only write `.sql` files, or `--execute-only` to run existing `.sql` files against the local DB without calling BigQuery.
-3. **Load data:** Sync a partition into each table with the existing script (per table) or the batch helper:
+   This fetches each table’s schema from BigQuery for all three layers, writes one `.sql` file per table under `schema/bronze/`, `schema/silver/`, and `schema/gold/`, and (if `LOCAL_DB_URL` is set) runs the DDL so the tables exist locally. Use `--write-only` to only write `.sql` files, or `--execute-only` to run existing `.sql` files against the local DB without calling BigQuery.
+4. **Load data:** Sync a partition into each table:
    ```bash
-   python data/local/scripts/bq_partition_to_local.py --table <table_id> --target-table <table_id>
-   # Or sync all listed bronze tables:
-   python data/local/scripts/sync_all_bronze_tables.py
+   python data/local/scripts/sync_all_tables.py --dataset bronze
+   python data/local/scripts/sync_all_tables.py --dataset silver
+   python data/local/scripts/sync_all_tables.py --dataset gold
    ```
    Use `BQ_PARTITION_LIMIT` or `--limit` to control how many rows are pulled per table.
 
@@ -58,7 +59,7 @@ To recreate the bronze tables (from the list in `scripts/bronze_tables.txt`) on 
    ```bash
    bash data/local/scripts/populate_local_db.sh
    ```
-   This loads `.env`, creates all bronze tables from BigQuery schemas, then syncs data into them.
+   This loads `.env`, creates bronze/silver/gold tables from BigQuery schemas, syncs data into all three layers, then loads the GIS CSV.
 
 ## Usage
 
@@ -66,7 +67,7 @@ To recreate the bronze tables (from the list in `scripts/bronze_tables.txt`) on 
    Use the project’s Docker Compose (see repo root `docker-compose.yml`) or your own local Postgres. Create a database for yourself (e.g. `datateam_local`).
 
 2. **Configure**  
-   Copy `.env.example` to `.env`. Set `BQ_PROJECT`, `BQ_DATASET`, and the table/partition you want. Set **`LOCAL_DB_URL`** to your Postgres URL, e.g.  
+   Copy `.env.example` to `.env`. Set `BQ_PROJECT`, `BQ_DATASET_BRONZE` (and optionally `BQ_DATASET_SILVER`, `BQ_DATASET_GOLD`), and the table/partition you want. Set **`LOCAL_DB_URL`** to your Postgres URL, e.g.  
    `postgresql://postgres:postgres@localhost:5432/datateam_local`  
    Do not commit `.env` or credentials.
 

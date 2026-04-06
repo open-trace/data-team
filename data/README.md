@@ -11,6 +11,31 @@ Structured assets for ingestion, SQL transforms, validation, and the **local par
 - **`validation/`** — Data quality checks (expectations, unit tests on schema/sample data).
 - **`local/`** — Local DB for a partition of BQ data: schema, sync scripts, and `.env.example`. Used to curate ETL in the IDE.
 
+## BigQuery schema catalog (aligned schema)
+
+To keep dbt, local DDL, and ingestion aligned with BigQuery, the repo can hold a **single schema snapshot** of all pipeline datasets (landing, bronze, silver, gold):
+
+- **Script:** `data/local/scripts/bq_schema_catalog.py` — Connects to BigQuery (using `BQ_PROJECT` and `BQ_DATASET_*` from `data/local/.env`), lists tables in each dataset, and dumps each table’s column name/type/mode.
+- **Outputs (in `docs/`):**
+  - **`docs/bq_schema_catalog.json`** — Machine-readable catalog: `project`, `datasets` (landing, bronze, silver, gold), each with `tables` and `columns`.
+  - **`docs/BIGQUERY_SCHEMA.md`** — Human-readable summary (tables and columns per dataset).
+
+Run from repo root (after setting `BQ_PROJECT` and credentials in `data/local/.env`):
+
+```bash
+python data/local/scripts/bq_schema_catalog.py
+```
+
+Use the generated catalog to curate dbt `sources.yml`, local `data/local/schema/` DDL, and ingestion config so they match the live BQ schema. Re-run the script whenever BigQuery schema changes.
+
+**dbt sources:** To keep `dbt/models/sources.yml` in sync with BQ without hand-maintaining tables, run the catalog script above, then:
+
+```bash
+python data/local/scripts/generate_dbt_sources.py
+```
+
+Or refresh the catalog and generate sources in one go: `python data/local/scripts/generate_dbt_sources.py --refresh`.
+
 ## Flow
 
 1. **Engineers** ingest data on GCP → **bronze database** (and beyond) in **BigQuery**.

@@ -1,0 +1,4 @@
+# Gold tables to sync to local DB. One table name per line.
+# Add table IDs from your BigQuery gold dataset, e.g.:
+# my_gold_table
+_placeholder

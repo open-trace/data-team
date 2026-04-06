@@ -55,6 +55,7 @@ data/local/keys/opentrace-bq-key.json
 
 # Local partition DB (do not commit)
 data/local/*.db
+data/local/vector_db/
 data/local/*.sqlite
 data/local/*.duckdb
 data/local/cache/
@@ -80,3 +81,4 @@ temp/
 
 # Composer / Airflow
 infra/composer/dags/__pycache__/
+data/local/pdf_chunks.jsonl

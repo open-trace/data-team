@@ -1,0 +1,170 @@
+---
+id: 4efb2dfe18db47a6
+url: https://news.google.com/rss/articles/CBMitgFBVV95cUxQUS1PcHE4V2JiWlRQblRZR1VUNVd1QmlEV0NEQUJaV2xzSVota0VYdXh2YW15ajJnRi12ZTRONHp5LWVVX0ROOHpRYWRvR0JDRkxmQjUzcG5YQ0ZwOHcweTlIQWxCdXlMQzJEVjZRR2U0QTBsejh6ZWZuRnZZT3ZJS04tQ1ZCWU9ZSlpycWdvTFVqNWVoVG9HemRZbW04cmdoU096clZNZ1RTR1psMW80R1FvdFBLQQ?oc=5
+rss_url: https://news.google.com/rss/articles/CBMitgFBVV95cUxQUS1PcHE4V2JiWlRQblRZR1VUNVd1QmlEV0NEQUJaV2xzSVota0VYdXh2YW15ajJnRi12ZTRONHp5LWVVX0ROOHpRYWRvR0JDRkxmQjUzcG5YQ0ZwOHcweTlIQWxCdXlMQzJEVjZRR2U0QTBsejh6ZWZuRnZZT3ZJS04tQ1ZCWU9ZSlpycWdvTFVqNWVoVG9HemRZbW04cmdoU096clZNZ1RTR1psMW80R1FvdFBLQQ?oc=5
+title: Bongo-based College Partners with Florida Agricultural Mechanical University
+  in the US - MyJoyOnline
+country: Ghana
+domain: agriculture
+domain_score: 2
+info_type: news_article
+published_at: '2020-07-26T00:00:00+00:00'
+published_at_source: rss
+published_at_confidence: 0.95
+published_at_raw: '2020-07-26'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:20:58+00:00'
+extracted_at: '2026-03-24T16:20:57+00:00'
+feed_name: Google News — Ghana agriculture [2020-07-25]
+source: rss
+body_source: tavily_search
+phase1_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMitgFBVV95cUxQUS1PcHE4V2JiWlRQblRZR1VUNVd1QmlEV0NEQUJaV2xzSVota0VYdXh2YW15ajJnRi12ZTRONHp5LWVVX0ROOHpRYWRvR0JDRkxmQjUzcG5YQ0ZwOHcweTlIQWxCdXlMQzJEVjZRR2U0QTBsejh6ZWZuRnZZT3ZJS04tQ1ZCWU9ZSlpycWdvTFVqNWVoVG9HemRZbW04cmdoU096clZNZ1RTR1psMW80R1FvdFBLQQ?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49DxlaYFlWKUIm0bEl2bv2ESTWd4DCwIIyEfJ-RkcVJRfWA14i8sMwfj6b-kgDpVnZ6Fa948DWHrNrbiJ8Wv2nhpvuJsy2RJ
+article_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMitgFBVV95cUxQUS1PcHE4V2JiWlRQblRZR1VUNVd1QmlEV0NEQUJaV2xzSVota0VYdXh2YW15ajJnRi12ZTRONHp5LWVVX0ROOHpRYWRvR0JDRkxmQjUzcG5YQ0ZwOHcweTlIQWxCdXlMQzJEVjZRR2U0QTBsejh6ZWZuRnZZT3ZJS04tQ1ZCWU9ZSlpycWdvTFVqNWVoVG9HemRZbW04cmdoU096clZNZ1RTR1psMW80R1FvdFBLQQ?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49DxlaYFlWKUIm0bEl2bv2ESTWd4DCwIIyEfJ-RkcVJRfWA14i8sMwfj6b-kgDpVnZ6Fa948DWHrNrbiJ8Wv2nhpvuJsy2RJ
+enriched: true
+enrichment_used: tavily_search
+dedupe_id: 62647d61dc9c0678
+cluster_id: bd2ce71d94d00429
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- agriculture
+- agricultural
+- seed
+domain_scores:
+  agriculture: 2
+  economics: 0
+domain_labels:
+- agriculture
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMitgFBVV95cUxQUS1PcHE4V2JiWlRQblRZR1VUNVd1QmlEV0NEQUJaV2xzSVota0VYdXh2YW15ajJnRi12ZTRONHp5LWVVX0ROOHpRYWRvR0JDRkxmQjUzcG5YQ0ZwOHcweTlIQWxCdXlMQzJEVjZRR2U0QTBsejh6ZWZuRnZZT3ZJS04tQ1ZCWU9ZSlpycWdvTFVqNWVoVG9HemRZbW04cmdoU096clZNZ1RTR1psMW80R1FvdFBLQQ?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49DxlaYFlWKUIm0bEl2bv2ESTWd4DCwIIyEfJ-RkcVJRfWA14i8sMwfj6b-kgDpVnZ6Fa948DWHrNrbiJ8Wv2nhpvuJsy2RJ
+---
+
+Historically Black Land-Grant Universities Celebrate USDA Agreement as ‘Big Win’ - Inside Higher Ed The USDA has signed such agreements with these institutions since Ronald Reagan—often at the start of a new administration—but the new memorandum of understanding reassures the universities’ leaders that the Trump administration will continue to support and work with their institutions, said Harry Williams, CEO of the Thurgood Marshall College Fund, which represents public HBCUs. Nave, president and CEO of the 1890 Universities Foundation, which advocates for historically Black land-grant institutions, said the MOU “builds on prior efforts while placing a stronger emphasis on ensuring that our work is not just symbolic, but truly actionable.”. Historically Black land-grant university leaders hope that the refreshed line of communication will help them to secure more funding and opportunities for their students. Historically Black land-grant universities and the Trump administration arguably got off to a rocky start last year when the USDA temporarily suspended the 1890 Scholars Program, which provides federal scholarships to agriculture students at their institutions. https://www.insidehighered.com/news/government/politics-elections/2026/03/19/historically-black-land-grants-celebrate-usda
+
+Florida begins title defense with 59-point rout of Prairie View, 2nd-biggest margin in NCAA tourney - The Washington Post # Florida begins title defense with 59-point rout of Prairie View, 2nd-biggest margin in NCAA tourney. — Florida began its national title defense with the second-largest victory margin in NCAA Tournament history, pounding Prairie View A&M 114-55 on Friday night. Florida center Rueben Chinyelu (9) celebrates during the second half in the first round of the NCAA college basketball tournament against Prairie View A M Friday, March 20, 2026, in Tampa, Fla. (AP Photo/Chris O’Meara). Florida began its national title defense with the second-largest victory margin in NCAA Tournament history, pounding Prairie View A&M 114-55. Boogie Fland scored 16 points to lead seven players in double figures for the top-seeded Gators (27-7), whose 59-point margin fell short of only Loyola Chicago’s 111-42 win over Tennessee Tech in 1963. Florida advanced to face the South Region’s No. 9 seed, Iowa, in the second round on Sunday. https://www.washingtonpost.com/sports/colleges/2026/03/21/prairie-view-florida-score-march-madness/4b0d7c4c-24db-11f1-954a-6300919c9854_story.html
+
+Republicans push campus carry laws in nearly a dozen states as college shootings reignite debate - AOL.com # Republicans push campus carry laws in nearly a dozen states as college shootings reignite debate. Republican lawmakers have renewed a push in 2026 to allow guns on college campuses amid a recent rash of school shootings across the country. In Florida, a proposed state Senate bill would allow students, faculty and staff to carry guns on public college campuses. Rep. Michelle Salzman, R-Fla., who was taking classes at Florida State University in 2025 when a gunman killed multiple people on campus, said students felt helpless during the attack. Prior to West Virginia's January 2023 decision to allow people with concealed carry permits to bring guns on college campuses, the presidents of West Virginia State University, Concord University and Shepherd University said they had "serious reservations" about what they said were "significant public safety challenges and financial burdens" the bill would present. *Original article source:* Republicans push campus carry laws in nearly a dozen states as college shootings reignite debate. https://www.aol.com/news/republicans-push-campus-carry-laws-002019764.html

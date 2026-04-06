@@ -1,0 +1,15 @@
+---
+id: 78663cf306fbc2c6
+url: https://waya.media
+title: WAYA
+country: Rwanda
+domain: agriculture
+domain_score: 2
+info_type: news_article
+published_at: '2024-12-03'
+feed_name: Google News — Rwanda agriculture
+source: rss
+body_source: fetched_html
+---
+
+Money Beltone Just Launched Egypt’s First Regulated Silver Fund Silver has more than doubled over the past year. Egyptian investors have had no regulated way to access it. Beltone... by WAYA Staff - Mar 19, 2026

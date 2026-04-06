@@ -1,0 +1,133 @@
+---
+id: 0b67b77cf13ff202
+url: https://news.google.com/rss/articles/CBMimwFBVV95cUxQZ3VsQlB5VVBrWGl4MWxsTnZhMVRiRHlDd0NTdzN4NVJmd2l4TUZ5dUhKUFRtOWd2T3lIQUNNc1pFQnlrZzVTcGRKZzlnMjZ0Z2R4X1pfelFUd0c5OWg3R1hPUnZBNWl1UGVTdXZ4azh4cUE0aGo1YlZMQ3B5VXVTN056WlVfQ1hIY3E0UTdQMzB6a1ZESzN5WHJaONIBmgFBVV95cUxNVS1BTUNDcUVnOWlTOTgtN25HWXgzTTVzS2NDYmx5TkMyWFk3YS1ZaGpNNEtZa1hCLTBKcFJpOTlSbDRVOG9Cd3JpS3BsLXVNdUhlMmpDazBETVpWQnpFNEpBSXViaXYxOUFZX2JHX0NydjNUVmJkWHhaaUNjMGVhUGp1RXlqQzFXbUF3bzhORDFNaGNaY3BFLUhn?oc=5
+rss_url: https://news.google.com/rss/articles/CBMimwFBVV95cUxQZ3VsQlB5VVBrWGl4MWxsTnZhMVRiRHlDd0NTdzN4NVJmd2l4TUZ5dUhKUFRtOWd2T3lIQUNNc1pFQnlrZzVTcGRKZzlnMjZ0Z2R4X1pfelFUd0c5OWg3R1hPUnZBNWl1UGVTdXZ4azh4cUE0aGo1YlZMQ3B5VXVTN056WlVfQ1hIY3E0UTdQMzB6a1ZESzN5WHJaONIBmgFBVV95cUxNVS1BTUNDcUVnOWlTOTgtN25HWXgzTTVzS2NDYmx5TkMyWFk3YS1ZaGpNNEtZa1hCLTBKcFJpOTlSbDRVOG9Cd3JpS3BsLXVNdUhlMmpDazBETVpWQnpFNEpBSXViaXYxOUFZX2JHX0NydjNUVmJkWHhaaUNjMGVhUGp1RXlqQzFXbUF3bzhORDFNaGNaY3BFLUhn?oc=5
+title: African Farmers Face Difficult Times Ahead As They Lose Export Market Access
+  Amidst COVID-19 Crisis - Modern Ghana
+country: Ghana
+domain: agriculture
+domain_score: 37
+info_type: news_article
+published_at: '2020-04-14T00:00:00+00:00'
+published_at_source: rss
+published_at_confidence: 0.95
+published_at_raw: '2020-04-14'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:17:42+00:00'
+extracted_at: '2026-03-24T16:17:41+00:00'
+feed_name: Google News — Ghana agriculture [2020-04-13]
+source: rss
+body_source: tavily_search
+phase1_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMimwFBVV95cUxQZ3VsQlB5VVBrWGl4MWxsTnZhMVRiRHlDd0NTdzN4NVJmd2l4TUZ5dUhKUFRtOWd2T3lIQUNNc1pFQnlrZzVTcGRKZzlnMjZ0Z2R4X1pfelFUd0c5OWg3R1hPUnZBNWl1UGVTdXZ4azh4cUE0aGo1YlZMQ3B5VXVTN056WlVfQ1hIY3E0UTdQMzB6a1ZESzN5WHJaONIBmgFBVV95cUxNVS1BTUNDcUVnOWlTOTgtN25HWXgzTTVzS2NDYmx5TkMyWFk3YS1ZaGpNNEtZa1hCLTBKcFJpOTlSbDRVOG9Cd3JpS3BsLXVNdUhlMmpDazBETVpWQnpFNEpBSXViaXYxOUFZX2JHX0NydjNUVmJkWHhaaUNjMGVhUGp1RXlqQzFXbUF3bzhORDFNaGNaY3BFLUhn?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49DqZpXogXlUWfbFYRfqRCm917tvILkgnvn8AyHFPcHDAA8mBrGnvy9gm9HHEnIlfFzMak6fk2sBcuD0Y56sLUxbPKyGhzI-
+article_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMimwFBVV95cUxQZ3VsQlB5VVBrWGl4MWxsTnZhMVRiRHlDd0NTdzN4NVJmd2l4TUZ5dUhKUFRtOWd2T3lIQUNNc1pFQnlrZzVTcGRKZzlnMjZ0Z2R4X1pfelFUd0c5OWg3R1hPUnZBNWl1UGVTdXZ4azh4cUE0aGo1YlZMQ3B5VXVTN056WlVfQ1hIY3E0UTdQMzB6a1ZESzN5WHJaONIBmgFBVV95cUxNVS1BTUNDcUVnOWlTOTgtN25HWXgzTTVzS2NDYmx5TkMyWFk3YS1ZaGpNNEtZa1hCLTBKcFJpOTlSbDRVOG9Cd3JpS3BsLXVNdUhlMmpDazBETVpWQnpFNEpBSXViaXYxOUFZX2JHX0NydjNUVmJkWHhaaUNjMGVhUGp1RXlqQzFXbUF3bzhORDFNaGNaY3BFLUhn?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49DqZpXogXlUWfbFYRfqRCm917tvILkgnvn8AyHFPcHDAA8mBrGnvy9gm9HHEnIlfFzMak6fk2sBcuD0Y56sLUxbPKyGhzI-
+enriched: true
+enrichment_used: tavily_search
+dedupe_id: b7d7f7c6acade723
+cluster_id: e31e7fc5f18cbea3
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- agriculture
+- agricultural
+- farmer
+- farmers
+- farming
+- farm
+- livestock
+- cattle
+- food security
+- commodity
+- grain
+domain_scores:
+  agriculture: 37
+  economics: 2
+domain_labels:
+- agriculture
+- economics
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- store_article
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMimwFBVV95cUxQZ3VsQlB5VVBrWGl4MWxsTnZhMVRiRHlDd0NTdzN4NVJmd2l4TUZ5dUhKUFRtOWd2T3lIQUNNc1pFQnlrZzVTcGRKZzlnMjZ0Z2R4X1pfelFUd0c5OWg3R1hPUnZBNWl1UGVTdXZ4azh4cUE0aGo1YlZMQ3B5VXVTN056WlVfQ1hIY3E0UTdQMzB6a1ZESzN5WHJaONIBmgFBVV95cUxNVS1BTUNDcUVnOWlTOTgtN25HWXgzTTVzS2NDYmx5TkMyWFk3YS1ZaGpNNEtZa1hCLTBKcFJpOTlSbDRVOG9Cd3JpS3BsLXVNdUhlMmpDazBETVpWQnpFNEpBSXViaXYxOUFZX2JHX0NydjNUVmJkWHhaaUNjMGVhUGp1RXlqQzFXbUF3bzhORDFNaGNaY3BFLUhn?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49DqZpXogXlUWfbFYRfqRCm917tvILkgnvn8AyHFPcHDAA8mBrGnvy9gm9HHEnIlfFzMak6fk2sBcuD0Y56sLUxbPKyGhzI-
+---
+
+Grain Farmers Warn Of Deepening Profitability Crisis - African Farming *South Africa’s grain farmers are facing increasing pressure, with urgent warning signs emerging. At the Grain SA Congress 2026, producers, policymakers and industry leaders confronted a sobering reality: Rising input costs, declining commodity prices and persistent policy uncertainty are pushing farm profitability to its limits. The message from this gathering was clear: Without profitable farmers, South Africa’s food security is at risk. Despite the pressures, South Africa’s grain farmers remain committed to producing food, supporting rural economies and contributing to national growth. #### **Also read:** **Ukukhula Conference and Day of Celebration – a historic milestone for black grain farmers in South Africa**. Established in 2020, African Farming aims to support black commercial farming in South Africa by providing informative and inspiring content and creating communication and education channels to help farmers develop and grow. Its initiatives include African Farming information days and workshops, which empower farmers – whether new or experienced – to build profitable and sustainable farming enterprises. https://www.africanfarming.com/2026/03/21/grain-farmers-warn-of-deepening-profitability-crisis/
+
+U.S. farmers risk losing Africa's booming ag market to China's trade dominance - Farm Progress # U.S. farmers risk losing Africa's booming ag market to China's trade dominance. Farm Progress America: University of Illinois research reveals Africa as agriculture's next major growth market. Mike Pearson reports on groundbreaking University of Illinois research that identifies Africa as potentially the most significant long-term market opportunity for American agriculture. Africa's rapidly growing population and rising incomes are creating ideal conditions for American agricultural exports. For commodity producers seeking the next China-sized market, Africa represents enormous untapped potential. China recognized Africa's potential early, becoming the continent's largest trading partner in 2009. By 2025, China-Africa trade reached $348 billion, more than triple total U.S.-Africa trade. The University of Illinois analysis delivers a stark warning: the window for building meaningful U.S. agricultural relationships in Africa won't remain open indefinitely. As China deepens infrastructure investment and expands market access, American inaction becomes increasingly costly. For U.S. farmers and ranchers navigating changing global trade flows, Africa demands immediate strategic attention. https://www.farmprogress.com/max-armstrong/u-s-farmers-risk-losing-africa-s-booming-ag-market-to-china-s-trade-dominance
+
+Former Female Teacher Now Herds Over 200 Beefmaster Cattle - African Farming ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Dr Lerato Matsaunyane. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Caiphas Muyambo. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Dr Lerato Matsaunyane. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Caiphas Muyambo. The recognition of her livestock success came at the Phezukomkhono Female Farmer Awards recently, where Nozuko Farming won the export category prize of R100 000, plus the overall winner award of R100 000, totalling R200 000 in recognition. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Dr Lerato Matsaunyane. Established in 2020, African Farming aims to support black commercial farming in South Africa by providing informative and inspiring content and creating communication and education channels to help farmers develop and grow. Its initiatives include African Farming information days and workshops, which empower farmers – whether new or experienced – to build profitable and sustainable farming enterprises. https://www.africanfarming.com/2026/03/20/former-female-teacher-now-herds-over-200-beefmaster-cattle/

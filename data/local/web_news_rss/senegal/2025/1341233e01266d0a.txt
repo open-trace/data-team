@@ -1,0 +1,15 @@
+---
+id: 1341233e01266d0a
+url: https://energycapitalpower.com
+title: Energy Capital &amp; Power
+country: Senegal
+domain: Policy & Institutional
+domain_score: 4
+info_type: news_article
+published_at: '2025-07-28'
+feed_name: Google News — Senegal agriculture
+source: rss
+body_source: fetched_html
+---
+
+LATEST NEWS Sonangol Deepens Stake in Angolan Blocks 3/05, 3/05A as Afentra Deal Evolves Mauritania Secures $1B ITFC Deal to Shield Economy from Energy Shocks Senegal Launches 30 Incubators to Grow Its SME Ecosystem JOGMEC, Toyota Tsusho Partnership to Accelerate Namibia’s Mining Sector Diversification Nigeria Lands £746M for Ports Upgrade Amid Record UK Trade TRENDING Nigeria Lands £746M for Ports Upgrade Amid Record UK Trade

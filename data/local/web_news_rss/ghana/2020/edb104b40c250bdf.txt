@@ -1,0 +1,71 @@
+---
+id: edb104b40c250bdf
+url: https://news.google.com/rss/articles/CBMijwFBVV95cUxQVS0xUFlPVjhTd1dqUjhmYUdfTl9zbGhla2NSc1lqNGlOcmxJaWJkcUloVHZKVWZRR2kyWlpiQXZKcUVrRktGYjlrTVBKaXVpYW1PN1hXSW04TTFUQm5ONzJLczZja0JIRlk0NVAtUGhpVlFPY2hUb2tydE9tb3hZdTNkQ3YyeUx3MlNjQzdaaw?oc=5
+rss_url: https://news.google.com/rss/articles/CBMijwFBVV95cUxQVS0xUFlPVjhTd1dqUjhmYUdfTl9zbGhla2NSc1lqNGlOcmxJaWJkcUloVHZKVWZRR2kyWlpiQXZKcUVrRktGYjlrTVBKaXVpYW1PN1hXSW04TTFUQm5ONzJLczZja0JIRlk0NVAtUGhpVlFPY2hUb2tydE9tb3hZdTNkQ3YyeUx3MlNjQzdaaw?oc=5
+title: Stakeholders Gather to Discuss Rice Cultivation Practices in Ghana - United
+  Nations University
+country: Ghana
+domain: agriculture
+domain_score: 28
+info_type: news_article
+published_at: '2020-02-03T00:00:00+00:00'
+published_at_source: rss
+published_at_confidence: 0.95
+published_at_raw: '2020-02-03'
+html_published_at: null
+html_published_raw: null
+article_updated_at: null
+html_updated_raw: null
+ingested_at: '2026-03-24T16:15:30+00:00'
+extracted_at: '2026-03-24T16:15:29+00:00'
+feed_name: Google News — Ghana agriculture [2020-02-02]
+source: rss
+body_source: tavily_search
+phase1_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMijwFBVV95cUxQVS0xUFlPVjhTd1dqUjhmYUdfTl9zbGhla2NSc1lqNGlOcmxJaWJkcUloVHZKVWZRR2kyWlpiQXZKcUVrRktGYjlrTVBKaXVpYW1PN1hXSW04TTFUQm5ONzJLczZja0JIRlk0NVAtUGhpVlFPY2hUb2tydE9tb3hZdTNkQ3YyeUx3MlNjQzdaaw?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49A6m8N1FukbNiuGvg7eXwj9wgX5zQ-C2JJe067akpc-d5NasIcR6mwFa88Y5YTBd_45sNW8CXHH40Ta88Wd6omf2c5oh7Cu
+article_fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMijwFBVV95cUxQVS0xUFlPVjhTd1dqUjhmYUdfTl9zbGhla2NSc1lqNGlOcmxJaWJkcUloVHZKVWZRR2kyWlpiQXZKcUVrRktGYjlrTVBKaXVpYW1PN1hXSW04TTFUQm5ONzJLczZja0JIRlk0NVAtUGhpVlFPY2hUb2tydE9tb3hZdTNkQ3YyeUx3MlNjQzdaaw?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49A6m8N1FukbNiuGvg7eXwj9wgX5zQ-C2JJe067akpc-d5NasIcR6mwFa88Y5YTBd_45sNW8CXHH40Ta88Wd6omf2c5oh7Cu
+enriched: true
+enrichment_used: tavily_search
+dedupe_id: bcf00d0cdfbd3f80
+cluster_id: 62bb66fc9304937d
+is_duplicate: false
+duplicate_of: null
+agrifood_signal: true
+agrifood_signals:
+- farmers
+- farming
+- farm
+- food security
+- rice
+- commodity
+- grain
+domain_scores:
+  agriculture: 28
+  economics: 2
+domain_labels:
+- agriculture
+- economics
+best_domain: agriculture
+pipeline_nodes_executed:
+- load_feeds
+- discover_candidates
+- dedupe_rank
+- fetch_phase1
+- resolve_article_url
+- fetch_phase2
+- clean_extract
+- extract_dates
+- normalize_dates
+- agrifood_gate
+- domain_score
+- enrichment_decision
+- tavily_enrich
+- merge_enrichment
+- store_article
+fetch_url: https://consent.google.com/ml?continue=https://news.google.com/rss/articles/CBMijwFBVV95cUxQVS0xUFlPVjhTd1dqUjhmYUdfTl9zbGhla2NSc1lqNGlOcmxJaWJkcUloVHZKVWZRR2kyWlpiQXZKcUVrRktGYjlrTVBKaXVpYW1PN1hXSW04TTFUQm5ONzJLczZja0JIRlk0NVAtUGhpVlFPY2hUb2tydE9tb3hZdTNkQ3YyeUx3MlNjQzdaaw?oc%3D5&gl=FR&hl=en-US&cm=2&pc=n&src=1&escs=AZ8E49A6m8N1FukbNiuGvg7eXwj9wgX5zQ-C2JJe067akpc-d5NasIcR6mwFa88Y5YTBd_45sNW8CXHH40Ta88Wd6omf2c5oh7Cu
+---
+
+AMT Fresh Produce Outlook | Big Price Moves For Tomatoes, Onions And Potatoes - African Farming ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Dr Lerato Matsaunyane. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Louw van Reenen. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Caiphas Muyambo. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Sizo Tshabalala. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Dr Lerato Matsaunyane. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Louw van Reenen. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Caiphas Muyambo. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Sizo Tshabalala. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Dr Lerato Matsaunyane. African Farming Agri-Development Imbizo 2026 – Meet the speakers: Louw van Reenen. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Dr Lerato Matsaunyane. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Louw van Reenen. ### African Farming Agri-Development Imbizo 2026 – Meet the speakers: Caiphas Muyambo. https://www.africanfarming.com/2026/03/18/amt-fresh-produce-outlook-big-price-moves-for-tomatoes-onions-and-potatoes/
+
+Mining in Ghana: E&P Enhances Tarkwa Operations with 30 New Dump Trucks - Modern Ghana | 22.03.2026 | CitiTV Mining in Ghana: E&P Enhances Tarkwa Operations with 30 New Dump Trucks |. Mining in Ghana: E&P Enhances Tarkwa Operations with 30 New Dump Trucks. Fight Against Illegal Mining: Lands Minister Urges Depoliticization. Road Crisis in Garu: MP Dr. Thomas Anaba Reacts to Residents’ Demands. Shatta Wale gives $100K, Stonebwoy pledges $81K at Black Stars World Cup fundraising | News Review. 2026 FIFA World Cup: PUMA Unveils New Ghana Jersey for Mundial. Managing Kidney Disease in Ghana | Renal Diet Explained | Sunday Breakfast. Ghana's World Cup opponents England name squad for March friendlies; What can Otto Addo learn? Healthy Smile, Healthy Life – Oral Health on Sunday Breakfast. **Govt won’t use public funds to fly fans to 2026 World Cup – Mahama**. **Fitch scores Ghana 75.5 in digital readiness index**. **Ghana's High Commissioner To United Kingdom meets UK's Speaker of House of Commo...**. **Brazil backs Ghana’s UN push to declare slave trade a crime against humanity**. https://www.modernghana.com/videonews/cititv/1/627265/
+
+Grain Farmers Warn Of Deepening Profitability Crisis - African Farming *South Africa’s grain farmers are facing increasing pressure, with urgent warning signs emerging. At the Grain SA Congress 2026, producers, policymakers and industry leaders confronted a sobering reality: Rising input costs, declining commodity prices and persistent policy uncertainty are pushing farm profitability to its limits. The message from this gathering was clear: Without profitable farmers, South Africa’s food security is at risk. Despite the pressures, South Africa’s grain farmers remain committed to producing food, supporting rural economies and contributing to national growth. #### **Also read:** **Ukukhula Conference and Day of Celebration – a historic milestone for black grain farmers in South Africa**. Established in 2020, African Farming aims to support black commercial farming in South Africa by providing informative and inspiring content and creating communication and education channels to help farmers develop and grow. Its initiatives include African Farming information days and workshops, which empower farmers – whether new or experienced – to build profitable and sustainable farming enterprises. https://www.africanfarming.com/2026/03/21/grain-farmers-warn-of-deepening-profitability-crisis/
