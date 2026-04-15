@@ -1,0 +1,5 @@
+# Add directories or file patterns to ignore during indexing (e.g. foo/ or *.csv)
+ml/rag/Text Documents/*
+data/local/processed_chunks/*
+data/local/vector_db/*
+data/local/web_news_rss/*

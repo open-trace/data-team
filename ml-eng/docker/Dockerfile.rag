@@ -1,0 +1,23 @@
+# RAG API image (Qdrant Cloud backend)
+# Build from repo root:
+#   docker build -f ml-eng/docker/Dockerfile.rag -t opentrace-rag-api:latest .
+
+FROM python:3.11-slim
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY ml-eng/requirements.txt ml-eng/requirements.txt
+COPY ml-eng/requirements-dev.txt ml-eng/requirements-dev.txt
+RUN pip install --no-cache-dir -r ml-eng/requirements.txt
+
+COPY ml-eng/ml ./ml
+
+ENV PYTHONPATH=/app
+
+EXPOSE 7860
+CMD ["uvicorn", "ml.rag.api:app", "--host", "0.0.0.0", "--port", "7860"]
+

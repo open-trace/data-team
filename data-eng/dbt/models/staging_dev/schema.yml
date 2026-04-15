@@ -1,0 +1,15 @@
+# staging_dev models: ref(raw_dev models) and source('staging_dev', ...); write to staging_dev (BQ_DATASET_SILVER).
+# Run: dbt run --target staging_dev (or dbt run --select staging_dev.*)
+
+version: 2
+
+models:
+  - name: silver_example
+    description: "Example staging_dev model. Use ref('...') and source('staging_dev', '...') as needed."
+    columns:
+      - name: id
+        description: "Placeholder primary key"
+      - name: layer
+        description: "Pipeline layer (staging_dev)"
+      - name: _loaded_at
+        description: "Load timestamp"

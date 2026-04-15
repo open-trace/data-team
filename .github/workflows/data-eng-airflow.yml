@@ -1,0 +1,21 @@
+name: Data Eng — Airflow DAG syntax
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'data-eng/airflow/**'
+      - '.github/workflows/data-eng-airflow.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'data-eng/airflow/**'
+      - '.github/workflows/data-eng-airflow.yml'
+
+jobs:
+  compile-dags:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compile DAG Python files
+        run: python -m compileall -q data-eng/airflow/dags

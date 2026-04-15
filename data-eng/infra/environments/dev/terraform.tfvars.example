@@ -1,0 +1,2 @@
+# Copy to `terraform.tfvars` (gitignored) or pass -var on CLI:
+# project_id = "opentrace-prod-5ga4"
