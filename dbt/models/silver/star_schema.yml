@@ -1,0 +1,157 @@
+version: 2
+
+models:
+  - name: stg_silver_star_metrics
+    description: "Canonical silver staging layer used to standardize measures before building the star schema."
+    columns:
+      - name: source_name
+      - name: domain_name
+      - name: indicator_name
+      - name: country_code
+      - name: country_name
+      - name: period_year
+      - name: metric_value
+
+  - name: dim_country
+    description: "Country master dimension."
+    columns:
+      - name: country_key
+        tests: [not_null, unique]
+
+  - name: dim_period
+    description: "Time master dimension at year grain."
+    columns:
+      - name: period_key
+        tests: [not_null, unique]
+
+  - name: dim_geography
+    description: "Geographic hierarchy dimension."
+    columns:
+      - name: geography_key
+        tests: [not_null, unique]
+
+  - name: dim_indicator
+    description: "Indicator/metric dimension."
+    columns:
+      - name: indicator_key
+        tests: [not_null, unique]
+
+  - name: dim_source
+    description: "Data-source dimension."
+    columns:
+      - name: source_key
+        tests: [not_null, unique]
+
+  - name: dim_unit
+    description: "Measurement unit dimension."
+    columns:
+      - name: unit_key
+        tests: [not_null, unique]
+
+  - name: dim_crop
+    description: "Crop/product dimension."
+    columns:
+      - name: crop_key
+        tests: [not_null, unique]
+
+  - name: dim_value_chain
+    description: "Value chain stage dimension."
+    columns:
+      - name: value_chain_stage_key
+        tests: [not_null, unique]
+
+  - name: dim_season
+    description: "Season dimension."
+    columns:
+      - name: season_key
+        tests: [not_null, unique]
+
+  - name: dim_policy_area
+    description: "Policy area dimension."
+    columns:
+      - name: policy_area_key
+        tests: [not_null, unique]
+
+  - name: dim_technology
+    description: "Technology dimension."
+    columns:
+      - name: technology_key
+        tests: [not_null, unique]
+
+  - name: dim_farm_practice
+    description: "Farming practice dimension."
+    columns:
+      - name: practice_key
+        tests: [not_null, unique]
+
+  - name: dim_shock_type
+    description: "Shock type dimension."
+    columns:
+      - name: shock_type_key
+        tests: [not_null, unique]
+
+  - name: dim_ipc_phase
+    description: "IPC phase dimension."
+    columns:
+      - name: ipc_phase_key
+        tests: [not_null, unique]
+
+  - name: fact_climate
+    description: "Climate fact table."
+    columns:
+      - name: fact_climate_key
+        tests: [not_null, unique]
+
+  - name: fact_land_use
+    description: "Land use fact table."
+    columns:
+      - name: fact_land_use_key
+        tests: [not_null, unique]
+
+  - name: fact_enterprise_investment
+    description: "Enterprise investment fact table."
+    columns:
+      - name: fact_enterprise_investment_key
+        tests: [not_null, unique]
+
+  - name: fact_technology
+    description: "Technology fact table."
+    columns:
+      - name: fact_technology_key
+        tests: [not_null, unique]
+
+  - name: fact_market_access
+    description: "Market access fact table."
+    columns:
+      - name: fact_market_access_key
+        tests: [not_null, unique]
+
+  - name: fact_production
+    description: "Production fact table."
+    columns:
+      - name: fact_production_key
+        tests: [not_null, unique]
+
+  - name: fact_policy
+    description: "Policy fact table."
+    columns:
+      - name: fact_policy_key
+        tests: [not_null, unique]
+
+  - name: fact_nutrition
+    description: "Nutrition fact table."
+    columns:
+      - name: fact_nutrition_key
+        tests: [not_null, unique]
+
+  - name: fact_value_chain
+    description: "Value chain fact table."
+    columns:
+      - name: fact_value_chain_key
+        tests: [not_null, unique]
+
+  - name: fact_humanitarian
+    description: "Humanitarian fact table."
+    columns:
+      - name: fact_humanitarian_key
+        tests: [not_null, unique]

@@ -170,3 +170,25 @@ The script reads `docs/bq_schema_catalog.json` and overwrites `dbt/models/source
 - **Docker “key not found”**: Mount the repo (e.g. `.:/app`) and put the key at `data/local/keys/<file>.json`; set `GOOGLE_APPLICATION_CREDENTIALS=/app/data/local/keys/<file>.json` in `.env` or in the compose `environment` section.
 
 For more on the repo’s data flow, see the main [README](../README.md) and [Architecture](../docs/ARCHITECTURE.md).
+
+## GitHub + BigQuery CI setup
+
+To make every dbt change visible in GitHub, this repository includes `.github/workflows/dbt-ci.yml`.
+It runs on every push/PR that touches `dbt/**` and executes `dbt debug`, `dbt parse`, and `dbt build` against BigQuery.
+
+Set these in your GitHub repository before enabling CI:
+
+- **Repository secret**
+  - `GCP_SERVICE_ACCOUNT_KEY`: full JSON content of your Google service account key.
+- **Repository variables**
+  - `BQ_PROJECT`
+  - `BQ_DATASET_BRONZE` (optional, recommended)
+  - `BQ_DATASET_SILVER` (required)
+  - `BQ_DATASET_GOLD` (optional, recommended)
+  - `DBT_BIGQUERY_LOCATION` (optional, default in profile is used if missing)
+
+Suggested minimum BigQuery IAM roles for the CI service account:
+
+- `roles/bigquery.jobUser`
+- `roles/bigquery.dataViewer` on source datasets
+- `roles/bigquery.dataEditor` on the target silver dataset
