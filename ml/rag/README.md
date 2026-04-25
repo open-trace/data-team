@@ -55,7 +55,7 @@ For a file-by-file map and end-to-end flow, see [ARCHITECTURE.md](ARCHITECTURE.m
 
 See also [`ml/rag/chat_history.py`](ml/rag/chat_history.py) for **legacy** `chat_history`-only truncation (no summary).
 
-**Streamlit** ([`streamlit_app.py`](ml/rag/streamlit_app.py)): multiple **chat sessions** in the sidebar; **pipeline debug** shows the last run’s decomposition and retrieval stats.
+**Streamlit** ([`chatbot/streamlit_app.py`](ml/rag/chatbot/streamlit_app.py)): multiple **chat sessions** in the sidebar; **pipeline debug** shows the last run’s decomposition and retrieval stats.
 
 **API** (`POST /query`): responses include **`session_id`**. Reuse it for **server-side** `{conversation_summary, recent_turns}` storage (in-process + lock; **single worker**, lost on restart). Send **`conversation_history`** to supply prior turns from the client; history is compacted for that request only and the server store is **not** updated.
 
@@ -63,7 +63,19 @@ See also [`ml/rag/chat_history.py`](ml/rag/chat_history.py) for **legacy** `chat
 
 - **BigQuery**: `BQ_PROJECT` and `BQ_DATASET_BRONZE` (see `data/local/.env`). The BQ retriever loads schema and runs NL-to-SQL **only** against the bronze dataset. Silver/gold env vars remain for dbt and other tooling.
 - **Bronze table hints (YAML + vectors)**: `match_bq_tables_from_descriptions` groups vector hits by `table_name` and fuses each with a compact column catalog from [`bronze_dataset_catalog.py`](bronze_dataset_catalog.py). Set **`RAG_BRONZE_MODEL_YAML`** to override the default path (`ml/rag/bronze_dataset_model.yml`). **`RAG_BRONZE_MODEL_SOURCE`** selects the dbt `sources` entry by name (default **`bronze`**); set it empty to merge every source in that file. If the primary YAML is missing or parses to no tables, the loader falls back to **`dbt/models/sources.yml`** (still honoring `RAG_BRONZE_MODEL_SOURCE`). Live BigQuery introspection remains the source of truth for runnable SQL.
-- **Vector DB**: **ChromaDB** in-repo at `data/local/vector_db/` (set `RAG_VECTOR_DB_PATH` to override). Populate from BQ or sample docs with `python -m ml.rag.populate_vector_db`.
+- **Vector DB**: **ChromaDB** in-repo at `data/local/vector_db/` (set `RAG_VECTOR_DB_PATH` to override). Populate from BQ or sample docs with `python -m ml.rag.populate_vector_db`. Debug counts/metadata: `PYTHONPATH=. python -m ml.rag.inspect_vector_db`.
+- **Embeddings (Chroma)** — optional env:
+
+| Variable | Meaning |
+|----------|---------|
+| `RAG_EMBEDDINGS_MODE` | `local` (default): **sentence-transformers** loads model weights on the machine. `hf_api`: **Hugging Face Inference API** for embeddings only (no local PyTorch load for that step); requires **`HF_API_TOKEN`**. |
+| `RAG_EMBEDDING_MODEL_ID` | When `RAG_EMBEDDINGS_MODE=hf_api`, Hugging Face model id (default **`sentence-transformers/all-MiniLM-L6-v2`**). |
+| `RAG_NEWS_GEO_FALLBACK` | Default **`1`**: if **news** retrieval returns no rows after a geography filter, retry once **without** geo (many chunks lack `geo_*` metadata). Set **`0`** to disable. |
+
+**Retrieval behavior:** BQ table-description search does **not** use a strict Chroma `where` on `doc_kind` so legacy chunks with only `type: "BQ … description"` still match; results are post-filtered. News uses the fallback above when geo would otherwise drop everything.
+
+If you **change** the embedding model to one with a **different vector size**, or switch between `local` and `hf_api` with incompatible settings, **rebuild the Chroma index** (e.g. delete the collection / use `--reset` on loaders, then repopulate). If `RAG_EMBEDDING_MODEL_ID` matches the same model you used for `local` MiniLM, dimensions stay aligned—still smoke-test queries after switching.
+
 - **Chat memory**: variables in the table above; summarization needs **`HF_API_TOKEN`** (same as the answer generator).
 
 ## Run
@@ -105,7 +117,7 @@ PYTHONPATH=. python -m ml.rag.run
 ### Test with Streamlit
 
 ```bash
-streamlit run ml/rag/streamlit_app.py
+streamlit run ml/rag/chatbot/streamlit_app.py
 ```
 
 Open the URL (e.g. http://localhost:8501), use the **chat** input, and switch sessions from the sidebar. Enable **pipeline debug** to see decomposition and retrieval stats.
@@ -239,6 +251,24 @@ docker compose --profile rag up --build rag-api rag-streamlit
 - **Streamlit:** http://localhost:8501  
 
 Stop: `docker compose --profile rag down` (or `down` without profile if no other services use those containers).
+
+### Docker Compose — baked vector index (no host `vector_db` mount)
+
+Use this when Chroma should live **inside the image** (build after populating `data/local/vector_db` on the machine that runs `docker build`).
+
+- **`Dockerfile.rag-baked`:** internal API (`ml.rag.api`) + Streamlit; same dependencies as `Dockerfile.rag` but **`COPY data/local/vector_db`** and [`scripts/hf-entrypoint.sh`](../../scripts/hf-entrypoint.sh) for optional **`GCP_SA_JSON`** / **`GCP_SA_JSON_B64`**.
+- **Root `Dockerfile`:** public chat API (`ml.serving.chat.app`); also bakes `vector_db`.
+
+**Secrets:** do not put **`HF_API_TOKEN`** or GCP JSON **into** the Dockerfile. Pass them at runtime via **`data/local/.env`** or `-e` (Compose already uses `env_file`). For GCP, either mount a key file (default path in Compose) or set **`GCP_SA_JSON`** so the entrypoint writes `/tmp/gcp-sa.json`.
+
+```bash
+# RAG API + Streamlit with index baked into the image
+docker compose --profile baked build rag-api-baked rag-streamlit-baked
+docker compose --profile baked up rag-api-baked rag-streamlit-baked
+
+# Optional: public chat API with baked index (port 7861 by default)
+docker compose --profile baked up chat-api-baked
+```
 
 ### Docker (local or CI)
 
