@@ -1,0 +1,29 @@
+name: Data Eng — dbt project checks
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'data-eng/dbt/**'
+      - '.github/workflows/data-eng-dbt.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'data-eng/dbt/**'
+      - '.github/workflows/data-eng-dbt.yml'
+
+jobs:
+  yaml-models:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Verify dbt YAML parses
+        run: |
+          python - <<'PY'
+          import yaml
+          from pathlib import Path
+          root = Path("data-eng/dbt")
+          for p in root.rglob("*.yml"):
+              yaml.safe_load(p.read_text())
+          print("OK:", root)
+          PY

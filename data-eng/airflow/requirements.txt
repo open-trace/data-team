@@ -1,0 +1,4 @@
+# Pin versions to match your Cloud Composer / Airflow image.
+# apache-airflow>=2.8.0
+# apache-airflow-providers-google
+# requests

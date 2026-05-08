@@ -1,0 +1,50 @@
+services:
+  rag-api:
+    build:
+      context: ../..
+      dockerfile: ml-eng/docker/Dockerfile.rag
+    image: opentrace-rag-api:latest
+    ports:
+      - "${RAG_API_PORT:-7860}:7860"
+    environment:
+      # BigQuery (optional; required if using BQ retriever)
+      BQ_PROJECT: ${BQ_PROJECT:-}
+      BQ_DATASET_BRONZE: ${BQ_DATASET_BRONZE:-bronze}
+
+      # HF (optional)
+      HF_API_TOKEN: ${HF_API_TOKEN:-}
+      RAG_LLM_MODEL_ID: ${RAG_LLM_MODEL_ID:-}
+      RAG_SUMMARY_MODEL_ID: ${RAG_SUMMARY_MODEL_ID:-}
+
+      # Qdrant Cloud
+      QDRANT_URL: ${QDRANT_URL:?set QDRANT_URL}
+      QDRANT_API_KEY: ${QDRANT_API_KEY:?set QDRANT_API_KEY}
+      QDRANT_COLLECTION: ${QDRANT_COLLECTION:-opentrace_rag}
+      QDRANT_TIMEOUT_S: ${QDRANT_TIMEOUT_S:-30}
+    restart: unless-stopped
+
+  rag-streamlit:
+    build:
+      context: ../..
+      dockerfile: ml-eng/docker/Dockerfile.rag
+    image: opentrace-rag-api:latest
+    ports:
+      - "${RAG_STREAMLIT_PORT:-8501}:8501"
+    environment:
+      QDRANT_URL: ${QDRANT_URL:?set QDRANT_URL}
+      QDRANT_API_KEY: ${QDRANT_API_KEY:?set QDRANT_API_KEY}
+      QDRANT_COLLECTION: ${QDRANT_COLLECTION:-opentrace_rag}
+      QDRANT_TIMEOUT_S: ${QDRANT_TIMEOUT_S:-30}
+    working_dir: /app
+    command:
+      [
+        "python",
+        "-m",
+        "streamlit",
+        "run",
+        "ml/rag/chatbot/streamlit_app.py",
+        "--server.port=8501",
+        "--server.address=0.0.0.0"
+      ]
+    restart: unless-stopped
+

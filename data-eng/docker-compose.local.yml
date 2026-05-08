@@ -1,0 +1,26 @@
+# Local Airflow (single container, `airflow standalone` — SQLite metadata).
+# Airbyte: install separately via official docs (see docker/README.md); default http://localhost:8000
+#
+# From repo root:
+#   docker compose -f data-eng/docker-compose.local.yml up -d
+#
+# Airflow UI: http://localhost:8080  user: airflow  password: airflow
+
+services:
+  airflow:
+    image: apache/airflow:2.8.3-python3.11
+    environment:
+      AIRFLOW__CORE__LOAD_EXAMPLES: "false"
+      AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: "true"
+      _AIRFLOW_WWW_USER_USERNAME: airflow
+      _AIRFLOW_WWW_USER_PASSWORD: airflow
+      AIRBYTE_URL: ${AIRBYTE_URL:-http://host.docker.internal:8000}
+      AIRBYTE_CLIENT_TOKEN: ${AIRBYTE_CLIENT_TOKEN:-}
+      BQ_PROJECT: ${BQ_PROJECT:-}
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./airflow/dags:/opt/airflow/dags
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    command: standalone

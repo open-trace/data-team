@@ -37,13 +37,14 @@ env/
 *.swo
 .DS_Store
 
-# Terraform
-infra/terraform/.terraform/
-infra/terraform/*.tfstate
-infra/terraform/*.tfstate.*
-infra/terraform/*.tfvars
-!infra/terraform/*.tfvars.example
+# Terraform (paths live under data-eng/infra as well as legacy infra symlinks)
+**/.terraform/
+**/infra/**/*.tfstate
+**/infra/**/*.tfstate.*
+**/infra/**/*.tfvars
+!**/infra/**/*.tfvars.example
 .terraform.lock.hcl
+*.tfplan
 
 # Secrets & env
 .env
@@ -51,23 +52,24 @@ infra/terraform/*.tfvars
 !.env.example
 *.pem
 service-account*.json
-data/local/keys/opentrace-bq-key.json
+**/local/keys/
 
 # Local partition DB (do not commit)
-data/local/*.db
-data/local/vector_db/
-data/local/*.sqlite
-data/local/*.duckdb
-data/local/cache/
-data/local/partitions/
+**/local/*.db
+**/local/vector_db/
+**/local/*.sqlite
+**/local/*.duckdb
+**/local/cache/
+**/local/partitions/
 
 
 # ML / Data (large or generated)
 *.parquet
 *.csv
 data/raw/
-data/local/processed_chunks/
-data/local/web_news_rss/
+ml-eng/ml/rag/data/
+**/local/processed_chunks/
+**/local/web_news_rss/
 ml/models/
 ml/rag/Text Documents/
 *.pkl
@@ -82,5 +84,17 @@ tmp/
 temp/
 .cache/
 
+# Docker compose local overrides
+docker-compose.override.yml
+docker-compose.*.override.yml
+
 # Composer / Airflow
 infra/composer/dags/__pycache__/
+data-eng/airflow/**/__pycache__/
+data-eng/airflow/logs/
+data-eng/airflow/plugins/**/__pycache__/
+
+# dbt artifacts (generated)
+data-eng/dbt/target/
+data-eng/dbt/dbt_packages/
+data-eng/dbt/logs/

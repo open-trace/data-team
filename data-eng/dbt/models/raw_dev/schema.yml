@@ -1,0 +1,16 @@
+# raw_dev models: read from landing and raw_dev sources; write to raw_dev dataset (BQ_DATASET_BRONZE).
+# Sources: source('landing', '...') and source('raw_dev', '...'). Tables/columns: models/sources.yml.
+# Run: dbt run --target raw_dev (or dbt run --select raw_dev.*)
+
+version: 2
+
+models:
+  - name: stg_example
+    description: "Example staging model. Replace with real logic from source('landing', ...) or source('raw_dev', ...)."
+    columns:
+      - name: id
+        description: "Placeholder primary key"
+      - name: layer
+        description: "Pipeline layer (raw_dev)"
+      - name: _loaded_at
+        description: "Load timestamp"

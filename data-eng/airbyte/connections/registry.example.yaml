@@ -1,0 +1,11 @@
+# Connection registry (copy to `registry.yaml` and fill; keep `registry.yaml` out of git if it has secrets — use .gitignore)
+
+registry:
+  # connection_id: UUID from Airbyte UI (Connection settings) after the connection is created
+  - name: example_fews_net
+    connection_id: "00000000-0000-0000-0000-000000000000"
+    source_type: example_source
+    destination_dataset: landing
+    cadence: "@daily"
+    owner: team-data-eng
+    notes: "Replace with real connection_id from Airbyte."
