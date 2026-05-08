@@ -1,0 +1,37 @@
+# ML/AI-eng dependencies (install with: pip install -r ml-eng/requirements.txt)
+#
+# Keep this sub-repo self-contained. Data-eng dependencies should live under data-eng
+# (or the repo root) instead of being required here unless needed by ML workloads.
+
+# Core BigQuery + data access (RAG uses BQ retriever)
+google-cloud-bigquery>=3.14.0
+google-cloud-storage>=2.14.0
+db-dtypes>=1.2.0
+pandas>=2.0.0
+pyarrow>=14.0.0
+
+# ML (features, training, evaluation)
+numpy>=1.24.0,<2.0
+scikit-learn>=1.3.0
+matplotlib>=3.7.0
+
+# RAG graph + API
+langgraph>=0.2.0
+langchain-core>=0.3.0
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+requests>=2.31.0
+PyYAML>=6.0
+
+# Vector DB (Qdrant Cloud)
+qdrant-client>=1.9.0
+
+# Embeddings + PDF processing (kept local for now)
+torch>=2.0.0
+torchvision>=0.15.0
+sentence-transformers>=2.2.0
+pypdf>=4.1.0
+
+# Local UI for testing
+streamlit>=1.28.0
+

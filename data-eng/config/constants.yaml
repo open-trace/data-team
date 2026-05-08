@@ -1,0 +1,24 @@
+# Non-secret defaults for data-eng (override per environment in Terraform or CI).
+gcp_default_region: europe-west3
+bigquery_default_location: europe-west3
+gcp_project_id: opentrace-prod-5ga4
+
+# dbt / medallion layer names -> BigQuery dataset IDs (see data/local/.env BQ_DATASET_*).
+datasets:
+  landing: landing
+  bronze: raw_dev
+  silver: staging_dev
+  gold: mart_dev
+
+# Optional landing variants and other source datasets (reference; catalog scripts may use BQ_DATASETS_INCLUDE in .env).
+additional_dataset_ids:
+  - dataverse
+  - ingestion_metadata
+  - landing_copernicus
+  - landing_dataverse
+  - landing_geoportal_frankfurt
+  - landing_iita
+  - landing_ilri
+  - mart_prod
+  - raw_prod
+  - staging_prod

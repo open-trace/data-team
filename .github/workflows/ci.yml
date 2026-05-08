@@ -30,8 +30,10 @@ jobs:
           python -m venv .venv
           . .venv/bin/activate
           pip install --upgrade pip
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-          if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
+          if [ -f data-eng/requirements.txt ]; then pip install -r data-eng/requirements.txt; fi
+          if [ -f data-eng/requirements-dev.txt ]; then pip install -r data-eng/requirements-dev.txt; fi
+          if [ -f ml-eng/requirements.txt ]; then pip install -r ml-eng/requirements.txt; fi
+          if [ -f ml-eng/requirements-dev.txt ]; then pip install -r ml-eng/requirements-dev.txt; fi
           pip install ruff black
 
       - name: Ruff lint

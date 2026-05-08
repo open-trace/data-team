@@ -5,14 +5,16 @@ on:
   push:
     branches: [main, develop]
     paths:
+      - 'ml-eng/**'
       - 'ml/**'
-      - 'requirements*.txt'
+      - 'ml-eng/requirements*.txt'
       - '.github/workflows/ml-tests.yml'
   pull_request:
     branches: [main, develop]
     paths:
+      - 'ml-eng/**'
       - 'ml/**'
-      - 'requirements*.txt'
+      - 'ml-eng/requirements*.txt'
       - '.github/workflows/ml-tests.yml'
 
 jobs:
@@ -38,12 +40,16 @@ jobs:
           python -m venv .venv
           . .venv/bin/activate
           pip install --upgrade pip
-          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
-          if [ -f requirements-dev.txt ]; then pip install -r requirements-dev.txt; fi
+          if [ -f ml-eng/requirements.txt ]; then pip install -r ml-eng/requirements.txt; fi
+          if [ -f ml-eng/requirements-dev.txt ]; then pip install -r ml-eng/requirements-dev.txt; fi
           pip install pytest pytest-cov
 
       - name: Run ML tests
         run: |
           . .venv/bin/activate
-          pytest ml/ -v --ignore=ml/rag --ignore=ml/serving -x --tb=short || true
+          if [ -d ml-eng/ml ]; then
+            PYTHONPATH=ml-eng pytest ml-eng/ml/ -v --ignore=ml-eng/ml/rag --ignore=ml-eng/ml/serving -x --tb=short || true
+          else
+            pytest ml/ -v --ignore=ml/rag --ignore=ml/serving -x --tb=short || true
+          fi
         continue-on-error: true

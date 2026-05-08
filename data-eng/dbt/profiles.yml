@@ -1,0 +1,54 @@
+# OpenTrace dbt — BigQuery. Default: OAuth (each dev uses their own Google identity).
+# For Docker/CI use _sa targets with GOOGLE_APPLICATION_CREDENTIALS set.
+# Run: cd dbt && DBT_PROFILES_DIR=. dbt run --target raw_dev
+
+open_trace:
+  target: "{{ env_var('DBT_TARGET', 'raw_dev') }}"
+  outputs:
+    # --- OAuth (default for local): gcloud auth application-default login ---
+    raw_dev:
+      type: bigquery
+      method: oauth
+      project: "{{ env_var('BQ_PROJECT', 'your-gcp-project-id') }}"
+      dataset: "{{ env_var('BQ_DATASET_BRONZE', 'raw_dev') }}"
+      location: "{{ env_var('DBT_BIGQUERY_LOCATION', 'europe-west3') }}"
+      threads: 4
+    staging_dev:
+      type: bigquery
+      method: oauth
+      project: "{{ env_var('BQ_PROJECT', 'your-gcp-project-id') }}"
+      dataset: "{{ env_var('BQ_DATASET_SILVER', 'staging_dev') }}"
+      location: "{{ env_var('DBT_BIGQUERY_LOCATION', 'europe-west3') }}"
+      threads: 4
+    mart_dev:
+      type: bigquery
+      method: oauth
+      project: "{{ env_var('BQ_PROJECT', 'your-gcp-project-id') }}"
+      dataset: "{{ env_var('BQ_DATASET_GOLD', 'mart_dev') }}"
+      location: "{{ env_var('DBT_BIGQUERY_LOCATION', 'europe-west3') }}"
+      threads: 4
+    # --- Service account (Docker/CI) ---
+    raw_dev_sa:
+      type: bigquery
+      method: service-account
+      project: "{{ env_var('BQ_PROJECT', 'your-gcp-project-id') }}"
+      dataset: "{{ env_var('BQ_DATASET_BRONZE', 'raw_dev') }}"
+      keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS', '') }}"
+      location: "{{ env_var('DBT_BIGQUERY_LOCATION', 'europe-west3') }}"
+      threads: 4
+    staging_dev_sa:
+      type: bigquery
+      method: service-account
+      project: "{{ env_var('BQ_PROJECT', 'your-gcp-project-id') }}"
+      dataset: "{{ env_var('BQ_DATASET_SILVER', 'staging_dev') }}"
+      keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS', '') }}"
+      location: "{{ env_var('DBT_BIGQUERY_LOCATION', 'europe-west3') }}"
+      threads: 4
+    mart_dev_sa:
+      type: bigquery
+      method: service-account
+      project: "{{ env_var('BQ_PROJECT', 'your-gcp-project-id') }}"
+      dataset: "{{ env_var('BQ_DATASET_GOLD', 'mart_dev') }}"
+      keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS', '') }}"
+      location: "{{ env_var('DBT_BIGQUERY_LOCATION', 'europe-west3') }}"
+      threads: 4

@@ -1,0 +1,1 @@
+"""Versioned chatbot HTTP API."""
