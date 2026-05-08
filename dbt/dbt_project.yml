@@ -30,10 +30,10 @@ models:
   open_trace:
     bronze:
       +schema: "{{ env_var('BQ_DATASET_BRONZE', 'bronze') }}"
-      +database: "{{ env_var('BQ_PROJECT', 'your-gcp-project-id') }}"
+      +database: "{{ env_var('BQ_PROJECT', 'opentrace-prod-5ga4') }}"
     silver:
       +schema: "{{ env_var('BQ_DATASET_SILVER', 'silver') }}"
-      +database: "{{ env_var('BQ_PROJECT', 'your-gcp-project-id') }}"
+      +database: "{{ env_var('BQ_PROJECT', 'opentrace-prod-5ga4') }}"
     gold:
       +schema: "{{ env_var('BQ_DATASET_GOLD', 'gold') }}"
-      +database: "{{ env_var('BQ_PROJECT', 'your-gcp-project-id') }}"
+      +database: "{{ env_var('BQ_PROJECT', 'opentrace-prod-5ga4') }}"
