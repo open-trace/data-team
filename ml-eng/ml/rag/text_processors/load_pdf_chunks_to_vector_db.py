@@ -20,11 +20,31 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from pathlib import Path
 from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_INPUT = REPO_ROOT / "data" / "local" / "pdf_chunks.jsonl"
+
+
+def _sentence_model_id() -> str:
+    s = os.environ.get("RAG_EMBEDDING_MODEL_SENTENCE", "").strip()
+    if s:
+        return s
+    return os.environ.get("RAG_EMBEDDING_MODEL_ID", "sentence-transformers/all-MiniLM-L6-v2").strip()
+
+
+def _semantic_model_id() -> str:
+    s = os.environ.get("RAG_EMBEDDING_MODEL_SEMANTIC", "").strip()
+    if s:
+        return s
+    return _sentence_model_id()
+
+
+def _embed_mode() -> str:
+    return os.environ.get("RAG_EMBEDDINGS_MODE", "local")
+
 
 def _clean_semicolon_list(value: str) -> str:
     parts = [p.strip() for p in (value or "").split(";")]
@@ -166,6 +186,7 @@ def _upsert_in_batches(
     metadatas: list[dict[str, str | int | float | bool]],
     batch_size: int,
 ) -> int:
+    """Legacy: single unnamed vector (default embedding model)."""
     total = len(ids)
     inserted = 0
     for i in range(0, total, batch_size):
@@ -175,7 +196,7 @@ def _upsert_in_batches(
         from ml.rag.retrievers.vector_retriever import _embed_texts
         from qdrant_client.http.models import PointStruct
 
-        embed_mode = os.environ.get("RAG_EMBEDDINGS_MODE", "local")
+        embed_mode = _embed_mode()
         model_id = os.environ.get("RAG_EMBEDDING_MODEL_ID", "sentence-transformers/all-MiniLM-L6-v2")
         vectors = _embed_texts(b_docs, model_id=model_id, mode=embed_mode)
         points = []
@@ -186,6 +207,255 @@ def _upsert_in_batches(
         client.upsert(collection_name=collection, points=points)
         inserted += len(b_ids)
     return inserted
+
+
+def _upsert_dual_vectors_batches(
+    client: Any,
+    collection: str,
+    ids: list[str],
+    docs: list[str],
+    metadatas: list[dict[str, str | int | float | bool]],
+    batch_size: int,
+) -> int:
+    """Named vectors: sentence + semantic (same chunk text, two models)."""
+    total = len(ids)
+    inserted = 0
+    mode = _embed_mode()
+    mid_s = _sentence_model_id()
+    mid_m = _semantic_model_id()
+    for i in range(0, total, batch_size):
+        b_ids = ids[i:i + batch_size]
+        b_docs = docs[i:i + batch_size]
+        b_meta = metadatas[i:i + batch_size]
+        from ml.rag.retrievers.vector_retriever import _embed_texts
+        from qdrant_client.http.models import PointStruct
+
+        v_sentence = _embed_texts(b_docs, model_id=mid_s, mode=mode)
+        v_semantic = _embed_texts(b_docs, model_id=mid_m, mode=mode)
+        points = []
+        for pid, doc, meta, vs, vm in zip(b_ids, b_docs, b_meta, v_sentence, v_semantic):
+            payload = dict(meta)
+            payload["content"] = doc
+            points.append(
+                PointStruct(
+                    id=pid,
+                    vector={"sentence": vs, "semantic": vm},
+                    payload=payload,
+                )
+            )
+        client.upsert(collection_name=collection, points=points)
+        inserted += len(b_ids)
+    return inserted
+
+
+def _upsert_sentence_named_batches(
+    client: Any,
+    collection: str,
+    ids: list[str],
+    docs: list[str],
+    metadatas: list[dict[str, str | int | float | bool]],
+    batch_size: int,
+) -> int:
+    """Single named vector ``sentence`` (data descriptions collection)."""
+    total = len(ids)
+    inserted = 0
+    mode = _embed_mode()
+    mid_s = _sentence_model_id()
+    for i in range(0, total, batch_size):
+        b_ids = ids[i:i + batch_size]
+        b_docs = docs[i:i + batch_size]
+        b_meta = metadatas[i:i + batch_size]
+        from ml.rag.retrievers.vector_retriever import _embed_texts
+        from qdrant_client.http.models import PointStruct
+
+        vecs = _embed_texts(b_docs, model_id=mid_s, mode=mode)
+        points = []
+        for pid, doc, meta, vec in zip(b_ids, b_docs, b_meta, vecs):
+            payload = dict(meta)
+            payload["content"] = doc
+            points.append(PointStruct(id=pid, vector={"sentence": vec}, payload=payload))
+        client.upsert(collection_name=collection, points=points)
+        inserted += len(b_ids)
+    return inserted
+
+
+def _ensure_collection_exists(*, client: Any, collection: str, dim: int, reset: bool) -> None:
+    from qdrant_client.http.models import Distance, VectorParams
+
+    if reset:
+        try:
+            client.delete_collection(collection_name=collection)
+        except Exception:
+            pass
+
+    try:
+        client.get_collection(collection_name=collection)
+        return
+    except Exception:
+        pass
+
+    client.create_collection(
+        collection_name=collection,
+        vectors_config=VectorParams(size=dim, distance=Distance.COSINE),
+    )
+
+
+def ensure_collection_dual_vectors(*, client: Any, collection: str, reset: bool) -> None:
+    from ml.rag.retrievers.vector_retriever import _embed_texts
+    from qdrant_client.http.models import Distance, VectorParams
+
+    if reset:
+        try:
+            client.delete_collection(collection_name=collection)
+        except Exception:
+            pass
+
+    try:
+        client.get_collection(collection_name=collection)
+        return
+    except Exception:
+        pass
+
+    mode = _embed_mode()
+    d_s = len(_embed_texts(["ping"], model_id=_sentence_model_id(), mode=mode)[0])
+    d_m = len(_embed_texts(["ping"], model_id=_semantic_model_id(), mode=mode)[0])
+
+    client.create_collection(
+        collection_name=collection,
+        vectors_config={
+            "sentence": VectorParams(size=d_s, distance=Distance.COSINE),
+            "semantic": VectorParams(size=d_m, distance=Distance.COSINE),
+        },
+    )
+
+
+def ensure_collection_sentence_named(*, client: Any, collection: str, reset: bool) -> None:
+    from ml.rag.retrievers.vector_retriever import _embed_texts
+    from qdrant_client.http.models import Distance, VectorParams
+
+    if reset:
+        try:
+            client.delete_collection(collection_name=collection)
+        except Exception:
+            pass
+
+    try:
+        client.get_collection(collection_name=collection)
+        return
+    except Exception:
+        pass
+
+    mode = _embed_mode()
+    d_s = len(_embed_texts(["ping"], model_id=_sentence_model_id(), mode=mode)[0])
+
+    client.create_collection(
+        collection_name=collection,
+        vectors_config={"sentence": VectorParams(size=d_s, distance=Distance.COSINE)},
+    )
+
+
+def upsert_jsonl_to_qdrant(
+    *,
+    input_path: Path,
+    collection: str,
+    reset: bool = False,
+    batch_size: int = 100,
+) -> int:
+    """
+    Programmatic API for loading chunk JSONL into Qdrant.
+
+    Returns number of upserted points.
+    """
+    if not input_path.exists():
+        raise FileNotFoundError(str(input_path))
+
+    ids, docs, metadatas = load_jsonl_chunks(input_path)
+    if not docs:
+        return 0
+
+    from ml.rag.retrievers.vector_retriever import _embed_texts, _get_qdrant_config
+    from qdrant_client import QdrantClient
+
+    url, api_key, _, timeout_s = _get_qdrant_config()
+    client = QdrantClient(url=url, api_key=api_key, timeout=timeout_s)
+
+    embed_mode = _embed_mode()
+    model_id = os.environ.get("RAG_EMBEDDING_MODEL_ID", "sentence-transformers/all-MiniLM-L6-v2")
+    dim = len(_embed_texts(["ping"], model_id=model_id, mode=embed_mode)[0])
+
+    _ensure_collection_exists(client=client, collection=collection, dim=dim, reset=reset)
+    return _upsert_in_batches(
+        client=client,
+        collection=collection,
+        ids=ids,
+        docs=docs,
+        metadatas=metadatas,
+        batch_size=max(1, int(batch_size)),
+    )
+
+
+def upsert_jsonl_to_qdrant_dual(
+    *,
+    input_path: Path,
+    collection: str,
+    reset: bool = False,
+    batch_size: int = 100,
+) -> int:
+    """Research/news: named vectors ``sentence`` + ``semantic``."""
+    if not input_path.exists():
+        raise FileNotFoundError(str(input_path))
+
+    ids, docs, metadatas = load_jsonl_chunks(input_path)
+    if not docs:
+        return 0
+
+    from ml.rag.retrievers.vector_retriever import _get_qdrant_config
+    from qdrant_client import QdrantClient
+
+    url, api_key, _, timeout_s = _get_qdrant_config()
+    client = QdrantClient(url=url, api_key=api_key, timeout=timeout_s)
+
+    ensure_collection_dual_vectors(client=client, collection=collection, reset=reset)
+    return _upsert_dual_vectors_batches(
+        client=client,
+        collection=collection,
+        ids=ids,
+        docs=docs,
+        metadatas=metadatas,
+        batch_size=max(1, int(batch_size)),
+    )
+
+
+def upsert_jsonl_to_qdrant_sentence_named(
+    *,
+    input_path: Path,
+    collection: str,
+    reset: bool = False,
+    batch_size: int = 100,
+) -> int:
+    """Data descriptions: single named vector ``sentence``."""
+    if not input_path.exists():
+        raise FileNotFoundError(str(input_path))
+
+    ids, docs, metadatas = load_jsonl_chunks(input_path)
+    if not docs:
+        return 0
+
+    from ml.rag.retrievers.vector_retriever import _get_qdrant_config
+    from qdrant_client import QdrantClient
+
+    url, api_key, _, timeout_s = _get_qdrant_config()
+    client = QdrantClient(url=url, api_key=api_key, timeout=timeout_s)
+
+    ensure_collection_sentence_named(client=client, collection=collection, reset=reset)
+    return _upsert_sentence_named_batches(
+        client=client,
+        collection=collection,
+        ids=ids,
+        docs=docs,
+        metadatas=metadatas,
+        batch_size=max(1, int(batch_size)),
+    )
 
 
 def build_arg_parser() -> argparse.ArgumentParser:
@@ -222,47 +492,15 @@ def main() -> int:
     args = build_arg_parser().parse_args()
     input_path: Path = args.input
 
-    if not input_path.exists():
-        raise SystemExit(f"Input file not found: {input_path}")
-
-    ids, docs, metadatas = load_jsonl_chunks(input_path)
-    if not docs:
-        raise SystemExit(f"No valid chunk rows found in: {input_path}")
-
-    import os
-    from ml.rag.retrievers.vector_retriever import _embed_texts, _get_qdrant_config
-    from qdrant_client import QdrantClient
-    from qdrant_client.http.models import Distance, VectorParams
-
-    url, api_key, _, timeout_s = _get_qdrant_config()
-    client = QdrantClient(url=url, api_key=api_key, timeout=timeout_s)
-
-    embed_mode = os.environ.get("RAG_EMBEDDINGS_MODE", "local")
-    model_id = os.environ.get("RAG_EMBEDDING_MODEL_ID", "sentence-transformers/all-MiniLM-L6-v2")
-    dim = len(_embed_texts(["ping"], model_id=model_id, mode=embed_mode)[0])
-
-    if args.reset:
-        try:
-            client.delete_collection(collection_name=args.collection)
-        except Exception:
-            pass
-
     try:
-        client.get_collection(collection_name=args.collection)
-    except Exception:
-        client.create_collection(
-            collection_name=args.collection,
-            vectors_config=VectorParams(size=dim, distance=Distance.COSINE),
+        inserted = upsert_jsonl_to_qdrant(
+            input_path=input_path,
+            collection=args.collection,
+            reset=bool(args.reset),
+            batch_size=int(args.batch_size),
         )
-
-    inserted = _upsert_in_batches(
-        client=client,
-        collection=args.collection,
-        ids=ids,
-        docs=docs,
-        metadatas=metadatas,
-        batch_size=max(1, int(args.batch_size)),
-    )
+    except FileNotFoundError:
+        raise SystemExit(f"Input file not found: {input_path}")
 
     print(
         f"Upserted {inserted} chunks into collection '{args.collection}' "

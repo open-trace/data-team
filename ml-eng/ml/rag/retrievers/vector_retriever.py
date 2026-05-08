@@ -18,6 +18,18 @@ def _env(name: str, default: str = "") -> str:
     return os.environ.get(name, default).strip()
 
 
+def sentence_embedding_model_id() -> str:
+    """Model id for ``sentence`` vectors and legacy retrieval defaults when aligned with loaders."""
+    return _env("RAG_EMBEDDING_MODEL_SENTENCE") or _env(
+        "RAG_EMBEDDING_MODEL_ID", "sentence-transformers/all-MiniLM-L6-v2"
+    )
+
+
+def semantic_embedding_model_id() -> str:
+    """Model id for ``semantic`` named vectors (dual-vector collections)."""
+    return _env("RAG_EMBEDDING_MODEL_SEMANTIC") or sentence_embedding_model_id()
+
+
 def _get_qdrant_config() -> tuple[str, str, str, float]:
     url = _env("QDRANT_URL")
     api_key = _env("QDRANT_API_KEY")
@@ -95,6 +107,21 @@ def _safe_payload(meta: dict[str, Any]) -> dict[str, str | int | float | bool]:
     return out
 
 
+def _merge_scored_hits(hits_lists: list[list[Any]], limit: int) -> list[Any]:
+    """Merge multiple search results by point id, keeping the higher score."""
+    best: dict[Any, tuple[float, Any]] = {}
+    for hits in hits_lists:
+        for h in hits or []:
+            pid = getattr(h, "id", None)
+            if pid is None:
+                continue
+            sc = float(getattr(h, "score", 0.0) or 0.0)
+            if pid not in best or sc > best[pid][0]:
+                best[pid] = (sc, h)
+    merged = sorted(best.values(), key=lambda x: x[0], reverse=True)
+    return [t[1] for t in merged[:limit]]
+
+
 class VectorRetriever(BaseRetriever):
     """
     Qdrant Cloud retriever.
@@ -102,7 +129,10 @@ class VectorRetriever(BaseRetriever):
     Env:
       - QDRANT_URL / QDRANT_API_KEY / QDRANT_COLLECTION
       - RAG_EMBEDDINGS_MODE=local|hf_api (optional)
-      - RAG_EMBEDDING_MODEL_ID (optional)
+      - RAG_EMBEDDING_MODEL_ID (legacy single-vector collections)
+      - RAG_EMBEDDING_MODEL_SENTENCE / RAG_EMBEDDING_MODEL_SEMANTIC (named vectors)
+      - RAG_QDRANT_QUERY_USING=sentence|semantic|both (dual-vector query)
+      - RAG_QDRANT_VECTOR_SEARCH_MODE=legacy|dual|sentence_named (default for retrieve)
     """
 
     def __init__(
@@ -130,8 +160,9 @@ class VectorRetriever(BaseRetriever):
         return self._client
 
     def _ensure_collection(self) -> None:
+        """Auto-create only legacy single-vector collections; named-vector collections are created by loaders."""
         client = self._get_client()
-        _, _, collection, _ = _get_qdrant_config()
+        collection = self.collection_name
         try:
             client.get_collection(collection_name=collection)
             return
@@ -203,6 +234,8 @@ class VectorRetriever(BaseRetriever):
           geo_country: substring match against geo_country_primary / geo_countries / country
           published_at_from, published_at_to: YYYY-MM-DD (compared to metadata published_at)
           domains_substring: substring match in metadata domains or domain
+          vector_search_mode: "legacy" (default unnamed vector) | "dual" (named sentence+semantic) |
+            "sentence_named" (single named sentence). Overrides RAG_QDRANT_VECTOR_SEARCH_MODE.
         """
         doc_kind = kwargs.get("doc_kind")
         if isinstance(doc_kind, str):
@@ -238,11 +271,16 @@ class VectorRetriever(BaseRetriever):
         overfetch = int(kwargs.get("overfetch_multiplier", 8 if has_filters else 1))
         overfetch = max(1, min(overfetch, 50))
 
-        self._ensure_collection()
-        client = self._get_client()
-        _, _, collection, _ = _get_qdrant_config()
+        vector_search_mode = kwargs.pop("vector_search_mode", None)
+        if vector_search_mode is None:
+            vector_search_mode = _env("RAG_QDRANT_VECTOR_SEARCH_MODE", "legacy") or "legacy"
+        vector_search_mode = str(vector_search_mode).strip().lower()
 
-        query_vec = _embed_texts([query], model_id=self._embed_model_id, mode=self._embed_mode)[0]
+        if vector_search_mode == "legacy":
+            self._ensure_collection()
+        client = self._get_client()
+        collection = self.collection_name
+
         fetch_n = max(top_k, top_k * overfetch)
 
         q_filter = None
@@ -254,13 +292,71 @@ class VectorRetriever(BaseRetriever):
             except Exception:
                 q_filter = None
 
-        hits = client.search(
-            collection_name=collection,
-            query_vector=query_vec,
-            limit=fetch_n,
-            with_payload=True,
-            query_filter=q_filter,
-        )
+        if vector_search_mode == "legacy":
+            query_vec = _embed_texts([query], model_id=self._embed_model_id, mode=self._embed_mode)[0]
+            hits = client.search(
+                collection_name=collection,
+                query_vector=query_vec,
+                limit=fetch_n,
+                with_payload=True,
+                query_filter=q_filter,
+            )
+        elif vector_search_mode == "sentence_named":
+            qv = _embed_texts(
+                [query], model_id=sentence_embedding_model_id(), mode=self._embed_mode
+            )[0]
+            hits = client.search(
+                collection_name=collection,
+                query_vector=("sentence", qv),
+                limit=fetch_n,
+                with_payload=True,
+                query_filter=q_filter,
+            )
+        elif vector_search_mode == "dual":
+            using = (_env("RAG_QDRANT_QUERY_USING", "sentence") or "sentence").strip().lower()
+            mid_s = sentence_embedding_model_id()
+            mid_m = semantic_embedding_model_id()
+            if using == "both":
+                q_s = _embed_texts([query], model_id=mid_s, mode=self._embed_mode)[0]
+                q_m = _embed_texts([query], model_id=mid_m, mode=self._embed_mode)[0]
+                h1 = client.search(
+                    collection_name=collection,
+                    query_vector=("sentence", q_s),
+                    limit=fetch_n,
+                    with_payload=True,
+                    query_filter=q_filter,
+                )
+                h2 = client.search(
+                    collection_name=collection,
+                    query_vector=("semantic", q_m),
+                    limit=fetch_n,
+                    with_payload=True,
+                    query_filter=q_filter,
+                )
+                hits = _merge_scored_hits([h1 or [], h2 or []], fetch_n)
+            elif using == "semantic":
+                q_m = _embed_texts([query], model_id=mid_m, mode=self._embed_mode)[0]
+                hits = client.search(
+                    collection_name=collection,
+                    query_vector=("semantic", q_m),
+                    limit=fetch_n,
+                    with_payload=True,
+                    query_filter=q_filter,
+                )
+            else:
+                q_s = _embed_texts([query], model_id=mid_s, mode=self._embed_mode)[0]
+                hits = client.search(
+                    collection_name=collection,
+                    query_vector=("sentence", q_s),
+                    limit=fetch_n,
+                    with_payload=True,
+                    query_filter=q_filter,
+                )
+        else:
+            raise ValueError(
+                f"Unknown vector_search_mode: {vector_search_mode!r} "
+                "(use legacy, dual, or sentence_named)"
+            )
 
         items: list[dict[str, Any]] = []
         for h in hits or []:

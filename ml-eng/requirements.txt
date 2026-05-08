@@ -23,6 +23,10 @@ uvicorn[standard]>=0.32.0
 requests>=2.31.0
 PyYAML>=6.0
 
+# Google Drive (ingestion sources)
+google-api-python-client>=2.120.0
+google-auth-oauthlib>=1.2.0
+
 # Vector DB (Qdrant Cloud)
 qdrant-client>=1.9.0
 

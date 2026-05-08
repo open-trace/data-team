@@ -4,6 +4,7 @@ RAG graph: query → decompose → parallel retrieval (BQ table match + news + a
 """
 from __future__ import annotations
 
+import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Any, TypedDict
 
@@ -57,7 +58,8 @@ def _tag_vector(item: dict[str, Any], kind: str) -> dict[str, Any]:
 def _retrieve_news(state: RAGGraphState) -> list[dict[str, Any]]:
     q = (state.get("query") or "").strip()
     dec = state.get("decomposition") or {}
-    vr = VectorRetriever()
+    news_coll = os.environ.get("QDRANT_COLLECTION_NEWS", "opentrace_news").strip() or "opentrace_news"
+    vr = VectorRetriever(collection_name=news_coll)
     geo = (state.get("geo_override") or "").strip()
     if not geo:
         geo_list = dec.get("geography") or []
@@ -83,19 +85,24 @@ def _retrieve_news(state: RAGGraphState) -> list[dict[str, Any]]:
     if domain_sub:
         kwargs["domains_substring"] = domain_sub
 
-    raw = vr.retrieve(q, **kwargs)
+    raw = vr.retrieve(q, vector_search_mode="dual", **kwargs)
     return [_tag_vector(x, "news") for x in raw]
 
 
 def _retrieve_academic(state: RAGGraphState) -> list[dict[str, Any]]:
     q = (state.get("query") or "").strip()
     top_k = int(state.get("academic_top_k") or 20)
-    vr = VectorRetriever()
+    rp_coll = (
+        os.environ.get("QDRANT_COLLECTION_RESEARCH_PAPERS", "opentrace_research_papers").strip()
+        or "opentrace_research_papers"
+    )
+    vr = VectorRetriever(collection_name=rp_coll)
     raw = vr.retrieve(
         q,
         top_k=top_k,
         doc_kind="academic_article",
         overfetch_multiplier=30,
+        vector_search_mode="dual",
     )
     return [_tag_vector(x, "academic") for x in raw]
 
