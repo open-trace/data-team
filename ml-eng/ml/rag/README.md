@@ -69,7 +69,11 @@ See also [`ml/rag/chat_history.py`](ml/rag/chat_history.py) for **legacy** `chat
 | Variable | Meaning |
 |----------|---------|
 | `RAG_EMBEDDINGS_MODE` | `local` (default): **sentence-transformers** loads model weights on the machine. `hf_api`: **Hugging Face Inference API** for embeddings only (no local PyTorch load for that step); requires **`HF_API_TOKEN`**. |
-| `RAG_EMBEDDING_MODEL_ID` | When `RAG_EMBEDDINGS_MODE=hf_api`, Hugging Face model id (default **`sentence-transformers/all-MiniLM-L6-v2`**). |
+| `RAG_EMBEDDING_MODEL_ID` | Legacy default embedding model id when the sentence-specific var is unset (default **`sentence-transformers/all-MiniLM-L6-v2`**). Also used by `populate_vector_db` single-vector collections. |
+| `RAG_EMBEDDING_MODEL_SENTENCE` | Model id for the **`sentence`** named vector (research, news, data descriptions loaders). Overrides `RAG_EMBEDDING_MODEL_ID` when set. |
+| `RAG_EMBEDDING_MODEL_SEMANTIC` | Model id for the **`semantic`** named vector (research + news loaders only). Defaults to the sentence model if unset. |
+| `RAG_QDRANT_QUERY_USING` | For dual-vector collections: query **`sentence`**, **`semantic`**, or **`both`** (merge by max score per point). |
+| `RAG_QDRANT_VECTOR_SEARCH_MODE` | Default `retrieve(..., vector_search_mode=...)`: **`legacy`** (unnamed single vector), **`dual`** (named `sentence`+`semantic`), **`sentence_named`** (single named `sentence`). Graph overrides explicitly. |
 | `RAG_NEWS_GEO_FALLBACK` | Default **`1`**: if **news** retrieval returns no rows after a geography filter, retry once **without** geo (many chunks lack `geo_*` metadata). Set **`0`** to disable. |
 
 **Retrieval behavior:** the retriever may apply a best-effort server-side filter on `doc_kind`, but still post-filters results for compatibility with legacy chunk metadata. News uses the fallback above when geo would otherwise drop everything.
@@ -85,6 +89,24 @@ From repo root (recommended: install from `ml-eng/`):
 ```bash
 # Install deps (ml-eng)
 pip install -r ml-eng/requirements.txt -r ml-eng/requirements-dev.txt
+
+# Rebuild 3 Qdrant collections from Google Drive folders (OAuth user auth)
+# Required env: QDRANT_URL, QDRANT_API_KEY, GDRIVE_OAUTH_CLIENT_SECRET_JSON,
+#   GDRIVE_FOLDER_RESEARCH_PAPERS_ID, GDRIVE_FOLDER_NEWS_ID, GDRIVE_FOLDER_DATA_DESCRIPTIONS_ID
+PYTHONPATH=ml-eng python -m ml.rag.ingestion.cli rebuild --kind all --reset
+
+# (Optional) Run per-collection preprocessing + loading scripts directly
+# Research papers
+PYTHONPATH=ml-eng python -m ml.rag.text_processors.research_papers_preprocessor --input-dir /path/to/pdfs --output data/local/ingestion_chunks/research_chunks.jsonl
+PYTHONPATH=ml-eng python -m ml.rag.text_processors.research_papers_load_to_vector_db --input data/local/ingestion_chunks/research_chunks.jsonl --reset
+#
+# News
+PYTHONPATH=ml-eng python -m ml.rag.text_processors.news_collection_preprocessor --input-dir /path/to/news_txt --output data/local/ingestion_chunks/news_chunks.jsonl
+PYTHONPATH=ml-eng python -m ml.rag.text_processors.news_load_to_vector_db --input data/local/ingestion_chunks/news_chunks.jsonl --reset
+#
+# Data descriptions (DOCX)
+PYTHONPATH=ml-eng python -m ml.rag.text_processors.data_descriptions_preprocessor --input-dir /path/to/docx --output data/local/ingestion_chunks/data_descriptions_chunks.jsonl
+PYTHONPATH=ml-eng python -m ml.rag.text_processors.data_descriptions_load_to_vector_db --input data/local/ingestion_chunks/data_descriptions_chunks.jsonl --reset
 
 # Optional: populate Qdrant collection from BQ or sample docs
 PYTHONPATH=ml-eng python -m ml.rag.populate_vector_db

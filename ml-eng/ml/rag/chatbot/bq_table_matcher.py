@@ -7,6 +7,7 @@ for ``BQRetriever`` ``table_hints``.
 """
 from __future__ import annotations
 
+import os
 import re
 from typing import Any
 
@@ -63,17 +64,23 @@ def _build_fused_content(
 def match_bq_tables_from_descriptions(
     query: str,
     top_k: int = 8,
-    collection_name: str = "opentrace_rag",
+    collection_name: str | None = None,
 ) -> list[dict[str, Any]]:
     """
     Retrieve BQ description chunks from Chroma, group by table, merge YAML/dbt catalog columns
     with narrative text. Returns one dict per table (``content`` fused for NL-to-SQL hints).
     """
-    vr = VectorRetriever(collection_name=collection_name)
+    coll = (
+        collection_name
+        or os.environ.get("QDRANT_COLLECTION_DATA_DESCRIPTIONS", "opentrace_data_descriptions").strip()
+        or "opentrace_data_descriptions"
+    )
+    vr = VectorRetriever(collection_name=coll)
     raw = vr.retrieve(
         query,
         top_k=top_k,
         doc_kind="bq_table_description",
+        vector_search_mode="sentence_named",
     )
     catalog = load_bronze_table_schemas()
 
