@@ -1,4 +1,5 @@
-CREATE TABLE IF NOT EXISTS yield_raw_data (
+CREATE SCHEMA IF NOT EXISTS raw_dev;
+CREATE TABLE IF NOT EXISTS raw_dev.yield_raw_data (
   fnid TEXT,
   country TEXT,
   country_code TEXT,

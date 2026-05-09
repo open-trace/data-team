@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-Fetch BigQuery table schemas for bronze, silver, and gold and generate PostgreSQL DDL.
+Fetch BigQuery table schemas for bronze, silver, and gold (raw_dev/staging_dev/mart_dev in BQ) and generate PostgreSQL DDL.
 Writes one .sql file per table to data/local/schema/{bronze,silver,gold}/ and optionally
 creates the tables on the local DB when LOCAL_DB_URL is set.
 
 Usage:
   Set BQ_PROJECT; optionally BQ_DATASET_BRONZE, BQ_DATASET_SILVER, BQ_DATASET_GOLD, LOCAL_DB_URL.
-  Table lists from data/local/scripts/{bronze,silver,gold}_tables.txt.
+  Table lists from data/local/scripts/{raw_dev,staging_dev,mart_dev}_tables.txt (recommended) or env BQ_{LAYER}_TABLES.
   python bq_schema_to_local_pg.py [--write-only] [--execute-only]
   --write-only: only write .sql files (default: write + execute if LOCAL_DB_URL set)
   --execute-only: only execute DDL on local DB (skip writing files; runs all existing .sql in schema/*/)
@@ -20,6 +20,8 @@ import re
 import sys
 from pathlib import Path
 
+from bq_table_lists import dataset_id_for_layer, load_layer_tables, local_schema_for_layer
+
 REPO_ROOT = Path(__file__).resolve().parents[3]
 SCRIPTS_DIR = Path(__file__).resolve().parent
 SCHEMA_DIR = REPO_ROOT / "data" / "local" / "schema"
@@ -29,9 +31,9 @@ from engine_connector import get_engine  # noqa: E402
 
 # Layer -> (env var for dataset id, table list file name)
 LAYERS = {
-    "bronze": ("BQ_DATASET_BRONZE", "bronze_tables.txt"),
-    "silver": ("BQ_DATASET_SILVER", "silver_tables.txt"),
-    "gold": ("BQ_DATASET_GOLD", "gold_tables.txt"),
+    "bronze": ("BQ_DATASET_BRONZE", "raw_dev_tables.txt"),
+    "silver": ("BQ_DATASET_SILVER", "staging_dev_tables.txt"),
+    "gold": ("BQ_DATASET_GOLD", "mart_dev_tables.txt"),
 }
 
 # BigQuery type -> PostgreSQL type
@@ -56,20 +58,13 @@ BQ_TO_PG = {
 
 
 def load_table_list(layer: str) -> list[str]:
-    """Load table IDs from {layer}_tables.txt or env BQ_{LAYER}_TABLES (comma-separated)."""
-    _, filename = LAYERS[layer]
-    env_key = f"BQ_{layer.upper()}_TABLES"
-    env_list = os.environ.get(env_key, "").strip()
-    if env_list:
-        return [t.strip() for t in env_list.split(",") if t.strip()]
-    path = SCRIPTS_DIR / filename
-    if not path.exists():
-        return []
-    return [
-        line.strip()
-        for line in path.read_text().splitlines()
-        if line.strip() and not line.strip().startswith("#")
-    ]
+    """
+    Load table IDs for a layer.
+
+    Prefer the shared resolver that matches BQ/dbt reality (sources.yml), but keep the old
+    function signature to avoid rewriting the rest of this script.
+    """
+    return load_layer_tables(layer)
 
 
 def bq_type_to_pg(field_type: str, mode: str | None) -> str:
@@ -84,10 +79,50 @@ def bq_type_to_pg(field_type: str, mode: str | None) -> str:
 
 
 def quote_ident(name: str) -> str:
-    """Quote identifier if it contains spaces or special chars."""
-    if re.search(r'[\s\-]', name) or (name and name.upper() in ("ORDER", "GROUP", "TABLE")):
-        return f'"{name}"'
-    return name
+    """
+    Quote an identifier safely for PostgreSQL.
+
+    BigQuery allows column names like `end` which are reserved words in Postgres.
+    We quote anything that isn't a simple lowercase identifier, or is a known reserved word.
+    """
+    if name is None:
+        return '""'
+    raw = str(name)
+    if raw == "":
+        return '""'
+
+    n = raw.lower()
+    pg_reserved = {
+        # Minimal high-impact set + words we have seen in BQ schemas
+        "end",
+        "start",
+        "user",
+        "group",
+        "order",
+        "table",
+        "select",
+        "where",
+        "from",
+        "to",
+        "by",
+        "limit",
+        "offset",
+        "join",
+        "inner",
+        "outer",
+        "left",
+        "right",
+        "full",
+        "on",
+        "having",
+        "union",
+    }
+
+    is_simple = re.fullmatch(r"[a-z_][a-z0-9_]*", n) is not None
+    if (not is_simple) or (n in pg_reserved) or re.search(r'[\s\-]', raw):
+        escaped = raw.replace('"', '""')
+        return f'"{escaped}"'
+    return raw
 
 
 def safe_filename(table_id: str) -> str:
@@ -95,8 +130,8 @@ def safe_filename(table_id: str) -> str:
     return re.sub(r"[^\w\-]", "_", table_id).strip("_") or "table"
 
 
-def build_create_table(table_id: str, schema_fields: list) -> str:
-    """Build CREATE TABLE IF NOT EXISTS ... (col defs) for PostgreSQL."""
+def build_create_table(*, layer: str, table_id: str, schema_fields: list) -> str:
+    """Build CREATE SCHEMA + CREATE TABLE IF NOT EXISTS ... (col defs) for PostgreSQL."""
     lines = []
     for f in schema_fields:
         name = getattr(f, "name", str(f))
@@ -106,8 +141,12 @@ def build_create_table(table_id: str, schema_fields: list) -> str:
         col_def = f"  {quote_ident(name)} {pg_type}"
         lines.append(col_def)
     cols = ",\n".join(lines)
+    schema_name = quote_ident(local_schema_for_layer(layer))
     table_name = quote_ident(table_id)
-    return f"CREATE TABLE IF NOT EXISTS {table_name} (\n{cols}\n);"
+    return (
+        f"CREATE SCHEMA IF NOT EXISTS {schema_name};\n"
+        f"CREATE TABLE IF NOT EXISTS {schema_name}.{table_name} (\n{cols}\n);"
+    )
 
 
 def main() -> None:
@@ -163,9 +202,10 @@ def main() -> None:
     for layer, (dataset_env, _) in LAYERS.items():
         dataset_id = (os.environ.get(dataset_env) or "").strip()
         if not dataset_id and layer == "bronze":
-            dataset_id = (os.environ.get("BQ_DATASET") or "bronze").strip()
+            dataset_id = (os.environ.get("BQ_DATASET") or "").strip()
         if not dataset_id:
-            dataset_id = layer
+            dataset_id = dataset_id_for_layer(layer)
+
         table_ids = load_table_list(layer)
         if not table_ids:
             continue
@@ -184,7 +224,7 @@ def main() -> None:
                 print(f"Skip {layer}.{table_id}: {e}", file=sys.stderr)
                 continue
             schema_fields = list(table.schema)
-            ddl = build_create_table(table_id, schema_fields)
+            ddl = build_create_table(layer=layer, table_id=table_id, schema_fields=schema_fields)
 
             if write_files:
                 fname = safe_filename(table_id) + ".sql"
@@ -196,10 +236,16 @@ def main() -> None:
                 from sqlalchemy import text
                 with engine.begin() as conn:
                     conn.execute(text(ddl))
-                print(f"Created table {quote_ident(table_id)} on local DB ({layer})")
+                # Local schema matches real BQ dataset id (raw_dev/staging_dev/mart_dev)
+                local_schema = local_schema_for_layer(layer)
+                print(f"Created table {quote_ident(local_schema)}.{quote_ident(table_id)} on local DB")
 
     if not any_tables:
-        print("No tables found in bronze_tables.txt, silver_tables.txt, or gold_tables.txt. Add table names to sync.", file=sys.stderr)
+        print(
+            "No tables found for any layer. Set BQ_{LAYER}_TABLES or add scripts/{layer}_tables.txt "
+            "or ensure dbt/models/sources.yml contains the layer datasets (e.g. raw_dev/staging_dev/mart_dev).",
+            file=sys.stderr,
+        )
     print("Done.")
 
 

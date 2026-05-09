@@ -54,6 +54,7 @@ def get_config() -> dict:
             os.environ.get("LOCAL_DB_PATH") or str(REPO_ROOT / "data" / "local" / "local.db")
         ),
         "target_table": os.environ.get("LOCAL_TABLE", "bronze_events"),
+        "target_schema": os.environ.get("LOCAL_SCHEMA", "").strip(),
     }
 
 
@@ -86,8 +87,11 @@ def main() -> None:
     parser.add_argument("--table", default=os.environ.get("BQ_TABLE", "bronze_events"))
     parser.add_argument("--partition-filter", default=os.environ.get("BQ_PARTITION_FILTER", ""))
     parser.add_argument("--limit", type=int, default=int(os.environ.get("BQ_PARTITION_LIMIT", "10000")))
-    parser.add_argument("--local-db", default=os.environ.get("LOCAL_DB_PATH", ""))
+    # Only use SQLite if the user explicitly passes --local-db.
+    # (LOCAL_DB_PATH is commonly set in .env as a fallback, but should not override LOCAL_DB_URL.)
+    parser.add_argument("--local-db", default="", help="Force SQLite by providing a path")
     parser.add_argument("--target-table", default=os.environ.get("LOCAL_TABLE", "bronze_events"))
+    parser.add_argument("--target-schema", default=os.environ.get("LOCAL_SCHEMA", ""), help="Postgres schema to write into")
     args = parser.parse_args()
 
     config = get_config()
@@ -102,6 +106,8 @@ def main() -> None:
         config["local_db_url"] = ""  # use SQLite
     if args.target_table:
         config["target_table"] = args.target_table
+    if args.target_schema:
+        config["target_schema"] = args.target_schema
 
     try:
         from google.cloud import bigquery
@@ -117,16 +123,26 @@ def main() -> None:
 
     engine = get_engine(config=config)
     with engine.begin() as conn:
+        schema = (config.get("target_schema") or "").strip() or None
+        # Only Postgres supports schemas; for SQLite we must not pass `schema=...`
+        if not config.get("local_db_url"):
+            schema = None
+        if schema:
+            from sqlalchemy import text
+            escaped = schema.replace('"', '""')
+            conn.execute(text(f'CREATE SCHEMA IF NOT EXISTS "{escaped}"'))
         df.to_sql(
             config["target_table"],
             conn,
             if_exists="replace",
             index=False,
             method="multi",
+            schema=schema,
         )
 
     target = config["local_db_url"] or config["local_db_path"]
-    print(f"Wrote {len(df)} rows to {target} table {config['target_table']}")
+    full_target = f"{schema}.{config['target_table']}" if schema else config["target_table"]
+    print(f"Wrote {len(df)} rows to {target} table {full_target}")
 
 
 if __name__ == "__main__":

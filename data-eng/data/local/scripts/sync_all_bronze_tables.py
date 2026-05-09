@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Sync data from all bronze tables (listed in bronze_tables.txt) into the local database.
+Sync data from all bronze tables (listed in raw_dev_tables.txt) into the local database.
 Calls bq_partition_to_local.py for each table. Run after creating tables with
 bq_schema_to_local_pg.py. Uses BQ_PARTITION_LIMIT and BQ_PARTITION_FILTER from env.
 
@@ -15,20 +15,15 @@ import subprocess
 import sys
 from pathlib import Path
 
+from bq_table_lists import load_layer_tables, local_schema_for_layer
+
 REPO_ROOT = Path(__file__).resolve().parents[3]
 SCRIPTS_DIR = Path(__file__).resolve().parent
 SYNC_SCRIPT = SCRIPTS_DIR / "bq_partition_to_local.py"
 
 
 def load_bronze_table_list() -> list[str]:
-    path = SCRIPTS_DIR / "bronze_tables.txt"
-    if not path.exists():
-        return []
-    return [
-        line.strip()
-        for line in path.read_text().splitlines()
-        if line.strip() and not line.strip().startswith("#")
-    ]
+    return load_layer_tables("bronze")
 
 
 def main() -> None:
@@ -43,7 +38,7 @@ def main() -> None:
 
     table_ids = load_bronze_table_list()
     if not table_ids:
-        print("No tables in bronze_tables.txt", file=sys.stderr)
+        print("No tables found for bronze/raw_dev", file=sys.stderr)
         sys.exit(1)
 
     env = os.environ.copy()
@@ -58,6 +53,7 @@ def main() -> None:
             str(SYNC_SCRIPT),
             "--table", table_id,
             "--target-table", table_id,
+            "--target-schema", local_schema_for_layer("bronze"),
         ]
         print(f"Syncing {table_id} ...")
         r = subprocess.run(cmd, env=env, cwd=str(REPO_ROOT))
