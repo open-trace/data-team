@@ -1,0 +1,28 @@
+CREATE SCHEMA IF NOT EXISTS raw_dev;
+CREATE TABLE IF NOT EXISTS raw_dev.FEWS_NET_cross_border_trade_data_series (
+  id BIGINT,
+  reporting_country TEXT,
+  border_point_name TEXT,
+  source TEXT,
+  destination TEXT,
+  cpcv2 TEXT,
+  product_name TEXT,
+  unit TEXT,
+  unit_name TEXT,
+  flow_type TEXT,
+  trade_type TEXT,
+  data_source_document TEXT,
+  data_source_organization TEXT,
+  data_usage_policy TEXT,
+  first_period_date TEXT,
+  last_period_date TEXT,
+  datapoint_count BIGINT,
+  datasourcedocument BIGINT,
+  datausagepolicy TEXT,
+  reporting_country_code TEXT,
+  source_country_code TEXT,
+  destination_country_code TEXT,
+  border_point DOUBLE PRECISION,
+  product TEXT,
+  description TEXT
+);

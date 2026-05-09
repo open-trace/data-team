@@ -1,0 +1,3 @@
+# Auto-generated from dbt/models/sources.yml (source: staging_dev)
+# Override: set BQ_SILVER_TABLES or edit this file for a smaller subset.
+_placeholder

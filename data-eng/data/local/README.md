@@ -1,6 +1,6 @@
-# Local partition database (PostgreSQL)
+# Local development database (PostgreSQL)
 
-A **local PostgreSQL database** holds a **partition** (or sample) of the data that lives in the **bronze, silver, and gold databases** in BigQuery. It is used to **curate and test** the ETL pipeline (bronze → silver → gold) in the IDE without running on full production data.
+A **local PostgreSQL database** holds a **partition** (or sample) of the data that lives in the BigQuery **dev datasets**: **`raw_dev`**, **`staging_dev`**, **`mart_dev`**. It is used to **curate and test** the ETL pipeline locally without running on full production data.
 
 We use **PostgreSQL** so the team’s local environment is close to BigQuery (full SQL, multiple connections, same mental model). SQLite remains supported if you prefer a file-based DB.
 
@@ -21,7 +21,8 @@ So: collaboration is smooth as long as everyone has their **own** database (or s
 
 When this repo is shared with the team, **everyone gets the same local DB setup**:
 
-- **Same schema:** The table lists (`scripts/bronze_tables.txt`, `scripts/silver_tables.txt`, `scripts/gold_tables.txt`) and schema script (`bq_schema_to_local_pg.py`) are in the repo. When any team member runs the scripts, they create the **same tables** (bronze, silver, gold) in their local Postgres, using the same BigQuery project and dataset names.
+- **Same schema:** The table lists (`scripts/raw_dev_tables.txt`, `scripts/staging_dev_tables.txt`, `scripts/mart_dev_tables.txt`) and schema script (`bq_schema_to_local_pg.py`) are in the repo. When any team member runs the scripts, they create the **same tables** in their local Postgres, using the same BigQuery project and dataset names.
+- **Same schema:** By default, table lists are derived from `dbt/models/sources.yml` (which is already the canonical list of BQ tables for dbt). Optional `scripts/{raw_dev,staging_dev,mart_dev}_tables.txt` files or env vars `BQ_{LAYER}_TABLES` can override this for targeted work. When any team member runs the scripts, they create the **same tables** under local Postgres schemas that match BigQuery dataset ids: `raw_dev.*`, `staging_dev.*`, `mart_dev.*`.
 - **Same workflow:** Everyone uses the same Docker Compose, same scripts, and the same `.env.example` as a template. Run `docker compose up -d`, create your DB, copy `.env.example` to `.env` and add your own BigQuery credentials and `LOCAL_DB_URL`, then run `bash data/local/scripts/populate_local_db.sh`.
 - **Your own data:** Each person’s local DB is **their own copy**. The rows in it are whatever they synced from BigQuery when they ran the sync. To get similar data across the team, use the same `BQ_PARTITION_LIMIT` and filters in `.env` (or document the recommended values in the repo).
 
@@ -37,17 +38,17 @@ So: same structure and process for everyone; each team member syncs their own da
 
 ## Creating bronze, silver, and gold tables from BigQuery
 
-To recreate the bronze, silver, and gold tables on your local PostgreSQL database:
+To recreate the logical layers (bronze/silver/gold) from BigQuery dev datasets on your local PostgreSQL database:
 
 1. **Set env:** `BQ_PROJECT`, `BQ_DATASET_BRONZE`, `BQ_DATASET_SILVER`, `BQ_DATASET_GOLD` (or rely on defaults `bronze`/`silver`/`gold`), and optionally `LOCAL_DB_URL` (to create tables directly on your local DB).
-2. **Table lists:** Add table names (one per line) to `scripts/bronze_tables.txt`, `scripts/silver_tables.txt`, and `scripts/gold_tables.txt` as needed.
+2. **Table lists (usually automatic):** The scripts will read `dbt/models/sources.yml` to determine which tables exist in each layer (using your `BQ_DATASET_BRONZE` / `BQ_DATASET_SILVER` / `BQ_DATASET_GOLD`). If you want to sync only a subset, set `BQ_{LAYER}_TABLES` (comma-separated) or edit `scripts/raw_dev_tables.txt`, `scripts/staging_dev_tables.txt`, `scripts/mart_dev_tables.txt`.
 3. **Generate DDL and create tables:**  
    From repo root:
    ```bash
    python data/local/scripts/bq_schema_to_local_pg.py
    ```
    This fetches each table’s schema from BigQuery for all three layers, writes one `.sql` file per table under `schema/bronze/`, `schema/silver/`, and `schema/gold/`, and (if `LOCAL_DB_URL` is set) runs the DDL so the tables exist locally. Use `--write-only` to only write `.sql` files, or `--execute-only` to run existing `.sql` files against the local DB without calling BigQuery.
-4. **Load data:** Sync a partition into each table:
+4. **Load data:** Sync a partition into each table (writes into local schemas `raw_dev`, `staging_dev`, `mart_dev`):
    ```bash
    python data/local/scripts/sync_all_tables.py --dataset bronze
    python data/local/scripts/sync_all_tables.py --dataset silver
@@ -60,6 +61,28 @@ To recreate the bronze, silver, and gold tables on your local PostgreSQL databas
    bash data/local/scripts/populate_local_db.sh
    ```
    This loads `.env`, creates bronze/silver/gold tables from BigQuery schemas, syncs data into all three layers, then loads the GIS CSV.
+
+## Running the local DB with Docker (recommended)
+
+From repo root:
+
+```bash
+cd data-eng
+docker compose up -d postgres
+docker compose --profile setup up --build setup
+```
+
+- The second command runs a one-shot container that executes `data/local/scripts/populate_local_db.sh`.
+- Data is written into Postgres schemas matching BQ dataset ids: `raw_dev.*`, `staging_dev.*`, `mart_dev.*`.
+
+### Connect with Power BI (optional)
+
+Power BI can connect to the running local Postgres:
+
+- **host**: `localhost`
+- **port**: `5432`
+- **database**: `datateam_local`
+- **username/password**: `postgres` / `postgres`
 
 ## Usage
 

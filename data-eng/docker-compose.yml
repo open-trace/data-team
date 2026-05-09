@@ -1,4 +1,4 @@
-# Local PostgreSQL + optional full setup (schema, bronze sync, GIS) in Docker.
+# Local PostgreSQL + optional full setup (schema, sync from BQ, GIS) in Docker.
 #
 # Postgres only (DB + datateam_local created on first run):
 #   docker compose up -d
@@ -15,6 +15,11 @@
 #
 # From the host, use LOCAL_DB_URL=postgresql://postgres:postgres@localhost:5432/datateam_local
 # to connect to Postgres. Stop: docker compose down
+#
+# BigQuery reality:
+# - Datasets are named: raw_dev, staging_dev, mart_dev
+# - Local Postgres schemas are created to match those dataset ids: raw_dev.*, staging_dev.*, mart_dev.*
+# - Table lists come from dbt/models/sources.yml by default (or scripts/{raw_dev,staging_dev,mart_dev}_tables.txt)
 
 services:
   postgres:

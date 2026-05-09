@@ -1,0 +1,27 @@
+CREATE SCHEMA IF NOT EXISTS raw_dev;
+CREATE TABLE IF NOT EXISTS raw_dev.arcgis_rarity_80_birds_africa (
+  objectid BIGINT,
+  fid_l0globalterrrar_025deg BIGINT,
+  id_1440 DOUBLE PRECISION,
+  area_km2 DOUBLE PRECISION,
+  prop_gadm DOUBLE PRECISION,
+  rich_all BIGINT,
+  rich_amph BIGINT,
+  rich_bird BIGINT,
+  rich_cact BIGINT,
+  rich_coni BIGINT,
+  rich_mamm BIGINT,
+  rich_rept BIGINT,
+  rar_all BIGINT,
+  rar_amph BIGINT,
+  rar_bird BIGINT,
+  rar_cact BIGINT,
+  rar_coni BIGINT,
+  rar_mamm BIGINT,
+  rar_rept BIGINT,
+  fid_j0ef2448dcf654e6bb1aa8ca379 BIGINT,
+  name TEXT,
+  count BIGINT,
+  analysisarea DOUBLE PRECISION,
+  geometry_wkt TEXT
+);

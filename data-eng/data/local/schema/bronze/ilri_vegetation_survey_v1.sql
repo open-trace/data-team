@@ -1,0 +1,25 @@
+CREATE SCHEMA IF NOT EXISTS raw_dev;
+CREATE TABLE IF NOT EXISTS raw_dev.ilri_vegetation_survey_v1 (
+  time_hour TEXT,
+  time_min TEXT,
+  time_sec TEXT,
+  time_period TEXT,
+  latitude TEXT,
+  longitude TEXT,
+  photo_id TEXT,
+  quantity_trees TEXT,
+  quantity_shrubs TEXT,
+  quantity_grass TEXT,
+  leaves_trees TEXT,
+  leaves_shrubs TEXT,
+  leaves_grass TEXT,
+  palatability_trees TEXT,
+  palatability_shrubs TEXT,
+  palatability_grass TEXT,
+  carrying_capacity TEXT,
+  currently_grazing TEXT,
+  survey_date BIGINT,
+  geopoint_accuracy DOUBLE PRECISION,
+  distance_to_water_km DOUBLE PRECISION,
+  ingestion_timestamp TIMESTAMPTZ
+);
