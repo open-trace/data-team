@@ -22,7 +22,7 @@ def main() -> int:
     from qdrant_client import QdrantClient
 
     url, api_key, _, timeout_s = _get_qdrant_config()
-    client = QdrantClient(url=url, api_key=api_key, timeout=timeout_s)
+    client = QdrantClient(url=url, api_key=api_key, timeout=int(timeout_s))
     try:
         info = client.get_collection(collection_name=args.collection)
     except Exception as e:

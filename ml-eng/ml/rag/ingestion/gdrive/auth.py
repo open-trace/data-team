@@ -21,6 +21,17 @@ class DriveAuthConfig:
     scopes: tuple[str, ...] = DRIVE_READONLY_SCOPES
 
 
+def _ml_eng_root() -> Path:
+    return Path(__file__).resolve().parents[4]
+
+
+def _resolve_ml_eng_path(raw: str) -> Path:
+    p = Path(raw).expanduser()
+    if p.is_absolute():
+        return p.resolve()
+    return (_ml_eng_root() / p).resolve()
+
+
 def load_auth_config_from_env() -> DriveAuthConfig:
     """
     Env:
@@ -33,14 +44,12 @@ def load_auth_config_from_env() -> DriveAuthConfig:
 
     token_path = _env("GDRIVE_TOKEN_PATH")
     if token_path:
-        tp = Path(token_path).expanduser().resolve()
+        tp = _resolve_ml_eng_path(token_path)
     else:
-        # repo root: .../ml/rag/ingestion/gdrive/auth.py -> parents[4] == ml-eng
-        ml_eng_root = Path(__file__).resolve().parents[4]
-        tp = (ml_eng_root / "data" / "local" / "gdrive_token.json").resolve()
+        tp = (_ml_eng_root() / "data" / "local" / "gdrive_token.json").resolve()
 
     return DriveAuthConfig(
-        client_secret_json_path=Path(raw_secret).expanduser().resolve(),
+        client_secret_json_path=_resolve_ml_eng_path(raw_secret),
         token_path=tp,
         scopes=DRIVE_READONLY_SCOPES,
     )
@@ -92,6 +101,5 @@ def build_drive_service(config: DriveAuthConfig):
     config.token_path.parent.mkdir(parents=True, exist_ok=True)
     config.token_path.write_text(creds.to_json(), encoding="utf-8")
 
-    # cache_discovery=False avoids a write in older googleapiclient versions.
     return build("drive", "v3", credentials=creds, cache_discovery=False)
 

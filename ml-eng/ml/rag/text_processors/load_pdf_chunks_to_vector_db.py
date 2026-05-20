@@ -12,9 +12,9 @@ Defaults:
     --collection opentrace_rag
 
 Usage:
-    PYTHONPATH=ml-eng python -m ml.rag.load_pdf_chunks_to_vector_db
-    PYTHONPATH=ml-eng python -m ml.rag.load_pdf_chunks_to_vector_db --reset
-    PYTHONPATH=ml-eng python -m ml.rag.load_pdf_chunks_to_vector_db --batch-size 200
+    PYTHONPATH=ml-eng python -m ml.rag.text_processors.load_pdf_chunks_to_vector_db
+    PYTHONPATH=ml-eng python -m ml.rag.text_processors.load_pdf_chunks_to_vector_db --reset
+    PYTHONPATH=ml-eng python -m ml.rag.text_processors.load_pdf_chunks_to_vector_db --batch-size 200
 """
 from __future__ import annotations
 
@@ -22,10 +22,21 @@ import argparse
 import json
 import os
 from pathlib import Path
-from typing import Any
+from typing import Any, Final, TypedDict
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_INPUT = REPO_ROOT / "data" / "local" / "pdf_chunks.jsonl"
+
+
+class _ProfileUpsertKwargs(TypedDict):
+    input_path: Path
+    collection: str
+    reset: bool
+    batch_size: int
+    allowed_payload_keys: frozenset[str] | None
+    model_id: str
+    vector_dim: int
+    corpus: str
 
 
 def _sentence_model_id() -> str:
@@ -96,6 +107,8 @@ def _normalize_metadata(meta: dict[str, Any]) -> dict[str, Any]:
         m.setdefault("source_kind", "web_news_rss_txt")
     elif doc_kind == "academic_article":
         m.setdefault("source_kind", "pdf_text_document")
+    elif doc_kind == "policy_report":
+        m.setdefault("source_kind", "pdf_policy_report")
 
     # --- geo normalization ---
     geo_countries = ""
@@ -124,6 +137,9 @@ def _normalize_metadata(meta: dict[str, Any]) -> dict[str, Any]:
     else:
         m.setdefault("geo_scope", "unknown")
 
+    if "domain" in m and "domains" not in m:
+        m["domains"] = m.pop("domain")
+
     return m
 
 
@@ -134,13 +150,63 @@ def _safe_metadata(meta: dict[str, Any]) -> dict[str, str | int | float | bool]:
     out: dict[str, str | int | float | bool] = {}
     for k, v in meta.items():
         if v is None:
-            # Skip null to maximize compatibility across Chroma versions.
+            # Skip null metadata values for broader Qdrant client compatibility.
             continue
         if isinstance(v, (str, int, float, bool)):
             out[k] = v
         else:
             out[k] = str(v)[:1000]
     return out
+
+
+# ---------------------------------------------------------------------------
+# Per-collection payload allow-lists (fields kept in each Qdrant point).
+# ---------------------------------------------------------------------------
+
+PAYLOAD_NEWS: Final[frozenset[str]] = frozenset({
+    "content", "doc_kind", "geo_country_primary", "geo_scope",
+    "domains", "published_at", "title", "source", "url",
+    "chunk_index", "total_chunks", "document_id", "content_hash",
+    "section_path", "ingest_version",
+})
+
+PAYLOAD_RESEARCH: Final[frozenset[str]] = frozenset({
+    "content", "doc_kind", "strategy", "geo_country_primary",
+    "geo_countries", "geo_scope", "domains",
+    "section_title", "chunk_index", "total_chunks",
+    "document_id", "content_hash", "section_path", "ingest_version",
+})
+
+PAYLOAD_OTA: Final[frozenset[str]] = frozenset({
+    "content", "insight_text", "metric_text", "recommendation_text",
+    "doc_kind", "geo_country_primary", "geo_scope", "domains",
+    "chunk_index", "total_chunks",
+})
+
+PAYLOAD_BQ_DESCRIPTIONS: Final[frozenset[str]] = frozenset({
+    "content", "doc_kind", "table_name", "label",
+    "chunk_index", "total_chunks", "document_id", "content_hash",
+    "section_path", "ingest_version", "type", "source_kind",
+})
+
+
+def _filter_payload(
+    meta: dict[str, Any],
+    doc: str,
+    allowed: frozenset[str] | None,
+) -> dict[str, str | int | float | bool]:
+    """Build a point payload keeping only *allowed* keys plus ``content``."""
+    payload: dict[str, str | int | float | bool] = {"content": doc}
+    if allowed is None:
+        payload.update(meta)
+        return payload
+    for k, v in meta.items():
+        if k in allowed and v is not None:
+            if isinstance(v, (str, int, float, bool)):
+                payload[k] = v
+            else:
+                payload[k] = str(v)[:1000]
+    return payload
 
 
 def load_jsonl_chunks(path: Path) -> tuple[list[str], list[str], list[dict[str, str | int | float | bool]]]:
@@ -185,6 +251,7 @@ def _upsert_in_batches(
     docs: list[str],
     metadatas: list[dict[str, str | int | float | bool]],
     batch_size: int,
+    allowed_keys: frozenset[str] | None = None,
 ) -> int:
     """Legacy: single unnamed vector (default embedding model)."""
     total = len(ids)
@@ -201,8 +268,7 @@ def _upsert_in_batches(
         vectors = _embed_texts(b_docs, model_id=model_id, mode=embed_mode)
         points = []
         for pid, doc, meta, vec in zip(b_ids, b_docs, b_meta, vectors):
-            payload = dict(meta)
-            payload["content"] = doc
+            payload = _filter_payload(meta, doc, allowed_keys)
             points.append(PointStruct(id=pid, vector=vec, payload=payload))
         client.upsert(collection_name=collection, points=points)
         inserted += len(b_ids)
@@ -216,6 +282,7 @@ def _upsert_dual_vectors_batches(
     docs: list[str],
     metadatas: list[dict[str, str | int | float | bool]],
     batch_size: int,
+    allowed_keys: frozenset[str] | None = None,
 ) -> int:
     """Named vectors: sentence + semantic (same chunk text, two models)."""
     total = len(ids)
@@ -234,8 +301,7 @@ def _upsert_dual_vectors_batches(
         v_semantic = _embed_texts(b_docs, model_id=mid_m, mode=mode)
         points = []
         for pid, doc, meta, vs, vm in zip(b_ids, b_docs, b_meta, v_sentence, v_semantic):
-            payload = dict(meta)
-            payload["content"] = doc
+            payload = _filter_payload(meta, doc, allowed_keys)
             points.append(
                 PointStruct(
                     id=pid,
@@ -255,6 +321,7 @@ def _upsert_sentence_named_batches(
     docs: list[str],
     metadatas: list[dict[str, str | int | float | bool]],
     batch_size: int,
+    allowed_keys: frozenset[str] | None = None,
 ) -> int:
     """Single named vector ``sentence`` (data descriptions collection)."""
     total = len(ids)
@@ -271,8 +338,7 @@ def _upsert_sentence_named_batches(
         vecs = _embed_texts(b_docs, model_id=mid_s, mode=mode)
         points = []
         for pid, doc, meta, vec in zip(b_ids, b_docs, b_meta, vecs):
-            payload = dict(meta)
-            payload["content"] = doc
+            payload = _filter_payload(meta, doc, allowed_keys)
             points.append(PointStruct(id=pid, vector={"sentence": vec}, payload=payload))
         client.upsert(collection_name=collection, points=points)
         inserted += len(b_ids)
@@ -354,12 +420,365 @@ def ensure_collection_sentence_named(*, client: Any, collection: str, reset: boo
     )
 
 
+def upsert_jsonl_to_qdrant_for_collection(
+    *,
+    input_path: Path,
+    collection: str,
+    reset: bool = False,
+    batch_size: int = 100,
+    allowed_payload_keys: frozenset[str] | None = None,
+) -> int:
+    """Route upsert to the vector layout implied by the collection's embedding profile."""
+    from ml.rag.text_processors.chunking_config import profile_for_collection
+
+    prof = profile_for_collection(collection)
+    mode = prof.qdrant_vector_mode
+    common: _ProfileUpsertKwargs = {
+        "input_path": input_path,
+        "collection": collection,
+        "reset": reset,
+        "batch_size": batch_size,
+        "allowed_payload_keys": allowed_payload_keys,
+        "model_id": prof.embedding_model,
+        "vector_dim": prof.vector_dim,
+        "corpus": prof.corpus,
+    }
+    if mode == "dense_named":
+        return upsert_jsonl_to_qdrant_dense_named_profile(**common)
+    if mode == "legacy":
+        return upsert_jsonl_to_qdrant_profile(**common)
+    if mode == "sentence_named":
+        return upsert_jsonl_to_qdrant_sentence_named_profile(**common)
+    if mode == "research_dual":
+        return upsert_jsonl_to_qdrant_research_dual_profile(**common)
+    if mode == "bq_triple":
+        return upsert_jsonl_to_qdrant_bq_triple_profile(**common)
+    if mode == "ota_triple":
+        return upsert_jsonl_to_qdrant_ota_triple(
+            input_path=input_path,
+            collection=collection,
+            reset=reset,
+            batch_size=batch_size,
+            model_id=prof.embedding_model,
+            corpus=prof.corpus,
+        )
+    return upsert_jsonl_to_qdrant_dual(
+        input_path=input_path,
+        collection=collection,
+        reset=reset,
+        batch_size=batch_size,
+        allowed_payload_keys=allowed_payload_keys,
+    )
+
+
+def _ensure_collection_from_spec(*, client: Any, collection: str, corpus: str, reset: bool) -> None:
+    from ml.rag.scripts.qdrant_collection_specs import COLLECTION_BUILDERS
+
+    if reset:
+        try:
+            client.delete_collection(collection_name=collection)
+        except Exception:
+            pass
+    try:
+        client.get_collection(collection_name=collection)
+        return
+    except Exception:
+        pass
+    from ml.rag.scripts.qdrant_collection_specs import ensure_payload_indexes
+
+    builder = COLLECTION_BUILDERS.get(corpus)
+    if not builder:
+        raise ValueError(f"No Qdrant collection spec for corpus {corpus!r}")
+    client.create_collection(collection_name=collection, **builder())
+    ensure_payload_indexes(client, collection, corpus)
+
+
+def _research_lane_texts(doc: str, meta: dict[str, Any]) -> tuple[str, str]:
+    abstract = str(meta.get("abstract_text") or "").strip()
+    section = str(meta.get("section_title") or meta.get("section_path") or "").strip()
+    if not abstract:
+        lead = doc[:700].strip()
+        abstract = f"{section}\n\n{lead}".strip() if section else lead
+    return abstract, doc
+
+
+def _bq_lane_texts(doc: str, meta: dict[str, Any]) -> tuple[str, str, str]:
+    lines = doc.splitlines()
+    schema_lines = [ln for ln in lines if ln.strip().startswith("|") or "column" in ln.lower()]
+    schema = "\n".join(schema_lines).strip() or doc
+    business_lines = [ln for ln in lines if ln.strip() and not ln.strip().startswith("|")]
+    business = "\n".join(business_lines).strip() or doc
+    return doc, schema, business
+
+
+def upsert_jsonl_to_qdrant_profile(
+    *,
+    input_path: Path,
+    collection: str,
+    reset: bool,
+    batch_size: int,
+    allowed_payload_keys: frozenset[str] | None,
+    model_id: str,
+    vector_dim: int,
+    corpus: str = "news",
+) -> int:
+    if not input_path.exists():
+        raise FileNotFoundError(str(input_path))
+    ids, docs, metadatas = load_jsonl_chunks(input_path)
+    if not docs:
+        return 0
+    from ml.rag.retrievers.vector_retriever import _get_qdrant_config
+    from qdrant_client import QdrantClient
+
+    url, api_key, _, timeout_s = _get_qdrant_config()
+    client = QdrantClient(url=url, api_key=api_key, timeout=int(timeout_s or 30))
+    _ensure_collection_from_spec(client=client, collection=collection, corpus=corpus, reset=reset)
+    _ = vector_dim
+    return _upsert_legacy_batches(
+        client=client,
+        collection=collection,
+        ids=ids,
+        docs=docs,
+        metadatas=metadatas,
+        batch_size=batch_size,
+        allowed_keys=allowed_payload_keys,
+        model_id=model_id,
+    )
+
+
+def _upsert_legacy_batches(
+    *,
+    client: Any,
+    collection: str,
+    ids: list[str],
+    docs: list[str],
+    metadatas: list[dict[str, Any]],
+    batch_size: int,
+    allowed_keys: frozenset[str] | None,
+    model_id: str,
+) -> int:
+    from ml.rag.retrievers.vector_retriever import _embed_texts_for_indexing
+    from qdrant_client.http.models import PointStruct
+
+    total = 0
+    for i in range(0, len(docs), batch_size):
+        b_ids = ids[i : i + batch_size]
+        b_docs = docs[i : i + batch_size]
+        b_meta = metadatas[i : i + batch_size]
+        vectors = _embed_texts_for_indexing(b_docs, model_id=model_id, mode=_embed_mode(), is_query=False)
+        points = []
+        for pid, doc, meta, vec in zip(b_ids, b_docs, b_meta, vectors):
+            payload = _filter_payload(meta, doc, allowed_keys)
+            points.append(PointStruct(id=pid, vector=vec, payload=payload))
+        if points:
+            client.upsert(collection_name=collection, points=points)
+            total += len(points)
+    return total
+
+
+def upsert_jsonl_to_qdrant_dense_named_profile(
+    *,
+    input_path: Path,
+    collection: str,
+    reset: bool,
+    batch_size: int,
+    allowed_payload_keys: frozenset[str] | None,
+    model_id: str,
+    vector_dim: int,
+    corpus: str,
+) -> int:
+    return _upsert_single_named_vector_profile(
+        input_path=input_path,
+        collection=collection,
+        reset=reset,
+        batch_size=batch_size,
+        allowed_payload_keys=allowed_payload_keys,
+        model_id=model_id,
+        vector_dim=vector_dim,
+        corpus=corpus,
+        vector_name="dense",
+    )
+
+
+def upsert_jsonl_to_qdrant_sentence_named_profile(
+    *,
+    input_path: Path,
+    collection: str,
+    reset: bool,
+    batch_size: int,
+    allowed_payload_keys: frozenset[str] | None,
+    model_id: str,
+    vector_dim: int,
+    corpus: str = "data_description",
+) -> int:
+    return _upsert_single_named_vector_profile(
+        input_path=input_path,
+        collection=collection,
+        reset=reset,
+        batch_size=batch_size,
+        allowed_payload_keys=allowed_payload_keys,
+        model_id=model_id,
+        vector_dim=vector_dim,
+        corpus=corpus,
+        vector_name="sentence",
+    )
+
+
+def _upsert_single_named_vector_profile(
+    *,
+    input_path: Path,
+    collection: str,
+    reset: bool,
+    batch_size: int,
+    allowed_payload_keys: frozenset[str] | None,
+    model_id: str,
+    vector_dim: int,
+    corpus: str,
+    vector_name: str,
+) -> int:
+    if not input_path.exists():
+        raise FileNotFoundError(str(input_path))
+    ids, docs, metadatas = load_jsonl_chunks(input_path)
+    if not docs:
+        return 0
+    from ml.rag.retrievers.vector_retriever import _embed_texts_for_indexing, _get_qdrant_config
+    from qdrant_client import QdrantClient
+    from qdrant_client.http.models import PointStruct
+
+    url, api_key, _, timeout_s = _get_qdrant_config()
+    client = QdrantClient(url=url, api_key=api_key, timeout=int(timeout_s or 30))
+    _ensure_collection_from_spec(client=client, collection=collection, corpus=corpus, reset=reset)
+    _ = vector_dim
+
+    total = 0
+    for i in range(0, len(docs), batch_size):
+        b_ids = ids[i : i + batch_size]
+        b_docs = docs[i : i + batch_size]
+        b_meta = metadatas[i : i + batch_size]
+        vecs = _embed_texts_for_indexing(b_docs, model_id=model_id, mode=_embed_mode(), is_query=False)
+        points = []
+        for pid, doc, meta, vec in zip(b_ids, b_docs, b_meta, vecs):
+            payload = _filter_payload(meta, doc, allowed_payload_keys)
+            points.append(PointStruct(id=pid, vector={vector_name: vec}, payload=payload))
+        if points:
+            client.upsert(collection_name=collection, points=points)
+            total += len(points)
+    return total
+
+
+def upsert_jsonl_to_qdrant_research_dual_profile(
+    *,
+    input_path: Path,
+    collection: str,
+    reset: bool,
+    batch_size: int,
+    allowed_payload_keys: frozenset[str] | None,
+    model_id: str,
+    vector_dim: int,
+    corpus: str,
+) -> int:
+    if not input_path.exists():
+        raise FileNotFoundError(str(input_path))
+    ids, docs, metadatas = load_jsonl_chunks(input_path)
+    if not docs:
+        return 0
+    from ml.rag.retrievers.vector_retriever import _embed_texts_for_indexing, _get_qdrant_config
+    from qdrant_client import QdrantClient
+    from qdrant_client.http.models import PointStruct
+
+    url, api_key, _, timeout_s = _get_qdrant_config()
+    client = QdrantClient(url=url, api_key=api_key, timeout=int(timeout_s or 30))
+    _ensure_collection_from_spec(client=client, collection=collection, corpus=corpus, reset=reset)
+    _ = vector_dim
+
+    total = 0
+    for i in range(0, len(docs), batch_size):
+        b_ids = ids[i : i + batch_size]
+        b_docs = docs[i : i + batch_size]
+        b_meta = metadatas[i : i + batch_size]
+        abs_docs = [_research_lane_texts(d, m)[0] for d, m in zip(b_docs, b_meta)]
+        v_abs = _embed_texts_for_indexing(abs_docs, model_id=model_id, mode=_embed_mode(), is_query=False)
+        v_content = _embed_texts_for_indexing(b_docs, model_id=model_id, mode=_embed_mode(), is_query=False)
+        points = []
+        for pid, doc, meta, va, vc in zip(b_ids, b_docs, b_meta, v_abs, v_content):
+            payload = _filter_payload(meta, doc, allowed_payload_keys)
+            points.append(
+                PointStruct(
+                    id=pid,
+                    vector={"abstract_vector": va, "content_vector": vc},
+                    payload=payload,
+                )
+            )
+        if points:
+            client.upsert(collection_name=collection, points=points)
+            total += len(points)
+    return total
+
+
+def upsert_jsonl_to_qdrant_bq_triple_profile(
+    *,
+    input_path: Path,
+    collection: str,
+    reset: bool,
+    batch_size: int,
+    allowed_payload_keys: frozenset[str] | None,
+    model_id: str,
+    vector_dim: int,
+    corpus: str,
+) -> int:
+    if not input_path.exists():
+        raise FileNotFoundError(str(input_path))
+    ids, docs, metadatas = load_jsonl_chunks(input_path)
+    if not docs:
+        return 0
+    from ml.rag.retrievers.vector_retriever import _embed_texts_for_indexing, _get_qdrant_config
+    from qdrant_client import QdrantClient
+    from qdrant_client.http.models import PointStruct
+
+    url, api_key, _, timeout_s = _get_qdrant_config()
+    client = QdrantClient(url=url, api_key=api_key, timeout=int(timeout_s or 30))
+    _ensure_collection_from_spec(client=client, collection=collection, corpus=corpus, reset=reset)
+    _ = vector_dim
+
+    total = 0
+    for i in range(0, len(docs), batch_size):
+        b_ids = ids[i : i + batch_size]
+        b_docs = docs[i : i + batch_size]
+        b_meta = metadatas[i : i + batch_size]
+        lanes = [_bq_lane_texts(d, m) for d, m in zip(b_docs, b_meta)]
+        table_docs = [t[0] for t in lanes]
+        schema_docs = [t[1] for t in lanes]
+        business_docs = [t[2] for t in lanes]
+        v_table = _embed_texts_for_indexing(table_docs, model_id=model_id, mode=_embed_mode(), is_query=False)
+        v_schema = _embed_texts_for_indexing(schema_docs, model_id=model_id, mode=_embed_mode(), is_query=False)
+        v_business = _embed_texts_for_indexing(business_docs, model_id=model_id, mode=_embed_mode(), is_query=False)
+        points = []
+        for pid, doc, meta, vt, vs, vb in zip(b_ids, b_docs, b_meta, v_table, v_schema, v_business):
+            payload = _filter_payload(meta, doc, allowed_payload_keys)
+            points.append(
+                PointStruct(
+                    id=pid,
+                    vector={
+                        "table_vector": vt,
+                        "schema_vector": vs,
+                        "business_vector": vb,
+                    },
+                    payload=payload,
+                )
+            )
+        if points:
+            client.upsert(collection_name=collection, points=points)
+            total += len(points)
+    return total
+
+
 def upsert_jsonl_to_qdrant(
     *,
     input_path: Path,
     collection: str,
     reset: bool = False,
     batch_size: int = 100,
+    allowed_payload_keys: frozenset[str] | None = None,
 ) -> int:
     """
     Programmatic API for loading chunk JSONL into Qdrant.
@@ -377,7 +796,7 @@ def upsert_jsonl_to_qdrant(
     from qdrant_client import QdrantClient
 
     url, api_key, _, timeout_s = _get_qdrant_config()
-    client = QdrantClient(url=url, api_key=api_key, timeout=timeout_s)
+    client = QdrantClient(url=url, api_key=api_key, timeout=int(timeout_s or 30.0))
 
     embed_mode = _embed_mode()
     model_id = os.environ.get("RAG_EMBEDDING_MODEL_ID", "sentence-transformers/all-MiniLM-L6-v2")
@@ -391,6 +810,7 @@ def upsert_jsonl_to_qdrant(
         docs=docs,
         metadatas=metadatas,
         batch_size=max(1, int(batch_size)),
+        allowed_keys=allowed_payload_keys,
     )
 
 
@@ -400,6 +820,7 @@ def upsert_jsonl_to_qdrant_dual(
     collection: str,
     reset: bool = False,
     batch_size: int = 100,
+    allowed_payload_keys: frozenset[str] | None = None,
 ) -> int:
     """Research/news: named vectors ``sentence`` + ``semantic``."""
     if not input_path.exists():
@@ -413,7 +834,7 @@ def upsert_jsonl_to_qdrant_dual(
     from qdrant_client import QdrantClient
 
     url, api_key, _, timeout_s = _get_qdrant_config()
-    client = QdrantClient(url=url, api_key=api_key, timeout=timeout_s)
+    client = QdrantClient(url=url, api_key=api_key, timeout=int(timeout_s or 30))
 
     ensure_collection_dual_vectors(client=client, collection=collection, reset=reset)
     return _upsert_dual_vectors_batches(
@@ -423,6 +844,7 @@ def upsert_jsonl_to_qdrant_dual(
         docs=docs,
         metadatas=metadatas,
         batch_size=max(1, int(batch_size)),
+        allowed_keys=allowed_payload_keys,
     )
 
 
@@ -432,6 +854,7 @@ def upsert_jsonl_to_qdrant_sentence_named(
     collection: str,
     reset: bool = False,
     batch_size: int = 100,
+    allowed_payload_keys: frozenset[str] | None = None,
 ) -> int:
     """Data descriptions: single named vector ``sentence``."""
     if not input_path.exists():
@@ -445,7 +868,7 @@ def upsert_jsonl_to_qdrant_sentence_named(
     from qdrant_client import QdrantClient
 
     url, api_key, _, timeout_s = _get_qdrant_config()
-    client = QdrantClient(url=url, api_key=api_key, timeout=timeout_s)
+    client = QdrantClient(url=url, api_key=api_key, timeout=int(timeout_s))
 
     ensure_collection_sentence_named(client=client, collection=collection, reset=reset)
     return _upsert_sentence_named_batches(
@@ -455,6 +878,193 @@ def upsert_jsonl_to_qdrant_sentence_named(
         docs=docs,
         metadatas=metadatas,
         batch_size=max(1, int(batch_size)),
+        allowed_keys=allowed_payload_keys,
+    )
+
+
+# ---------------------------------------------------------------------------
+# OTA Insights: triple named vectors (insight / metric / recommendation)
+# ---------------------------------------------------------------------------
+
+_OTA_TEXT_ALIASES: Final[dict[str, tuple[str, ...]]] = {
+    "insight_text": ("insight_text", "text_insight"),
+    "metric_text": ("metric_text", "text_metric"),
+    "recommendation_text": ("recommendation_text", "text_recommendation"),
+}
+
+
+def _pick_text(row: dict[str, Any], canonical: str, aliases: tuple[str, ...], fallback: str) -> str:
+    """Resolve a text field from top-level row or nested metadata."""
+    for alias in aliases:
+        v = row.get(alias) or (row.get("metadata") or {}).get(alias)
+        if isinstance(v, str) and v.strip():
+            return v.strip()
+    return fallback
+
+
+def load_ota_jsonl_chunks(
+    path: Path,
+) -> tuple[
+    list[str],
+    list[str],
+    list[str],
+    list[str],
+    list[str],
+    list[dict[str, str | int | float | bool]],
+]:
+    """Parse OTA insight JSONL.
+
+    Returns (ids, insight_texts, metric_texts, recommendation_texts,
+             combined_texts, metadatas).
+    """
+    ids: list[str] = []
+    insight_texts: list[str] = []
+    metric_texts: list[str] = []
+    recommendation_texts: list[str] = []
+    combined_texts: list[str] = []
+    metadatas: list[dict[str, str | int | float | bool]] = []
+
+    with path.open("r", encoding="utf-8") as f:
+        for line in f:
+            raw = line.strip()
+            if not raw:
+                continue
+            try:
+                row = json.loads(raw)
+            except json.JSONDecodeError:
+                continue
+
+            chunk_id = str(row.get("id", "")).strip()
+            if not chunk_id:
+                continue
+
+            fallback = str(row.get("text", "")).strip()
+            i_text = _pick_text(row, "insight_text", _OTA_TEXT_ALIASES["insight_text"], fallback)
+            m_text = _pick_text(row, "metric_text", _OTA_TEXT_ALIASES["metric_text"], fallback)
+            r_text = _pick_text(row, "recommendation_text", _OTA_TEXT_ALIASES["recommendation_text"], fallback)
+
+            if not (i_text or m_text or r_text):
+                continue
+
+            meta = row.get("metadata", {})
+            if not isinstance(meta, dict):
+                meta = {}
+            meta.setdefault("info_type", "ota_insight")
+
+            from ml.rag.text_processors.domain_taxonomy import infer_domains
+            combined = " ".join(filter(None, [i_text, m_text, r_text]))
+            if "domains" not in meta and "domain" not in meta:
+                meta["domains"] = "; ".join(infer_domains(combined))
+
+            normed = _normalize_metadata(meta)
+            safe = _safe_metadata(normed)
+
+            safe["insight_text"] = i_text
+            safe["metric_text"] = m_text
+            safe["recommendation_text"] = r_text
+
+            ids.append(chunk_id)
+            insight_texts.append(i_text)
+            metric_texts.append(m_text)
+            recommendation_texts.append(r_text)
+            combined_texts.append(combined)
+            metadatas.append(safe)
+
+    return ids, insight_texts, metric_texts, recommendation_texts, combined_texts, metadatas
+
+
+def _upsert_ota_triple_batches(
+    client: Any,
+    collection: str,
+    ids: list[str],
+    insight_texts: list[str],
+    metric_texts: list[str],
+    recommendation_texts: list[str],
+    combined_texts: list[str],
+    metadatas: list[dict[str, str | int | float | bool]],
+    batch_size: int,
+    allowed_keys: frozenset[str] | None = PAYLOAD_OTA,
+    model_id: str | None = None,
+) -> int:
+    """Embed three text lanes into three named vectors per point."""
+    total = len(ids)
+    inserted = 0
+    mode = _embed_mode()
+    mid = model_id or _sentence_model_id()
+    for i in range(0, total, batch_size):
+        b_ids = ids[i:i + batch_size]
+        b_it = insight_texts[i:i + batch_size]
+        b_mt = metric_texts[i:i + batch_size]
+        b_rt = recommendation_texts[i:i + batch_size]
+        b_ct = combined_texts[i:i + batch_size]
+        b_meta = metadatas[i:i + batch_size]
+
+        from ml.rag.retrievers.vector_retriever import _embed_texts_for_indexing
+        from qdrant_client.http.models import PointStruct
+
+        v_insight = _embed_texts_for_indexing(b_it, model_id=mid, mode=mode, is_query=False)
+        v_metric = _embed_texts_for_indexing(b_mt, model_id=mid, mode=mode, is_query=False)
+        v_recommendation = _embed_texts_for_indexing(b_rt, model_id=mid, mode=mode, is_query=False)
+
+        points = []
+        for pid, ct, meta, vi, vm, vr in zip(b_ids, b_ct, b_meta, v_insight, v_metric, v_recommendation):
+            payload = _filter_payload(meta, ct, allowed_keys)
+            points.append(
+                PointStruct(
+                    id=pid,
+                    vector={
+                        "insight_vector": vi,
+                        "metric_vector": vm,
+                        "recommendation_vector": vr,
+                    },
+                    payload=payload,
+                )
+            )
+        client.upsert(collection_name=collection, points=points)
+        inserted += len(b_ids)
+    return inserted
+
+
+def ensure_collection_ota_triple(*, client: Any, collection: str, reset: bool) -> None:
+    _ensure_collection_from_spec(client=client, collection=collection, corpus="ota", reset=reset)
+
+
+def upsert_jsonl_to_qdrant_ota_triple(
+    *,
+    input_path: Path,
+    collection: str,
+    reset: bool = False,
+    batch_size: int = 100,
+    model_id: str | None = None,
+    corpus: str = "ota",
+) -> int:
+    """OTA insights: three named vectors (insight / metric / recommendation)."""
+    if not input_path.exists():
+        raise FileNotFoundError(str(input_path))
+
+    ids, i_texts, m_texts, r_texts, c_texts, metadatas = load_ota_jsonl_chunks(input_path)
+    if not ids:
+        return 0
+
+    from ml.rag.retrievers.vector_retriever import _get_qdrant_config
+    from qdrant_client import QdrantClient
+
+    url, api_key, _, timeout_s = _get_qdrant_config()
+    client = QdrantClient(url=url, api_key=api_key, timeout=int(timeout_s or 30))
+
+    _ensure_collection_from_spec(client=client, collection=collection, corpus=corpus, reset=reset)
+    mid = model_id or _sentence_model_id()
+    return _upsert_ota_triple_batches(
+        client=client,
+        collection=collection,
+        ids=ids,
+        insight_texts=i_texts,
+        metric_texts=m_texts,
+        recommendation_texts=r_texts,
+        combined_texts=c_texts,
+        metadatas=metadatas,
+        batch_size=max(1, int(batch_size)),
+        model_id=mid,
     )
 
 

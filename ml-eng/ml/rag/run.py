@@ -8,7 +8,7 @@ stdout), unless ``RAG_CLI_SHOW_SQL`` is set to 0/false/off.
 
 Set ``RAG_CLI_SHOW_RETRIEVAL=0`` to hide a one-line retrieval summary on stderr (counts of
 BQ rows, catalog chunks, news, academic, merged). When merged is 0, the model sees no context —
-fix env (``BQ_PROJECT``, ``GOOGLE_APPLICATION_CREDENTIALS``, ``RAG_VECTOR_DB_PATH``).
+fix env (``BQ_PROJECT``, ``GOOGLE_APPLICATION_CREDENTIALS``, ``QDRANT_URL``, ``QDRANT_API_KEY``, and collection env vars).
 BigQuery failures are explained on stderr when ``RAG_BQ_RETRIEVER_DEBUG`` is on (default).
 
 Set ``RAG_CLI_PIPELINE_TRACE=1`` for an extra stderr line: decomposition summary, BQ hint
@@ -133,8 +133,8 @@ def _print_retrieval_summary(result: dict[str, Any]) -> None:
     if n_merge == 0:
         print(
             "[rag] hint: no chunks reached the generator. Check BQ_PROJECT, "
-            "GOOGLE_APPLICATION_CREDENTIALS, network to BigQuery, and RAG_VECTOR_DB_PATH "
-            "(Chroma with news/academic/bq descriptions). "
+            "GOOGLE_APPLICATION_CREDENTIALS, network to BigQuery, and Qdrant "
+            "(QDRANT_URL, QDRANT_API_KEY, QDRANT_COLLECTION_* for news/research/data descriptions). "
             "If BigQuery failed, stderr may include a line from bq_retrieve explaining why.",
             file=sys.stderr,
         )

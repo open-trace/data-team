@@ -11,11 +11,12 @@ import argparse
 import os
 from pathlib import Path
 
-from ml.rag.text_processors.load_pdf_chunks_to_vector_db import upsert_jsonl_to_qdrant_dual
+from ml.rag.text_processors.load_pdf_chunks_to_vector_db import PAYLOAD_NEWS, upsert_jsonl_to_qdrant_for_collection
 
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_INPUT = REPO_ROOT / "data" / "local" / "news_chunks.jsonl"
+from ml.rag.paths import preprocessed_jsonl_for_corpus
+
+DEFAULT_INPUT = preprocessed_jsonl_for_corpus("news")
 
 def load_news_to_qdrant(
     *,
@@ -24,11 +25,12 @@ def load_news_to_qdrant(
     reset: bool,
     batch_size: int,
 ) -> int:
-    return upsert_jsonl_to_qdrant_dual(
+    return upsert_jsonl_to_qdrant_for_collection(
         input_path=input_path,
         collection=collection,
         reset=reset,
         batch_size=batch_size,
+        allowed_payload_keys=PAYLOAD_NEWS,
     )
 
 
@@ -38,7 +40,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
     p.add_argument(
         "--collection",
         type=str,
-        default=os.environ.get("QDRANT_COLLECTION_NEWS", "opentrace_news"),
+        default=os.environ.get("QDRANT_COLLECTION_NEWS", "news_data"),
         help="Qdrant collection name for news.",
     )
     p.add_argument("--batch-size", type=int, default=200, help="Upsert batch size (default: 200)")

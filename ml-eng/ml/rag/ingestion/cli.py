@@ -4,7 +4,7 @@ import argparse
 import json
 from dataclasses import asdict
 
-from ml.rag.ingestion.collections import ALL_SPECS
+from ml.rag.ingestion.collections import DRIVE_REBUILD_KINDS
 from ml.rag.ingestion.rebuild_qdrant import rebuild_many
 
 
@@ -17,7 +17,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
         "--kind",
         type=str,
         default="all",
-        choices=sorted(list(ALL_SPECS.keys()) + ["all"]),
+        choices=sorted(list(DRIVE_REBUILD_KINDS) + ["all"]),
         help="Which collection pipeline to rebuild.",
     )
     rebuild.add_argument("--reset", action="store_true", help="Delete+recreate collection before upserting.")

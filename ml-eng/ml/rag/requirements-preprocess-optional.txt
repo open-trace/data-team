@@ -1,0 +1,4 @@
+# Optional: richer PDF/DOCX structure via Unstructured (pulls numba/llvmlite on some platforms).
+# If pip install fails on macOS, skip this file — preprocess falls back to pypdf + stdlib DOCX.
+# Enable when installed: export RAG_USE_UNSTRUCTURED=1
+unstructured[pdf,docx]>=0.16.0
