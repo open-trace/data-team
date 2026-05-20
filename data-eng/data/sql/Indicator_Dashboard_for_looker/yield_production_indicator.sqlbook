@@ -1,0 +1,34 @@
+-- SQLBook: Code
+WITH vw_yield_production_indicator AS (
+
+    SELECT
+        'Yield_Production' AS indicator_group,
+        'africa_crop_production' AS source_table,
+        TRIM(INITCAP(country_name)) AS country,
+        TRIM(country_code_m49) AS country_code,
+        CAST(observation_year AS STRING) AS year
+    FROM `opentrace-prod-5ga4.raw_dev.africa_crop_production_bronze`
+
+    UNION ALL
+
+    SELECT
+        'Yield_Production' AS indicator_group,
+        'yield_raw_data' AS source_table,
+        TRIM(INITCAP(country)) AS country,
+        TRIM(country_code) AS country_code,
+        CAST(harvest_year AS STRING) AS year
+    FROM `opentrace-prod-5ga4.raw_dev.yield_raw_data`
+
+)
+SELECT
+    indicator_group,
+    country,
+    year,
+    COUNT(*) AS total_data_points
+
+FROM vw_yield_production_indicator
+
+GROUP BY
+    indicator_group,
+    country,
+    year

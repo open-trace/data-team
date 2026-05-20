@@ -1,0 +1,102 @@
+-- SQLBook: Code
+WITH vw_african_countries AS (
+    SELECT african_country
+    FROM UNNEST([
+        'Algeria', 'Angola', 'Benin', 'Botswana', 'Burkina Faso', 'Burundi', 'Cameroon',
+        'Cape Verde', 'Central African Republic', 'Chad', 'Comoros', 'Congo',
+        'Democratic Republic of the Congo', 'Djibouti', 'Egypt', 'Equatorial Guinea',
+        'Eritrea', 'Eswatini', 'Ethiopia', 'Gabon', 'Gambia', 'Ghana', 'Guinea',
+        'Guinea-Bissau', 'Ivory Coast', 'Kenya', 'Lesotho', 'Liberia', 'Libya',
+        'Madagascar', 'Malawi', 'Mali', 'Mauritania', 'Mauritius', 'Morocco',
+        'Mozambique', 'Namibia', 'Niger', 'Nigeria', 'Rwanda', 'Senegal', 'Seychelles',
+        'Sierra Leone', 'Somalia', 'South Africa', 'South Sudan', 'Sudan', 'Tanzania',
+        'Togo', 'Tunisia', 'Uganda', 'Zambia', 'Zimbabwe'
+    ]) AS african_country
+),
+
+vw_Land_use_and_soil_property AS (
+-- ISDA SOIL PROPERTY
+SELECT
+    'Land_use_and_soil_property' AS indicator_group,
+    'enriched_isda_soil_property_Africa' AS source_table,
+    TRIM(country) AS country,
+    CAST(NULL AS STRING) AS country_code,
+    CAST(NULL AS STRING) AS year
+
+FROM `opentrace-prod-5ga4.raw_dev.enriched_isda_soil_property_Africa`
+
+UNION ALL
+-- isric_africa_soil_data
+SELECT
+    'Land_use_and_soil_property' AS indicator_group,
+    'isric_africa_soil_data' AS source_table,
+    CAST(NULL AS STRING)  AS country,
+    CAST(NULL AS STRING) AS country_code,
+    CAST(NULL AS STRING) AS year
+
+FROM `opentrace-prod-5ga4.raw_dev.isric_africa_soil_data`
+
+UNION ALL
+-- FAO LAND USE
+SELECT
+    'Land_use_and_soil_property' AS indicator_group,
+    'fao_land_use_bronze' AS source_table,
+    TRIM(country_name) AS country,
+    TRIM(country_code) AS country_code,
+    CAST(year AS STRING) AS year
+
+FROM `opentrace-prod-5ga4.raw_dev.fao_land_use_bronze`
+
+WHERE LOWER(TRIM(country_name)) IN (
+    SELECT LOWER(TRIM(african_country))
+    FROM vw_african_countries
+)
+
+UNION ALL
+-- FAO FERTILIZERS
+SELECT
+    'Land_use_and_soil_property' AS indicator_group,
+    'fao_fertilizers_nutrient_bronze' AS source_table,
+    TRIM(country_name) AS country,
+    TRIM(country_code) AS country_code,
+    CAST(year AS STRING) AS year
+
+FROM `opentrace-prod-5ga4.raw_dev.fao_fertilizers_nutrient_bronze`
+
+WHERE LOWER(TRIM(country_name)) IN (
+    SELECT LOWER(TRIM(african_country))
+    FROM vw_african_countries
+)
+
+UNION ALL
+-- FAO PESTICIDES
+SELECT
+    'Land_use_and_soil_property' AS indicator_group,
+    'fao_pesticides_use_bronze' AS source_table,
+    TRIM(country_name) AS country,
+    TRIM(country_code) AS country_code,
+    CAST(year AS STRING) AS year
+
+FROM `opentrace-prod-5ga4.raw_dev.fao_pesticides_use_bronze`
+
+WHERE LOWER(TRIM(country_name)) IN (
+    SELECT LOWER(TRIM(african_country))
+    FROM vw_african_countries
+)
+
+)
+
+SELECT
+    indicator_group,
+    country,
+    country_code,
+    year,
+    COUNT(*) AS total_data_points
+
+FROM vw_Land_use_and_soil_property
+
+GROUP BY
+    indicator_group,
+    country,
+    country_code,
+    year
