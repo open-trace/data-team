@@ -17,8 +17,9 @@ COPY ml ./ml
 
 # HF Spaces use port 7860; frontend will call this API
 ENV PYTHONPATH=/app
-# Chroma path inside the container; bind-mount host vector_db here at runtime (do not COPY the index into the image).
-ENV RAG_VECTOR_DB_PATH=/app/data/local/vector_db
+# Vector search uses Qdrant (not a local on-disk index). Set at runtime, e.g.:
+#   QDRANT_URL, QDRANT_API_KEY, QDRANT_COLLECTION_NEWS, QDRANT_COLLECTION_RESEARCH_PAPERS,
+#   QDRANT_COLLECTION_DATA_DESCRIPTIONS (see README / vector_retriever.py).
 
 # Optional: pass HF_API_TOKEN at build time (or set at runtime)
 ARG HF_API_TOKEN

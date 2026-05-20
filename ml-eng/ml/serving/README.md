@@ -1,6 +1,6 @@
 # Serving (exposition API)
 
-Public, versioned HTTP API for the OpenTrace chatbot. Retrieval internals (`bq_sql`, trace fields, tuning knobs) stay on the internal app [`ml/rag/api.py`](../rag/api.py) (`POST /query`).
+Public, versioned HTTP API for the OpenTrace chatbot. Retrieval internals (`bq_sql`, trace fields, tuning knobs) stay on the internal app [`ml/rag/app/api.py`](../rag/app/api.py) (served as `ml.rag.api:app`, `POST /query`).
 
 ## Endpoints (v1)
 
@@ -35,7 +35,7 @@ Use the **repo root [`Dockerfile`](../../Dockerfile)**. It runs **`ml.serving.ch
 
 ### Build prerequisites
 
-1. **Chroma index:** Populate **`data/local/vector_db`** before `docker build` (see [`ml/rag/README.md`](../rag/README.md) — `populate_vector_db`, loaders, etc.). The root `Dockerfile` **`COPY`**s that directory into the image at `RAG_VECTOR_DB_PATH` (`/app/data/local/vector_db`). A tracked **`.gitkeep`** keeps an empty tree buildable; for production, bake a real index or use **`git add -f`**, **Git LFS**, or **CI** that generates the folder before build.
+1. **Qdrant:** RAG vector search uses **Qdrant** (see [`ml/rag/README.md`](../rag/README.md)). Set **`QDRANT_URL`**, **`QDRANT_API_KEY`**, and collection env vars in Space secrets or `data/local/.env`. Populate collections with the ingestion CLI or loaders in that README—not a local `vector_db` directory.
 
 2. **From repo root:**
 
@@ -55,11 +55,13 @@ docker build -t opentrace-chat-hf .
 | `BQ_PROJECT` | GCP project ID for BigQuery |
 | `BQ_DATASET_BRONZE` | Bronze dataset the RAG queries |
 | `HF_API_TOKEN` | Hugging Face Inference API (LLM / embeddings as configured in RAG) |
+| `QDRANT_URL` | Qdrant cluster URL (RAG vector retrieval) |
+| `QDRANT_API_KEY` | Qdrant API key |
 | `CHATBOT_CORS_ORIGINS` | Comma-separated browser origins (not `*` in production if you use credentials) |
 | `GCP_SA_JSON` | Full GCP **service account JSON** (multiline). Written to `/tmp/gcp-sa.json` at startup; sets `GOOGLE_APPLICATION_CREDENTIALS`. |
 | `GCP_SA_JSON_B64` | Same key, **base64-encoded** (use if the UI mangles multiline JSON). Takes precedence over `GCP_SA_JSON` when set. |
 
-Optional: `CHATBOT_BUILD_ID` (shown on `/v1/meta`), `CHATBOT_DEBUG=1` (richer errors). For **remote Chroma embeddings** (no local sentence-transformers load), set `RAG_EMBEDDINGS_MODE=hf_api` and see [`ml/rag/README.md`](../rag/README.md) (`RAG_EMBEDDING_MODEL_ID`).
+Optional: `CHATBOT_BUILD_ID` (shown on `/v1/meta`), `CHATBOT_DEBUG=1` (richer errors). For **HF API embeddings** (no local `sentence-transformers` load), set `RAG_EMBEDDINGS_MODE=hf_api` and see [`ml/rag/README.md`](../rag/README.md) (`RAG_EMBEDDING_MODEL_ID`).
 
 If neither `GCP_SA_JSON` nor `GCP_SA_JSON_B64` is set, **`GOOGLE_APPLICATION_CREDENTIALS`** is left unchanged (e.g. local Docker with a mounted key file).
 

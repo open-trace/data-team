@@ -1,5 +1,5 @@
 """
-Load bronze table/column catalog from ml/rag/bronze_dataset_model.yml (dbt-style fragment).
+Load bronze table/column catalog from ``ml/rag/chatbot/bronze_dataset_model.yml`` (dbt-style fragment).
 
 The file may be a YAML fragment starting with ``  - name: bronze``; we prepend ``sources:`` so
 ``yaml.safe_load`` returns ``{ "sources": [ { "name": "bronze", "tables": [...] } ] }``.
@@ -117,7 +117,7 @@ def load_bronze_table_schemas(
 
     Reloads when the file mtime changes or ``force_reload`` is True.
 
-    Loads ``RAG_BRONZE_MODEL_YAML`` or ``ml/rag/bronze_dataset_model.yml`` (dbt fragment
+    Loads ``RAG_BRONZE_MODEL_YAML`` or the default ``chatbot/bronze_dataset_model.yml`` (dbt fragment
     or full ``sources.yml``). If that file is missing, empty, or parses to zero tables,
     falls back to ``dbt/models/sources.yml`` (bronze source only unless
     ``RAG_BRONZE_MODEL_SOURCE`` is set).

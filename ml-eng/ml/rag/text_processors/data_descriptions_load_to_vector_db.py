@@ -8,11 +8,12 @@ import argparse
 import os
 from pathlib import Path
 
-from ml.rag.text_processors.load_pdf_chunks_to_vector_db import upsert_jsonl_to_qdrant_sentence_named
+from ml.rag.text_processors.load_pdf_chunks_to_vector_db import PAYLOAD_BQ_DESCRIPTIONS, upsert_jsonl_to_qdrant_for_collection
 
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_INPUT = REPO_ROOT / "data" / "local" / "bq_description_chunks.jsonl"
+from ml.rag.paths import preprocessed_jsonl_for_corpus
+
+DEFAULT_INPUT = preprocessed_jsonl_for_corpus("data_description")
 
 def load_data_descriptions_to_qdrant(
     *,
@@ -21,21 +22,29 @@ def load_data_descriptions_to_qdrant(
     reset: bool,
     batch_size: int,
 ) -> int:
-    return upsert_jsonl_to_qdrant_sentence_named(
+    return upsert_jsonl_to_qdrant_for_collection(
         input_path=input_path,
         collection=collection,
         reset=reset,
         batch_size=batch_size,
+        allowed_payload_keys=PAYLOAD_BQ_DESCRIPTIONS,
     )
 
 
 def build_arg_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(description="Load DATA_DESCRIPTIONS chunk JSONL into Qdrant.")
-    p.add_argument("--input", type=Path, default=DEFAULT_INPUT, help=f"Path to chunk JSONL (default: {DEFAULT_INPUT})")
+    p.add_argument(
+        "--input",
+        type=Path,
+        default=DEFAULT_INPUT,
+        help=(
+            f"Path to chunk JSONL (default: {DEFAULT_INPUT}, under data/local/preprocessed_data/). "
+        ),
+    )
     p.add_argument(
         "--collection",
         type=str,
-        default=os.environ.get("QDRANT_COLLECTION_DATA_DESCRIPTIONS", "opentrace_data_descriptions"),
+        default=os.environ.get("QDRANT_COLLECTION_DATA_DESCRIPTIONS", "BQ_table_descriptions"),
         help="Qdrant collection name for data descriptions.",
     )
     p.add_argument("--batch-size", type=int, default=200, help="Upsert batch size (default: 200)")

@@ -1,0 +1,4 @@
+- query: "Climate impacts on maize yields in sub-Saharan Africa"
+  expect_doc_kind: academic_article
+- query: "Soil moisture and crop productivity research"
+  expect_doc_kind: academic_article

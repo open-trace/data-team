@@ -1,0 +1,4 @@
+- query: "What is the outlook for wheat production in East Africa?"
+  expect_doc_kind: news_article
+- query: "Recent food security developments in Kenya"
+  expect_doc_kind: news_article

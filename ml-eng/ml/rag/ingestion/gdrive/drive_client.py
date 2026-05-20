@@ -5,6 +5,8 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any, Iterable
 
+from googleapiclient.http import MediaIoBaseDownload
+
 
 FOLDER_MIME = "application/vnd.google-apps.folder"
 
@@ -82,13 +84,6 @@ def download_file(service: Any, file_id: str, dest_path: Path) -> None:
     """
     Download a Drive file (binary) to dest_path.
     """
-    try:
-        from googleapiclient.http import MediaIoBaseDownload
-    except ImportError as e:
-        raise ImportError(
-            "Missing Google Drive deps. Install: google-api-python-client"
-        ) from e
-
     dest_path.parent.mkdir(parents=True, exist_ok=True)
     fh = io.BytesIO()
     request = service.files().get_media(fileId=file_id, supportsAllDrives=True)

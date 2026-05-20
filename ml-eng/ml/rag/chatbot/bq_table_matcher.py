@@ -67,20 +67,20 @@ def match_bq_tables_from_descriptions(
     collection_name: str | None = None,
 ) -> list[dict[str, Any]]:
     """
-    Retrieve BQ description chunks from Chroma, group by table, merge YAML/dbt catalog columns
+    Retrieve BQ description chunks from Qdrant, group by table, merge YAML/dbt catalog columns
     with narrative text. Returns one dict per table (``content`` fused for NL-to-SQL hints).
     """
     coll = (
         collection_name
-        or os.environ.get("QDRANT_COLLECTION_DATA_DESCRIPTIONS", "opentrace_data_descriptions").strip()
-        or "opentrace_data_descriptions"
+        or os.environ.get("QDRANT_COLLECTION_DATA_DESCRIPTIONS", "BQ_table_descriptions").strip()
+        or "BQ_table_descriptions"
     )
     vr = VectorRetriever(collection_name=coll)
     raw = vr.retrieve(
         query,
         top_k=top_k,
         doc_kind="bq_table_description",
-        vector_search_mode="sentence_named",
+        vector_search_mode="bq_triple",
     )
     catalog = load_bronze_table_schemas()
 

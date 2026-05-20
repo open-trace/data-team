@@ -40,7 +40,7 @@ For a file-by-file map and end-to-end flow, see [ARCHITECTURE.md](ARCHITECTURE.m
 ## Chat sessions and context memory (summary + verbatim window)
 
 - **Retrieval** (decompose, BigQuery, vectors) always uses **only the latest user message**. Prior turns do not change retrieval.
-- **Generation** sees a **rolling summary** of older dialogue plus the **last N user+assistant pairs** verbatim (default **N = 5**). When a new reply would exceed N pairs, the **oldest** pair is folded into the summary via an LLM call (`HF_API_TOKEN`; optional `RAG_SUMMARY_MODEL_ID`, else `RAG_LLM_MODEL_ID`). If the token is missing, folding uses a short **text stub** instead (see [`ml/rag/chat_memory.py`](ml/rag/chat_memory.py)).
+- **Generation** sees a **rolling summary** of older dialogue plus the **last N user+assistant pairs** verbatim (default **N = 5**). When a new reply would exceed N pairs, the **oldest** pair is folded into the summary via an LLM call (`HF_API_TOKEN`; optional `RAG_SUMMARY_MODEL_ID`, else `RAG_LLM_MODEL_ID`). If the token is missing, folding uses a short **text stub** instead (see [`ml/rag/chatbot/chat_memory.py`](ml/rag/chatbot/chat_memory.py)).
 - **Streamlit UI** keeps a **full message list** for scrolling; the compact **summary + recent_turns** is what gets sent to `run_rag` on the next turn.
 
 **Env (optional)**
@@ -53,7 +53,7 @@ For a file-by-file map and end-to-end flow, see [ARCHITECTURE.md](ARCHITECTURE.m
 | `RAG_SUMMARY_MAX_CHARS` | Max length of the running summary string (default **2000**) |
 | `RAG_SUMMARY_MODEL_ID` | Optional HF model for summarization |
 
-See also [`ml/rag/chat_history.py`](ml/rag/chat_history.py) for **legacy** `chat_history`-only truncation (no summary).
+See also [`ml/rag/chat_history.py`](ml/rag/chat_history.py) (shim to [`chatbot/chat_history.py`](chatbot/chat_history.py)) for **legacy** `chat_history`-only truncation (no summary).
 
 **Streamlit** ([`chatbot/streamlit_app.py`](ml/rag/chatbot/streamlit_app.py)): multiple **chat sessions** in the sidebar; **pipeline debug** shows the last run’s decomposition and retrieval stats.
 
@@ -62,23 +62,50 @@ See also [`ml/rag/chat_history.py`](ml/rag/chat_history.py) for **legacy** `chat
 ## Env and config
 
 - **BigQuery**: `BQ_PROJECT` and `BQ_DATASET_BRONZE` (see `data/local/.env`). The BQ retriever loads schema and runs NL-to-SQL **only** against the bronze dataset. Silver/gold env vars remain for dbt and other tooling.
-- **Bronze table hints (YAML + vectors)**: `match_bq_tables_from_descriptions` groups vector hits by `table_name` and fuses each with a compact column catalog from [`bronze_dataset_catalog.py`](bronze_dataset_catalog.py). Set **`RAG_BRONZE_MODEL_YAML`** to override the default path (`ml/rag/bronze_dataset_model.yml`). **`RAG_BRONZE_MODEL_SOURCE`** selects the dbt `sources` entry by name (default **`bronze`**); set it empty to merge every source in that file. If the primary YAML is missing or parses to no tables, the loader falls back to **`dbt/models/sources.yml`** (still honoring `RAG_BRONZE_MODEL_SOURCE`). Live BigQuery introspection remains the source of truth for runnable SQL.
-- **Vector DB**: **Qdrant Cloud** (set `QDRANT_URL`, `QDRANT_API_KEY`, `QDRANT_COLLECTION`). Populate from BQ or sample docs with `PYTHONPATH=ml-eng python -m ml.rag.populate_vector_db`. Debug payload counts/metadata: `PYTHONPATH=ml-eng python -m ml.rag.inspect_vector_db`.
-- **Embeddings (Qdrant)** — optional env:
+- **Bronze table hints (YAML + vectors)**: `match_bq_tables_from_descriptions` groups vector hits by `table_name` and fuses each with a compact column catalog from [`chatbot/bronze_dataset_catalog.py`](chatbot/bronze_dataset_catalog.py). Set **`RAG_BRONZE_MODEL_YAML`** to override the default path (`ml/rag/chatbot/bronze_dataset_model.yml`). **`RAG_BRONZE_MODEL_SOURCE`** selects the dbt `sources` entry by name (default **`bronze`**); set it empty to merge every source in that file. If the primary YAML is missing or parses to no tables, the loader falls back to **`dbt/models/sources.yml`** (still honoring `RAG_BRONZE_MODEL_SOURCE`). Live BigQuery introspection remains the source of truth for runnable SQL.
+- **Vector DB**: **Qdrant** (set `QDRANT_URL`, `QDRANT_API_KEY`, and per-collection names such as `QDRANT_COLLECTION_NEWS`, `QDRANT_COLLECTION_RESEARCH_PAPERS`, `QDRANT_COLLECTION_DATA_DESCRIPTIONS`, `QDRANT_COLLECTION_OTA_INSIGHTS`). Populate via [`ingestion/cli`](ingestion/cli.py) rebuild or the `*_preprocessor` / `*_load_to_vector_db` scripts below. Debug payload counts/metadata: `PYTHONPATH=ml-eng python -m ml.rag.inspect_vector_db`.
+- **Embeddings (Qdrant)** — per-corpus profiles in [`text_processors/chunking_config.py`](text_processors/chunking_config.py):
+
+| Corpus | Collection | Model (default) | Dim | Qdrant mode |
+|--------|------------|-----------------|-----|-------------|
+| News | `news_data` | `intfloat/multilingual-e5-small` | 384 | `legacy` |
+| Research | `research_other_papers` | `intfloat/multilingual-e5-base` | 768 | `legacy` |
+| OTA | `OTA_insights` | `BAAI/bge-small-en-v1.5` | 384 | `ota_triple` |
+| BQ descriptions | `BQ_table_descriptions` | `BAAI/bge-small-en-v1.5` | 384 | `sentence_named` |
 
 | Variable | Meaning |
 |----------|---------|
-| `RAG_EMBEDDINGS_MODE` | `local` (default): **sentence-transformers** loads model weights on the machine. `hf_api`: **Hugging Face Inference API** for embeddings only (no local PyTorch load for that step); requires **`HF_API_TOKEN`**. |
-| `RAG_EMBEDDING_MODEL_ID` | Legacy default embedding model id when the sentence-specific var is unset (default **`sentence-transformers/all-MiniLM-L6-v2`**). Also used by `populate_vector_db` single-vector collections. |
-| `RAG_EMBEDDING_MODEL_SENTENCE` | Model id for the **`sentence`** named vector (research, news, data descriptions loaders). Overrides `RAG_EMBEDDING_MODEL_ID` when set. |
-| `RAG_EMBEDDING_MODEL_SEMANTIC` | Model id for the **`semantic`** named vector (research + news loaders only). Defaults to the sentence model if unset. |
-| `RAG_QDRANT_QUERY_USING` | For dual-vector collections: query **`sentence`**, **`semantic`**, or **`both`** (merge by max score per point). |
-| `RAG_QDRANT_VECTOR_SEARCH_MODE` | Default `retrieve(..., vector_search_mode=...)`: **`legacy`** (unnamed single vector), **`dual`** (named `sentence`+`semantic`), **`sentence_named`** (single named `sentence`). Graph overrides explicitly. |
-| `RAG_NEWS_GEO_FALLBACK` | Default **`1`**: if **news** retrieval returns no rows after a geography filter, retry once **without** geo (many chunks lack `geo_*` metadata). Set **`0`** to disable. |
+| `RAG_EMBEDDINGS_MODE` | `local` (default) or `hf_api` (requires **`HF_API_TOKEN`**) |
+| `RAG_EMBEDDING_MODEL_NEWS` / `_RESEARCH` / `_OTA` / `_DATA_DESCRIPTION` | Override per-corpus model ids |
+| `RAG_CHUNK_TARGET_TOKENS_*` / `RAG_CHUNK_OVERLAP_PCT_*` | Override chunk sizes (see `chunking_config.py`) |
+| `RAG_NEWS_GEO_FALLBACK` | Default **`1`**: retry news search without geo if geo filter returns nothing |
 
-**Retrieval behavior:** the retriever may apply a best-effort server-side filter on `doc_kind`, but still post-filters results for compatibility with legacy chunk metadata. News uses the fallback above when geo would otherwise drop everything.
+**E5 prefixing:** news and research use `query:` at retrieval and `passage:` at index time (automatic in `vector_retriever`).
 
-If you **change** the embedding model to one with a **different vector size**, or switch between `local` and `hf_api` with incompatible settings, **recreate the Qdrant collection** (use `--reset` on loaders, then repopulate).
+**Reindex:** after changing chunking or embedding models, run loaders with `--reset` or recreate collections via `python -m ml.rag.scripts.create_qdrant_collections`, then repopulate. Preprocessors skip unchanged chunks via `content_hash` in the ingest manifest (`INGEST_VERSION` bump forces re-chunk).
+
+**Preprocess pipeline:** [`text_processors/preprocess/`](text_processors/preprocess/) — parse → section/schema blocks → corpus-specific chunking (~500 tokens) → hard token cap. Chunk metadata includes `hierarchy_path`, `parent_chunk_id`, `semantic_lane` (research/OTA).
+
+| Qdrant collection | Chunking strategy |
+|-------------------|-------------------|
+| `news_data` | Recursive paragraphs + semantic fallback (`recursive_semantic`) |
+| `research_other_papers` | Section blocks + semantic boundaries (`hierarchical_semantic`) |
+| `OTA_insights` | Semantic within each lane (`lane_semantic`) |
+| `BQ_table_descriptions` | Schema/table blocks, sentence cap only (`schema_only`) |
+
+Semantic splits use the same E5 model as ingest (`profile.embedding_model`). Disable with `RAG_SEMANTIC_CHUNKING=0`. Tune breakpoints with `RAG_SEMANTIC_BREAKPOINT_PERCENTILE` (default `95`).
+
+**Troubleshooting preprocess:** if you see `NumPy 2.x` / `PyTorch was not found` / `torch>=2.4` errors:
+
+```bash
+cd ml-eng && source venv/bin/activate
+pip install 'numpy>=1.24,<2'
+pip install 'transformers>=4.44,<5' 'sentence-transformers>=3.0,<5'
+```
+
+On **Intel Mac** (`x86_64`), PyPI often only offers **torch up to 2.2.2** — you cannot `pip install torch>=2.4`. Use the `transformers<5` pins above (works with torch 2.2.2). Preprocess falls back to sentence/token chunking if embeddings still cannot load.
+
+**Eval:** `PYTHONPATH=ml-eng python -m ml.rag.eval.run_retrieval_eval --corpus all --k 5` (requires live Qdrant + populated collections).
 
 - **Chat memory**: variables in the table above; summarization needs **`HF_API_TOKEN`** (same as the answer generator).
 
@@ -90,45 +117,38 @@ From repo root (recommended: install from `ml-eng/`):
 # Install deps (ml-eng)
 pip install -r ml-eng/requirements.txt -r ml-eng/requirements-dev.txt
 
-# Rebuild 3 Qdrant collections from Google Drive folders (OAuth user auth)
-# Required env: QDRANT_URL, QDRANT_API_KEY, GDRIVE_OAUTH_CLIENT_SECRET_JSON,
-#   GDRIVE_FOLDER_RESEARCH_PAPERS_ID, GDRIVE_FOLDER_NEWS_ID, GDRIVE_FOLDER_DATA_DESCRIPTIONS_ID
-PYTHONPATH=ml-eng python -m ml.rag.ingestion.cli rebuild --kind all --reset
+# Create Qdrant collections (set QDRANT_URL + QDRANT_API_KEY in ml-eng/data/local/.env first)
+cd ml-eng && set -a && source data/local/.env && set +a
+PYTHONPATH=. python -m ml.rag.scripts.create_qdrant_collections
 
-# (Optional) Run per-collection preprocessing + loading scripts directly
-# Research papers
-PYTHONPATH=ml-eng python -m ml.rag.text_processors.research_papers_preprocessor --input-dir /path/to/pdfs --output data/local/ingestion_chunks/research_chunks.jsonl
-PYTHONPATH=ml-eng python -m ml.rag.text_processors.research_papers_load_to_vector_db --input data/local/ingestion_chunks/research_chunks.jsonl --reset
-#
-# News
-PYTHONPATH=ml-eng python -m ml.rag.text_processors.news_collection_preprocessor --input-dir /path/to/news_txt --output data/local/ingestion_chunks/news_chunks.jsonl
-PYTHONPATH=ml-eng python -m ml.rag.text_processors.news_load_to_vector_db --input data/local/ingestion_chunks/news_chunks.jsonl --reset
-#
-# Data descriptions (DOCX)
-PYTHONPATH=ml-eng python -m ml.rag.text_processors.data_descriptions_preprocessor --input-dir /path/to/docx --output data/local/ingestion_chunks/data_descriptions_chunks.jsonl
-PYTHONPATH=ml-eng python -m ml.rag.text_processors.data_descriptions_load_to_vector_db --input data/local/ingestion_chunks/data_descriptions_chunks.jsonl --reset
+# Rebuild collections from Google Drive (OAuth user auth; run from ml-eng/)
+# Required: QDRANT_*, GDRIVE_OAUTH_CLIENT_SECRET_JSON, GDRIVE_FOLDER_* (ID or folder URL)
+# Research merges GDRIVE_FOLDER_RESEARCH_PAPERS_ID (academic_article) and
+#   GDRIVE_FOLDER_OTHER_PAPERS_ID (policy_report) into research_other_papers.
+PYTHONPATH=. python -m ml.rag.ingestion.cli rebuild --kind all --reset
 
-# Optional: populate Qdrant collection from BQ or sample docs
-PYTHONPATH=ml-eng python -m ml.rag.populate_vector_db
-# Or from BQ: --sql "SELECT * FROM bronze.your_table LIMIT 100"
+# Preprocess only (structure-aware, token-bounded chunks → data/local/preprocessed_data/*.jsonl)
+# Requires: pip install -r ml-eng/ml/rag/requirements.txt (pypdf, tiktoken, llama-index-core)
+# Optional structure parsing: pip install -r ml-eng/ml/rag/requirements-preprocess-optional.txt && export RAG_USE_UNSTRUCTURED=1
+cd ml-eng && PYTHONPATH=.
 
-# Build chunks from ml/rag/BQ data description/*.docx
-PYTHONPATH=ml-eng python -m ml.rag.bq_description_preprocessor
-# Loads into data/local/bq_description_chunks.jsonl with metadata:
-#   type: "BQ <table_name> description"
+# Unified CLI
+python -m ml.rag.text_processors.preprocess.cli run --corpus research \
+  --input-dir ml/rag/data/Text_Documents
+python -m ml.rag.text_processors.preprocess.cli validate \
+  --jsonl data/local/preprocessed_data/research_chunks.jsonl
 
-# Load those chunks into vector DB
-PYTHONPATH=ml-eng python -m ml.rag.load_pdf_chunks_to_vector_db \
-  --input data/local/bq_description_chunks.jsonl
+# Per-corpus wrappers (same engines)
+python -m ml.rag.text_processors.research_papers_preprocessor \
+  --input-dir ml/rag/data/Text_Documents
+python -m ml.rag.text_processors.news_collection_preprocessor --input-dir data/local/web_news_rss
+python -m ml.rag.text_processors.data_descriptions_preprocessor --input-dir /path/to/docx
+python -m ml.rag.text_processors.ota_insights_preprocessor  # via consolidate_ota_staging import
 
-# Build chunks from scraped news articles under data/local/web_news_rss/
-PYTHONPATH=ml-eng python -m ml.rag.news_preprocessor \
-  --input-dir data/local/web_news_rss \
-  --output data/local/news_chunks.jsonl
-
-# Load news chunks into vector DB
-PYTHONPATH=ml-eng python -m ml.rag.load_pdf_chunks_to_vector_db \
-  --input data/local/news_chunks.jsonl
+# Load into Qdrant (separate step)
+python -m ml.rag.text_processors.research_papers_load_to_vector_db --reset
+python -m ml.rag.text_processors.news_load_to_vector_db --reset
+python -m ml.rag.text_processors.data_descriptions_load_to_vector_db --reset
 
 # Run with a question
 PYTHONPATH=ml-eng python -m ml.rag.run "What tables exist in bronze for yields?"
@@ -168,22 +188,23 @@ result2 = run_rag(
 
 | Path | Role |
 |------|------|
-| `state.py` | `RAGState` (legacy); graph uses `RAGGraphState` in `graph.py` |
-| `retrievers/base.py` | `BaseRetriever` interface |
-| `retrievers/bq_retriever.py` | BigQuery retrieval |
-| `retrievers/vector_retriever.py` | Vector DB retrieval (wire your store here) |
-| `reranker.py` | `rerank(query, context_items, top_k)` |
-| `generator.py` | `generate(query, context_items)` |
-| `graph.py` | LangGraph build + `run_rag(query)` |
-| `chat_history.py` | Normalize/truncate prior messages (legacy flat history) |
-| `chat_memory.py` | Summary + verbatim window, LLM fold-on-overflow |
-| `run.py` | CLI entrypoint |
+| [`chatbot/state.py`](chatbot/state.py) | `RAGState` (legacy); graph uses `RAGGraphState` in [`chatbot/graph.py`](chatbot/graph.py) |
+| [`retrievers/base.py`](retrievers/base.py) | `BaseRetriever` interface |
+| [`retrievers/bq_retriever.py`](retrievers/bq_retriever.py) | BigQuery retrieval |
+| [`retrievers/vector_retriever.py`](retrievers/vector_retriever.py) | Qdrant vector retrieval |
+| [`chatbot/reranker.py`](chatbot/reranker.py) | `rerank(query, context_items, top_k)` |
+| [`chatbot/generator.py`](chatbot/generator.py) | `generate(query, context_items)` |
+| [`chatbot/graph.py`](chatbot/graph.py) (re-export [`graph.py`](graph.py)) | LangGraph build + `run_rag(query)` |
+| [`chat_history.py`](chat_history.py) | Shim: `ml.rag.chat_history` → [`chatbot/chat_history.py`](chatbot/chat_history.py) |
+| [`chat_memory.py`](chat_memory.py) | Shim: `ml.rag.chat_memory` → [`chatbot/chat_memory.py`](chatbot/chat_memory.py) |
+| [`app/api.py`](app/api.py) | FastAPI app (`ml.rag.app.api`); use [`api.py`](api.py) for `uvicorn ml.rag.api:app` |
+| [`run.py`](run.py) | CLI entrypoint |
 
 ## Extending
 
-1. **Vector DB**: The default is in-repo ChromaDB; you can point `RAG_VECTOR_DB_PATH` elsewhere or swap in another client in `vector_retriever.py`.
-2. **Reranker**: In `reranker.py`, call your API or model and return ordered `list[dict]` with `content`/`text`.
-3. **Generator**: In `generator.py`, call Vertex AI / OpenAI / local LLM with `query` and `context_items` and return the answer string.
+1. **Vector DB**: RAG uses **Qdrant** only ([`retrievers/vector_retriever.py`](retrievers/vector_retriever.py)). Configure `QDRANT_URL`, `QDRANT_API_KEY`, and collection env vars; extend `VectorRetriever` if you need a different backend.
+2. **Reranker**: In [`chatbot/reranker.py`](chatbot/reranker.py), call your API or model and return ordered `list[dict]` with `content`/`text`.
+3. **Generator**: In [`chatbot/generator.py`](chatbot/generator.py), call Vertex AI / OpenAI / local LLM with `query` and `context_items` and return the answer string.
 4. **BQ NL-to-SQL**: In `BQRetriever.retrieve()`, add a step that turns `query` into SQL (e.g. LLM or templates) and pass it as `kwargs["sql"]` or set `sql` internally.
 
 ---
@@ -232,8 +253,9 @@ Response:
 3. **Secrets (Space → Settings → Variables and Secrets)**  
    - `BQ_PROJECT` – GCP project ID  
    - `BQ_DATASET_BRONZE` – BigQuery bronze dataset (RAG queries this dataset only)  
+   - **Qdrant**: `QDRANT_URL`, `QDRANT_API_KEY`, and collection variables as in [Env and config](#env-and-config)  
    - For BigQuery auth: either attach a **GCP service account key** (e.g. paste JSON as a secret and set `GOOGLE_APPLICATION_CREDENTIALS` to a path you write it to at startup) or use Workload Identity if running on GCP.  
-   - Any keys for vector DB or LLM (e.g. `COHERE_API_KEY`, `OPENAI_API_KEY`) if you use them.
+   - `HF_API_TOKEN` (and optional embedding / LLM model ids) as needed.
 
 4. **CORS**  
    For production, set **`RAG_CORS_ORIGINS`** to your frontend origin(s), comma-separated (e.g. `https://yourapp.com`). Default is `*`.
@@ -245,7 +267,7 @@ Response:
 
 ```bash
 pip install fastapi "uvicorn[standard]"
-PYTHONPATH=. uvicorn ml.rag.api:app --host 0.0.0.0 --port 7860
+PYTHONPATH=ml-eng uvicorn ml.rag.api:app --host 0.0.0.0 --port 7860
 # Frontend: http://localhost:7860/docs and POST http://localhost:7860/query
 ```
 
@@ -253,10 +275,10 @@ PYTHONPATH=. uvicorn ml.rag.api:app --host 0.0.0.0 --port 7860
 
 Prerequisites:
 
-- **`data/local/.env` must exist** (Compose `env_file`); create it with your secrets — e.g. `BQ_PROJECT`, `BQ_DATASET_BRONZE`, `HF_API_TOKEN`, and any other `RAG_*` vars. If the file is missing, `docker compose` fails when starting RAG services.
+- **`data/local/.env` must exist** (Compose `env_file`); create it with your secrets — e.g. `BQ_PROJECT`, `BQ_DATASET_BRONZE`, `HF_API_TOKEN`, **`QDRANT_URL`**, **`QDRANT_API_KEY`**, and optional `QDRANT_COLLECTION_*` / `RAG_*` vars. If the file is missing, `docker compose` fails when starting RAG services.
 - **GCP key** mounted read-only into the container (default host path **`data/local/keys/opentrace-bq-key.json`**). Override with env **`GCP_SA_KEY_HOST_PATH`** before `docker compose` if your key lives elsewhere.
-- **Chroma on the host:** populate **`data/local/vector_db`** first (see [Run](#run) and loaders above). Override the host side with **`RAG_VECTOR_DB_HOST_PATH`** if needed. The container sets **`RAG_VECTOR_DB_PATH=/app/data/local/vector_db`** and bind-mounts that path; an empty folder means no news/academic vector hits.
-- **Optional port / path overrides (shell env, not inside `.env` required):** `RAG_API_PORT` (default 7860), `RAG_STREAMLIT_PORT` (default 8501), `GCP_SA_KEY_HOST_PATH`, `RAG_VECTOR_DB_HOST_PATH`.
+- **Qdrant**: vectors live in Qdrant (cloud or self-hosted), not in a bind-mounted `vector_db` directory. Populate collections using [Run](#run) (ingestion CLI or loaders) before expecting non-empty retrieval.
+- **Optional port overrides (shell env, not inside `.env` required):** `RAG_API_PORT` (default 7860), `RAG_STREAMLIT_PORT` (default 8501), `GCP_SA_KEY_HOST_PATH`.
 
 From repo root:
 
@@ -273,27 +295,27 @@ docker compose --profile rag up --build rag-api rag-streamlit
 
 Stop: `docker compose --profile rag down` (or `down` without profile if no other services use those containers).
 
-### Docker Compose — baked vector index (no host `vector_db` mount)
+### Docker Compose — “baked” images (no local vector index mount)
 
-Use this when Chroma should live **inside the image** (build after populating `data/local/vector_db` on the machine that runs `docker build`).
+For Qdrant-backed RAG, **indexes are not copied from `data/local/vector_db`** (that path was legacy). Use **Qdrant Cloud** (or a reachable Qdrant URL) and pass **`QDRANT_*`** secrets at runtime. Optional baked images can still pre-install dependencies and app code; see your repo’s `Dockerfile.rag-baked` / root `Dockerfile` for how the **serving** image is built.
 
-- **`Dockerfile.rag-baked`:** internal API (`ml.rag.api`) + Streamlit; same dependencies as `Dockerfile.rag` but **`COPY data/local/vector_db`** and [`scripts/hf-entrypoint.sh`](../../scripts/hf-entrypoint.sh) for optional **`GCP_SA_JSON`** / **`GCP_SA_JSON_B64`**.
-- **Root `Dockerfile`:** public chat API (`ml.serving.chat.app`); also bakes `vector_db`.
+- **`Dockerfile.rag-baked`** (if present): may bundle app + Streamlit with [`scripts/hf-entrypoint.sh`](../../scripts/hf-entrypoint.sh) for optional **`GCP_SA_JSON`** / **`GCP_SA_JSON_B64`**.
+- **Root `Dockerfile`:** may target the public chat API (`ml.serving.chat.app`); vector state still comes from Qdrant when RAG is wired in.
 
 **Secrets:** do not put **`HF_API_TOKEN`** or GCP JSON **into** the Dockerfile. Pass them at runtime via **`data/local/.env`** or `-e` (Compose already uses `env_file`). For GCP, either mount a key file (default path in Compose) or set **`GCP_SA_JSON`** so the entrypoint writes `/tmp/gcp-sa.json`.
 
 ```bash
-# RAG API + Streamlit with index baked into the image
+# Example: build and run baked profile services (names depend on your compose file)
 docker compose --profile baked build rag-api-baked rag-streamlit-baked
 docker compose --profile baked up rag-api-baked rag-streamlit-baked
 
-# Optional: public chat API with baked index (port 7861 by default)
+# Optional: public chat API (port may differ)
 docker compose --profile baked up chat-api-baked
 ```
 
 ### Docker (local or CI)
 
-From repo root:
+From the **`ml-eng/`** directory (so `requirements.txt` and `ml/` exist in the build context):
 
 ```bash
 docker build -f ml/rag/Dockerfile -t rag-api .
@@ -303,10 +325,10 @@ docker run --rm -p 7860:7860 \
   -e BQ_DATASET_BRONZE=bronze \
   -e HF_API_TOKEN=your-hf-token \
   -e GOOGLE_APPLICATION_CREDENTIALS=/secrets/bq.json \
-  -e RAG_VECTOR_DB_PATH=/app/data/local/vector_db \
-  -v "$(pwd)/data/local/vector_db:/app/data/local/vector_db" \
+  -e QDRANT_URL=https://your-cluster.qdrant.io \
+  -e QDRANT_API_KEY=your-qdrant-api-key \
   -v "$(pwd)/path/to/your-sa.json:/secrets/bq.json:ro" \
   rag-api
 ```
 
-Adjust the service-account path to match your machine. Without the vector mount, Chroma starts empty inside the container.
+Adjust paths and secrets to match your machine. Without valid **Qdrant** and **BigQuery** credentials, retrieval or BQ steps may return empty context.

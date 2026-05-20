@@ -31,9 +31,13 @@ google-auth-oauthlib>=1.2.0
 qdrant-client>=1.9.0
 
 # Embeddings + PDF processing (kept local for now)
+numpy>=1.24.0,<2.0
 torch>=2.0.0
 torchvision>=0.15.0
-sentence-transformers>=2.2.0
+# transformers 5.x needs torch>=2.4 (not on Intel macOS PyPI — max torch 2.2.2)
+transformers>=4.44,<5
+sentence-transformers>=3.0,<5
+tiktoken>=0.5.0
 pypdf>=4.1.0
 
 # Local UI for testing
