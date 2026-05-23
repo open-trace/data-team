@@ -34,7 +34,7 @@ def chunk_bq_description(
 ) -> list[TextChunk]:
     from ml.rag.text_processors.preprocess.engines.bq import _schema_blocks_from_text
 
-    blocks = _schema_blocks_from_text(text, table_name)
+    blocks = _schema_blocks_from_text(text, table_name=table_name)
     tuples = [(b.hierarchy_path, b.section_title, b.text) for b in blocks]
     slices = split_blocks(tuples, profile)
     return [TextChunk(text=s.text, section_path=s.hierarchy_path) for s in slices]

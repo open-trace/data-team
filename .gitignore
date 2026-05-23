@@ -66,12 +66,15 @@ service-account*.json
 # ML / Data (large or generated)
 *.parquet
 *.csv
+ml-eng/config/keys/
+ml-eng/data/
 data/raw/
 ml-eng/ml/rag/data/
 **/local/processed_chunks/
 **/local/web_news_rss/
 ml/models/
 ml/rag/Text Documents/
+test/*
 *.pkl
 *.joblib
 *.h5

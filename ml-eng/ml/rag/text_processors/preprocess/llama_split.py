@@ -2,9 +2,12 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
+from typing import Literal
 
 from ml.rag.text_processors.chunking_config import ChunkingProfile
 from ml.rag.text_processors.preprocess.tokens import count_tokens
+
+ContentType = Literal["prose", "table"]
 
 
 @dataclass(frozen=True)
@@ -12,6 +15,7 @@ class TextSlice:
     text: str
     section_title: str = ""
     hierarchy_path: str = ""
+    content_type: ContentType = "prose"
 
 
 def _split_sentences(text: str) -> list[str]:

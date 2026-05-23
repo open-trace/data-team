@@ -12,17 +12,23 @@ import os
 import uuid
 from pathlib import Path
 
-# Load .env from data/local
-_env = Path(__file__).resolve().parents[2] / "data" / "local" / ".env"
-if _env.exists():
-    with open(_env) as f:
-        for line in f:
-            line = line.strip()
-            if line and not line.startswith("#") and "=" in line:
-                k, _, v = line.partition("=")
-                k, v = k.strip(), v.strip().strip('"').strip("'")
-                if k and k not in os.environ:
-                    os.environ[k] = v
+# Load env: data/local/.env then config/.env (BQ + LLM keys not duplicated in local)
+_ml_eng = Path(__file__).resolve().parents[2]
+from ml.rag.local_env import load_data_local_dotenv
+
+load_data_local_dotenv(_ml_eng)
+_config_env = _ml_eng / "config" / ".env"
+if _config_env.exists():
+    for line in _config_env.read_text(encoding="utf-8").splitlines():
+        line = line.strip()
+        if not line or line.startswith("#") or "=" not in line:
+            continue
+        k, _, v = line.partition("=")
+        k, v = k.strip(), v.strip().strip('"').strip("'")
+        if k.lower().startswith("export "):
+            k = k[7:].strip()
+        if k and k not in os.environ:
+            os.environ[k] = v
 
 import streamlit as st
 
@@ -200,10 +206,10 @@ with st.sidebar:
 
     st.divider()
     st.subheader("Retrieval controls")
-    news_top_k = st.number_input("News chunks (top_k)", min_value=1, max_value=50, value=8)
-    academic_top_k = st.number_input("Academic chunks (top_k)", min_value=1, max_value=30, value=5)
+    news_top_k = st.number_input("News chunks (top_k)", min_value=1, max_value=50, value=20)
+    academic_top_k = st.number_input("Academic chunks (top_k)", min_value=1, max_value=50, value=20)
     bq_top_k = st.number_input("BQ rows (top_k)", min_value=1, max_value=100, value=15)
-    rerank_top_k = st.number_input("Rerank context size", min_value=1, max_value=30, value=8)
+    rerank_top_k = st.number_input("Rerank context size", min_value=1, max_value=50, value=20)
     st.divider()
     geo_override = st.text_input("Geography override (optional)", placeholder="e.g. Nigeria")
     t_start = st.text_input("Time start YYYY-MM-DD (optional)", placeholder="2020-01-01")
@@ -281,7 +287,7 @@ if show_debug and "last_rag_debug" in st.session_state:
         with c2:
             st.metric("News chunks", len(result.get("vector_news_results") or []))
         with c3:
-            st.metric("Academic chunks", len(result.get("vector_academic_results") or []))
+            st.metric("Research corpus chunks", len(result.get("vector_academic_results") or []))
         bq_rows = result.get("bq_results") or []
         if bq_rows:
             sql = (bq_rows[0].get("metadata") or {}).get("sql", "")

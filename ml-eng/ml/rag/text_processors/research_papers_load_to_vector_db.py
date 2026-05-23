@@ -11,7 +11,8 @@ from pathlib import Path
 from ml.rag.text_processors.load_pdf_chunks_to_vector_db import PAYLOAD_RESEARCH, upsert_jsonl_to_qdrant_for_collection
 
 
-from ml.rag.paths import preprocessed_jsonl_for_corpus
+from ml.rag.paths import ML_ENG_ROOT, preprocessed_jsonl_for_corpus
+from ml.rag.local_env import load_data_local_dotenv
 
 DEFAULT_INPUT = preprocessed_jsonl_for_corpus("research")
 
@@ -46,6 +47,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
 
 
 def main() -> int:
+    load_data_local_dotenv(ML_ENG_ROOT)
     args = build_arg_parser().parse_args()
     inserted = load_research_papers_to_qdrant(
         input_path=args.input,

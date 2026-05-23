@@ -15,10 +15,11 @@ ChunkingStrategy = Literal[
     "recursive_semantic",  # news_data: paragraphs + semantic fallback
     "hierarchical_semantic",  # research: section blocks + semantic boundaries
     "lane_semantic",  # OTA_insights: semantic within each lane
-    "schema_only",  # BQ_table_descriptions: table/schema blocks, no semantic
+    "schema_only",  # legacy BQ: sentence + token cap
+    "bq_structured",  # BQ_table_descriptions: section/schema-aware splits
 ]
 
-INGEST_VERSION = "2026.05-chunk-v4"
+INGEST_VERSION = "2026.05-chunk-v10"
 
 # OpenTrace namespace for deterministic UUID5 chunk ids
 CHUNK_ID_NAMESPACE = "6ba7b810-9dad-11d1-80b4-00c04fd430c8"
@@ -81,20 +82,39 @@ def _env_model(corpus: CorpusKey, default: str) -> str:
     return os.environ.get(key, "").strip() or default
 
 
-def _vector_dim() -> int:
-    return _env_int("RAG_QDRANT_VECTOR_SIZE", 768)
+_CORPUS_VECTOR_DIM_DEFAULTS: dict[CorpusKey, int] = {
+    "news": 384,
+    "research": 384,
+    "ota": 384,
+    "data_description": 384,
+}
+
+_CORPUS_VECTOR_DIM_ENV: dict[CorpusKey, str] = {
+    "news": "RAG_QDRANT_VECTOR_SIZE_NEWS",
+    "research": "RAG_QDRANT_VECTOR_SIZE_RESEARCH",
+    "ota": "RAG_QDRANT_VECTOR_SIZE_OTA",
+    "data_description": "RAG_QDRANT_VECTOR_SIZE_DATA_DESCRIPTIONS",
+}
+
+
+def _vector_dim_for(corpus: CorpusKey) -> int:
+    """Per-corpus dense dimension (384 news/research/BQ, 768 OTA by default)."""
+    env_key = _CORPUS_VECTOR_DIM_ENV[corpus]
+    if os.environ.get(env_key, "").strip():
+        return max(32, _env_int(env_key, _CORPUS_VECTOR_DIM_DEFAULTS[corpus]))
+    return max(32, _env_int("RAG_QDRANT_VECTOR_SIZE", _CORPUS_VECTOR_DIM_DEFAULTS[corpus]))
 
 
 def _news_profile() -> ChunkingProfile:
     return ChunkingProfile(
         corpus="news",
         qdrant_collection=os.environ.get("QDRANT_COLLECTION_NEWS", "news_data").strip() or "news_data",
-        target_tokens=_env_int("RAG_CHUNK_TARGET_TOKENS_NEWS", 500),
+        target_tokens=_env_int("RAG_CHUNK_TARGET_TOKENS_NEWS", 400),
         overlap_pct=_env_float("RAG_CHUNK_OVERLAP_PCT_NEWS", 0.15),
         max_chunks_per_doc=None,
         min_tokens=_env_int("RAG_CHUNK_MIN_TOKENS_NEWS", 40),
         embedding_model=_env_model("news", "intfloat/multilingual-e5-base"),
-        vector_dim=_vector_dim(),
+        vector_dim=_vector_dim_for("news"),
         e5_prefix_passage=True,
         qdrant_vector_mode="dense_named",
         chunking_strategy="recursive_semantic",
@@ -110,10 +130,10 @@ def _research_profile() -> ChunkingProfile:
         overlap_pct=_env_float("RAG_CHUNK_OVERLAP_PCT_RESEARCH", 0.10),
         max_chunks_per_doc=_env_int("RAG_CHUNK_MAX_CHUNKS_RESEARCH", 400),
         min_tokens=_env_int("RAG_CHUNK_MIN_TOKENS_RESEARCH", 80),
-        embedding_model=_env_model("research", "intfloat/multilingual-e5-base"),
-        vector_dim=_vector_dim(),
+        embedding_model=_env_model("research", "intfloat/multilingual-e5-small"),
+        vector_dim=_vector_dim_for("research"),
         e5_prefix_passage=True,
-        qdrant_vector_mode="research_dual",
+        qdrant_vector_mode="dense_named",
         chunking_strategy="hierarchical_semantic",
     )
 
@@ -131,7 +151,7 @@ def _ota_profile() -> ChunkingProfile:
         max_chunks_per_doc=_env_int("RAG_CHUNK_MAX_CHUNKS_OTA", 100),
         min_tokens=_env_int("RAG_CHUNK_MIN_TOKENS_OTA", 40),
         embedding_model=_env_model("ota", "intfloat/multilingual-e5-base"),
-        vector_dim=_vector_dim(),
+        vector_dim=_vector_dim_for("ota"),
         e5_prefix_passage=True,
         qdrant_vector_mode="ota_triple",
         chunking_strategy="lane_semantic",
@@ -143,15 +163,15 @@ def _data_description_profile() -> ChunkingProfile:
         corpus="data_description",
         qdrant_collection=os.environ.get("QDRANT_COLLECTION_DATA_DESCRIPTIONS", "BQ_table_descriptions").strip()
         or "BQ_table_descriptions",
-        target_tokens=_env_int("RAG_CHUNK_TARGET_TOKENS_DATA_DESCRIPTIONS", 200),
-        overlap_pct=_env_float("RAG_CHUNK_OVERLAP_PCT_DATA_DESCRIPTIONS", 0.15),
-        max_chunks_per_doc=None,
-        min_tokens=_env_int("RAG_CHUNK_MIN_TOKENS_DATA_DESCRIPTIONS", 30),
-        embedding_model=_env_model("data_description", "intfloat/multilingual-e5-base"),
-        vector_dim=_vector_dim(),
+        target_tokens=_env_int("RAG_CHUNK_TARGET_TOKENS_DATA_DESCRIPTIONS", 480),
+        overlap_pct=_env_float("RAG_CHUNK_OVERLAP_PCT_DATA_DESCRIPTIONS", 0.05),
+        max_chunks_per_doc=_env_int("RAG_CHUNK_MAX_CHUNKS_DATA_DESCRIPTIONS", 3),
+        min_tokens=_env_int("RAG_CHUNK_MIN_TOKENS_DATA_DESCRIPTIONS", 80),
+        embedding_model=_env_model("data_description", "intfloat/multilingual-e5-small"),
+        vector_dim=_vector_dim_for("data_description"),
         e5_prefix_passage=True,
         qdrant_vector_mode="bq_triple",
-        chunking_strategy="schema_only",
+        chunking_strategy="bq_structured",
     )
 
 

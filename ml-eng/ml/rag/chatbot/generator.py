@@ -30,9 +30,12 @@ def _build_prompt(
         "agricultural production, crop productivity, regions, districts, agroecological zones, "
         "yield gaps, rainfall, irrigation, drought, food supply stability, and trends over time. "
         "Use the provided context (BigQuery results and/or document snippets) to answer. "
-        "Ground your answer in the context: prefer facts from [News], [Academic], and BigQuery row text. "
+        "Ground your answer in the context: prefer facts from [News], [Academic], [Policy], "
+        "[Public report], and BigQuery row text. "
+        "For [Academic] snippets, cite the source when metadata is present (authors, year, article title, journal, DOI). "
         "Cite specific numbers or regions when the context supports it. "
-        "If the context does not fully answer the question, say so and summarize what the data does show."
+        "If the context does not fully answer the question, say so and summarize what the data does show. "
+        "Do not invent citations or statistics that are not supported by the context."
     )
     facet_block = ""
     intent_tone = ""
@@ -138,17 +141,27 @@ def generate(
     memory_block = _resolve_memory_block(**kwargs)
 
     if not context_items:
-        # Still try to call the LLM so it can answer from its own knowledge if allowed.
-        prompt = _build_prompt(
-            query,
-            context_block="[No external context]",
-            decomposition=decomposition,
-            memory_block=memory_block,
+        allow_ungrounded = os.environ.get("RAG_ALLOW_UNGROUNDED", "").strip().lower() in (
+            "1",
+            "true",
+            "on",
+            "yes",
         )
-        llama_answer = _call_llama(prompt)
-        if llama_answer:
-            return llama_answer
-        return f"[No context] Query: {query}"
+        if allow_ungrounded:
+            prompt = _build_prompt(
+                query,
+                context_block="[No external context]",
+                decomposition=decomposition,
+                memory_block=memory_block,
+            )
+            llama_answer = _call_llama(prompt)
+            if llama_answer:
+                return llama_answer
+        return (
+            "I couldn't find relevant OpenTrace sources (news, research, policy, public reports, "
+            "or BigQuery data) for this question. Try naming a specific country, crop, or dataset, "
+            "or confirm the Qdrant collections are loaded."
+        )
 
     content_key = "content" if any("content" in c for c in context_items) else "text"
     ctx_budget = 6000

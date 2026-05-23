@@ -35,7 +35,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
         "--doc-kind",
         type=str,
         default="academic_article",
-        choices=("academic_article", "policy_report"),
+        choices=("academic_article", "policy_document", "public_report"),
     )
     return p
 

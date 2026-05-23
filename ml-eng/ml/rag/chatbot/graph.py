@@ -10,10 +10,11 @@ from typing import Any, TypedDict
 
 from ml.rag.chatbot.bq_table_matcher import match_bq_tables_from_descriptions
 from ml.rag.chatbot.generator import generate
-from ml.rag.chatbot.query_decomposer import decompose_query
+from ml.rag.chatbot.query_decomposer import decompose_query, resolve_news_geo
 from ml.rag.chatbot.reranker import rerank
 from ml.rag.retrievers.bq_retriever import BQRetriever
 from ml.rag.retrievers.vector_retriever import VectorRetriever
+from ml.rag.text_processors.preprocess.bibliographic_metadata import format_academic_citation
 
 
 class RAGGraphState(TypedDict, total=False):
@@ -55,26 +56,26 @@ def _tag_vector(item: dict[str, Any], kind: str) -> dict[str, Any]:
     }
 
 
+_RESEARCH_DOC_KINDS = ("academic_article", "policy_document", "public_report")
+
+
 def _retrieve_news(state: RAGGraphState) -> list[dict[str, Any]]:
     q = (state.get("query") or "").strip()
     dec = state.get("decomposition") or {}
     news_coll = os.environ.get("QDRANT_COLLECTION_NEWS", "news_data").strip() or "news_data"
     vr = VectorRetriever(collection_name=news_coll)
-    geo = (state.get("geo_override") or "").strip()
-    if not geo:
-        geo_list = dec.get("geography") or []
-        geo = geo_list[0] if geo_list else ""
+    geo = resolve_news_geo(
+        geo_override=str(state.get("geo_override") or ""),
+        geography=dec.get("geography") if isinstance(dec.get("geography"), list) else None,
+    )
 
     ts = (state.get("time_start_override") or dec.get("time_start") or "").strip()[:10]
     te = (state.get("time_end_override") or dec.get("time_end") or "").strip()[:10]
-    domains = dec.get("domains") or []
-    domain_sub = domains[0] if domains else None
 
-    top_k = int(state.get("news_top_k") or 15)
+    top_k = int(state.get("news_top_k") or 20)
     kwargs: dict[str, Any] = {
         "doc_kind": "news_article",
         "top_k": top_k,
-        "overfetch_multiplier": 20,
     }
     if geo:
         kwargs["geo_country"] = geo
@@ -82,8 +83,11 @@ def _retrieve_news(state: RAGGraphState) -> list[dict[str, Any]]:
         kwargs["published_at_from"] = ts
     if te:
         kwargs["published_at_to"] = te
-    if domain_sub:
-        kwargs["domains_substring"] = domain_sub
+    # Domain substring filter is opt-in — it often zeroes results on broad trend/policy queries.
+    if os.environ.get("RAG_NEWS_DOMAIN_FILTER", "").strip().lower() in ("1", "true", "on", "yes"):
+        domains = dec.get("domains") or []
+        if domains:
+            kwargs["domains_substring"] = str(domains[0])
 
     raw = vr.retrieve(q, vector_search_mode="dense_named", **kwargs)
     return [_tag_vector(x, "news") for x in raw]
@@ -100,11 +104,26 @@ def _retrieve_academic(state: RAGGraphState) -> list[dict[str, Any]]:
     raw = vr.retrieve(
         q,
         top_k=top_k,
-        doc_kind="academic_article",
-        overfetch_multiplier=30,
-        vector_search_mode="research_dual",
+        doc_kinds=list(_RESEARCH_DOC_KINDS),
+        vector_search_mode="dense_named",
     )
-    return [_tag_vector(x, "academic") for x in raw]
+    return [_tag_vector(x, "research") for x in raw]
+
+
+def _research_context_label(meta: dict[str, Any]) -> tuple[str, str]:
+    """Return (source tag, content prefix) for a research-corpus chunk."""
+    dk = str(meta.get("doc_kind") or "").strip().lower()
+    if dk == "policy_document":
+        title = str(meta.get("section_title") or meta.get("label") or meta.get("source_file") or "").strip()
+        prefix = f"[Policy | {title}]" if title else "[Policy]"
+        return "policy", prefix
+    if dk == "public_report":
+        title = str(meta.get("section_title") or meta.get("label") or meta.get("source_file") or "").strip()
+        prefix = f"[Public report | {title}]" if title else "[Public report]"
+        return "public_report", prefix
+    cite = format_academic_citation(meta)
+    prefix = f"[Academic | {cite}]" if cite else "[Academic]"
+    return "academic", prefix
 
 
 def _retrieve_bq_tables(state: RAGGraphState) -> list[dict[str, Any]]:
@@ -181,11 +200,12 @@ def node_merge(state: RAGGraphState) -> dict[str, Any]:
     for item in state.get("vector_academic_results") or []:
         text = item.get("content") or ""
         meta = item.get("metadata") if isinstance(item.get("metadata"), dict) else {}
+        source_tag, label = _research_context_label(meta if isinstance(meta, dict) else {})
         merged.append(
             {
-                "content": f"[Academic] {text}",
-                "source": "academic",
-                "_context_kind": "academic",
+                "content": f"{label} {text}",
+                "source": source_tag,
+                "_context_kind": source_tag,
                 "metadata": meta,
                 "score": item.get("score"),
             }
@@ -196,7 +216,7 @@ def node_merge(state: RAGGraphState) -> dict[str, Any]:
 def node_rerank(state: RAGGraphState) -> dict[str, Any]:
     query = state.get("query") or ""
     merged = state.get("merged_context") or []
-    top_k = int(state.get("rerank_top_k") or 21)
+    top_k = int(state.get("rerank_top_k") or 20)
     top = rerank(query, merged, top_k=top_k)
     return {"reranked_context": top}
 

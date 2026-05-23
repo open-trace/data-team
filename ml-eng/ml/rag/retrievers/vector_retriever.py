@@ -6,9 +6,9 @@ the vector store implementation to be swapped. In this repo, RAG uses Qdrant Clo
 
 Typical collection layouts (embedding model must match how points were indexed):
 
-  news_data / research_other_papers        – single unnamed vector (mode: **legacy**; e5-small / e5-base)
+  news_data / research_other_papers        – single named ``dense`` vector (mode: **dense_named**; e5-small)
   legacy dual-vector collections           – named ``sentence`` + ``semantic`` (mode: **dual**)
-  research_other_papers (alt schema)       – ``abstract_vector`` + ``content_vector`` (mode: **research_dual**)
+  research_other_papers (legacy schema)    – ``abstract_vector`` + ``content_vector`` (mode: **research_dual**)
   data descriptions (DOCX loader)          – named ``sentence`` only (mode: **sentence_named**)
   OTA_insights                             – insight / metric / recommendation (mode: **ota_triple**)
   BQ_table_descriptions (triple schema)    – table / schema / business (mode: **bq_triple**)
@@ -29,6 +29,24 @@ DEFAULT_MODEL = "intfloat/multilingual-e5-small"
 
 def _env(name: str, default: str = "") -> str:
     return os.environ.get(name, default).strip()
+
+
+def _research_exclude_roles() -> frozenset[str]:
+    from ml.rag.text_processors.preprocess.section_roles import (
+        exclude_boilerplate_enabled,
+        research_excluded_roles,
+    )
+
+    if not exclude_boilerplate_enabled():
+        return frozenset()
+    return research_excluded_roles()
+
+
+def _is_research_collection(collection_name: str) -> bool:
+    try:
+        return profile_for_collection(collection_name).corpus == "research"
+    except Exception:
+        return False
 
 
 def embedding_model_id(collection_name: str | None = None) -> str:
@@ -60,8 +78,8 @@ def _embed_texts_for_indexing(
 
 
 def _get_qdrant_config() -> tuple[str, str, str, float]:
-    url = _env("QDRANT_URL")
-    api_key = _env("QDRANT_API_KEY")
+    url = _env("QDRANT_URL").strip('"').strip("'")
+    api_key = _env("QDRANT_API_KEY").strip('"').strip("'")
     collection = _env("QDRANT_COLLECTION", "opentrace_rag") or "opentrace_rag"
     try:
         timeout_s = float(_env("QDRANT_TIMEOUT_S", "30") or 30)
@@ -73,6 +91,19 @@ def _get_qdrant_config() -> tuple[str, str, str, float]:
             "(and optionally QDRANT_COLLECTION, QDRANT_TIMEOUT_S)."
         )
     return url, api_key, collection, timeout_s
+
+
+def make_qdrant_client(*, timeout_s: float | None = None):
+    """Qdrant client using env config; skips client/server version compatibility check."""
+    from qdrant_client import QdrantClient
+
+    url, api_key, _, default_timeout = _get_qdrant_config()
+    return QdrantClient(
+        url=url,
+        api_key=api_key,
+        timeout=int(timeout_s if timeout_s is not None else default_timeout or 30),
+        check_compatibility=False,
+    )
 
 
 def _embed_texts(texts: list[str], *, model_id: str, mode: str) -> list[list[float]]:
@@ -124,16 +155,19 @@ def _embed_texts(texts: list[str], *, model_id: str, mode: str) -> list[list[flo
 def build_qdrant_filter(
     *,
     doc_kind: str | None = None,
+    doc_kinds: list[str] | None = None,
     geo_country: str | None = None,
     published_at_from: str | None = None,
     published_at_to: str | None = None,
     domains_substring: str | None = None,
+    exclude_section_roles: frozenset[str] | None = None,
 ) -> Any | None:
     """Build a Qdrant Filter for indexed payload fields (requires payload indexes)."""
     try:
         from qdrant_client.http.models import (
             FieldCondition,
             Filter,
+            MatchAny,
             MatchText,
             MatchValue,
             Range,
@@ -142,9 +176,18 @@ def build_qdrant_filter(
         return None
 
     must: list[Any] = []
+    must_not: list[Any] = []
 
-    if doc_kind:
-        must.append(FieldCondition(key="doc_kind", match=MatchValue(value=doc_kind)))
+    kinds: list[str] = []
+    if doc_kinds:
+        kinds = [str(k).strip() for k in doc_kinds if str(k).strip()]
+    elif doc_kind:
+        kinds = [doc_kind.strip()]
+    if kinds:
+        if len(kinds) == 1:
+            must.append(FieldCondition(key="doc_kind", match=MatchValue(value=kinds[0])))
+        else:
+            must.append(FieldCondition(key="doc_kind", match=MatchAny(any=kinds)))
 
     if geo_country:
         gc = geo_country.strip()
@@ -175,9 +218,13 @@ def build_qdrant_filter(
         if ds:
             must.append(FieldCondition(key="domains", match=MatchText(text=ds)))
 
-    if not must:
+    if exclude_section_roles:
+        for role in sorted(exclude_section_roles):
+            must_not.append(FieldCondition(key="section_role", match=MatchValue(value=role)))
+
+    if not must and not must_not:
         return None
-    return Filter(must=must)
+    return Filter(must=must or None, must_not=must_not or None)
 
 
 def _safe_payload(meta: dict[str, Any]) -> dict[str, str | int | float | bool]:
@@ -234,6 +281,23 @@ _BQ_USING: dict[str, tuple[str, ...]] = {
 }
 
 
+def _sparse_names_for_collection(collection_name: str) -> tuple[str, ...]:
+    """Sparse vector names for hybrid RRF when enabled for this collection."""
+    try:
+        from ml.rag.sparse_embeddings import hybrid_search_enabled, sparse_embeddings_enabled
+        from ml.rag.scripts.qdrant_collection_specs import sparse_vector_names
+    except ImportError:
+        return ()
+    if not hybrid_search_enabled() or not sparse_embeddings_enabled():
+        return ()
+    prof = profile_for_collection(collection_name)
+    return sparse_vector_names(prof.corpus)
+
+
+def _collection_has_hybrid_sparse(collection_name: str) -> bool:
+    return bool(_sparse_names_for_collection(collection_name))
+
+
 class VectorRetriever(BaseRetriever):
     """
     Qdrant Cloud retriever.
@@ -247,6 +311,9 @@ class VectorRetriever(BaseRetriever):
       - RAG_QDRANT_RESEARCH_QUERY_USING=abstract|content|both
       - RAG_QDRANT_OTA_QUERY_USING=insight|metric|recommendation|merge
       - RAG_QDRANT_BQ_QUERY_USING=table|schema|business|merge
+      - RAG_SPARSE_EMBEDDINGS=on|off (BM25 sparse vectors on upsert; default on)
+      - RAG_QDRANT_HYBRID_SEARCH=on|off (dense+sparse RRF at query; default on)
+      - RAG_HYBRID_DENSE_PREFETCH / RAG_HYBRID_SPARSE_PREFETCH / RAG_HYBRID_FUSION_LIMIT (default 20 each)
     """
 
     def __init__(
@@ -270,7 +337,7 @@ class VectorRetriever(BaseRetriever):
             from qdrant_client import QdrantClient
         except ImportError as e:
             raise ImportError("Install qdrant-client: pip install qdrant-client") from e
-        self._client = QdrantClient(url=url, api_key=api_key, timeout=int(timeout_s))
+        self._client = make_qdrant_client(timeout_s=timeout_s)
         return self._client
 
     def _ensure_collection(self) -> None:
@@ -296,26 +363,28 @@ class VectorRetriever(BaseRetriever):
         meta: dict[str, Any],
         *,
         doc_kind: str | None,
+        doc_kinds: list[str] | None = None,
         geo_country: str | None,
         published_at_from: str | None,
         published_at_to: str | None,
         domains_substring: str | None,
+        exclude_section_roles: frozenset[str] | None = None,
     ) -> bool:
-        if doc_kind:
+        allowed_kinds: list[str] = []
+        if doc_kinds:
+            allowed_kinds = [str(k).strip() for k in doc_kinds if str(k).strip()]
+        elif doc_kind:
+            allowed_kinds = [doc_kind.strip()]
+
+        if allowed_kinds:
             dk = str(meta.get("doc_kind") or "").strip()
             it = str(meta.get("info_type") or "").strip()
-            if doc_kind == "news_article":
-                if dk != "news_article" and it != "news_article":
-                    return False
-            elif doc_kind == "academic_article":
-                if dk != "academic_article" and it != "academic_article":
-                    return False
-            elif doc_kind == "bq_table_description":
-                if dk != "bq_table_description":
-                    st = str(meta.get("type") or "")
-                    if not st.strip().lower().startswith("bq "):
-                        return False
-            elif dk != doc_kind and it != doc_kind:
+            matched = dk in allowed_kinds or it in allowed_kinds
+            if not matched and "bq_table_description" in allowed_kinds:
+                matched = dk == "bq_table_description" or str(meta.get("type") or "").strip().lower().startswith(
+                    "bq "
+                )
+            if not matched:
                 return False
 
         if geo_country:
@@ -337,9 +406,54 @@ class VectorRetriever(BaseRetriever):
             if domains_substring.lower() not in str(ds).lower():
                 return False
 
+        if exclude_section_roles:
+            role = str(meta.get("section_role") or "").strip().lower()
+            if role in exclude_section_roles:
+                return False
+
         return True
 
     # -- internal: query by named vectors ------------------------------------
+
+    def _query_hybrid(
+        self,
+        query: str,
+        dense_names: tuple[str, ...],
+        sparse_names: tuple[str, ...],
+        *,
+        dense_prefetch: int,
+        sparse_prefetch: int,
+        fusion_limit: int,
+        q_filter: Any,
+    ) -> list[Any]:
+        """Dense + sparse prefetch fused with reciprocal rank fusion (RRF)."""
+        from ml.rag.sparse_embeddings import embed_sparse_query
+        from qdrant_client.http.models import Fusion, FusionQuery, Prefetch
+
+        client = self._get_client()
+        collection = self.collection_name
+        qv = _embed_texts_for_indexing(
+            [query], model_id=self._embed_model_id, mode=self._embed_mode, is_query=True
+        )[0]
+        sqv = embed_sparse_query(query)
+
+        query_kwargs: dict[str, Any] = {"limit": fusion_limit, "with_payload": True}
+        if q_filter is not None:
+            query_kwargs["query_filter"] = q_filter
+
+        prefetch: list[Any] = []
+        for vname in dense_names:
+            prefetch.append(Prefetch(query=qv, using=vname, limit=dense_prefetch))
+        for sname in sparse_names:
+            prefetch.append(Prefetch(query=sqv, using=sname, limit=sparse_prefetch))
+
+        resp = client.query_points(
+            collection_name=collection,
+            prefetch=prefetch,
+            query=FusionQuery(fusion=Fusion.RRF),
+            **query_kwargs,
+        )
+        return resp.points or []
 
     def _query_named_vectors(
         self,
@@ -347,8 +461,36 @@ class VectorRetriever(BaseRetriever):
         vector_names: tuple[str, ...],
         fetch_n: int,
         q_filter: Any,
+        *,
+        top_k: int,
+        sparse_names: tuple[str, ...] | None = None,
     ) -> list[Any]:
-        """Embed query once, search each named vector, merge by highest score."""
+        """Embed query once, search dense named vectors; optionally hybrid with sparse RRF."""
+        if sparse_names is None:
+            sparse_names = _sparse_names_for_collection(self.collection_name)
+        if sparse_names:
+            try:
+                from ml.rag.sparse_embeddings import (
+                    hybrid_dense_prefetch_limit,
+                    hybrid_fusion_limit,
+                    hybrid_sparse_prefetch_limit,
+                )
+
+                return self._query_hybrid(
+                    query,
+                    vector_names,
+                    sparse_names,
+                    dense_prefetch=hybrid_dense_prefetch_limit(),
+                    sparse_prefetch=hybrid_sparse_prefetch_limit(),
+                    fusion_limit=hybrid_fusion_limit(top_k=top_k),
+                    q_filter=q_filter,
+                )
+            except ImportError:
+                pass
+            except Exception:
+                # Fall back to dense-only if hybrid fails (e.g. empty sparse index).
+                pass
+
         client = self._get_client()
         collection = self.collection_name
         qv = _embed_texts_for_indexing(
@@ -389,13 +531,18 @@ class VectorRetriever(BaseRetriever):
 
         Kwargs:
           vector_search_mode: legacy | dual | sentence_named | research_dual | ota_triple | bq_triple
-          doc_kind / geo_country / published_at_from / published_at_to / domains_substring
+          doc_kind / doc_kinds / geo_country / published_at_from / published_at_to / domains_substring
         """
         doc_kind = kwargs.get("doc_kind")
         if isinstance(doc_kind, str):
             doc_kind = doc_kind.strip() or None
         else:
             doc_kind = None
+
+        raw_doc_kinds = kwargs.get("doc_kinds")
+        doc_kinds: list[str] | None = None
+        if isinstance(raw_doc_kinds, (list, tuple)):
+            doc_kinds = [str(k).strip() for k in raw_doc_kinds if str(k).strip()] or None
 
         geo_country = kwargs.get("geo_country")
         if isinstance(geo_country, str):
@@ -421,9 +568,7 @@ class VectorRetriever(BaseRetriever):
         else:
             domains_substring = None
 
-        has_filters = any([doc_kind, geo_country, published_at_from, published_at_to, domains_substring])
-        overfetch = int(kwargs.get("overfetch_multiplier", 8 if has_filters else 1))
-        overfetch = max(1, min(overfetch, 50))
+        has_filters = any([doc_kind, doc_kinds, geo_country, published_at_from, published_at_to, domains_substring])
 
         vector_search_mode = kwargs.pop("vector_search_mode", None)
         if vector_search_mode is None:
@@ -432,15 +577,24 @@ class VectorRetriever(BaseRetriever):
 
         client = self._get_client()
         collection = self.collection_name
+        use_hybrid = _collection_has_hybrid_sparse(collection)
+        if use_hybrid:
+            overfetch = 1
+        else:
+            overfetch = int(kwargs.get("overfetch_multiplier", 8 if has_filters else 1))
+            overfetch = max(1, min(overfetch, 50))
         fetch_n = max(top_k, top_k * overfetch)
+        exclude_section_roles = _research_exclude_roles() if _is_research_collection(collection) else frozenset()
 
         try:
             q_filter = build_qdrant_filter(
                 doc_kind=doc_kind,
+                doc_kinds=doc_kinds,
                 geo_country=geo_country,
                 published_at_from=published_at_from,
                 published_at_to=published_at_to,
                 domains_substring=domains_substring,
+                exclude_section_roles=exclude_section_roles,
             )
         except Exception:
             q_filter = None
@@ -471,33 +625,33 @@ class VectorRetriever(BaseRetriever):
                 vector_names = ("semantic",)
             else:
                 vector_names = DUAL_SENTENCE_SEMANTIC
-            hits = self._query_named_vectors(query, vector_names, fetch_n, q_filter)
+            hits = self._query_named_vectors(query, vector_names, fetch_n, q_filter, top_k=top_k)
 
         # ----- dense_named: single named ``dense`` vector (news_data) -----
         elif vector_search_mode == "dense_named":
-            hits = self._query_named_vectors(query, ("dense",), fetch_n, q_filter)
+            hits = self._query_named_vectors(query, ("dense",), fetch_n, q_filter, top_k=top_k)
 
         # ----- sentence_named: single named ``sentence`` vector ------------
         elif vector_search_mode == "sentence_named":
-            hits = self._query_named_vectors(query, ("sentence",), fetch_n, q_filter)
+            hits = self._query_named_vectors(query, ("sentence",), fetch_n, q_filter, top_k=top_k)
 
         # ----- research_dual: abstract_vector + content_vector --------------
         elif vector_search_mode == "research_dual":
             using = _env("RAG_QDRANT_RESEARCH_QUERY_USING", "content").lower()
             vector_names = _RESEARCH_USING.get(using, ("content_vector",))
-            hits = self._query_named_vectors(query, vector_names, fetch_n, q_filter)
+            hits = self._query_named_vectors(query, vector_names, fetch_n, q_filter, top_k=top_k)
 
         # ----- ota_triple: insight / metric / recommendation ----------------
         elif vector_search_mode == "ota_triple":
             using = _env("RAG_QDRANT_OTA_QUERY_USING", "merge").lower()
             vector_names = _OTA_USING.get(using, OTA_VECTORS)
-            hits = self._query_named_vectors(query, vector_names, fetch_n, q_filter)
+            hits = self._query_named_vectors(query, vector_names, fetch_n, q_filter, top_k=top_k)
 
         # ----- bq_triple: table / schema / business -------------------------
         elif vector_search_mode == "bq_triple":
             using = _env("RAG_QDRANT_BQ_QUERY_USING", "merge").lower()
             vector_names = _BQ_USING.get(using, BQ_VECTORS)
-            hits = self._query_named_vectors(query, vector_names, fetch_n, q_filter)
+            hits = self._query_named_vectors(query, vector_names, fetch_n, q_filter, top_k=top_k)
 
         else:
             raise ValueError(
@@ -515,10 +669,12 @@ class VectorRetriever(BaseRetriever):
             if not self._metadata_passes_filters(
                 meta,
                 doc_kind=doc_kind,
+                doc_kinds=doc_kinds,
                 geo_country=geo_country,
                 published_at_from=published_at_from,
                 published_at_to=published_at_to,
                 domains_substring=domains_substring,
+                exclude_section_roles=exclude_section_roles,
             ):
                 continue
             items.append(

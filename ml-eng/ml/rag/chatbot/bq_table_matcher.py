@@ -43,6 +43,21 @@ def _table_name_from_item(item: dict[str, Any]) -> str:
     return ""
 
 
+def _catalog_schema_for_table(
+    catalog: dict[str, str],
+    table_name: str,
+    meta: dict[str, Any],
+) -> str | None:
+    schema = catalog.get(table_name) or catalog.get(table_name.strip())
+    if schema:
+        return schema
+    bq_id = str(meta.get("bq_table_id") or "").strip()
+    if bq_id:
+        short = bq_id.split(".")[-1]
+        return catalog.get(short) or catalog.get(short.strip())
+    return None
+
+
 def _build_fused_content(
     table_name: str,
     narrative: str,
@@ -84,15 +99,19 @@ def match_bq_tables_from_descriptions(
     )
     catalog = load_bronze_table_schemas()
 
-    # table_name -> list of (score, content)
-    groups: dict[str, list[tuple[float, str]]] = {}
+    # table_name -> list of (score, content, meta)
+    groups: dict[str, list[tuple[float, str, dict[str, Any]]]] = {}
+    metas_by_table: dict[str, dict[str, Any]] = {}
     for item in raw:
         tn = _table_name_from_item(item)
         if not tn:
             continue
         score = float(item.get("score") or 0.0)
         content = str(item.get("content") or "").strip()
+        md = item.get("metadata") if isinstance(item.get("metadata"), dict) else {}
         groups.setdefault(tn, []).append((score, content))
+        if tn not in metas_by_table and isinstance(md, dict):
+            metas_by_table[tn] = md
 
     out: list[dict[str, Any]] = []
     for tn, scored_chunks in groups.items():
@@ -105,7 +124,7 @@ def match_bq_tables_from_descriptions(
             if len(scored_chunks[1][1]) > 400:
                 second += "…"
 
-        schema = catalog.get(tn) or catalog.get(tn.strip())
+        schema = _catalog_schema_for_table(catalog, tn, metas_by_table.get(tn, {}))
         fused = _build_fused_content(tn, primary, second, schema)
 
         meta_base = {"table_name": tn, "catalog_matched": bool(schema)}

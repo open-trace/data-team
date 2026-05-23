@@ -55,6 +55,8 @@ def enrich_metadata(
     hierarchy_path: str = "",
     parent_chunk_id: str | None = None,
     semantic_lane: str = "",
+    section_role: str = "",
+    content_type: str = "",
 ) -> dict[str, Any]:
     out = dict(meta)
     out["document_id"] = document_id
@@ -72,6 +74,10 @@ def enrich_metadata(
         out["parent_chunk_id"] = parent_chunk_id
     if semantic_lane:
         out["semantic_lane"] = semantic_lane
+    if section_role:
+        out["section_role"] = section_role
+    if content_type:
+        out["content_type"] = content_type
     out["id"] = make_chunk_id(
         corpus=corpus,
         document_id=document_id,
