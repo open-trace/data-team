@@ -1,6 +1,9 @@
 """
 Match user queries to BigQuery table description chunks in the vector DB, then enrich
-with structured column catalogs from bronze_dataset_model.yml (or dbt sources fallback).
+with structured per-table schemas (``ml/rag/bq_tables_yaml_files/*.yml``) and the
+flat column catalog (``bronze_dataset_model.yml`` / dbt sources fallback) so each
+fused hint carries semantic context the NL-to-SQL prompt can actually use:
+grain, keys, joins, aggregation rules, filtering guidance, sql_generation_hints.
 
 Output is one item per distinct table, ordered by best vector score, with ``content`` suitable
 for ``BQRetriever`` ``table_hints``.
@@ -11,6 +14,7 @@ import os
 import re
 from typing import Any
 
+from ml.rag.chatbot.bq_table_schema_yaml import format_table_schema
 from ml.rag.chatbot.bronze_dataset_catalog import load_bronze_table_schemas
 from ml.rag.retrievers.vector_retriever import VectorRetriever
 
@@ -63,12 +67,24 @@ def _build_fused_content(
     narrative: str,
     second_excerpt: str,
     catalog_schema: str | None,
+    *,
+    rich_schema: str | None = None,
 ) -> str:
+    """Compose the SQL-prompt block for one table.
+
+    Order chosen so the most-actionable signal (rich per-table YAML schema)
+    sits closest to the question in the final prompt. ``catalog_schema``
+    (flat column list) is included only as a column-naming fallback when
+    the rich YAML block is unavailable.
+    """
     parts = [f"Bronze table: {table_name}"]
-    if catalog_schema:
+    if rich_schema and rich_schema.strip():
+        parts.append("Schema (semantic):")
+        parts.append(rich_schema.strip())
+    elif catalog_schema:
         parts.append(f"Catalog (columns): {catalog_schema}")
     else:
-        parts.append("Catalog (columns): (not listed in bronze dataset model — use live schema).")
+        parts.append("Catalog (columns): (not listed — fall back to BigQuery live schema).")
     ne = narrative.strip()
     if second_excerpt.strip():
         ne = f"{ne}\n\n{second_excerpt.strip()}"
@@ -108,9 +124,10 @@ def match_bq_tables_from_descriptions(
             continue
         score = float(item.get("score") or 0.0)
         content = str(item.get("content") or "").strip()
-        md = item.get("metadata") if isinstance(item.get("metadata"), dict) else {}
-        groups.setdefault(tn, []).append((score, content))
-        if tn not in metas_by_table and isinstance(md, dict):
+        raw_md = item.get("metadata")
+        md: dict[str, Any] = raw_md if isinstance(raw_md, dict) else {}
+        groups.setdefault(tn, []).append((score, content, md))
+        if tn not in metas_by_table:
             metas_by_table[tn] = md
 
     out: list[dict[str, Any]] = []
@@ -125,9 +142,20 @@ def match_bq_tables_from_descriptions(
                 second += "…"
 
         schema = _catalog_schema_for_table(catalog, tn, metas_by_table.get(tn, {}))
-        fused = _build_fused_content(tn, primary, second, schema)
+        # Rich per-table YAML (grain, keys, joins, sql_generation_hints, etc.).
+        rich = format_table_schema(tn)
+        if not rich:
+            # Fall back to the FQN if the bare-name lookup missed.
+            bq_id = str(metas_by_table.get(tn, {}).get("bq_table_id") or "").strip()
+            if bq_id:
+                rich = format_table_schema(bq_id)
+        fused = _build_fused_content(tn, primary, second, schema, rich_schema=rich)
 
-        meta_base = {"table_name": tn, "catalog_matched": bool(schema)}
+        meta_base = {
+            "table_name": tn,
+            "catalog_matched": bool(schema),
+            "rich_schema_matched": bool(rich),
+        }
         out.append(
             {
                 "content": fused,

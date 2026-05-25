@@ -7,9 +7,8 @@ from __future__ import annotations
 import os
 from typing import Any
 
-import requests
-
 from ml.rag.chat_history import normalize_messages
+from ml.rag.llm_chat import llm_chat_complete, llm_model_id
 
 _SUMMARY_SYSTEM = (
     "You compress chat history into a single factual running summary. "
@@ -77,45 +76,27 @@ def _pair_to_text(pair: list[dict[str, str]]) -> str:
 
 def merge_summary_llm(existing_summary: str, evicted_pair: list[dict[str, str]]) -> str:
     """Return merged summary; empty string if caller should use stub."""
-    api_token = os.environ.get("HF_API_TOKEN")
-    model_id = os.environ.get("RAG_SUMMARY_MODEL_ID") or os.environ.get(
-        "RAG_LLM_MODEL_ID", "meta-llama/Llama-3.1-8B-Instruct"
-    )
-    if not api_token:
+    if not os.environ.get("HF_API_TOKEN") and not os.environ.get("RAG_LLM_BASE_URL", "").strip():
         return ""
 
+    model_id = os.environ.get("RAG_SUMMARY_MODEL_ID") or llm_model_id()
     new_text = _pair_to_text(evicted_pair)
     user_block = (
         f"Current running summary (may be empty):\n{existing_summary.strip()}\n\n"
         f"Oldest turn to fold in:\n{new_text}\n\n"
         "Write the updated running summary only."
     )
-    url = "https://router.huggingface.co/v1/chat/completions"
-    headers = {
-        "Authorization": f"Bearer {api_token}",
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-    }
-    payload = {
-        "model": model_id,
-        "messages": [
+    out = llm_chat_complete(
+        [
             {"role": "system", "content": _SUMMARY_SYSTEM},
             {"role": "user", "content": user_block},
         ],
-        "max_tokens": 512,
-        "temperature": 0.2,
-    }
-    try:
-        resp = requests.post(url, headers=headers, json=payload, timeout=60)
-        if resp.status_code in (410, 503, 502, 429):
-            return ""
-        resp.raise_for_status()
-        data = resp.json()
-        out = str(data["choices"][0]["message"]["content"]).strip()
-        cap = default_summary_max_chars()
-        return out[:cap] if out else ""
-    except Exception:
-        return ""
+        model=model_id,
+        max_tokens=512,
+        temperature=0.2,
+    )
+    cap = default_summary_max_chars()
+    return out[:cap] if out else ""
 
 
 def fold_pair_into_summary(existing_summary: str, evicted_pair: list[dict[str, str]]) -> str:

@@ -5,7 +5,7 @@ From repo root:
 
   PYTHONPATH=. python -m ml.rag.check_hf
 
-Loads ``data/local/.env`` (same rules as ``local_env``). Checks:
+Loads ``data/local/.env`` and ``config/.env`` (same rules as ``local_env.load_rag_dotenv``).
 
 1. ``whoami-v2`` — token is valid for the Hub.
 2. Chat completion — ``huggingface_hub.InferenceClient.chat.completions`` (non-stream),
@@ -26,12 +26,12 @@ import requests
 
 from ml.rag.hf_chat import hf_chat_sync
 from ml.rag.hf_token import get_hf_api_token
-from ml.rag.local_env import load_data_local_dotenv
+from ml.rag.local_env import load_rag_dotenv
 
 
 def main() -> int:
     repo_root = Path(__file__).resolve().parents[2]
-    load_data_local_dotenv(repo_root)
+    load_rag_dotenv(repo_root)
 
     token = get_hf_api_token()
     if not token:
@@ -87,6 +87,8 @@ def main() -> int:
         "\nCommon causes:\n"
         "  • Missing/invalid token — set HF_API_TOKEN / HUGGINGFACE_HUB_TOKEN / HF_TOKEN.\n"
         "  • Gated model — accept the license on the model card.\n"
+        "  • HF inference billing (402) — add credits at huggingface.co/settings/billing, "
+        "or set RAG_LLM_BASE_URL to a local OpenAI-compatible server (LM Studio).\n"
         "  • Model not available on your inference provider — try another RAG_LLM_MODEL_ID.\n",
         file=sys.stderr,
     )

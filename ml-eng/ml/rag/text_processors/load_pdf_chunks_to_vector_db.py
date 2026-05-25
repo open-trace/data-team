@@ -64,7 +64,7 @@ def _resolve_sparse_text(source: str, doc: str, meta: dict[str, Any]) -> str:
     val = meta.get(source)
     if isinstance(val, str) and val.strip():
         return val.strip()
-    return doc
+    return " "
 
 
 def _batch_sparse_vectors(
@@ -80,8 +80,11 @@ def _batch_sparse_vectors(
         return {}
     try:
         from ml.rag.sparse_embeddings import embed_sparse_documents, sparse_embeddings_enabled
-    except ImportError:
-        return {}
+    except ImportError as exc:
+        raise RuntimeError(
+            "Sparse embeddings requested (RAG_SPARSE_EMBEDDINGS on by default) but "
+            "fastembed is not installed. Install fastembed or set RAG_SPARSE_EMBEDDINGS=off."
+        ) from exc
     if not sparse_embeddings_enabled():
         return {}
 
@@ -1179,7 +1182,7 @@ def main() -> int:
     input_path: Path = args.input
 
     try:
-        inserted = upsert_jsonl_to_qdrant(
+        inserted = upsert_jsonl_to_qdrant_for_collection(
             input_path=input_path,
             collection=args.collection,
             reset=bool(args.reset),

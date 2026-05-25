@@ -8,27 +8,133 @@ Run from repo root: streamlit run ml/rag/streamlit_app.py
 """
 from __future__ import annotations
 
+import json
 import os
+import time
 import uuid
 from pathlib import Path
+from typing import Any
 
 # Load env: data/local/.env then config/.env (BQ + LLM keys not duplicated in local)
-_ml_eng = Path(__file__).resolve().parents[2]
-from ml.rag.local_env import load_data_local_dotenv
+# streamlit_app.py lives at ml-eng/ml/rag/chatbot/, so parents[3] is `ml-eng/` (load_rag_dotenv needs this).
+_ml_eng = Path(__file__).resolve().parents[3]
+from ml.rag.local_env import load_rag_dotenv
 
-load_data_local_dotenv(_ml_eng)
-_config_env = _ml_eng / "config" / ".env"
-if _config_env.exists():
-    for line in _config_env.read_text(encoding="utf-8").splitlines():
-        line = line.strip()
-        if not line or line.startswith("#") or "=" not in line:
-            continue
-        k, _, v = line.partition("=")
-        k, v = k.strip(), v.strip().strip('"').strip("'")
-        if k.lower().startswith("export "):
-            k = k[7:].strip()
-        if k and k not in os.environ:
-            os.environ[k] = v
+# #region agent log
+_WORKSPACE_ROOT = Path(__file__).resolve().parents[4]  # data-team workspace root
+
+
+def _agent_debug_log_runtime(location: str, message: str, data: dict, hypothesis_id: str, run_id: str = "pre-fix") -> None:
+    try:
+        payload = {
+            "sessionId": "6c8b2f",
+            "id": f"log_{int(time.time()*1000)}_{uuid.uuid4().hex[:8]}",
+            "timestamp": int(time.time() * 1000),
+            "location": location,
+            "message": message,
+            "data": data,
+            "runId": run_id,
+            "hypothesisId": hypothesis_id,
+        }
+        with (_WORKSPACE_ROOT / "debug-6c8b2f.log").open("a", encoding="utf-8") as f:
+            f.write(json.dumps(payload) + "\n")
+    except Exception:
+        pass
+
+
+_agent_debug_log_runtime(
+    "streamlit_app.py:env_probe:before",
+    "about to load rag dotenv",
+    {
+        "ml_eng_root": str(_ml_eng),
+        "cwd": str(Path.cwd()),
+        "config_env_exists": (_ml_eng / "config" / ".env").is_file(),
+        "data_local_env_exists": (_ml_eng / "data" / "local" / ".env").is_file(),
+    },
+    "A",
+)
+# #endregion
+
+load_rag_dotenv(_ml_eng)
+
+# #region agent log
+_agent_debug_log_runtime(
+    "streamlit_app.py:env_probe:after",
+    "loaded rag dotenv",
+    {
+        "qdrant_url_present": bool(os.environ.get("QDRANT_URL", "").strip()),
+        "qdrant_api_key_present": bool(os.environ.get("QDRANT_API_KEY", "").strip()),
+        "qdrant_url_len": len(os.environ.get("QDRANT_URL", "")),
+        "qdrant_api_key_len": len(os.environ.get("QDRANT_API_KEY", "")),
+        "rag_llm_base_url": os.environ.get("RAG_LLM_BASE_URL", ""),
+        "rag_llm_model_id": os.environ.get("RAG_LLM_MODEL_ID", ""),
+    },
+    "D",
+)
+
+
+def _probe_qdrant_collection_dims() -> None:
+    """Introspect all RAG collections to compare ingest-time vs query-time dims (H-E/F/G)."""
+    try:
+        from qdrant_client import QdrantClient
+
+        url = os.environ.get("QDRANT_URL", "").strip().strip('"').strip("'")
+        api_key = os.environ.get("QDRANT_API_KEY", "").strip().strip('"').strip("'")
+        if not url or not api_key:
+            return
+        client = QdrantClient(url=url, api_key=api_key, check_compatibility=False, timeout=30)
+        targets = [
+            ("news_data", os.environ.get("QDRANT_COLLECTION_NEWS", "news_data")),
+            ("research_other_papers", os.environ.get("QDRANT_COLLECTION_RESEARCH_PAPERS", "research_other_papers")),
+            ("BQ_table_descriptions", os.environ.get("QDRANT_COLLECTION_DATA_DESCRIPTIONS", "BQ_table_descriptions")),
+            ("OTA_insights", os.environ.get("QDRANT_COLLECTION_OTA_INSIGHTS", "OTA_insights")),
+        ]
+        for label, name in targets:
+            try:
+                info = client.get_collection(collection_name=name)
+                params = getattr(info.config, "params", None)
+                vectors = getattr(params, "vectors", None) if params is not None else None
+                sparse = getattr(params, "sparse_vectors", None) if params is not None else None
+                # vectors may be either a single VectorParams or dict[name->VectorParams]
+                dense_summary: dict[str, Any] = {}
+                if hasattr(vectors, "size"):
+                    dense_summary["<unnamed>"] = {"size": getattr(vectors, "size", None), "distance": str(getattr(vectors, "distance", ""))}
+                elif isinstance(vectors, dict):
+                    for vname, vparams in vectors.items():
+                        dense_summary[vname] = {
+                            "size": getattr(vparams, "size", None),
+                            "distance": str(getattr(vparams, "distance", "")),
+                        }
+                sparse_names = list(sparse.keys()) if isinstance(sparse, dict) else []
+                _agent_debug_log_runtime(
+                    "streamlit_app.py:qdrant_collection_probe",
+                    f"collection dims for {label}",
+                    {
+                        "collection": name,
+                        "points_count": getattr(info, "points_count", None),
+                        "dense_vectors": dense_summary,
+                        "sparse_vector_names": sparse_names,
+                    },
+                    "E",
+                )
+            except Exception as exc:
+                _agent_debug_log_runtime(
+                    "streamlit_app.py:qdrant_collection_probe",
+                    f"collection probe failed for {label}",
+                    {"collection": name, "error": str(exc)[:200]},
+                    "E",
+                )
+    except Exception as exc:
+        _agent_debug_log_runtime(
+            "streamlit_app.py:qdrant_collection_probe",
+            "client init failed",
+            {"error": str(exc)[:200]},
+            "E",
+        )
+
+
+_probe_qdrant_collection_dims()
+# #endregion
 
 import streamlit as st
 
@@ -84,12 +190,11 @@ except Exception:
     pass
 
 try:
-    import streamlit.config as _st_config
-
+    # Use the public Streamlit API; streamlit.config is an internal module not in type stubs.
     _agent_debug_log(
         "streamlit_config_probe",
         {
-            "server.fileWatcherType": _st_config.get_option("server.fileWatcherType"),
+            "server.fileWatcherType": st.get_option("server.fileWatcherType"),
         },
         "B",
     )
@@ -137,7 +242,7 @@ from ml.rag.chat_memory import append_turn_and_compact
 st.set_page_config(page_title="OpenTrace RAG (test)", page_icon="🔍", layout="wide")
 st.title("OpenTrace RAG — test interface")
 st.caption(
-    "Decomposition → BQ table match + filtered news + academic → BigQuery → merge → rerank → answer"
+    "Decomposition → BQ table match + filtered news + academic → BigQuery (LM Studio NL-to-SQL) → merge → answer (LM Studio)"
 )
 
 
@@ -203,6 +308,19 @@ with st.sidebar:
         if st.button("Delete session"):
             _delete_active_session()
             st.rerun()
+
+    st.divider()
+    st.subheader("LLM backend")
+    from ml.rag.llm_chat import llm_chat_completions_url, llm_configured, llm_model_id
+
+    llm_url = llm_chat_completions_url() or "(not configured)"
+    st.caption(f"URL: {llm_url}")
+    st.caption(f"Model: {llm_model_id()}")
+    st.caption(f"Configured: {llm_configured()}")
+    rerank_on = os.environ.get("RAG_LLM_RERANK", "off").strip().lower() not in ("off", "0", "false")
+    st.caption(f"LLM rerank: {'on' if rerank_on else 'off (pass-through order)'}")
+    if not llm_configured():
+        st.warning("Set RAG_LLM_BASE_URL in ml-eng/config/.env and restart Streamlit.")
 
     st.divider()
     st.subheader("Retrieval controls")
@@ -275,24 +393,92 @@ if prompt:
         except Exception as e:
             st.exception(e)
 
+def _render_chunk_rows(items: list[dict[str, Any]], *, preview_chars: int = 600) -> None:
+    """Render retrieval/rerank chunks as collapsible rows with score, metadata, and content preview."""
+    if not items:
+        st.info("No items.")
+        return
+    for i, it in enumerate(items, start=1):
+        content = str(it.get("content") or "")
+        score = it.get("score")
+        raw_meta = it.get("metadata")
+        meta: dict[str, Any] = raw_meta if isinstance(raw_meta, dict) else {}
+        source = it.get("source") or it.get("_context_kind") or "?"
+        title_bits = [f"#{i}", f"[{source}]"]
+        if isinstance(score, (int, float)):
+            title_bits.append(f"score={score:.4f}")
+        # Helpful metadata: title/source_file/authors/doi/url/country/date.
+        for k in ("section_title", "label", "source_file", "title", "url", "doi", "table_name", "geo_country_primary", "country", "published_at"):
+            v = meta.get(k)
+            if isinstance(v, str) and v.strip():
+                title_bits.append(f"{k}={v.strip()[:50]}")
+                break
+        header = " · ".join(title_bits)
+        with st.expander(header, expanded=False):
+            if isinstance(score, (int, float)):
+                st.caption(f"score: {score:.6f}  ·  source: {source}")
+            if meta:
+                st.json({k: v for k, v in meta.items() if v is not None and v != ""}, expanded=False)
+            preview = content if len(content) <= preview_chars else content[:preview_chars] + "…"
+            st.markdown(preview if preview else "_(empty content)_")
+
+
 if show_debug and "last_rag_debug" in st.session_state:
     result = st.session_state.last_rag_debug
     with st.expander("Pipeline debug (last run)", expanded=True):
         dec = result.get("decomposition") or {}
         st.subheader("Query decomposition")
         st.json(dec)
-        c1, c2, c3 = st.columns(3)
+
+        c1, c2, c3, c4, c5 = st.columns(5)
         with c1:
             st.metric("BQ table-description matches", len(result.get("bq_table_candidates") or []))
         with c2:
-            st.metric("News chunks", len(result.get("vector_news_results") or []))
+            st.metric("BQ SQL queries", len(result.get("bq_sql_queries") or []))
         with c3:
+            st.metric("News chunks", len(result.get("vector_news_results") or []))
+        with c4:
             st.metric("Research corpus chunks", len(result.get("vector_academic_results") or []))
-        bq_rows = result.get("bq_results") or []
-        if bq_rows:
-            sql = (bq_rows[0].get("metadata") or {}).get("sql", "")
-            if sql:
+        with c5:
+            st.metric("Reranked → generator", len(result.get("reranked_context") or []))
+
+        bq_sql_list = result.get("bq_sql_queries") or []
+        if not bq_sql_list:
+            bq_rows = result.get("bq_results") or []
+            seen_sql: set[str] = set()
+            for row in bq_rows:
+                s = str((row.get("metadata") or {}).get("sql") or "").strip()
+                if s and s not in seen_sql:
+                    seen_sql.add(s)
+                    bq_sql_list.append(s)
+        if bq_sql_list:
+            st.subheader(f"BigQuery SQL ({len(bq_sql_list)} queries)")
+            for i, sql in enumerate(bq_sql_list, start=1):
+                st.caption(f"Query {i}")
                 st.code(sql, language="sql")
+
+        st.subheader("Retrieved from each collection")
+        tab_news, tab_research, tab_bq_desc, tab_bq_rows, tab_merged, tab_used = st.tabs([
+            f"News ({len(result.get('vector_news_results') or [])})",
+            f"Research / Policy / Public Report ({len(result.get('vector_academic_results') or [])})",
+            f"BQ table descriptions ({len(result.get('bq_table_candidates') or [])})",
+            f"BQ rows ({len(result.get('bq_results') or [])})",
+            f"Merged before rerank ({len(result.get('merged_context') or [])})",
+            f"Passed to generator ({len(result.get('reranked_context') or [])})",
+        ])
+        with tab_news:
+            _render_chunk_rows(list(result.get("vector_news_results") or []))
+        with tab_research:
+            _render_chunk_rows(list(result.get("vector_academic_results") or []))
+        with tab_bq_desc:
+            _render_chunk_rows(list(result.get("bq_table_candidates") or []))
+        with tab_bq_rows:
+            _render_chunk_rows(list(result.get("bq_results") or []))
+        with tab_merged:
+            _render_chunk_rows(list(result.get("merged_context") or []))
+        with tab_used:
+            st.caption("Items in this tab are the exact context block the generator (LLM) saw, in order.")
+            _render_chunk_rows(list(result.get("reranked_context") or []))
 
 st.divider()
 st.markdown("**CLI**")
