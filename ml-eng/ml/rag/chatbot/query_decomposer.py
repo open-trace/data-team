@@ -120,8 +120,25 @@ _COUNTRY_ALIASES = {
     "uganda": "Uganda",
     "zambia": "Zambia",
     "zimbabwe": "Zimbabwe",
-
 }
+
+# Continent / region tokens — not valid news geo_country filters (too broad or non-exact).
+_NON_COUNTRY_GEO: frozenset[str] = frozenset(
+    {
+        "africa",
+        "sub-saharan africa",
+        "sub saharan africa",
+        "east africa",
+        "west africa",
+        "southern africa",
+        "north africa",
+        "central africa",
+        "african continent",
+        "global",
+        "worldwide",
+        "international",
+    }
+)
 
 _DOMAIN_KEYWORDS = (
     "yield",
@@ -153,8 +170,45 @@ def _extract_countries(text: str) -> list[str]:
     return found
 
 
+def normalize_geography_for_filter(geography: list[str] | None) -> list[str]:
+    """Drop continent/region tokens that break exact country news filters."""
+    out: list[str] = []
+    for g in geography or []:
+        s = str(g).strip()
+        if not s or s.lower() in _NON_COUNTRY_GEO:
+            continue
+        if s not in out:
+            out.append(s)
+    return out
+
+
+def resolve_news_geo(*, geo_override: str, geography: list[str] | None) -> str | None:
+    """Pick at most one country for news filtering; skip continents/regions."""
+    if geo_override.strip():
+        g = geo_override.strip()
+        return None if g.lower() in _NON_COUNTRY_GEO else g
+    countries = normalize_geography_for_filter(geography)
+    return countries[0] if countries else None
+
+
+def _extract_relative_year_range(text: str) -> tuple[str | None, str | None]:
+    """Parse 'past 7 years', 'last 5 years', etc."""
+    from datetime import date
+
+    m = re.search(r"\b(?:past|last)\s+(\d{1,2})\s+years?\b", (text or "").lower())
+    if not m:
+        return None, None
+    n = max(1, min(50, int(m.group(1))))
+    end = date.today()
+    start = date(end.year - n, end.month, min(end.day, 28))
+    return start.isoformat(), end.isoformat()
+
+
 def _extract_year_range(text: str) -> tuple[str | None, str | None]:
     """Return (start_iso, end_iso) as YYYY-MM-DD or (None, None)."""
+    rel_start, rel_end = _extract_relative_year_range(text)
+    if rel_start and rel_end:
+        return rel_start, rel_end
     years = [int(m.group(0)) for m in re.finditer(r"\b(19|20)\d{2}\b", text)]
     if not years:
         return None, None
@@ -373,5 +427,6 @@ def decompose_query(query: str) -> dict[str, Any]:
     if not out["time_end"] and te:
         out["time_end"] = te
 
+    out["geography"] = normalize_geography_for_filter(out.get("geography"))
     out["intent"] = _normalize_intent(out.get("intent"))
     return out

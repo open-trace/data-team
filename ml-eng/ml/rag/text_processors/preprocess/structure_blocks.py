@@ -2,8 +2,11 @@ from __future__ import annotations
 
 import re
 from dataclasses import dataclass
+from typing import Literal
 
 from ml.rag.text_processors.preprocess.unstructured_fast import ParsedElement
+
+ContentType = Literal["prose", "table"]
 
 
 @dataclass(frozen=True)
@@ -11,11 +14,16 @@ class StructureBlock:
     hierarchy_path: str
     section_title: str
     text: str
+    content_type: ContentType = "prose"
 
 
 def _slug_heading(title: str) -> str:
     s = re.sub(r"[^a-z0-9]+", "_", (title or "").lower()).strip("_")
     return s[:120] or "section"
+
+
+def _is_table_element(kind: str) -> bool:
+    return kind in ("table",)
 
 
 def elements_to_blocks(elements: list[ParsedElement]) -> list[StructureBlock]:
@@ -25,7 +33,7 @@ def elements_to_blocks(elements: list[ParsedElement]) -> list[StructureBlock]:
     title_stack: list[str] = []
     buf: list[str] = []
 
-    def flush() -> None:
+    def flush(*, content_type: ContentType = "prose") -> None:
         nonlocal buf
         body = "\n\n".join(buf).strip()
         buf = []
@@ -33,7 +41,25 @@ def elements_to_blocks(elements: list[ParsedElement]) -> list[StructureBlock]:
             return
         hp = "/".join(path_stack) if path_stack else "body"
         st = title_stack[-1] if title_stack else "body"
-        blocks.append(StructureBlock(hierarchy_path=hp, section_title=st, text=body))
+        blocks.append(
+            StructureBlock(hierarchy_path=hp, section_title=st, text=body, content_type=content_type)
+        )
+
+    def append_table_block(text: str) -> None:
+        body = text.strip()
+        if not body:
+            return
+        hp = "/".join(path_stack) if path_stack else "body"
+        st = title_stack[-1] if title_stack else "body"
+        table_hp = f"{hp}/table" if hp else "table"
+        blocks.append(
+            StructureBlock(
+                hierarchy_path=table_hp,
+                section_title=st,
+                text=body,
+                content_type="table",
+            )
+        )
 
     for el in elements:
         text = (el.text or "").strip()
@@ -52,6 +78,10 @@ def elements_to_blocks(elements: list[ParsedElement]) -> list[StructureBlock]:
                     title_stack.pop()
             path_stack.append(slug)
             title_stack.append(text[:200])
+            continue
+        if _is_table_element(kind):
+            flush()
+            append_table_block(text)
             continue
         buf.append(text)
 

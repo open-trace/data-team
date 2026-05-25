@@ -29,6 +29,7 @@ google-auth-oauthlib>=1.2.0
 
 # Vector DB (Qdrant Cloud)
 qdrant-client>=1.9.0
+fastembed>=0.4.0
 
 # Embeddings + PDF processing (kept local for now)
 numpy>=1.24.0,<2.0

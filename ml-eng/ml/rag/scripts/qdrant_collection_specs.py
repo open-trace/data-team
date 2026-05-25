@@ -2,17 +2,57 @@
 Qdrant collection vector layouts (dense HNSW + INT8 quant + optional sparse).
 
 Used by create_qdrant_collections and loaders on --reset.
+
+Per-corpus dense dimensions come from ``chunking_config.PROFILES`` (384 news/research/BQ,
+768 OTA by default).
 """
 from __future__ import annotations
 
-import os
 from typing import Any
 
 from qdrant_client.http import models
 
-# 768-dim dense (e5-base class models); override for experiments
-DENSE_DIM = max(32, int(os.getenv("RAG_QDRANT_VECTOR_SIZE", "768").strip() or "768"))
-HNSW_M = 8
+from ml.rag.text_processors.chunking_config import PROFILES, ChunkingProfile, CorpusKey
+
+HNSW_M = 4
+
+# Dense + sparse vector counts per point (must match collection builders below).
+CORPUS_VECTOR_LAYOUT: dict[CorpusKey, dict[str, int]] = {
+    "news": {"dense_vectors": 1, "sparse_vectors": 1},
+    "research": {"dense_vectors": 1, "sparse_vectors": 1},
+    "ota": {"dense_vectors": 3, "sparse_vectors": 2},
+    "data_description": {"dense_vectors": 3, "sparse_vectors": 0},
+}
+
+# Sparse vector name → text source for BM25 ("doc" = chunk text; else metadata key).
+CORPUS_SPARSE_FIELDS: dict[CorpusKey, list[tuple[str, str]]] = {
+    "news": [("sparse", "doc")],
+    "research": [("sparse", "doc")],
+    "ota": [
+        ("sparse_insight", "insight_text"),
+        ("sparse_recommendation", "recommendation_text"),
+    ],
+    "data_description": [],
+}
+
+
+def sparse_vector_names(corpus: CorpusKey) -> tuple[str, ...]:
+    return tuple(name for name, _ in CORPUS_SPARSE_FIELDS.get(corpus, []))
+
+
+def corpus_has_sparse(corpus: CorpusKey) -> bool:
+    return bool(CORPUS_SPARSE_FIELDS.get(corpus))
+
+# Payload size scales with chunk token targets (content + metadata in Qdrant payload).
+PAYLOAD_BASE_BYTES = 220
+PAYLOAD_BYTES_PER_TOKEN = 4
+SPARSE_VECTOR_BYTES = 200
+
+# Illustrative chunks/doc when profile has no max_chunks_per_doc cap.
+_ILLUSTRATIVE_CHUNKS_PER_DOC: dict[CorpusKey, int] = {
+    "news": 8,
+    "data_description": 3,
+}
 
 
 def _int8_quant(*, quantile: float | None = None, always_ram: bool = False) -> models.ScalarQuantization:
@@ -26,38 +66,44 @@ def _int8_quant(*, quantile: float | None = None, always_ram: bool = False) -> m
 
 def dense_vector_params(
     *,
+    dim: int,
     ef_construct: int = 100,
     quantile: float | None = None,
     always_ram: bool = False,
+    on_disk: bool = False,
 ) -> models.VectorParams:
+    size = max(32, dim)
     return models.VectorParams(
-        size=DENSE_DIM,
+        size=size,
         distance=models.Distance.COSINE,
+        on_disk=on_disk,
         hnsw_config=models.HnswConfigDiff(m=HNSW_M, ef_construct=ef_construct),
         quantization_config=_int8_quant(quantile=quantile, always_ram=always_ram),
     )
 
 
+def _dim(corpus: CorpusKey) -> int:
+    return PROFILES[corpus].vector_dim
+
+
 def news_collection_kwargs() -> dict[str, Any]:
+    dim = _dim("news")
     return {
-        "vectors_config": {"dense": dense_vector_params(ef_construct=100, quantile=0.99, always_ram=True)},
+        "vectors_config": {"dense": dense_vector_params(dim=dim, ef_construct=100, quantile=0.99, always_ram=True)},
         "sparse_vectors_config": {"sparse": models.SparseVectorParams(modifier=models.Modifier.IDF)},
     }
 
 
 def research_collection_kwargs() -> dict[str, Any]:
-    vp = dense_vector_params(ef_construct=100)
+    vp = dense_vector_params(dim=_dim("research"), ef_construct=100, on_disk=True)
     return {
-        "vectors_config": {
-            "abstract_vector": vp,
-            "content_vector": vp,
-        },
+        "vectors_config": {"dense": vp},
         "sparse_vectors_config": {"sparse": models.SparseVectorParams(modifier=models.Modifier.IDF)},
     }
 
 
 def ota_collection_kwargs() -> dict[str, Any]:
-    vp = dense_vector_params(ef_construct=100)
+    vp = dense_vector_params(dim=_dim("ota"), ef_construct=100)
     return {
         "vectors_config": {
             "insight_vector": vp,
@@ -72,7 +118,7 @@ def ota_collection_kwargs() -> dict[str, Any]:
 
 
 def bq_collection_kwargs() -> dict[str, Any]:
-    vp = dense_vector_params(ef_construct=80)
+    vp = dense_vector_params(dim=_dim("data_description"), ef_construct=80)
     return {
         "vectors_config": {
             "table_vector": vp,
@@ -103,6 +149,12 @@ PAYLOAD_INDEXES: dict[str, list[tuple[str, models.PayloadSchemaType]]] = {
         ("doc_kind", models.PayloadSchemaType.KEYWORD),
         ("geo_country_primary", models.PayloadSchemaType.KEYWORD),
         ("geo_countries", models.PayloadSchemaType.TEXT),
+        ("section_role", models.PayloadSchemaType.KEYWORD),
+        ("content_type", models.PayloadSchemaType.KEYWORD),
+        ("semantic_lane", models.PayloadSchemaType.KEYWORD),
+        ("publication_year", models.PayloadSchemaType.KEYWORD),
+        ("journal", models.PayloadSchemaType.KEYWORD),
+        ("doi", models.PayloadSchemaType.KEYWORD),
     ],
     "ota": [
         ("doc_kind", models.PayloadSchemaType.KEYWORD),
@@ -135,32 +187,56 @@ def ensure_payload_indexes(client: Any, collection_name: str, corpus: str) -> li
     return created
 
 
-def estimate_points_per_gib(*, dim: int = DENSE_DIM, include_sparse: bool = True) -> int:
-    """
-    Rough capacity for a 1 GiB RAM single-node cluster.
+def estimate_bytes_per_point(*, profile: ChunkingProfile, layout: dict[str, int]) -> int:
+    """Rough RAM per Qdrant point including multi-vector layout and chunk-sized payload."""
+    dim = profile.vector_dim
+    num_dense = layout["dense_vectors"]
+    num_sparse = layout["sparse_vectors"]
+    dense_bytes = dim * num_dense  # INT8 per dimension per dense vector
+    hnsw_overhead = HNSW_M * dim * 4 * num_dense
+    payload_bytes = PAYLOAD_BASE_BYTES + profile.target_tokens * PAYLOAD_BYTES_PER_TOKEN
+    sparse_bytes = SPARSE_VECTOR_BYTES * num_sparse
+    return dense_bytes + hnsw_overhead + payload_bytes + sparse_bytes
 
-    Assumes INT8 quantized dense vectors, HNSW m=8, optimized payload (~500 B),
-    and optional sparse BM25 overhead.
-    """
-    dense_bytes = dim  # INT8 per dimension
-    hnsw_overhead = HNSW_M * dim * 4  # graph links (approx)
-    payload_bytes = 500
-    sparse_bytes = 200 if include_sparse else 0
-    per_point = dense_bytes + hnsw_overhead + payload_bytes + sparse_bytes
+
+def estimate_points_per_gib(*, profile: ChunkingProfile, layout: dict[str, int]) -> int:
+    """Rough capacity for a 1 GiB RAM single-node cluster."""
+    per_point = estimate_bytes_per_point(profile=profile, layout=layout)
     gib = 1024**3
     usable = int(gib * 0.65)  # headroom for OS / Qdrant process
     return max(1, usable // max(per_point, 1))
 
 
+def _doc_capacity_hint(corpus: CorpusKey, profile: ChunkingProfile, points: int) -> str:
+    if profile.max_chunks_per_doc:
+        chunks = profile.max_chunks_per_doc
+        docs = points // max(chunks, 1)
+        return f"~{docs:,} docs @ max {chunks} chunks/doc"
+    chunks = _ILLUSTRATIVE_CHUNKS_PER_DOC.get(corpus, 5)
+    docs = points // max(chunks, 1)
+    return f"~{docs:,} docs @ ~{chunks} chunks/doc (illustrative)"
+
+
 def print_capacity_estimates() -> None:
-    dim = DENSE_DIM
-    pts_dense_only = estimate_points_per_gib(dim=dim, include_sparse=False)
-    pts_hybrid = estimate_points_per_gib(dim=dim, include_sparse=True)
     print("\n==============================")
     print("CAPACITY ESTIMATES (1 GiB RAM node)")
     print("==============================")
-    print(f"  Dense dim: {dim} (INT8), HNSW m={HNSW_M}")
-    print(f"  ~{pts_dense_only:,} points (dense only)")
-    print(f"  ~{pts_hybrid:,} points (dense + sparse BM25)")
-    print("  News @ 500 tokens/chunk, max 10 chunks/doc → ~50k articles at 500k points")
+    print(f"  HNSW m={HNSW_M}, INT8 dense quant, ~65% RAM usable")
+    print("  Payload estimate scales with per-corpus chunk token targets.")
+    print()
+    for corpus in ("news", "research", "ota", "data_description"):
+        profile = PROFILES[corpus]
+        layout = CORPUS_VECTOR_LAYOUT[corpus]
+        points = estimate_points_per_gib(profile=profile, layout=layout)
+        per_point = estimate_bytes_per_point(profile=profile, layout=layout)
+        dim = profile.vector_dim
+        n_dense = layout["dense_vectors"]
+        n_sparse = layout["sparse_vectors"]
+        doc_hint = _doc_capacity_hint(corpus, profile, points)
+        print(f"  {profile.qdrant_collection} ({corpus}):")
+        print(
+            f"    dim={dim}, {n_dense} dense + {n_sparse} sparse, "
+            f"~{profile.target_tokens} tok/chunk, ~{per_point:,} B/point"
+        )
+        print(f"    ~{points:,} points -> {doc_hint}")
     print("  Reindex after model/dim/HNSW changes (--reset on loaders).")

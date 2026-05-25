@@ -27,6 +27,51 @@ def _normalize_text(raw: str) -> str:
     return text.strip()
 
 
+def _normalize_table_text(raw: str) -> str:
+    text = raw.replace("\r\n", "\n").replace("\r", "\n")
+    lines = [re.sub(r"[ \t]+", " ", ln).strip() for ln in text.split("\n")]
+    lines = [ln for ln in lines if ln]
+    return "\n".join(lines)
+
+
+def _html_table_to_text(html: str) -> str:
+    text = re.sub(r"</tr>", "\n", html, flags=re.I)
+    text = re.sub(r"</t[dh]>", " | ", text, flags=re.I)
+    text = re.sub(r"<[^>]+>", "", text)
+    return _normalize_table_text(text)
+
+
+def _partition_strategy() -> str:
+    raw = os.environ.get("RAG_UNSTRUCTURED_STRATEGY", "fast").strip().lower()
+    return raw or "fast"
+
+
+def _partition_languages() -> list[str] | None:
+    raw = os.environ.get("RAG_UNSTRUCTURED_LANGUAGES", "eng,fra").strip()
+    if not raw:
+        return None
+    langs = [part.strip() for part in raw.split(",") if part.strip()]
+    return langs or None
+
+
+def _element_category(el: Any) -> str:
+    cat = getattr(el, "category", None)
+    if isinstance(cat, str):
+        return cat
+    return str(getattr(cat, "name", "NarrativeText") or "NarrativeText")
+
+
+def _element_text(el: Any, *, is_table: bool) -> str:
+    if is_table and hasattr(el, "metadata") and el.metadata:
+        html = getattr(el.metadata, "text_as_html", None)
+        if isinstance(html, str) and html.strip():
+            converted = _html_table_to_text(html)
+            if converted:
+                return converted
+    raw = str(el) or ""
+    return _normalize_table_text(raw) if is_table else _normalize_text(raw)
+
+
 def _pypdf_text(pdf_path: Path) -> str:
     from pypdf import PdfReader  # type: ignore[import-not-found]
 
@@ -81,14 +126,18 @@ def _text_to_elements_with_headings(text: str) -> list[ParsedElement]:
 def _unstructured_partition(path: Path) -> list[ParsedElement]:
     from unstructured.partition.auto import partition  # type: ignore[import-not-found]
 
-    elements = partition(filename=str(path), strategy="fast")
+    kwargs: dict[str, Any] = {"filename": str(path), "strategy": _partition_strategy()}
+    langs = _partition_languages()
+    if langs:
+        kwargs["languages"] = langs
+    elements = partition(**kwargs)
     out: list[ParsedElement] = []
     for el in elements:
-        text = _normalize_text(str(el) or "")
+        name = _element_category(el)
+        is_table = name.lower() == "table"
+        text = _element_text(el, is_table=is_table)
         if not text:
             continue
-        cat = getattr(el, "category", None)
-        name = cat if isinstance(cat, str) else getattr(cat, "name", "NarrativeText")
         meta: dict[str, Any] = {}
         if hasattr(el, "metadata") and el.metadata:
             md = el.metadata.to_dict() if hasattr(el.metadata, "to_dict") else {}

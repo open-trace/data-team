@@ -5,7 +5,8 @@ Requires:
   QDRANT_URL, QDRANT_API_KEY
 
 Optional:
-  RAG_QDRANT_VECTOR_SIZE   dense dimension (default 768)
+  RAG_QDRANT_VECTOR_SIZE_NEWS / _RESEARCH / _OTA / _DATA_DESCRIPTIONS
+  RAG_QDRANT_VECTOR_SIZE (fallback when per-corpus var unset)
   --skip-existing            only create collections that are missing (no delete)
 
 Run:
@@ -20,12 +21,14 @@ import sys
 
 from qdrant_client import QdrantClient
 
+from ml.rag.local_env import load_data_local_dotenv
+from ml.rag.paths import ML_ENG_ROOT
 from ml.rag.scripts.qdrant_collection_specs import (
     COLLECTION_BUILDERS,
     ensure_payload_indexes,
     print_capacity_estimates,
 )
-from ml.rag.text_processors.chunking_config import PROFILES
+from ml.rag.text_processors.chunking_config import PROFILES, CorpusKey
 
 
 def main() -> int:
@@ -37,15 +40,17 @@ def main() -> int:
     )
     args = parser.parse_args()
 
+    load_data_local_dotenv(ML_ENG_ROOT)
+
     qdrant_url = os.getenv("QDRANT_URL", "").strip()
-    qdrant_api_key = os.getenv("QDRANT_API_KEY", "").strip()
+    qdrant_api_key = os.getenv("QDRANT_API_KEY", "").strip().strip('"').strip("'")
     if not qdrant_url or not qdrant_api_key:
         print("Set QDRANT_URL and QDRANT_API_KEY", file=sys.stderr)
         return 1
 
-    client = QdrantClient(url=qdrant_url, api_key=qdrant_api_key)
+    client = QdrantClient(url=qdrant_url, api_key=qdrant_api_key, check_compatibility=False)
 
-    targets = [
+    targets: list[tuple[CorpusKey, str]] = [
         ("news", PROFILES["news"].qdrant_collection),
         ("research", PROFILES["research"].qdrant_collection),
         ("ota", PROFILES["ota"].qdrant_collection),
@@ -66,7 +71,8 @@ def main() -> int:
         client.create_collection(collection_name=collection_name, **kwargs)
         indexed = ensure_payload_indexes(client, collection_name, corpus_key)
         idx_msg = f", indexes: {', '.join(indexed)}" if indexed else ""
-        print(f"[CREATED] {collection_name} ({corpus_key}{idx_msg})")
+        dim = PROFILES[corpus_key].vector_dim
+        print(f"[CREATED] {collection_name} ({corpus_key}, dim={dim}{idx_msg})")
 
     print("\n==============================")
     print("COLLECTIONS IN QDRANT")

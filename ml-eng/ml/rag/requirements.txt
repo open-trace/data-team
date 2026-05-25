@@ -15,17 +15,20 @@ PyYAML>=6.0
 numpy>=1.24.0,<2.0
 # torchvision: transformers (pulled by sentence-transformers) lazy-imports vision modules;
 # Streamlit's file watcher can trigger those imports and crash without torchvision.
-torch>=2.0.0
-torchvision>=0.15.0
+torch>=2.4.0
+torchvision>=0.17.0
 qdrant-client>=1.9.0
+fastembed>=0.4.0
 # transformers 5.x requires torch>=2.4 (unavailable on some Intel macOS builds — max 2.2.2).
 transformers>=4.44,<5
+huggingface_hub[hf_xetra]
 sentence-transformers>=3.0,<5
 tiktoken>=0.5.0
 pypdf>=4.1.0
 llama-index-core>=0.11.0
 pydantic>=2.0
 # Optional Unstructured (numba/llvmlite): pip install -r ml-eng/ml/rag/requirements-preprocess-optional.txt
+unstructured>=0.10.0
 
 # Streamlit (for local RAG testing UI)
 streamlit>=1.28.0

@@ -19,8 +19,11 @@ def section_parent_id(
     )
 
 
-def semantic_lane_for_path(hierarchy_path: str) -> str:
-    hp = (hierarchy_path or "").lower()
-    if hp == "abstract" or hp.startswith("abstract/"):
-        return "abstract"
-    return "content"
+def semantic_lane_for_path(hierarchy_path: str, *, section_title: str = "") -> str:
+    from ml.rag.text_processors.preprocess.section_roles import (
+        classify_section,
+        semantic_lane_for_section,
+    )
+
+    role = classify_section(section_title, hierarchy_path)
+    return semantic_lane_for_section(role)
