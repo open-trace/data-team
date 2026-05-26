@@ -9,7 +9,7 @@ import json
 import os
 from typing import Any
 
-import requests
+from ml.rag.llm_chat import llm_chat_complete, llm_configured, llm_default_timeout_s, llm_model_id
 
 from ml.rag.chat_history import normalize_messages, truncate_chat_history
 from ml.rag.chat_memory import (
@@ -24,7 +24,7 @@ def _build_prompt(
     context_block: str,
     decomposition: dict[str, Any] | None = None,
     memory_block: str = "",
-) -> str:
+) -> list[dict[str, str]]:
     system = (
         "You are a helpful data assistant for the OpenTrace team. Questions are often about "
         "agricultural production, crop productivity, regions, districts, agroecological zones, "
@@ -62,15 +62,11 @@ def _build_prompt(
     if intent_tone:
         system = system + intent_tone
     mb = (memory_block.strip() + "\n\n") if memory_block.strip() else ""
-    return (
-        f"<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n"
-        f"{system}\n"
-        f"<|eot_id|><|start_header_id|>user<|end_header_id|>\n"
-        f"{facet_block}"
-        f"{mb}"
-        f"Context:\n{context_block}\n\nQuestion: {query}\n"
-        f"<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n"
-    )
+    user = f"{facet_block}{mb}Context:\n{context_block}\n\nQuestion: {query}"
+    return [
+        {"role": "system", "content": system},
+        {"role": "user", "content": user},
+    ]
 
 
 def _resolve_memory_block(**kwargs: Any) -> str:
@@ -91,36 +87,17 @@ def _resolve_memory_block(**kwargs: Any) -> str:
     return block
 
 
-def _call_llama(prompt: str) -> str:
-    """Call LLM via Hugging Face router (chat completions). Falls back if not configured."""
-    api_token = os.environ.get("HF_API_TOKEN")
-    model_id = os.environ.get(
-        "RAG_LLM_MODEL_ID", "meta-llama/Llama-3.1-8B-Instruct"
+def _call_llama(messages: list[dict[str, str]]) -> str:
+    """Call configured LLM backend; never raises on HTTP errors."""
+    gen_timeout = float(os.environ.get("RAG_GENERATE_TIMEOUT_S", "0") or 0) or llm_default_timeout_s()
+    max_toks = int(os.environ.get("RAG_GENERATE_MAX_TOKENS", "1024") or 1024)
+    return llm_chat_complete(
+        messages,
+        model=llm_model_id(),
+        max_tokens=max_toks,
+        temperature=0.3,
+        timeout_s=gen_timeout,
     )
-    if not api_token:
-        return ""
-
-    url = "https://router.huggingface.co/v1/chat/completions"
-    headers = {
-        "Authorization": f"Bearer {api_token}",
-        "Accept": "application/json",
-        "Content-Type": "application/json",
-    }
-    payload = {
-        "model": model_id,
-        "messages": [{"role": "user", "content": prompt}],
-        "max_tokens": 512,
-        "temperature": 0.3,
-    }
-    resp = requests.post(url, headers=headers, json=payload, timeout=60)
-    if resp.status_code in (410, 503, 502, 429):
-        return ""
-    resp.raise_for_status()
-    data = resp.json()
-    try:
-        return str(data["choices"][0]["message"]["content"]).strip()
-    except (KeyError, IndexError, TypeError):
-        return ""
 
 
 def generate(
@@ -148,13 +125,13 @@ def generate(
             "yes",
         )
         if allow_ungrounded:
-            prompt = _build_prompt(
+            messages = _build_prompt(
                 query,
                 context_block="[No external context]",
                 decomposition=decomposition,
                 memory_block=memory_block,
             )
-            llama_answer = _call_llama(prompt)
+            llama_answer = _call_llama(messages)
             if llama_answer:
                 return llama_answer
         return (
@@ -171,13 +148,20 @@ def generate(
         (c.get(content_key) or c.get("text", str(c)))[:2000] for c in context_items
     )[:ctx_budget]
 
-    prompt = _build_prompt(query, context_block, decomposition=decomposition, memory_block=memory_block)
-    llama_answer = _call_llama(prompt)
+    messages = _build_prompt(query, context_block, decomposition=decomposition, memory_block=memory_block)
+    llama_answer = _call_llama(messages)
     if llama_answer:
         return llama_answer
 
-    # Fallback when HF_API_TOKEN missing or API returned 410/503/etc.
-    return (
-        f"[LLM unavailable—showing retrieved context only.]\n\n"
-        f"Context:\n{context_block[:3000]}\n\nQuery: {query}"
-    )
+    if llm_configured():
+        hint = (
+            "[LLM generation failed — local server may have timed out or the request was cancelled. "
+            f"Try RAG_LLM_TIMEOUT_S=300, RAG_GENERATE_MAX_TOKENS=1024, and RAG_LLM_RERANK=off. "
+            f"Model id must match LM Studio: {llm_model_id()!r}. Showing retrieved context only.]\n\n"
+        )
+    else:
+        hint = (
+            "[LLM unavailable — set RAG_LLM_BASE_URL (e.g. http://127.0.0.1:1234/v1) for LM Studio, "
+            "or HF_API_TOKEN for the Hugging Face router. Showing retrieved context only.]\n\n"
+        )
+    return hint + f"Context:\n{context_block[:3000]}\n\nQuery: {query}"

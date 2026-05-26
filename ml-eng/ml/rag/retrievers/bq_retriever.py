@@ -4,14 +4,17 @@ Uses Llama 3.1 via Hugging Face for NL-to-SQL; validates and runs only SELECTs.
 """
 from __future__ import annotations
 
+import logging
 import os
 import re
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any
 
-import requests
-
+from ml.rag.llm_chat import llm_chat_complete, llm_default_timeout_s, llm_model_id
 from ml.rag.retrievers.base import BaseRetriever
+
+logger = logging.getLogger(__name__)
 
 # Load .env when used from repo root
 _REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -39,27 +42,17 @@ def _get_datasets_config() -> dict[str, str]:
     }
 
 
-def _call_llama_for_sql(prompt: str) -> str:
-    """Call LLM via Hugging Face router (chat completions); return raw text (expected to be SQL)."""
-    api_token = os.environ.get("HF_API_TOKEN")
-    model_id = os.environ.get("RAG_LLM_MODEL_ID", "meta-llama/Llama-3.1-8B-Instruct")
-    if not api_token:
-        return ""
-    url = "https://router.huggingface.co/v1/chat/completions"
-    headers = {"Authorization": f"Bearer {api_token}", "Accept": "application/json", "Content-Type": "application/json"}
-    payload = {
-        "model": model_id,
-        "messages": [{"role": "user", "content": prompt}],
-        "max_tokens": 512,
-        "temperature": 0.0,
-    }
-    try:
-        resp = requests.post(url, headers=headers, json=payload, timeout=60)
-        resp.raise_for_status()
-        data = resp.json()
-        return str(data["choices"][0]["message"]["content"]).strip()
-    except Exception:
-        return ""
+def _call_llama_for_sql(messages: list[dict[str, str]], *, max_tokens: int | None = None) -> str:
+    """Call LLM for NL-to-SQL; return raw text (expected to be SQL) or empty string."""
+    cap = max_tokens or int(os.environ.get("RAG_BQ_NL2SQL_MAX_TOKENS", "1024") or 1024)
+    bq_timeout = float(os.environ.get("RAG_BQ_NL2SQL_TIMEOUT_S", "0") or 0) or llm_default_timeout_s()
+    return llm_chat_complete(
+        messages,
+        model=llm_model_id(),
+        max_tokens=cap,
+        temperature=0.0,
+        timeout_s=bq_timeout,
+    )
 
 
 # Filter-column mapping aligned with bronze dbt sources. Use exact names from the Schema section.
@@ -91,6 +84,76 @@ _FORBIDDEN_SQL = re.compile(
     r"\b(INSERT|UPDATE|DELETE|DROP|CREATE|MERGE|TRUNCATE|ALTER|GRANT|REVOKE|EXEC|EXECUTE|CALL)\b",
     re.IGNORECASE,
 )
+
+_QUERY_SPLIT_RE = re.compile(r"\n---+\s*(?:QUERY)?\s*---+\n", re.IGNORECASE)
+
+
+def _format_query_constraints(
+    *,
+    geo_country: str | None,
+    time_start: str | None,
+    time_end: str | None,
+    entities: list[str] | None,
+    domains: list[str] | None,
+) -> str:
+    """Structured filters from query decomposition (must appear in generated SQL)."""
+    lines: list[str] = []
+    if geo_country:
+        lines.append(
+            f"- REQUIRED country/area filter: {geo_country!r} "
+            "(use country, country_name, area, Area, adm0_name, or geographic_unit_name per schema)"
+        )
+    if time_start or time_end:
+        lines.append(
+            f"- REQUIRED time range: start={time_start or 'any'}, end={time_end or 'any'} "
+            "(use year, planting_year, harvest_year, observation_year, TIME_PERIOD, or Y#### columns)"
+        )
+    if entities:
+        ent = [str(e).strip() for e in entities if str(e).strip()]
+        if ent:
+            lines.append(f"- Key entities to cover in filters or SELECT: {', '.join(ent)}")
+    if domains:
+        dom = [str(d).strip() for d in domains if str(d).strip()]
+        if dom:
+            lines.append(f"- Topic domains: {', '.join(dom)}")
+    if not lines:
+        return ""
+    return "Query constraints from decomposition (MUST honor in WHERE / GROUP BY):\n" + "\n".join(lines)
+
+
+def _extract_single_select(raw: str) -> str:
+    if not raw:
+        return ""
+    text = raw.strip()
+    if "```" in text:
+        for block in re.findall(r"```(?:\w+)?\s*([\s\S]*?)```", text):
+            if block.strip().upper().startswith("SELECT"):
+                return block.strip().rstrip(";")
+        text = re.sub(r"```[\s\S]*?```", "", text).strip()
+    return text.rstrip(";")
+
+
+def _parse_sql_queries(raw: str, max_queries: int) -> list[str]:
+    """Parse up to max_queries SELECT statements from one LLM response."""
+    if not raw or max_queries < 1:
+        return []
+    chunks = _QUERY_SPLIT_RE.split(raw)
+    if len(chunks) <= 1:
+        chunks = re.split(r"\n(?=SELECT\s)", raw, flags=re.IGNORECASE)
+    seen: set[str] = set()
+    out: list[str] = []
+    for chunk in chunks:
+        sql = _extract_single_select(chunk)
+        if not sql.upper().startswith("SELECT"):
+            continue
+        norm = " ".join(sql.split())
+        if norm in seen:
+            continue
+        seen.add(norm)
+        out.append(sql)
+        if len(out) >= max_queries:
+            break
+    return out
 
 
 def _validate_sql(sql: str, allowed_dataset_ids: set[str], default_limit: int) -> str | None:
@@ -179,61 +242,219 @@ class BQRetriever(BaseRetriever):
             self._schema_cache = "[Schema unavailable]"
         return self._schema_cache
 
-    def _nl_to_sql(self, question: str, table_hints: list[str] | None = None) -> str:
-        """Generate a single BigQuery SELECT from the user question and current schema."""
-        schema_text = self._get_schema()
+    def _schema_for_nl2sql(self, table_hints: list[str] | None) -> str:
+        """Compact schema text; skip live BQ catalog when rich per-table hints are present."""
+        skip_live = os.environ.get("RAG_BQ_SKIP_LIVE_SCHEMA", "on").strip().lower() in (
+            "1",
+            "true",
+            "on",
+            "yes",
+        )
+        if skip_live and table_hints:
+            ds = self.datasets_config.get("bronze", "").strip()
+            return (
+                f"Project: `{self.project_id}`. Bronze dataset: `{ds}`. "
+                "Use only the table and columns described in the table hint below."
+            )
+        return self._get_schema()
+
+    def _build_nl2sql_messages(
+        self,
+        question: str,
+        table_hints: list[str] | None,
+        *,
+        geo_country: str | None,
+        time_start: str | None,
+        time_end: str | None,
+        entities: list[str] | None,
+        domains: list[str] | None,
+        multi_query: bool,
+        max_queries: int,
+    ) -> list[dict[str, str]]:
+        schema_text = self._schema_for_nl2sql(table_hints)
+        constraints_block = _format_query_constraints(
+            geo_country=geo_country,
+            time_start=time_start,
+            time_end=time_end,
+            entities=entities,
+            domains=domains,
+        )
         hints_block = ""
         if table_hints:
             cleaned = [str(h).strip() for h in table_hints if str(h).strip()]
             if cleaned:
+                per_hint_cap = int(os.environ.get("RAG_BQ_HINT_MAX_CHARS", "2500") or 2500)
                 hints_block = (
-                    "\n\nPrioritized table descriptions from the knowledge base (prefer these tables/columns when they match the question):\n"
-                    + "\n".join(f"- {h[:800]}" for h in cleaned[:10])
+                    "\n\nPrioritized table descriptions from the knowledge base "
+                    "(use the table(s) below; honor sql_generation_hints, filtering_guidance, "
+                    "and aggregation_rules):\n"
+                    + "\n".join(f"- {h[:per_hint_cap]}" for h in cleaned)
                 )
+        if multi_query:
+            output_rule = (
+                f"6) Output up to {max_queries} separate BigQuery SELECT queries — one per relevant "
+                f"table hint when possible. Put each query on its own block separated by a line "
+                f"containing only ---QUERY---. No explanation, no markdown fences."
+            )
+        else:
+            output_rule = (
+                "6) Output exactly one SELECT for the single table hint provided. "
+                "No explanation, no markdown, no code fence."
+            )
         system = (
             "You are a BigQuery expert for OpenTrace agricultural and food-security data in the bronze dataset only. "
-            "Your job is to output exactly one valid BigQuery SQL SELECT that returns the most relevant rows. "
             "Rules: "
-            "1) Use ONLY tables and columns that appear in the Schema section below (bronze dataset). Do not reference silver, gold, or landing datasets. "
-            "Use full names: `project.dataset.table` or dataset.table. "
-            "2) ALWAYS add WHERE clauses when the question mentions a specific value: "
-            "   - Country (e.g. Kenya, Uganda) -> WHERE country = 'Kenya' or country_name = 'Kenya' or area = 'Kenya' (match schema). "
-            "   - Season or year -> WHERE season_name = '...' OR planting_year = 2023 OR year = 2023 (use the column that exists). "
-            "   - Product or crop (e.g. maize, rice) -> WHERE product = 'maize' OR item = 'Maize' OR Commodity = '...' (match schema). "
-            "   - Region/district -> WHERE admin_1 = '...' OR admin_2 = '...' OR geographic_unit_name = '...' OR agroecological_zone = '...'. "
-            "3) Use the Filter and table hints below to pick the right columns and tables; every table must exist in the Schema section. "
-            "4) For 'which regions', 'most significant changes', 'compare', 'over time': ALWAYS add a time filter (e.g. planting_year >= 2014 for past decade), GROUP BY region, compute change or aggregate (e.g. MAX(yield)-MIN(yield)), ORDER BY that metric DESC, then LIMIT. Do NOT use SELECT * LIMIT 10 for such questions. "
-            "5) Output only the SQL, no explanation, no markdown, no code fence."
+            "1) Use ONLY tables and columns from the Schema section (bronze dataset). "
+            "Use full names: `project.dataset.table`. "
+            "2) When Query constraints are present, REQUIRED country and time filters MUST appear in every SELECT. "
+            "3) Match country columns to schema (country, country_name, Area, adm0_name, geographic_unit_name). "
+            "4) Match time columns to schema (year, planting_year, harvest_year, observation_year, TIME_PERIOD). "
+            "5) Use table hints for table/column choice; prefer GROUP BY / ORDER BY over bare SELECT * LIMIT. "
+            f"{output_rule}"
         )
+        constraints_section = f"\n\n{constraints_block}\n" if constraints_block else ""
         user = (
-            f"Filter and table hints (use these for WHERE and table choice):\n{_SCHEMA_FILTER_GUIDE}"
+            f"Filter and table hints:\n{_SCHEMA_FILTER_GUIDE}"
+            f"{constraints_section}"
             f"{hints_block}\n\n"
-            f"Schema (available tables and columns):\n{schema_text}\n\n"
+            f"Schema:\n{schema_text}\n\n"
             f"Question: {question}"
         )
-        prompt = (
-            f"<|begin_of_text|><|start_header_id|>system<|end_header_id|>\n{system}\n"
-            f"<|eot_id|><|start_header_id|>user<|end_header_id|>\n{user}\n<|eot_id|><|start_header_id|>assistant<|end_header_id|>\n"
+        return [
+            {"role": "system", "content": system},
+            {"role": "user", "content": user},
+        ]
+
+    def _nl_to_sql_one(
+        self,
+        question: str,
+        table_hints: list[str] | None = None,
+        *,
+        geo_country: str | None = None,
+        time_start: str | None = None,
+        time_end: str | None = None,
+        entities: list[str] | None = None,
+        domains: list[str] | None = None,
+    ) -> str:
+        """Generate one BigQuery SELECT (focused on a single table hint when provided)."""
+        messages = self._build_nl2sql_messages(
+            question,
+            table_hints,
+            geo_country=geo_country,
+            time_start=time_start,
+            time_end=time_end,
+            entities=entities,
+            domains=domains,
+            multi_query=False,
+            max_queries=1,
         )
-        raw = _call_llama_for_sql(prompt)
-        if not raw:
-            return ""
-        # Strip markdown code block if present
-        if "```" in raw:
-            for block in re.findall(r"```(?:\w+)?\s*([\s\S]*?)```", raw):
-                if block.strip().upper().startswith("SELECT"):
-                    return block.strip()
-            raw = re.sub(r"```[\s\S]*?```", "", raw).strip()
-        return raw.strip()
+        raw = _call_llama_for_sql(messages)
+        sql = _extract_single_select(raw)
+        if not sql and raw:
+            logger.warning("NL-to-SQL: LLM returned non-SELECT text (first 200 chars): %s", raw[:200])
+        return sql
+
+    def _nl_to_sql_queries(
+        self,
+        question: str,
+        table_hints: list[str] | None = None,
+        *,
+        geo_country: str | None = None,
+        time_start: str | None = None,
+        time_end: str | None = None,
+        entities: list[str] | None = None,
+        domains: list[str] | None = None,
+    ) -> list[str]:
+        """
+        Generate up to RAG_BQ_MAX_SQL_QUERIES (default 10) SELECT statements via NL-to-SQL.
+
+        Mode RAG_BQ_NL2SQL_MODE:
+        - per_hint (default): one LLM call per vector-matched table hint (up to max queries).
+        - batch: one LLM call returning multiple queries separated by ---QUERY---.
+        """
+        max_queries = max(1, int(os.environ.get("RAG_BQ_MAX_SQL_QUERIES", "10") or 10))
+        mode = os.environ.get("RAG_BQ_NL2SQL_MODE", "per_hint").strip().lower()
+        cleaned_hints = [str(h).strip() for h in (table_hints or []) if str(h).strip()]
+
+        if mode == "batch":
+            messages = self._build_nl2sql_messages(
+                question,
+                cleaned_hints[:max_queries],
+                geo_country=geo_country,
+                time_start=time_start,
+                time_end=time_end,
+                entities=entities,
+                domains=domains,
+                multi_query=True,
+                max_queries=max_queries,
+            )
+            parsed = _parse_sql_queries(_call_llama_for_sql(messages), max_queries)
+            if parsed:
+                return parsed
+
+        # per_hint: one targeted SELECT per matched table (primary path)
+        hints_for_calls = cleaned_hints[:max_queries] if cleaned_hints else [None]
+        parallel = os.environ.get("RAG_BQ_NL2SQL_PARALLEL", "off").strip().lower() in (
+            "1",
+            "true",
+            "on",
+            "yes",
+        )
+        workers = max(1, int(os.environ.get("RAG_BQ_NL2SQL_PARALLEL_WORKERS", "4") or 4))
+
+        def _gen_one(hint: str | None) -> str:
+            return self._nl_to_sql_one(
+                question,
+                table_hints=[hint] if hint else None,
+                geo_country=geo_country,
+                time_start=time_start,
+                time_end=time_end,
+                entities=entities,
+                domains=domains,
+            )
+
+        seen: set[str] = set()
+        queries: list[str] = []
+        if parallel and len(hints_for_calls) > 1:
+            with ThreadPoolExecutor(max_workers=min(workers, len(hints_for_calls))) as pool:
+                futs = {pool.submit(_gen_one, h): h for h in hints_for_calls}
+                for fut in as_completed(futs):
+                    sql = fut.result()
+                    if not sql:
+                        continue
+                    norm = " ".join(sql.split())
+                    if norm in seen:
+                        continue
+                    seen.add(norm)
+                    queries.append(sql)
+        else:
+            for hint in hints_for_calls:
+                sql = _gen_one(hint)
+                if not sql:
+                    continue
+                norm = " ".join(sql.split())
+                if norm in seen:
+                    continue
+                seen.add(norm)
+                queries.append(sql)
+                if len(queries) >= max_queries:
+                    break
+        if not queries:
+            logger.warning(
+                "NL-to-SQL: 0 queries from %s hint(s) (mode=%s); check RAG_LLM_BASE_URL, "
+                "RAG_LLM_MODEL_ID (must match LM Studio), and timeout logs",
+                len(cleaned_hints),
+                mode,
+            )
+        return queries[:max_queries]
 
     def _fallback_sql(self, question: str) -> str:
-        """When NL-to-SQL fails (e.g. HF 410), build a sensible query from question keywords so results are still useful."""
+        """Minimal fallback when NL-to-SQL returns nothing (connectivity / LLM down)."""
         q = (question or "").lower()
         proj = self.project_id
         bronze_ds = self.datasets_config.get("bronze", "").strip()
         if not bronze_ds:
             return ""
-        # Template: regions + past decade + "most significant changes" -> aggregated by country with yield change (bronze yield_raw_data)
         if any(x in q for x in ("which region", "which country", "which district", "most significant change", "past decade", "over the past")) and any(x in q for x in ("yield", "productivity", "crop", "production")):
             return (
                 f"SELECT country, "
@@ -246,7 +467,6 @@ class BQRetriever(BaseRetriever):
                 f"ORDER BY yield_change DESC "
                 f"LIMIT {min(20, self.max_rows)}"
             )
-        # Generic: first available table in configured datasets, LIMIT only
         try:
             from google.cloud.bigquery import DatasetReference
             for _layer, ds_id in self.datasets_config.items():
@@ -266,39 +486,104 @@ class BQRetriever(BaseRetriever):
 
     def retrieve(self, query: str, top_k: int = 10, **kwargs: Any) -> list[dict[str, Any]]:
         """
-        Run a BQ query and return rows as context items.
-        If kwargs["sql"] is provided, use it (after validation). Otherwise use NL-to-SQL over the bronze dataset.
-        When NL-to-SQL returns nothing (e.g. LLM 410), a fallback query is used so BQ access can still be verified.
+        Run one or more BQ queries and return rows as context items.
+
+        NL-to-SQL generates up to RAG_BQ_MAX_SQL_QUERIES (default 10) SELECTs, typically
+        one per vector-matched table hint. kwargs["sql"] may be a single string or list.
+
+        Optional kwargs: geo_country, time_start, time_end, entities, domains, table_hints.
+        Graph node aggregates distinct executed SQL into state ``bq_sql_queries``.
         """
         if not self.project_id:
             return []
         client = self._get_client()
-        sql = kwargs.get("sql")
         table_hints = kwargs.get("table_hints")
         hint_list: list[str] | None = None
         if isinstance(table_hints, list) and table_hints:
             hint_list = [str(x) for x in table_hints if str(x).strip()]
-        if not sql and self.nl2sql_enabled:
-            sql = self._nl_to_sql(query, table_hints=hint_list)
-        if not sql:
-            sql = self._fallback_sql(query)
-        if not sql:
+
+        geo_country = kwargs.get("geo_country")
+        if isinstance(geo_country, str):
+            geo_country = geo_country.strip() or None
+        else:
+            geo_country = None
+
+        time_start = kwargs.get("time_start")
+        if not isinstance(time_start, str) or not time_start.strip():
+            time_start = None
+        else:
+            time_start = time_start.strip()[:10]
+
+        time_end = kwargs.get("time_end")
+        if not isinstance(time_end, str) or not time_end.strip():
+            time_end = None
+        else:
+            time_end = time_end.strip()[:10]
+
+        entities = kwargs.get("entities")
+        if not isinstance(entities, list):
+            entities = None
+        domains = kwargs.get("domains")
+        if not isinstance(domains, list):
+            domains = None
+
+        sql_input = kwargs.get("sql")
+        sql_queries: list[str] = []
+        if isinstance(sql_input, str) and sql_input.strip():
+            sql_queries = [sql_input.strip()]
+        elif isinstance(sql_input, list):
+            sql_queries = [str(s).strip() for s in sql_input if str(s).strip()]
+
+        if not sql_queries and self.nl2sql_enabled:
+            sql_queries = self._nl_to_sql_queries(
+                query,
+                table_hints=hint_list,
+                geo_country=geo_country,
+                time_start=time_start,
+                time_end=time_end,
+                entities=entities,
+                domains=domains,
+            )
+        if not sql_queries:
+            fb = self._fallback_sql(query)
+            if fb:
+                sql_queries = [fb]
+
+        if not sql_queries:
             return []
+
+        max_queries = max(1, int(os.environ.get("RAG_BQ_MAX_SQL_QUERIES", "10") or 10))
+        rows_per_query = max(1, int(os.environ.get("RAG_BQ_ROWS_PER_QUERY", "10") or 10))
         allowed = set(self.datasets_config.values())
-        validated = _validate_sql(sql, allowed, self.max_rows)
-        if validated is None:
-            return []
-        try:
-            job = client.query(validated)
-            rows = list(job.result())
-        except Exception:
-            return []
-        items = []
-        for row in rows[: top_k or self.max_rows]:
-            d = dict(row)
-            items.append({
-                "content": str(d),
-                "source": "bigquery",
-                "metadata": {**d, "sql": validated},
-            })
+        budget = top_k or self.max_rows
+        items: list[dict[str, Any]] = []
+
+        for idx, raw_sql in enumerate(sql_queries[:max_queries]):
+            if budget <= 0:
+                break
+            limit = min(rows_per_query, budget)
+            validated = _validate_sql(raw_sql, allowed, limit)
+            if validated is None:
+                continue
+            try:
+                job = client.query(validated)
+                rows = list(job.result())
+            except Exception:
+                continue
+            for row in rows[:limit]:
+                d = dict(row)
+                items.append({
+                    "content": str(d),
+                    "source": "bigquery",
+                    "metadata": {
+                        **d,
+                        "sql": validated,
+                        "sql_index": idx + 1,
+                        "sql_count": len(sql_queries),
+                    },
+                })
+                budget -= 1
+                if budget <= 0:
+                    break
+
         return items

@@ -12,6 +12,8 @@ import os
 import re
 from typing import Any
 
+from ml.rag.llm_chat import llm_chat_complete, llm_model_id
+
 # Stakeholder-oriented insight intents (not DB/channel labels). Used in heuristics, LLM prompt, and normalization.
 INTENT_ALLOWED: tuple[str, ...] = (
     "descriptive",
@@ -164,7 +166,8 @@ def _extract_countries(text: str) -> list[str]:
     q = text.lower()
     found: list[str] = []
     for key, canonical in sorted(_COUNTRY_ALIASES.items(), key=lambda x: -len(x[0])):
-        if key in q:
+        # Word boundaries avoid matching "niger" inside "nigeria".
+        if re.search(rf"\b{re.escape(key)}\b", q):
             if canonical not in found:
                 found.append(canonical)
     return found
@@ -324,13 +327,8 @@ def _infer_domains(text: str) -> list[str]:
 
 
 def _call_llama_decompose(query: str) -> dict[str, Any] | None:
-    api_token = os.environ.get("HF_API_TOKEN")
-    model_id = os.environ.get("RAG_LLM_MODEL_ID", "meta-llama/Llama-3.1-8B-Instruct")
-    if not api_token:
-        return None
-    try:
-        import requests
-    except ImportError:
+    model_id = llm_model_id()
+    if not os.environ.get("HF_API_TOKEN") and not os.environ.get("RAG_LLM_BASE_URL", "").strip():
         return None
     intent_block = "\n".join(f"  - {line}" for line in _INTENT_LLM_LINES)
     allowed_csv = ", ".join(INTENT_ALLOWED)
@@ -346,19 +344,16 @@ def _call_llama_decompose(query: str) -> dict[str, Any] | None:
         "No markdown, no extra keys.\n\nQuestion: "
         + query
     )
-    url = "https://router.huggingface.co/v1/chat/completions"
-    headers = {"Authorization": f"Bearer {api_token}", "Content-Type": "application/json"}
-    payload = {
-        "model": model_id,
-        "messages": [{"role": "user", "content": prompt}],
-        "max_tokens": 400,
-        "temperature": 0.0,
-    }
     try:
-        resp = requests.post(url, headers=headers, json=payload, timeout=45)
-        resp.raise_for_status()
-        data = resp.json()
-        raw = str(data["choices"][0]["message"]["content"]).strip()
+        raw = llm_chat_complete(
+            [{"role": "user", "content": prompt}],
+            model=model_id,
+            max_tokens=400,
+            temperature=0.0,
+            timeout_s=45,
+        )
+        if not raw:
+            return None
         if "```" in raw:
             m = re.search(r"```(?:json)?\s*([\s\S]*?)```", raw)
             if m:

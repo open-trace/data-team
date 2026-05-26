@@ -17,14 +17,52 @@ Typical collection layouts (embedding model must match how points were indexed):
 
 from __future__ import annotations
 
+import json
+import logging
 import os
 import re
+import threading
+import time
+import uuid
+from functools import lru_cache
+from pathlib import Path
 from typing import Any
 
 from ml.rag.retrievers.base import BaseRetriever
 from ml.rag.text_processors.chunking_config import profile_for_collection
 
+logger = logging.getLogger(__name__)
+
 DEFAULT_MODEL = "intfloat/multilingual-e5-small"
+
+# Loading SentenceTransformer is slow (model files + torch) and not thread-safe on Windows
+# (file locks, DLL races). We load each model once per process and reuse the instance.
+_SENTENCE_MODEL_LOCK = threading.Lock()
+
+
+# #region agent log
+_WORKSPACE_ROOT = Path(__file__).resolve().parents[4]  # data-team workspace root
+
+
+def _agent_debug_log(location: str, message: str, data: dict, hypothesis_id: str, run_id: str = "pre-fix") -> None:
+    try:
+        payload = {
+            "sessionId": "6c8b2f",
+            "id": f"log_{int(time.time()*1000)}_{uuid.uuid4().hex[:8]}",
+            "timestamp": int(time.time() * 1000),
+            "location": location,
+            "message": message,
+            "data": data,
+            "runId": run_id,
+            "hypothesisId": hypothesis_id,
+        }
+        with (_WORKSPACE_ROOT / "debug-6c8b2f.log").open("a", encoding="utf-8") as f:
+            f.write(json.dumps(payload) + "\n")
+    except Exception:
+        pass
+
+
+# #endregion
 
 
 def _env(name: str, default: str = "") -> str:
@@ -85,6 +123,21 @@ def _get_qdrant_config() -> tuple[str, str, str, float]:
         timeout_s = float(_env("QDRANT_TIMEOUT_S", "30") or 30)
     except Exception:
         timeout_s = 30.0
+    # #region agent log
+    _agent_debug_log(
+        "vector_retriever.py:_get_qdrant_config",
+        "qdrant env probe",
+        {
+            "url_present": bool(url),
+            "api_key_present": bool(api_key),
+            "url_len": len(url),
+            "api_key_len": len(api_key),
+            "collection": collection,
+            "timeout_s": timeout_s,
+        },
+        "C",
+    )
+    # #endregion
     if not url or not api_key:
         raise RuntimeError(
             "Qdrant is not configured. Set QDRANT_URL and QDRANT_API_KEY "
@@ -104,6 +157,20 @@ def make_qdrant_client(*, timeout_s: float | None = None):
         timeout=int(timeout_s if timeout_s is not None else default_timeout or 30),
         check_compatibility=False,
     )
+
+
+@lru_cache(maxsize=4)
+def _load_sentence_transformer(model_id: str) -> Any:
+    """Process-wide singleton SentenceTransformer per model_id.
+
+    `lru_cache` makes lookups thread-safe; the explicit lock serializes the
+    initial load so concurrent threads do not race on file/DLL access.
+    """
+    with _SENTENCE_MODEL_LOCK:
+        from sentence_transformers import SentenceTransformer
+
+        logger.info("Loading SentenceTransformer %r (one-time)", model_id)
+        return SentenceTransformer(model_id)
 
 
 def _embed_texts(texts: list[str], *, model_id: str, mode: str) -> list[list[float]]:
@@ -145,9 +212,7 @@ def _embed_texts(texts: list[str], *, model_id: str, mode: str) -> list[list[flo
             out.append(vec)
         return out
 
-    from sentence_transformers import SentenceTransformer
-
-    m = SentenceTransformer(model_id)
+    m = _load_sentence_transformer(model_id)
     vecs = m.encode(texts, normalize_embeddings=True)
     return [[float(x) for x in row] for row in vecs]
 
@@ -161,8 +226,16 @@ def build_qdrant_filter(
     published_at_to: str | None = None,
     domains_substring: str | None = None,
     exclude_section_roles: frozenset[str] | None = None,
+    indexed_fields: frozenset[str] | None = None,
 ) -> Any | None:
-    """Build a Qdrant Filter for indexed payload fields (requires payload indexes)."""
+    """Build a Qdrant Filter for indexed payload fields (requires payload indexes).
+
+    ``indexed_fields`` (optional): when provided, any ``FieldCondition`` whose key
+    is not in the set is silently dropped. This prevents Qdrant from returning
+    ``400 Bad request: Index required but not found for "<field>"`` when a
+    collection happens to not index every field referenced here. Pass the result
+    of ``indexed_fields_for_corpus`` from ``qdrant_collection_specs``.
+    """
     try:
         from qdrant_client.http.models import (
             FieldCondition,
@@ -175,6 +248,9 @@ def build_qdrant_filter(
     except ImportError:
         return None
 
+    def _allow(field: str) -> bool:
+        return indexed_fields is None or field in indexed_fields
+
     must: list[Any] = []
     must_not: list[Any] = []
 
@@ -183,7 +259,7 @@ def build_qdrant_filter(
         kinds = [str(k).strip() for k in doc_kinds if str(k).strip()]
     elif doc_kind:
         kinds = [doc_kind.strip()]
-    if kinds:
+    if kinds and _allow("doc_kind"):
         if len(kinds) == 1:
             must.append(FieldCondition(key="doc_kind", match=MatchValue(value=kinds[0])))
         else:
@@ -192,17 +268,19 @@ def build_qdrant_filter(
     if geo_country:
         gc = geo_country.strip()
         if gc:
-            must.append(
-                Filter(
-                    should=[
-                        FieldCondition(key="geo_country_primary", match=MatchValue(value=gc)),
-                        FieldCondition(key="country", match=MatchValue(value=gc)),
-                        FieldCondition(key="geo_countries", match=MatchText(text=gc)),
-                    ]
+            geo_should: list[Any] = []
+            if _allow("geo_country_primary"):
+                geo_should.append(
+                    FieldCondition(key="geo_country_primary", match=MatchValue(value=gc))
                 )
-            )
+            if _allow("country"):
+                geo_should.append(FieldCondition(key="country", match=MatchValue(value=gc)))
+            if _allow("geo_countries"):
+                geo_should.append(FieldCondition(key="geo_countries", match=MatchText(text=gc)))
+            if geo_should:
+                must.append(Filter(should=geo_should))
 
-    if published_at_from or published_at_to:
+    if (published_at_from or published_at_to) and _allow("published_at"):
         range_args: dict[str, str] = {}
         if published_at_from:
             range_args["gte"] = published_at_from
@@ -213,12 +291,12 @@ def build_qdrant_filter(
             FieldCondition(key="published_at", range=Range(**range_args))  # type: ignore[arg-type]
         )
 
-    if domains_substring:
+    if domains_substring and _allow("domains"):
         ds = domains_substring.strip()
         if ds:
             must.append(FieldCondition(key="domains", match=MatchText(text=ds)))
 
-    if exclude_section_roles:
+    if exclude_section_roles and _allow("section_role"):
         for role in sorted(exclude_section_roles):
             must_not.append(FieldCondition(key="section_role", match=MatchValue(value=role)))
 
@@ -426,7 +504,13 @@ class VectorRetriever(BaseRetriever):
         fusion_limit: int,
         q_filter: Any,
     ) -> list[Any]:
-        """Dense + sparse prefetch fused with reciprocal rank fusion (RRF)."""
+        """Dense + sparse prefetch fused with reciprocal rank fusion (RRF).
+
+        The geo/temporal/doc_kind filter is applied **inside each ``Prefetch``** so
+        each dense/sparse candidate stream is pre-filtered before fusion. This is the
+        Qdrant-recommended pattern for dynamic, query-aware retrieval — top-level
+        ``query_filter`` would only post-filter the fused results.
+        """
         from ml.rag.sparse_embeddings import embed_sparse_query
         from qdrant_client.http.models import Fusion, FusionQuery, Prefetch
 
@@ -437,21 +521,29 @@ class VectorRetriever(BaseRetriever):
         )[0]
         sqv = embed_sparse_query(query)
 
-        query_kwargs: dict[str, Any] = {"limit": fusion_limit, "with_payload": True}
         if q_filter is not None:
-            query_kwargs["query_filter"] = q_filter
+            logger.debug(
+                "Hybrid pre-filter applied per Prefetch for %s: %s",
+                collection,
+                q_filter,
+            )
 
         prefetch: list[Any] = []
         for vname in dense_names:
-            prefetch.append(Prefetch(query=qv, using=vname, limit=dense_prefetch))
+            prefetch.append(
+                Prefetch(query=qv, using=vname, limit=dense_prefetch, filter=q_filter)
+            )
         for sname in sparse_names:
-            prefetch.append(Prefetch(query=sqv, using=sname, limit=sparse_prefetch))
+            prefetch.append(
+                Prefetch(query=sqv, using=sname, limit=sparse_prefetch, filter=q_filter)
+            )
 
         resp = client.query_points(
             collection_name=collection,
             prefetch=prefetch,
             query=FusionQuery(fusion=Fusion.RRF),
-            **query_kwargs,
+            limit=fusion_limit,
+            with_payload=True,
         )
         return resp.points or []
 
@@ -485,11 +577,18 @@ class VectorRetriever(BaseRetriever):
                     fusion_limit=hybrid_fusion_limit(top_k=top_k),
                     q_filter=q_filter,
                 )
-            except ImportError:
-                pass
+            except ImportError as exc:
+                logger.warning(
+                    "Hybrid search disabled (missing dependency) for %s: %s",
+                    self.collection_name,
+                    exc,
+                )
             except Exception:
                 # Fall back to dense-only if hybrid fails (e.g. empty sparse index).
-                pass
+                logger.exception(
+                    "Hybrid (dense+sparse) search failed for %s; falling back to dense-only",
+                    self.collection_name,
+                )
 
         client = self._get_client()
         collection = self.collection_name
@@ -586,6 +685,18 @@ class VectorRetriever(BaseRetriever):
         fetch_n = max(top_k, top_k * overfetch)
         exclude_section_roles = _research_exclude_roles() if _is_research_collection(collection) else frozenset()
 
+        # Skip filter conditions whose key isn't indexed on this collection:
+        # Qdrant otherwise rejects the whole query with a 400. Falls back to
+        # "no constraint on indexed_fields" if the corpus profile lookup fails.
+        try:
+            from ml.rag.scripts.qdrant_collection_specs import indexed_fields_for_corpus
+
+            indexed_fields = indexed_fields_for_corpus(
+                profile_for_collection(collection).corpus
+            )
+        except Exception:
+            indexed_fields = None
+
         try:
             q_filter = build_qdrant_filter(
                 doc_kind=doc_kind,
@@ -595,6 +706,7 @@ class VectorRetriever(BaseRetriever):
                 published_at_to=published_at_to,
                 domains_substring=domains_substring,
                 exclude_section_roles=exclude_section_roles,
+                indexed_fields=indexed_fields,
             )
         except Exception:
             q_filter = None

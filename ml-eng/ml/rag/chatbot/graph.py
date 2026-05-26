@@ -4,6 +4,7 @@ RAG graph: query → decompose → parallel retrieval (BQ table match + news + a
 """
 from __future__ import annotations
 
+import logging
 import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from typing import Any, TypedDict
@@ -16,6 +17,8 @@ from ml.rag.retrievers.bq_retriever import BQRetriever
 from ml.rag.retrievers.vector_retriever import VectorRetriever
 from ml.rag.text_processors.preprocess.bibliographic_metadata import format_academic_citation
 
+logger = logging.getLogger(__name__)
+
 
 class RAGGraphState(TypedDict, total=False):
     query: str
@@ -25,6 +28,7 @@ class RAGGraphState(TypedDict, total=False):
     vector_academic_results: list[dict[str, Any]]
     vector_results: list[dict[str, Any]]
     bq_results: list[dict[str, Any]]
+    bq_sql_queries: list[str]
     merged_context: list[dict[str, Any]]
     reranked_context: list[dict[str, Any]]
     answer: str
@@ -94,19 +98,42 @@ def _retrieve_news(state: RAGGraphState) -> list[dict[str, Any]]:
 
 
 def _retrieve_academic(state: RAGGraphState) -> list[dict[str, Any]]:
+    """Research retrieval (academic / policy / public report).
+
+    Inherits geo + time decomposition from the query so retrieval is dynamically
+    scoped: a query about Senegal does not pull Botswana papers, and a query
+    about 2020+ trends does not pull 1990s reports. Filters are applied
+    per-Prefetch (pre-fusion) inside ``VectorRetriever`` for best recall.
+    """
     q = (state.get("query") or "").strip()
+    dec = state.get("decomposition") or {}
     top_k = int(state.get("academic_top_k") or 20)
     rp_coll = (
         os.environ.get("QDRANT_COLLECTION_RESEARCH_PAPERS", "research_other_papers").strip()
         or "research_other_papers"
     )
     vr = VectorRetriever(collection_name=rp_coll)
-    raw = vr.retrieve(
-        q,
-        top_k=top_k,
-        doc_kinds=list(_RESEARCH_DOC_KINDS),
-        vector_search_mode="dense_named",
+
+    geo = resolve_news_geo(
+        geo_override=str(state.get("geo_override") or ""),
+        geography=dec.get("geography") if isinstance(dec.get("geography"), list) else None,
     )
+    ts = (state.get("time_start_override") or dec.get("time_start") or "").strip()[:10]
+    te = (state.get("time_end_override") or dec.get("time_end") or "").strip()[:10]
+
+    kwargs: dict[str, Any] = {
+        "top_k": top_k,
+        "doc_kinds": list(_RESEARCH_DOC_KINDS),
+        "vector_search_mode": "dense_named",
+    }
+    if geo:
+        kwargs["geo_country"] = geo
+    if ts:
+        kwargs["published_at_from"] = ts
+    if te:
+        kwargs["published_at_to"] = te
+
+    raw = vr.retrieve(q, **kwargs)
     return [_tag_vector(x, "research") for x in raw]
 
 
@@ -148,6 +175,7 @@ def node_parallel_retrieve(state: RAGGraphState) -> dict[str, Any]:
             try:
                 res = fut.result()
             except Exception:
+                logger.exception("Parallel retrieval failed for %s; returning empty list", kind)
                 res = []
             if kind == "bq_tables":
                 bq_cands = res
@@ -167,12 +195,38 @@ def node_parallel_retrieve(state: RAGGraphState) -> dict[str, Any]:
 
 def node_bq_retrieve(state: RAGGraphState) -> dict[str, Any]:
     q = (state.get("query") or "").strip()
+    dec = state.get("decomposition") or {}
     cands = state.get("bq_table_candidates") or []
-    hints = [str(c.get("content") or "") for c in cands[:12] if c.get("content")]
+    max_sql = max(1, int(os.environ.get("RAG_BQ_MAX_SQL_QUERIES", "10") or 10))
+    hints = [str(c.get("content") or "") for c in cands[:max_sql] if c.get("content")]
     top_k = int(state.get("bq_top_k") or 15)
+    geo = resolve_news_geo(
+        geo_override=str(state.get("geo_override") or ""),
+        geography=dec.get("geography") if isinstance(dec.get("geography"), list) else None,
+    )
+    ts = (state.get("time_start_override") or dec.get("time_start") or "").strip()[:10]
+    te = (state.get("time_end_override") or dec.get("time_end") or "").strip()[:10]
+    entities = dec.get("entities") if isinstance(dec.get("entities"), list) else None
+    domains = dec.get("domains") if isinstance(dec.get("domains"), list) else None
     retriever = BQRetriever()
-    results = retriever.retrieve(q, top_k=top_k, table_hints=hints)
-    return {"bq_results": results}
+    results = retriever.retrieve(
+        q,
+        top_k=top_k,
+        table_hints=hints,
+        geo_country=geo,
+        time_start=ts or None,
+        time_end=te or None,
+        entities=entities,
+        domains=domains,
+    )
+    sql_seen: set[str] = set()
+    bq_sql_queries: list[str] = []
+    for row in results:
+        sql = str((row.get("metadata") or {}).get("sql") or "").strip()
+        if sql and sql not in sql_seen:
+            sql_seen.add(sql)
+            bq_sql_queries.append(sql)
+    return {"bq_results": results, "bq_sql_queries": bq_sql_queries}
 
 
 def node_merge(state: RAGGraphState) -> dict[str, Any]:

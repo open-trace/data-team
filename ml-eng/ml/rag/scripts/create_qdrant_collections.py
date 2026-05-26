@@ -8,9 +8,12 @@ Optional:
   RAG_QDRANT_VECTOR_SIZE_NEWS / _RESEARCH / _OTA / _DATA_DESCRIPTIONS
   RAG_QDRANT_VECTOR_SIZE (fallback when per-corpus var unset)
   --skip-existing            only create collections that are missing (no delete)
+  --indexes-only             skip create/delete; only (re)apply payload indexes from
+                             PAYLOAD_INDEXES against existing collections (idempotent)
 
 Run:
   PYTHONPATH=ml-eng python -m ml.rag.scripts.create_qdrant_collections
+  PYTHONPATH=ml-eng python -m ml.rag.scripts.create_qdrant_collections --indexes-only
 """
 
 from __future__ import annotations
@@ -38,6 +41,11 @@ def main() -> int:
         action="store_true",
         help="Do not delete collections that already exist (create missing only).",
     )
+    parser.add_argument(
+        "--indexes-only",
+        action="store_true",
+        help="Skip create/delete; only (re)apply payload indexes from PAYLOAD_INDEXES.",
+    )
     args = parser.parse_args()
 
     load_data_local_dotenv(ML_ENG_ROOT)
@@ -58,6 +66,18 @@ def main() -> int:
     ]
 
     existing = {c.name for c in client.get_collections().collections}
+
+    if args.indexes_only:
+        for corpus_key, collection_name in targets:
+            if collection_name not in existing:
+                print(f"[SKIP] {collection_name} not found in Qdrant")
+                continue
+            indexed = ensure_payload_indexes(client, collection_name, corpus_key)
+            if indexed:
+                print(f"[INDEXED] {collection_name}: {', '.join(indexed)}")
+            else:
+                print(f"[OK] {collection_name}: all indexes already present")
+        return 0
 
     for corpus_key, collection_name in targets:
         if collection_name in existing:

@@ -21,9 +21,9 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from ml.rag.local_env import load_data_local_dotenv
+from ml.rag.local_env import load_rag_dotenv
 
-load_data_local_dotenv(Path(__file__).resolve().parents[2])
+load_rag_dotenv(Path(__file__).resolve().parents[2])
 
 
 def _dedupe_bq_sql(bq_results: list[Any] | None) -> list[str]:

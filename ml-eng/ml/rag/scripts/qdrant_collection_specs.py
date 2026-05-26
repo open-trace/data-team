@@ -142,6 +142,8 @@ PAYLOAD_INDEXES: dict[str, list[tuple[str, models.PayloadSchemaType]]] = {
         ("published_at", models.PayloadSchemaType.KEYWORD),
         ("geo_country_primary", models.PayloadSchemaType.KEYWORD),
         ("country", models.PayloadSchemaType.KEYWORD),
+        # TEXT index enables MatchText substring filter on the semicolon-list payload.
+        ("geo_countries", models.PayloadSchemaType.TEXT),
         ("geo_scope", models.PayloadSchemaType.KEYWORD),
         ("domains", models.PayloadSchemaType.TEXT),
     ],
@@ -149,6 +151,8 @@ PAYLOAD_INDEXES: dict[str, list[tuple[str, models.PayloadSchemaType]]] = {
         ("doc_kind", models.PayloadSchemaType.KEYWORD),
         ("geo_country_primary", models.PayloadSchemaType.KEYWORD),
         ("geo_countries", models.PayloadSchemaType.TEXT),
+        # KEYWORD index lets the geo filter's ``country`` MatchValue fallback work.
+        ("country", models.PayloadSchemaType.KEYWORD),
         ("section_role", models.PayloadSchemaType.KEYWORD),
         ("content_type", models.PayloadSchemaType.KEYWORD),
         ("semantic_lane", models.PayloadSchemaType.KEYWORD),
@@ -166,6 +170,15 @@ PAYLOAD_INDEXES: dict[str, list[tuple[str, models.PayloadSchemaType]]] = {
         ("table_name", models.PayloadSchemaType.KEYWORD),
     ],
 }
+
+
+def indexed_fields_for_corpus(corpus: CorpusKey) -> frozenset[str]:
+    """Names of payload fields with a server-side index for the given corpus.
+
+    Used at query time by ``build_qdrant_filter`` to drop ``FieldCondition``s
+    that would otherwise raise ``400 Index required but not found`` on Qdrant.
+    """
+    return frozenset(name for name, _ in PAYLOAD_INDEXES.get(corpus, []))
 
 
 def ensure_payload_indexes(client: Any, collection_name: str, corpus: str) -> list[str]:

@@ -11,8 +11,8 @@ requests>=2.31.0
 PyYAML>=6.0
 
 # Qdrant + local/HF embeddings (sentence-transformers needs torch).
-# Pin NumPy 1.x: torch wheels are often built against NumPy 1.x (NumPy 2 breaks torch import).
-numpy>=1.24.0,<2.0
+# NumPy 2.x is required for Python 3.13 (no 1.x wheels for cp313); torch>=2.4 supports it.
+numpy>=1.24.0,<3.0
 # torchvision: transformers (pulled by sentence-transformers) lazy-imports vision modules;
 # Streamlit's file watcher can trigger those imports and crash without torchvision.
 torch>=2.4.0
