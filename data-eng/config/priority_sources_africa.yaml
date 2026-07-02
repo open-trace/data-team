@@ -1,0 +1,246 @@
+# Priority Data Sources for Africa Coverage Expansion
+# Defines which data sources to expand and their priority levels
+
+priority_sources:
+  - name: market_prices
+    category: market
+    description: Regional staple crop and commodity price monitoring
+    current_countries:
+      - KE  # Kenya
+      - NG  # Nigeria
+      - ET  # Ethiopia
+      - GH  # Ghana
+    target_countries:
+      - TZ  # Tanzania
+      - UG  # Uganda
+      - RW  # Rwanda
+      - MW  # Malawi
+      - ZM  # Zambia
+      - ZW  # Zimbabwe
+      - BF  # Burkina Faso
+      - ML  # Mali
+      - SN  # Senegal
+      - CI  # Côte d'Ivoire
+      - CM  # Cameroon
+      - ZA  # South Africa
+    crops:
+      - maize
+      - sorghum
+      - rice
+      - wheat
+      - millet
+      - beans
+      - cassava
+    priority: high
+    
+  - name: weather
+    category: weather
+    description: Rainfall and climate anomaly signals for crop planning
+    current_countries:
+      - KE  # Kenya
+      - UG  # Uganda
+      - RW  # Rwanda
+      - TZ  # Tanzania
+    target_countries:
+      - ET  # Ethiopia
+      - SO  # Somalia
+      - SS  # South Sudan
+      - MW  # Malawi
+      - ZM  # Zambia
+      - ZW  # Zimbabwe
+      - MZ  # Mozambique
+      - BF  # Burkina Faso
+      - ML  # Mali
+      - NE  # Niger
+      - NG  # Nigeria
+      - GH  # Ghana
+    crops:
+      - maize
+      - beans
+      - coffee
+      - tea
+      - sorghum
+      - millet
+      - rice
+    priority: high
+    
+  - name: satellite_vegetation
+    category: satellite
+    description: NDVI and vegetation condition monitoring
+    current_countries:
+      - ET  # Ethiopia
+      - SD  # Sudan
+      - ML  # Mali
+      - SN  # Senegal
+    target_countries:
+      - KE  # Kenya
+      - TZ  # Tanzania
+      - UG  # Uganda
+      - SO  # Somalia
+      - SS  # South Sudan
+      - BF  # Burkina Faso
+      - NE  # Niger
+      - TD  # Chad
+      - MR  # Mauritania
+      - NG  # Nigeria
+      - ZM  # Zambia
+      - MW  # Malawi
+    crops:
+      - millet
+      - sorghum
+      - rice
+      - cassava
+      - maize
+    priority: high
+    
+  - name: food_security
+    category: food_security
+    description: Food insecurity and household resilience signals
+    current_countries:
+      - SO  # Somalia
+      - SS  # South Sudan
+      - NE  # Niger
+      - BF  # Burkina Faso
+    target_countries:
+      - ET  # Ethiopia
+      - KE  # Kenya
+      - SD  # Sudan
+      - ML  # Mali
+      - TD  # Chad
+      - CF  # Central African Republic
+      - CD  # Congo, Democratic Republic
+      - MW  # Malawi
+      - ZW  # Zimbabwe
+      - MZ  # Mozambique
+      - MG  # Madagascar
+      - NG  # Nigeria
+    crops:
+      - millet
+      - sorghum
+      - maize
+      - cowpeas
+      - cassava
+      - rice
+    priority: high
+    
+  - name: soil_data
+    category: soil
+    description: Soil properties for agricultural planning
+    current_countries:
+      - KE  # Kenya
+      - ET  # Ethiopia
+      - NG  # Nigeria
+      - GH  # Ghana
+      - TZ  # Tanzania
+    target_countries:
+      - UG  # Uganda
+      - RW  # Rwanda
+      - MW  # Malawi
+      - ZM  # Zambia
+      - ZW  # Zimbabwe
+      - MZ  # Mozambique
+      - ZA  # South Africa
+      - BF  # Burkina Faso
+      - ML  # Mali
+      - SN  # Senegal
+      - CI  # Côte d'Ivoire
+      - CM  # Cameroon
+    crops:
+      - all  # Soil data applies to all crops
+    priority: medium
+    
+  - name: crop_production
+    category: crop
+    description: Crop production statistics and yield data
+    current_countries:
+      - KE  # Kenya
+      - NG  # Nigeria
+      - ET  # Ethiopia
+      - GH  # Ghana
+      - TZ  # Tanzania
+      - UG  # Uganda
+    target_countries:
+      - RW  # Rwanda
+      - MW  # Malawi
+      - ZM  # Zambia
+      - ZW  # Zimbabwe
+      - MZ  # Mozambique
+      - ZA  # South Africa
+      - BF  # Burkina Faso
+      - ML  # Mali
+      - SN  # Senegal
+      - CI  # Côte d'Ivoire
+      - CM  # Cameroon
+      - EG  # Egypt
+      - MA  # Morocco
+      - DZ  # Algeria
+      - TN  # Tunisia
+      - SD  # Sudan
+    crops:
+      - maize
+      - rice
+      - wheat
+      - sorghum
+      - millet
+      - cassava
+      - yams
+      - sweet_potato
+      - beans
+      - cowpeas
+      - groundnuts
+      - soybeans
+      - coffee
+      - tea
+      - cocoa
+      - cotton
+    priority: high
+
+# Crop types priority list
+priority_crops:
+  staples:
+    - maize
+    - rice
+    - wheat
+    - sorghum
+    - millet
+    - cassava
+    - yams
+    - sweet_potato
+  legumes:
+    - beans
+    - cowpeas
+    - groundnuts
+    - soybeans
+    - lentils
+    - chickpeas
+  cash_crops:
+    - coffee
+    - tea
+    - cocoa
+    - cotton
+    - tobacco
+    - sugarcane
+  vegetables:
+    - tomatoes
+    - onions
+    - cabbage
+    - kale
+    - spinach
+  fruits:
+    - bananas
+    - mangoes
+    - oranges
+    - avocados
+
+# Data source categories
+source_categories:
+  - market
+  - weather
+  - satellite
+  - food_security
+  - soil
+  - crop
+  - biodiversity
+  - climate
+  - trade
+  - policy
