@@ -1,0 +1,635 @@
+// Database Schema ERD
+// Generated from agricultural_indicator_schema_catalog
+// Use at https://dbdiagram.io
+
+// Note: Table names have been sanitized for DBML compatibility
+// Original names are preserved in comments
+
+Table Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops {
+  // Source: Climate
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  Source_Code varchar
+  year varchar
+  // ... and 8 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Energy_use_in_agriculture {
+  // Source: Climate
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  year varchar
+  // ... and 6 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Livestock {
+  // Source: Climate
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  Source_Code varchar
+  year varchar
+  // ... and 8 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Land_use_and_change_Emissions_from_Drained_organic_soils {
+  // Source: ISRIC
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  Source_Code varchar
+  year varchar
+  // ... and 7 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Land_use_and_change_Emissions_from_Fires {
+  // Source: Climate
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  Source_Code varchar
+  year varchar
+  // ... and 7 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Land_use_and_change_Emissions_from_Forests {
+  // Source: Climate
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  Source_Code varchar
+  year varchar
+  // ... and 7 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Pre_and_post_agricultural_production_Emissions_from_pre_and_post_agricultural_production {
+  // Source: Climate
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  year varchar
+  // ... and 6 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Totals_and_Indicators_Emissions_indicators {
+  // Source: Climate
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  year varchar
+  // ... and 6 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Totals_and_Indicators_Emissions_intensities {
+  // Source: Climate
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  year varchar
+  // ... and 7 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Totals_and_Indicators_Emissions_totals {
+  // Source: Climate
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  Source_Code varchar
+  year varchar
+  // ... and 7 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Cost_and_Affordability_of_a_Healthy_Diet_Cost_and_Affordability_of_a_Healthy_Diet {
+  // Source: Other
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  Release_Code varchar
+  year varchar
+  // ... and 7 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Discontinued_archives_and_data_series_Machinery {
+  // Source: Other
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  year varchar
+  // ... and 6 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Food_Balances_Food_Balances_2010_23 {
+  // Original name: Unpivoted_FAOstat_africa_Food Balances_Food_Balances_2010-23
+  // Source: Other
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  year varchar
+  // ... and 7 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Food_Balances_Commodity_Balances_non_food_2010_23 {
+  // Original name: Unpivoted_FAOstat_africa_Food_Balances_Commodity_Balances_non-food_2010-23
+  // Source: Other
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  year varchar
+  // ... and 7 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Food_Balances_Food_Balances_1961_2013_old_methodology_and_population {
+  // Original name: Unpivoted_FAOstat_africa_Food_Balances_Food_Balances_1961-2013_old_methodology_and_population
+  // Source: Other
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  year varchar
+  // ... and 7 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Food_Balances_Supply_Utilization_Accounts_2010_23 {
+  // Original name: Unpivoted_FAOstat_africa_Food_Balances_Supply_Utilization_Accounts_2010-23
+  // Source: Other
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  year varchar
+  // ... and 7 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Food_Security_and_Nutrition_Suite_of_Food_Security_Indicators {
+  // Source: Other
+  // Type: Dimension
+  area_code varchar
+  item_code varchar
+  element_code varchar
+  period_key integer
+  // ... and 9 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Forestry_Forestry_Production_and_Trade {
+  // Source: Other
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  year varchar
+  // ... and 6 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Forestry_Pulp_and_paper_capacities_survey {
+  // Source: Other
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  year varchar
+  // ... and 6 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Investment_Country_Investment_Statistics_Profile {
+  // Source: Other
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  year varchar
+  // ... and 6 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Investment_Credit_to_Agriculture {
+  // Source: Other
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  year varchar
+  // ... and 6 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Investment_Foreign_Direct_Investment_FDI {
+  // Source: Other
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  year varchar
+  // ... and 6 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Investment_Government_Expenditure {
+  // Source: Other
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  year varchar
+  // ... and 6 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Inputs_Fertilizers_by_Nutrient {
+  // Source: Other
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  year varchar
+  // ... and 6 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Inputs_Fertilizers_by_Product {
+  // Source: Other
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  year varchar
+  // ... and 6 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Inputs_Livestock_Manure {
+  // Source: Other
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  year varchar
+  // ... and 7 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Inputs_Pesticides_Trade {
+  // Source: Other
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  year varchar
+  // ... and 6 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Inputs_Pesticides_Use {
+  // Source: Other
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  year varchar
+  // ... and 6 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Land_Land_Cover {
+  // Source: Other
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  year varchar
+  // ... and 6 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Land_Land_Use {
+  // Source: Other
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  year varchar
+  // ... and 6 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Sustainability_Indicators_Bioenergy {
+  // Source: Other
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  year varchar
+  // ... and 6 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Sustainability_Indicators_Cropland_Nutrient_Balance {
+  // Source: Other
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  year varchar
+  // ... and 6 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Sustainability_Indicators_Livestock_Patterns {
+  // Source: Other
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  year varchar
+  // ... and 7 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Macro_Economic_Indicators_Capital_Stock {
+  // Original name: Unpivoted_FAOstat_africa_Macro-Economic_Indicators_Capital_Stock
+  // Source: Other
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  year varchar
+  // ... and 6 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Macro_Economic_Indicators_Macro_Indicators {
+  // Original name: Unpivoted_FAOstat_africa_Macro-Economic_Indicators_Macro_Indicators
+  // Source: Other
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  year varchar
+  // ... and 6 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Population_and_Employment_Annual_population {
+  // Source: Other
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  year varchar
+  // ... and 6 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Prices_Consumer_Price_Indices {
+  // Source: Other
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  Months_Code varchar
+  year varchar
+  // ... and 7 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Prices_Deflators {
+  // Source: Other
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  year varchar
+  // ... and 6 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Prices_Producer_Prices {
+  // Source: Other
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  Months_Code varchar
+  year varchar
+  // ... and 8 more fields
+}
+
+Table Unpivoted_FAOstat_africa_SDG_Indicators_SDG_Indicators {
+  // Source: Other
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  year varchar
+  // ... and 7 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Trade_Crops_and_livestock_products {
+  // Source: Other
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  year varchar
+  // ... and 7 more fields
+}
+
+Table Unpivoted_FAOstat_africa_Trade_Trade_Indices {
+  // Source: Other
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  year varchar
+  // ... and 7 more fields
+}
+
+Table Unpivoted_FAOstat_africa_World_Census_of_Agriculture_Structural_data_from_agricultural_censuses {
+  // Source: Other
+  // Type: Dimension
+  Area_Code varchar
+  Item_Code varchar
+  Element_Code varchar
+  Census_Year_Code varchar
+  year varchar
+  // ... and 7 more fields
+}
+
+Table Unpivoted_FAOstat_africa_production_Crops_and_livestock {
+  // Source: Other
+  // Type: Dimension
+  area_code varchar
+  item_code varchar
+  element_code varchar
+  year varchar
+  // ... and 7 more fields
+}
+
+Table Unpivoted_FAOstat_africa_production_Production_Indices {
+  // Original name: Unpivoted_FAOstat_africa_production_Production Indices
+  // Source: Other
+  // Type: Dimension
+  area_code varchar
+  item_code varchar
+  element_code varchar
+  year float
+  // ... and 7 more fields
+}
+
+Table fao_fertilizers_nutrient_bronze {
+  // Source: FAO
+  // Type: Dimension
+  domain_code varchar
+  area_code varchar
+  element_code varchar
+  item_code varchar
+  year varchar
+  country_code varchar
+  // ... and 8 more fields
+}
+
+Table fao_land_use_bronze {
+  // Source: FAO
+  // Type: Dimension
+  domain_code varchar
+  area_code varchar
+  element_code varchar
+  item_code varchar
+  year varchar
+  country_code varchar
+  // ... and 8 more fields
+}
+
+Table fao_pesticides_use_bronze {
+  // Source: FAO
+  // Type: Dimension
+  domain_code varchar
+  area_code varchar
+  element_code varchar
+  item_code varchar
+  year varchar
+  country_code varchar
+  // ... and 8 more fields
+}
+
+Table fao_trade_crops_livestock_bronze {
+  // Source: FAO
+  // Type: Dimension
+  domain_code varchar
+  area_code varchar
+  element_code varchar
+  item_code varchar
+  year varchar
+  country_code varchar
+  // ... and 8 more fields
+}
+
+Table fao_trade_indices_bronze {
+  // Source: FAO
+  // Type: Dimension
+  domain_code varchar
+  area_code varchar
+  element_code varchar
+  item_code varchar
+  year varchar
+  country_code varchar
+  // ... and 8 more fields
+}
+
+// Relationships
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Area_Code > Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Energy_use_in_agriculture.Area_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Item_Code > Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Energy_use_in_agriculture.Item_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Element_Code > Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Energy_use_in_agriculture.Element_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Area_Code > Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Livestock.Area_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Item_Code > Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Livestock.Item_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Element_Code > Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Livestock.Element_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Source_Code > Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Livestock.Source_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Area_Code > Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Land_use_and_change_Emissions_from_Drained_organic_soils.Area_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Item_Code > Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Land_use_and_change_Emissions_from_Drained_organic_soils.Item_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Element_Code > Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Land_use_and_change_Emissions_from_Drained_organic_soils.Element_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Source_Code > Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Land_use_and_change_Emissions_from_Drained_organic_soils.Source_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Area_Code > Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Land_use_and_change_Emissions_from_Fires.Area_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Item_Code > Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Land_use_and_change_Emissions_from_Fires.Item_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Element_Code > Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Land_use_and_change_Emissions_from_Fires.Element_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Source_Code > Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Land_use_and_change_Emissions_from_Fires.Source_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Area_Code > Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Land_use_and_change_Emissions_from_Forests.Area_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Item_Code > Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Land_use_and_change_Emissions_from_Forests.Item_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Element_Code > Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Land_use_and_change_Emissions_from_Forests.Element_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Source_Code > Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Land_use_and_change_Emissions_from_Forests.Source_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Area_Code > Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Pre_and_post_agricultural_production_Emissions_from_pre_and_post_agricultural_production.Area_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Item_Code > Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Pre_and_post_agricultural_production_Emissions_from_pre_and_post_agricultural_production.Item_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Element_Code > Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Pre_and_post_agricultural_production_Emissions_from_pre_and_post_agricultural_production.Element_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Area_Code > Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Totals_and_Indicators_Emissions_indicators.Area_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Item_Code > Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Totals_and_Indicators_Emissions_indicators.Item_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Element_Code > Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Totals_and_Indicators_Emissions_indicators.Element_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Area_Code > Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Totals_and_Indicators_Emissions_intensities.Area_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Item_Code > Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Totals_and_Indicators_Emissions_intensities.Item_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Element_Code > Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Totals_and_Indicators_Emissions_intensities.Element_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Area_Code > Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Totals_and_Indicators_Emissions_totals.Area_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Item_Code > Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Totals_and_Indicators_Emissions_totals.Item_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Element_Code > Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Totals_and_Indicators_Emissions_totals.Element_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Source_Code > Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Totals_and_Indicators_Emissions_totals.Source_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Area_Code > Unpivoted_FAOstat_africa_Cost_and_Affordability_of_a_Healthy_Diet_Cost_and_Affordability_of_a_Healthy_Diet.Area_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Item_Code > Unpivoted_FAOstat_africa_Cost_and_Affordability_of_a_Healthy_Diet_Cost_and_Affordability_of_a_Healthy_Diet.Item_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Element_Code > Unpivoted_FAOstat_africa_Cost_and_Affordability_of_a_Healthy_Diet_Cost_and_Affordability_of_a_Healthy_Diet.Element_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Area_Code > Unpivoted_FAOstat_africa_Discontinued_archives_and_data_series_Machinery.Area_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Item_Code > Unpivoted_FAOstat_africa_Discontinued_archives_and_data_series_Machinery.Item_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Element_Code > Unpivoted_FAOstat_africa_Discontinued_archives_and_data_series_Machinery.Element_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Area_Code > Unpivoted_FAOstat_africa_Food_Balances_Food_Balances_2010_23.Area_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Item_Code > Unpivoted_FAOstat_africa_Food_Balances_Food_Balances_2010_23.Item_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Element_Code > Unpivoted_FAOstat_africa_Food_Balances_Food_Balances_2010_23.Element_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Area_Code > Unpivoted_FAOstat_africa_Food_Balances_Commodity_Balances_non_food_2010_23.Area_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Item_Code > Unpivoted_FAOstat_africa_Food_Balances_Commodity_Balances_non_food_2010_23.Item_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Element_Code > Unpivoted_FAOstat_africa_Food_Balances_Commodity_Balances_non_food_2010_23.Element_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Area_Code > Unpivoted_FAOstat_africa_Food_Balances_Food_Balances_1961_2013_old_methodology_and_population.Area_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Item_Code > Unpivoted_FAOstat_africa_Food_Balances_Food_Balances_1961_2013_old_methodology_and_population.Item_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Element_Code > Unpivoted_FAOstat_africa_Food_Balances_Food_Balances_1961_2013_old_methodology_and_population.Element_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Area_Code > Unpivoted_FAOstat_africa_Food_Balances_Supply_Utilization_Accounts_2010_23.Area_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Item_Code > Unpivoted_FAOstat_africa_Food_Balances_Supply_Utilization_Accounts_2010_23.Item_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Element_Code > Unpivoted_FAOstat_africa_Food_Balances_Supply_Utilization_Accounts_2010_23.Element_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Area_Code > Unpivoted_FAOstat_africa_Food_Security_and_Nutrition_Suite_of_Food_Security_Indicators.area_code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Item_Code > Unpivoted_FAOstat_africa_Food_Security_and_Nutrition_Suite_of_Food_Security_Indicators.item_code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Element_Code > Unpivoted_FAOstat_africa_Food_Security_and_Nutrition_Suite_of_Food_Security_Indicators.element_code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Area_Code > Unpivoted_FAOstat_africa_Forestry_Forestry_Production_and_Trade.Area_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Item_Code > Unpivoted_FAOstat_africa_Forestry_Forestry_Production_and_Trade.Item_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Element_Code > Unpivoted_FAOstat_africa_Forestry_Forestry_Production_and_Trade.Element_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Area_Code > Unpivoted_FAOstat_africa_Forestry_Pulp_and_paper_capacities_survey.Area_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Item_Code > Unpivoted_FAOstat_africa_Forestry_Pulp_and_paper_capacities_survey.Item_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Element_Code > Unpivoted_FAOstat_africa_Forestry_Pulp_and_paper_capacities_survey.Element_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Area_Code > Unpivoted_FAOstat_africa_Investment_Country_Investment_Statistics_Profile.Area_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Item_Code > Unpivoted_FAOstat_africa_Investment_Country_Investment_Statistics_Profile.Item_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Element_Code > Unpivoted_FAOstat_africa_Investment_Country_Investment_Statistics_Profile.Element_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Area_Code > Unpivoted_FAOstat_africa_Investment_Credit_to_Agriculture.Area_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Item_Code > Unpivoted_FAOstat_africa_Investment_Credit_to_Agriculture.Item_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Element_Code > Unpivoted_FAOstat_africa_Investment_Credit_to_Agriculture.Element_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Area_Code > Unpivoted_FAOstat_africa_Investment_Foreign_Direct_Investment_FDI.Area_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Item_Code > Unpivoted_FAOstat_africa_Investment_Foreign_Direct_Investment_FDI.Item_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Element_Code > Unpivoted_FAOstat_africa_Investment_Foreign_Direct_Investment_FDI.Element_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Area_Code > Unpivoted_FAOstat_africa_Investment_Government_Expenditure.Area_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Item_Code > Unpivoted_FAOstat_africa_Investment_Government_Expenditure.Item_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Element_Code > Unpivoted_FAOstat_africa_Investment_Government_Expenditure.Element_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Area_Code > Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Inputs_Fertilizers_by_Nutrient.Area_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Item_Code > Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Inputs_Fertilizers_by_Nutrient.Item_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Element_Code > Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Inputs_Fertilizers_by_Nutrient.Element_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Area_Code > Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Inputs_Fertilizers_by_Product.Area_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Item_Code > Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Inputs_Fertilizers_by_Product.Item_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Element_Code > Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Inputs_Fertilizers_by_Product.Element_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Area_Code > Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Inputs_Livestock_Manure.Area_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Item_Code > Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Inputs_Livestock_Manure.Item_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Element_Code > Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Inputs_Livestock_Manure.Element_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Area_Code > Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Inputs_Pesticides_Trade.Area_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Item_Code > Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Inputs_Pesticides_Trade.Item_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Element_Code > Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Inputs_Pesticides_Trade.Element_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Area_Code > Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Inputs_Pesticides_Use.Area_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Item_Code > Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Inputs_Pesticides_Use.Item_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Element_Code > Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Inputs_Pesticides_Use.Element_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Area_Code > Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Land_Land_Cover.Area_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Item_Code > Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Land_Land_Cover.Item_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Element_Code > Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Land_Land_Cover.Element_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Area_Code > Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Land_Land_Use.Area_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Item_Code > Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Land_Land_Use.Item_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Element_Code > Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Land_Land_Use.Element_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Area_Code > Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Sustainability_Indicators_Bioenergy.Area_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Item_Code > Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Sustainability_Indicators_Bioenergy.Item_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Element_Code > Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Sustainability_Indicators_Bioenergy.Element_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Area_Code > Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Sustainability_Indicators_Cropland_Nutrient_Balance.Area_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Item_Code > Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Sustainability_Indicators_Cropland_Nutrient_Balance.Item_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Element_Code > Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Sustainability_Indicators_Cropland_Nutrient_Balance.Element_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Area_Code > Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Sustainability_Indicators_Livestock_Patterns.Area_Code
+Ref: Unpivoted_FAOstat_africa_Climate_Change_Agrifood_systems_emissions_Farm_gate_Emissions_from_Crops.Item_Code > Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Sustainability_Indicators_Livestock_Patterns.Item_Code
