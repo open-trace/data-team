@@ -1,0 +1,166 @@
+# Data Source API Configurations
+# Defines API endpoints, authentication methods, and rate limits for each data source
+
+sources:
+  fews_net:
+    name: FEWS NET
+    category: food_security
+    description: Famine Early Warning Systems Network
+    base_url: https://fdw.fews.net/api/
+    endpoints:
+      ipc_phase: ipcphaseclass/
+      market_prices: marketprice/
+      food_security: foodsecurityclass/
+      cross_border_trade: crossbordertrade/
+    authentication:
+      type: none  # Public API
+      required: false
+    rate_limit:
+      requests_per_minute: 60
+      requests_per_hour: 1000
+    data_format: json
+    pagination: true
+    max_page_size: 1000
+    
+  wfp_food_prices:
+    name: WFP VAMPIRE Tool
+    category: market
+    description: World Food Programme Global Food Prices
+    base_url: https://data.humdata.org/api/3/action/
+    endpoints:
+      food_prices: datastore_search
+    authentication:
+      type: api_key
+      required: false  # Public dataset
+    rate_limit:
+      requests_per_minute: 30
+      requests_per_hour: 500
+    data_format: json
+    pagination: true
+    resource_id: 12d7c8e3-eff9-4db0-93b7-726825c4fe9a
+    
+  isric_soil:
+    name: ISRIC World Soil Information
+    category: soil
+    description: SoilGrids global soil property maps
+    base_url: https://rest.isric.org/soilgrids/v2.0/
+    endpoints:
+      properties: properties/query
+      classification: classification/query
+    authentication:
+      type: none
+      required: false
+    rate_limit:
+      requests_per_minute: 10
+      requests_per_hour: 100
+    data_format: json
+    coordinate_based: true
+    
+  gbif_biodiversity:
+    name: GBIF
+    category: biodiversity
+    description: Global Biodiversity Information Facility
+    base_url: https://api.gbif.org/v1/
+    endpoints:
+      occurrence: occurrence/search
+      species: species/search
+    authentication:
+      type: none
+      required: false
+    rate_limit:
+      requests_per_minute: 60
+      requests_per_hour: 1000
+    data_format: json
+    pagination: true
+    max_page_size: 300
+    
+  fao_crop_production:
+    name: FAO STAT
+    category: crop
+    description: Food and Agriculture Organization Statistics
+    base_url: https://fenixservices.fao.org/faostat/api/v1/en/
+    endpoints:
+      data: data
+      definitions: definitions
+      dimensions: dimensions
+    authentication:
+      type: none
+      required: false
+    rate_limit:
+      requests_per_minute: 30
+      requests_per_hour: 500
+    data_format: json
+    domains:
+      - QC  # Crops and livestock products
+      - QCL  # Crops and livestock products (legacy)
+      - RL  # Land use
+      - RFN  # Fertilizers
+      - RP  # Pesticides
+      - TI  # Trade indices
+      - TCL  # Trade crops and livestock
+    
+  nasa_power:
+    name: NASA POWER
+    category: weather
+    description: NASA Prediction Of Worldwide Energy Resources
+    base_url: https://power.larc.nasa.gov/api/temporal/
+    endpoints:
+      daily: daily/point
+      monthly: monthly/point
+    authentication:
+      type: none
+      required: false
+    rate_limit:
+      requests_per_minute: 10
+      requests_per_hour: 100
+    data_format: json
+    coordinate_based: true
+    parameters:
+      - T2M  # Temperature at 2 Meters
+      - PRECTOTCORR  # Precipitation Corrected
+      - RH2M  # Relative Humidity at 2 Meters
+      - WS2M  # Wind Speed at 2 Meters
+      - ALLSKY_SFC_SW_DWN  # Solar Radiation
+      
+  copernicus_climate:
+    name: Copernicus Climate Data Store
+    category: climate
+    description: European climate data service
+    base_url: https://cds.climate.copernicus.eu/api/v2/
+    endpoints:
+      resources: resources
+    authentication:
+      type: api_key
+      required: true
+      env_var: COPERNICUS_API_KEY
+    rate_limit:
+      requests_per_minute: 5
+      requests_per_hour: 50
+    data_format: netcdf
+    requires_download: true
+
+# BigQuery configuration
+bigquery:
+  project_id: opentrace-prod-5ga4
+  landing_dataset: landing
+  credentials_env_var: GOOGLE_APPLICATION_CREDENTIALS
+  location: europe-west3
+  
+# Logging configuration
+logging:
+  level: INFO
+  format: "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+  log_dir: /var/log/data-ingestion/
+  max_bytes: 10485760  # 10MB
+  backup_count: 5
+  
+# Retry configuration
+retry:
+  max_attempts: 3
+  backoff_factor: 2
+  retry_on_status_codes:
+    - 429  # Too Many Requests
+    - 500  # Internal Server Error
+    - 502  # Bad Gateway
+    - 503  # Service Unavailable
+    - 504  # Gateway Timeout

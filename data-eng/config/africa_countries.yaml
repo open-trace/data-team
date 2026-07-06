@@ -1,0 +1,340 @@
+# All 54 African Countries with ISO Codes
+# Used for data ingestion scripts to expand coverage across Africa
+# Format: country_name, alpha2_code, alpha3_code
+
+countries:
+  - name: Algeria
+    alpha2: DZ
+    alpha3: DZA
+    region: North Africa
+    
+  - name: Angola
+    alpha2: AO
+    alpha3: AGO
+    region: Southern Africa
+    
+  - name: Benin
+    alpha2: BJ
+    alpha3: BEN
+    region: West Africa
+    
+  - name: Botswana
+    alpha2: BW
+    alpha3: BWA
+    region: Southern Africa
+    
+  - name: Burkina Faso
+    alpha2: BF
+    alpha3: BFA
+    region: West Africa
+    
+  - name: Burundi
+    alpha2: BI
+    alpha3: BDI
+    region: East Africa
+    
+  - name: Cabo Verde
+    alpha2: CV
+    alpha3: CPV
+    region: West Africa
+    
+  - name: Cameroon
+    alpha2: CM
+    alpha3: CMR
+    region: Central Africa
+    
+  - name: Central African Republic
+    alpha2: CF
+    alpha3: CAF
+    region: Central Africa
+    
+  - name: Chad
+    alpha2: TD
+    alpha3: TCD
+    region: Central Africa
+    
+  - name: Comoros
+    alpha2: KM
+    alpha3: COM
+    region: East Africa
+    
+  - name: Congo
+    alpha2: CG
+    alpha3: COG
+    region: Central Africa
+    
+  - name: "Congo, Democratic Republic"
+    alpha2: CD
+    alpha3: COD
+    region: Central Africa
+    
+  - name: "Côte d'Ivoire"
+    alpha2: CI
+    alpha3: CIV
+    region: West Africa
+    
+  - name: Djibouti
+    alpha2: DJ
+    alpha3: DJI
+    region: East Africa
+    
+  - name: Egypt
+    alpha2: EG
+    alpha3: EGY
+    region: North Africa
+    
+  - name: Equatorial Guinea
+    alpha2: GQ
+    alpha3: GNQ
+    region: Central Africa
+    
+  - name: Eritrea
+    alpha2: ER
+    alpha3: ERI
+    region: East Africa
+    
+  - name: Eswatini
+    alpha2: SZ
+    alpha3: SWZ
+    region: Southern Africa
+    
+  - name: Ethiopia
+    alpha2: ET
+    alpha3: ETH
+    region: East Africa
+    
+  - name: Gabon
+    alpha2: GA
+    alpha3: GAB
+    region: Central Africa
+    
+  - name: Gambia
+    alpha2: GM
+    alpha3: GMB
+    region: West Africa
+    
+  - name: Ghana
+    alpha2: GH
+    alpha3: GHA
+    region: West Africa
+    
+  - name: Guinea
+    alpha2: GN
+    alpha3: GIN
+    region: West Africa
+    
+  - name: Guinea-Bissau
+    alpha2: GW
+    alpha3: GNB
+    region: West Africa
+    
+  - name: Kenya
+    alpha2: KE
+    alpha3: KEN
+    region: East Africa
+    
+  - name: Lesotho
+    alpha2: LS
+    alpha3: LSO
+    region: Southern Africa
+    
+  - name: Liberia
+    alpha2: LR
+    alpha3: LBR
+    region: West Africa
+    
+  - name: Libya
+    alpha2: LY
+    alpha3: LBY
+    region: North Africa
+    
+  - name: Madagascar
+    alpha2: MG
+    alpha3: MDG
+    region: East Africa
+    
+  - name: Malawi
+    alpha2: MW
+    alpha3: MWI
+    region: Southern Africa
+    
+  - name: Mali
+    alpha2: ML
+    alpha3: MLI
+    region: West Africa
+    
+  - name: Mauritania
+    alpha2: MR
+    alpha3: MRT
+    region: West Africa
+    
+  - name: Mauritius
+    alpha2: MU
+    alpha3: MUS
+    region: East Africa
+    
+  - name: Morocco
+    alpha2: MA
+    alpha3: MAR
+    region: North Africa
+    
+  - name: Mozambique
+    alpha2: MZ
+    alpha3: MOZ
+    region: Southern Africa
+    
+  - name: Namibia
+    alpha2: NA
+    alpha3: NAM
+    region: Southern Africa
+    
+  - name: Niger
+    alpha2: NE
+    alpha3: NER
+    region: West Africa
+    
+  - name: Nigeria
+    alpha2: NG
+    alpha3: NGA
+    region: West Africa
+    
+  - name: Rwanda
+    alpha2: RW
+    alpha3: RWA
+    region: East Africa
+    
+  - name: "São Tomé and Príncipe"
+    alpha2: ST
+    alpha3: STP
+    region: Central Africa
+    
+  - name: Senegal
+    alpha2: SN
+    alpha3: SEN
+    region: West Africa
+    
+  - name: Seychelles
+    alpha2: SC
+    alpha3: SYC
+    region: East Africa
+    
+  - name: Sierra Leone
+    alpha2: SL
+    alpha3: SLE
+    region: West Africa
+    
+  - name: Somalia
+    alpha2: SO
+    alpha3: SOM
+    region: East Africa
+    
+  - name: South Africa
+    alpha2: ZA
+    alpha3: ZAF
+    region: Southern Africa
+    
+  - name: South Sudan
+    alpha2: SS
+    alpha3: SSD
+    region: East Africa
+    
+  - name: Sudan
+    alpha2: SD
+    alpha3: SDN
+    region: North Africa
+    
+  - name: Tanzania
+    alpha2: TZ
+    alpha3: TZA
+    region: East Africa
+    
+  - name: Togo
+    alpha2: TG
+    alpha3: TGO
+    region: West Africa
+    
+  - name: Tunisia
+    alpha2: TN
+    alpha3: TUN
+    region: North Africa
+    
+  - name: Uganda
+    alpha2: UG
+    alpha3: UGA
+    region: East Africa
+    
+  - name: Zambia
+    alpha2: ZM
+    alpha3: ZMB
+    region: Southern Africa
+    
+  - name: Zimbabwe
+    alpha2: ZW
+    alpha3: ZWE
+    region: Southern Africa
+
+# Regional groupings for batch processing
+regions:
+  north_africa:
+    - DZ  # Algeria
+    - EG  # Egypt
+    - LY  # Libya
+    - MA  # Morocco
+    - SD  # Sudan
+    - TN  # Tunisia
+    
+  west_africa:
+    - BJ  # Benin
+    - BF  # Burkina Faso
+    - CV  # Cabo Verde
+    - CI  # Côte d'Ivoire
+    - GM  # Gambia
+    - GH  # Ghana
+    - GN  # Guinea
+    - GW  # Guinea-Bissau
+    - LR  # Liberia
+    - ML  # Mali
+    - MR  # Mauritania
+    - NE  # Niger
+    - NG  # Nigeria
+    - SN  # Senegal
+    - SL  # Sierra Leone
+    - TG  # Togo
+    
+  central_africa:
+    - CM  # Cameroon
+    - CF  # Central African Republic
+    - TD  # Chad
+    - CG  # Congo
+    - CD  # Congo, Democratic Republic
+    - GQ  # Equatorial Guinea
+    - GA  # Gabon
+    - ST  # São Tomé and Príncipe
+    
+  east_africa:
+    - BI  # Burundi
+    - KM  # Comoros
+    - DJ  # Djibouti
+    - ER  # Eritrea
+    - ET  # Ethiopia
+    - KE  # Kenya
+    - MG  # Madagascar
+    - MU  # Mauritius
+    - RW  # Rwanda
+    - SC  # Seychelles
+    - SO  # Somalia
+    - SS  # South Sudan
+    - TZ  # Tanzania
+    - UG  # Uganda
+    
+  southern_africa:
+    - AO  # Angola
+    - BW  # Botswana
+    - SZ  # Eswatini
+    - LS  # Lesotho
+    - MW  # Malawi
+    - MZ  # Mozambique
+    - NA  # Namibia
+    - ZA  # South Africa
+    - ZM  # Zambia
+    - ZW  # Zimbabwe

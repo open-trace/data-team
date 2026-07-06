@@ -247,6 +247,7 @@ def build_qdrant_filter(
     published_at_from: str | None = None,
     published_at_to: str | None = None,
     domains_substring: str | None = None,
+    namespace: str | None = None,
     exclude_section_roles: frozenset[str] | None = None,
     indexed_fields: frozenset[str] | None = None,
 ) -> Any | None:
@@ -336,6 +337,11 @@ def build_qdrant_filter(
         ds = domains_substring.strip()
         if ds:
             must.append(FieldCondition(key="domains", match=MatchText(text=ds)))
+
+    if namespace and _allow("namespace"):
+        ns = str(namespace).strip()
+        if ns:
+            must.append(FieldCondition(key="namespace", match=MatchValue(value=ns)))
 
     if exclude_section_roles and _allow("section_role"):
         for role in sorted(exclude_section_roles):
@@ -488,6 +494,7 @@ class VectorRetriever(BaseRetriever):
         published_at_from: str | None,
         published_at_to: str | None,
         domains_substring: str | None,
+        namespace: str | None = None,
         exclude_section_roles: frozenset[str] | None = None,
     ) -> bool:
         allowed_kinds: list[str] = []
@@ -538,6 +545,11 @@ class VectorRetriever(BaseRetriever):
         if domains_substring:
             ds = (meta.get("domains") or meta.get("domain") or "")
             if domains_substring.lower() not in str(ds).lower():
+                return False
+
+        if namespace:
+            meta_namespace = str(meta.get("namespace") or "").strip().lower()
+            if meta_namespace and meta_namespace != str(namespace).strip().lower():
                 return False
 
         if exclude_section_roles:
@@ -736,6 +748,12 @@ class VectorRetriever(BaseRetriever):
         else:
             domains_substring = None
 
+        namespace = kwargs.get("namespace")
+        if isinstance(namespace, str):
+            namespace = namespace.strip() or None
+        else:
+            namespace = None
+
         has_filters = any(
             [
                 doc_kind,
@@ -745,6 +763,7 @@ class VectorRetriever(BaseRetriever):
                 published_at_from,
                 published_at_to,
                 domains_substring,
+                namespace,
             ]
         )
 
@@ -790,6 +809,7 @@ class VectorRetriever(BaseRetriever):
                 published_at_from=published_at_from,
                 published_at_to=published_at_to,
                 domains_substring=domains_substring,
+                namespace=namespace,
                 exclude_section_roles=exclude_section_roles,
                 indexed_fields=indexed_fields,
             )
@@ -872,6 +892,7 @@ class VectorRetriever(BaseRetriever):
                 published_at_from=post_filter_from,
                 published_at_to=post_filter_to,
                 domains_substring=domains_substring,
+                namespace=namespace,
                 exclude_section_roles=exclude_section_roles,
             ):
                 continue

@@ -4,6 +4,7 @@ Stable chunk / document identifiers and content hashing for idempotent Qdrant up
 from __future__ import annotations
 
 import hashlib
+import os
 import uuid
 from typing import Any
 
@@ -26,18 +27,34 @@ def document_id_from_path(path: str, *, dedupe_id: str | None = None) -> str:
     return hashlib.sha256(str(path).encode("utf-8")).hexdigest()[:32]
 
 
+def resolve_namespace(*, namespace: str | None = None, corpus: CorpusKey | str | None = None) -> str:
+    if namespace and str(namespace).strip():
+        return str(namespace).strip()
+    if corpus:
+        env_key = f"RAG_NAMESPACE_{str(corpus).upper()}"
+        env_value = os.environ.get(env_key, "").strip()
+        if env_value:
+            return env_value
+    env_value = os.environ.get("RAG_NAMESPACE", "").strip()
+    if env_value:
+        return env_value
+    return str(corpus or "default").strip() or "default"
+
+
 def make_chunk_id(
     *,
     corpus: CorpusKey,
     document_id: str,
     chunk_index: int,
     text: str,
+    namespace: str | None = None,
 ) -> str:
     ch = content_hash(text)
+    namespace_value = resolve_namespace(namespace=namespace, corpus=corpus)
     return str(
         uuid.uuid5(
             _NS,
-            f"{corpus}|{document_id}|{chunk_index}|{ch[:16]}",
+            f"{corpus}|{namespace_value}|{document_id}|{chunk_index}|{ch[:16]}",
         )
     )
 
@@ -57,6 +74,7 @@ def enrich_metadata(
     semantic_lane: str = "",
     section_role: str = "",
     content_type: str = "",
+    namespace: str | None = None,
 ) -> dict[str, Any]:
     out = dict(meta)
     out["document_id"] = document_id
@@ -64,6 +82,8 @@ def enrich_metadata(
     out["total_chunks"] = total_chunks
     out["content_hash"] = content_hash(text)
     out["ingest_version"] = INGEST_VERSION
+    namespace_value = resolve_namespace(namespace=namespace, corpus=corpus)
+    out["namespace"] = namespace_value
     if section_path:
         out["section_path"] = section_path
     if section_title:
@@ -83,5 +103,6 @@ def enrich_metadata(
         document_id=document_id,
         chunk_index=chunk_index,
         text=text,
+        namespace=namespace_value,
     )
     return out

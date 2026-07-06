@@ -139,6 +139,7 @@ COLLECTION_BUILDERS: dict[str, Any] = {
 PAYLOAD_INDEXES: dict[str, list[tuple[str, models.PayloadSchemaType]]] = {
     "news": [
         ("doc_kind", models.PayloadSchemaType.KEYWORD),
+        ("namespace", models.PayloadSchemaType.KEYWORD),
         ("published_at", models.PayloadSchemaType.KEYWORD),
         ("geo_country_primary", models.PayloadSchemaType.KEYWORD),
         ("country", models.PayloadSchemaType.KEYWORD),
@@ -149,6 +150,7 @@ PAYLOAD_INDEXES: dict[str, list[tuple[str, models.PayloadSchemaType]]] = {
     ],
     "research": [
         ("doc_kind", models.PayloadSchemaType.KEYWORD),
+        ("namespace", models.PayloadSchemaType.KEYWORD),
         ("geo_country_primary", models.PayloadSchemaType.KEYWORD),
         ("geo_countries", models.PayloadSchemaType.TEXT),
         # KEYWORD index lets the geo filter's ``country`` MatchValue fallback work.
@@ -162,11 +164,13 @@ PAYLOAD_INDEXES: dict[str, list[tuple[str, models.PayloadSchemaType]]] = {
     ],
     "ota": [
         ("doc_kind", models.PayloadSchemaType.KEYWORD),
+        ("namespace", models.PayloadSchemaType.KEYWORD),
         ("geo_country_primary", models.PayloadSchemaType.KEYWORD),
         ("geo_scope", models.PayloadSchemaType.KEYWORD),
     ],
     "data_description": [
         ("doc_kind", models.PayloadSchemaType.KEYWORD),
+        ("namespace", models.PayloadSchemaType.KEYWORD),
         ("table_name", models.PayloadSchemaType.KEYWORD),
     ],
 }
