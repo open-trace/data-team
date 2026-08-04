@@ -1,0 +1,191 @@
+version: 2
+
+# staging_dev (silver) - star schema dims + facts
+# All models read from stg_silver_star_metrics.
+
+models:
+  - name: stg_silver_star_metrics
+    description: "Unified silver view unioning 7 landing sources into 18-col star schema shape"
+
+  - name: dim_country
+    description: "Distinct countries"
+    columns:
+      - name: country_key
+        description: "MD5 surrogate key"
+        tests: [unique, not_null]
+      - name: country_code
+        description: "ISO/M49 code"
+      - name: country_name
+        description: "Country name"
+
+  - name: dim_geography
+    description: "Country + admin combinations"
+    columns:
+      - name: geography_key
+        description: "MD5 surrogate key"
+        tests: [unique, not_null]
+
+  - name: dim_indicator
+    description: "Distinct indicator names"
+    columns:
+      - name: indicator_key
+        description: "MD5 surrogate key"
+        tests: [unique, not_null]
+
+  - name: dim_source
+    description: "Distinct data providers"
+    columns:
+      - name: source_key
+        description: "MD5 surrogate key"
+        tests: [unique, not_null]
+
+  - name: dim_unit
+    description: "Distinct units of measurement"
+    columns:
+      - name: unit_key
+        description: "MD5 surrogate key"
+        tests: [unique, not_null]
+
+  - name: dim_period
+    description: "Calendar year dimension"
+    columns:
+      - name: period_key
+        description: "Year as int64 PK"
+        tests: [unique, not_null]
+      - name: period_year
+        description: "Calendar year"
+      - name: start_date
+        description: "First day of year"
+
+  - name: dim_crop
+    description: "Distinct crop names"
+    columns:
+      - name: crop_key
+        description: "MD5 surrogate key"
+        tests: [unique, not_null]
+
+  - name: dim_season
+    description: "Distinct growing seasons"
+    columns:
+      - name: season_key
+        description: "MD5 surrogate key"
+        tests: [unique, not_null]
+
+  - name: dim_farm_practice
+    description: "Distinct farm practices"
+    columns:
+      - name: practice_key
+        description: "MD5 surrogate key"
+        tests: [unique, not_null]
+
+  - name: dim_technology
+    description: "Agricultural technologies"
+    columns:
+      - name: technology_key
+        description: "MD5 surrogate key"
+        tests: [unique, not_null]
+
+  - name: dim_value_chain
+    description: "Value-chain stages"
+    columns:
+      - name: value_chain_stage_key
+        description: "MD5 surrogate key"
+        tests: [unique, not_null]
+
+  - name: dim_policy_area
+    description: "Policy area names"
+    columns:
+      - name: policy_area_key
+        description: "MD5 surrogate key"
+        tests: [unique, not_null]
+
+  - name: dim_shock_type
+    description: "Shock and stress types"
+    columns:
+      - name: shock_type_key
+        description: "MD5 surrogate key"
+        tests: [unique, not_null]
+
+  - name: dim_ipc_phase
+    description: "IPC food security phases"
+    columns:
+      - name: ipc_phase_key
+        description: "MD5 surrogate key"
+        tests: [unique, not_null]
+
+  - name: fact_nutrition
+    description: "Nutrition metrics (domain=nutrition)"
+    columns:
+      - name: fact_nutrition_key
+        description: "MD5 surrogate key"
+        tests: [unique, not_null]
+
+  - name: fact_production
+    description: "Production metrics (domain=production)"
+    columns:
+      - name: fact_production_key
+        description: "MD5 surrogate key"
+        tests: [unique, not_null]
+
+  - name: fact_humanitarian
+    description: "Humanitarian metrics (domain=humanitarian)"
+    columns:
+      - name: fact_humanitarian_key
+        description: "MD5 surrogate key"
+        tests: [unique, not_null]
+
+  - name: fact_market_access
+    description: "Market price metrics (domain=market_access)"
+    columns:
+      - name: fact_market_access_key
+        description: "MD5 surrogate key"
+        tests: [unique, not_null]
+
+  - name: fact_land_use
+    description: "Land use metrics (domain=land_use)"
+    columns:
+      - name: fact_land_use_key
+        description: "MD5 surrogate key"
+        tests: [unique, not_null]
+
+  - name: fact_climate
+    description: "Climate metrics (domain=climate)"
+    columns:
+      - name: fact_climate_key
+        description: "MD5 surrogate key"
+        tests: [unique, not_null]
+
+  - name: fact_enterprise_investment
+    description: "Enterprise investment metrics (domain=enterprise_investment)"
+    columns:
+      - name: fact_enterprise_investment_key
+        description: "MD5 surrogate key"
+        tests: [unique, not_null]
+
+  - name: fact_policy
+    description: "Policy metrics (domain=policy)"
+    columns:
+      - name: fact_policy_key
+        description: "MD5 surrogate key"
+        tests: [unique, not_null]
+
+  - name: fact_technology
+    description: "Technology metrics (domain=technology)"
+    columns:
+      - name: fact_technology_key
+        description: "MD5 surrogate key"
+        tests: [unique, not_null]
+
+  - name: fact_value_chain
+    description: "Value-chain metrics (domain=value_chain)"
+    columns:
+      - name: fact_value_chain_key
+        description: "MD5 surrogate key"
+        tests: [unique, not_null]
+
+  - name: land_use_soil_property_join
+    description: "FAO land-use joined with ISDA and ISRIC soil summaries"
+
+  - name: soil_dashboard_base
+    description: "ISDA + ISRIC soil data joined on lat/lon for Power BI"
+

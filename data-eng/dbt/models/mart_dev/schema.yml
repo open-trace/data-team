@@ -1,11 +1,47 @@
-# mart_dev models: analytics-ready; write to mart_dev (BQ_DATASET_GOLD).
-# Run: dbt run --target mart_dev
+# mart_dev (gold layer) — BI-ready aggregations and dashboard tables.
+# Written to BQ_DATASET_GOLD (default: mart_dev).
+# Run: dbt run --select mart_dev
 
 version: 2
 
 models:
-  - name: gold_example
-    description: "Example mart model. Replace with aggregations and ML-ready logic."
+  - name: mart_food_security
+    description: >
+      Gold food security dashboard table. Unions nutrition + humanitarian facts,
+      joins with country / period / indicator / source / unit dimensions.
+      Aggregated to country / year / indicator / domain grain.
+      Used by Power BI / Looker Studio dashboards.
     columns:
-      - name: id
-        description: "Primary key"
+      - name: mart_food_security_key
+        description: "MD5 surrogate key (country + year + indicator + domain)"
+        tests: [unique, not_null]
+      - name: country_code
+        description: "ISO/M49 country code"
+        tests: [not_null]
+      - name: country_name
+        description: "Country name from dim_country"
+      - name: period_year
+        description: "Reference year"
+        tests: [not_null]
+      - name: indicator_name
+        description: "Metric or indicator label"
+      - name: source_name
+        description: "Data provider"
+      - name: unit_name
+        description: "Unit of measurement"
+      - name: domain_name
+        description: "Thematic domain (nutrition or humanitarian)"
+      - name: total_value
+        description: "Sum of metric_value for this grain"
+      - name: avg_value
+        description: "Average of metric_value for this grain"
+      - name: record_count
+        description: "Number of source rows aggregated"
+      - name: _refreshed_at
+        description: "Timestamp when this mart table was last refreshed"
+
+  - name: gold_example
+    description: >
+      Template gold model — placeholder. Replace or delete once real
+      mart models are in place.
+

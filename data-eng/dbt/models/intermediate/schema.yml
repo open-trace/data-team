@@ -1,0 +1,25 @@
+version: 2
+
+# intermediate layer — cross-domain enrichment, ephemeral by default.
+# Models here are inlined as CTEs into downstream queries (no BQ tables created).
+# Override materialized='table' per model if a persistent table is needed.
+
+models:
+  - name: int_example
+    description: >
+      Enriched metrics intermediate model. Joins stg_silver_star_metrics with
+      dim_country to resolve country names. Use as a template — rename and
+      extend with additional dimension joins or business logic.
+    columns:
+      - name: domain_name
+        description: "Thematic domain (nutrition, production, humanitarian, etc.)"
+      - name: country_code
+        description: "ISO/M49 country code"
+      - name: country_name
+        description: "Country name (coalesced from metrics + dim_country)"
+      - name: indicator_name
+        description: "Metric or indicator label"
+      - name: period_year
+        description: "Reference year"
+      - name: metric_value
+        description: "Numeric metric value"

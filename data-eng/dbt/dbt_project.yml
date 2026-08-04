@@ -1,17 +1,18 @@
-# dbt project: OpenTrace data team (landing → raw_dev → staging_dev → mart_dev).
-# BigQuery dataset IDs match folder names; override with BQ_DATASET_* env vars.
-# Run with: dbt run --target raw_dev | staging_dev | mart_dev
+# dbt project: OpenTrace data team
+# Pipeline: landing → raw_dev (bronze) → staging_dev (silver) → mart_dev (gold)
+# Run everything: dbt run
+# Run one layer:  dbt run --select raw_dev | staging_dev | mart_dev
 
 name: open_trace
 version: "1.0.0"
 config-version: 2
 profile: open_trace
 
-model-paths: ["models"]
+model-paths:    ["models"]
 analysis-paths: ["analyses"]
-test-paths: ["tests"]
-seed-paths: ["seeds"]
-macro-paths: ["macros"]
+test-paths:     ["tests"]
+seed-paths:     ["seeds"]
+macro-paths:    ["macros"]
 snapshot-paths: ["snapshots"]
 
 target-path: "target"
@@ -20,23 +21,41 @@ clean-targets:
   - "dbt_packages"
 
 vars:
-  # Datasets (from env; env names keep BQ_DATASET_BRONZE etc. for backwards compatibility)
-  landing_dataset: "{{ env_var('BQ_DATASET_LANDING', 'landing') }}"
-  raw_dev_dataset: "{{ env_var('BQ_DATASET_BRONZE', 'raw_dev') }}"
+  bq_project:          "{{ env_var('BQ_PROJECT', 'opentrace-prod-5ga4') }}"
+  landing_dataset:     "{{ env_var('BQ_DATASET_LANDING', 'landing') }}"
+  raw_dev_dataset:     "{{ env_var('BQ_DATASET_BRONZE', 'raw_dev') }}"
   staging_dev_dataset: "{{ env_var('BQ_DATASET_SILVER', 'staging_dev') }}"
-  mart_dev_dataset: "{{ env_var('BQ_DATASET_GOLD', 'mart_dev') }}"
+  mart_dev_dataset:    "{{ env_var('BQ_DATASET_GOLD', 'mart_dev') }}"
 
 models:
   open_trace:
+
+    # Landing — pass-through views; use source() directly, no model files needed
     landing:
+      +materialized: view
       +schema: "{{ env_var('BQ_DATASET_LANDING', 'landing') }}"
-      +database: "{{ env_var('BQ_PROJECT', 'your-gcp-project-id') }}"
+      +database: "{{ env_var('BQ_PROJECT', 'opentrace-prod-5ga4') }}"
+
+    # Bronze — lightweight cleaning and type-casting from landing sources
     raw_dev:
+      +materialized: view
       +schema: "{{ env_var('BQ_DATASET_BRONZE', 'raw_dev') }}"
-      +database: "{{ env_var('BQ_PROJECT', 'your-gcp-project-id') }}"
+      +database: "{{ env_var('BQ_PROJECT', 'opentrace-prod-5ga4') }}"
+
+    # Intermediate — cross-domain enrichment; ephemeral (no BQ table created)
+    intermediate:
+      +materialized: ephemeral
+      +schema: "{{ env_var('BQ_DATASET_BRONZE', 'raw_dev') }}"
+      +database: "{{ env_var('BQ_PROJECT', 'opentrace-prod-5ga4') }}"
+
+    # Silver — star-schema dims + facts from stg_silver_star_metrics
     staging_dev:
+      +materialized: table
       +schema: "{{ env_var('BQ_DATASET_SILVER', 'staging_dev') }}"
-      +database: "{{ env_var('BQ_PROJECT', 'your-gcp-project-id') }}"
+      +database: "{{ env_var('BQ_PROJECT', 'opentrace-prod-5ga4') }}"
+
+    # Gold — BI-ready aggregations and dashboard tables
     mart_dev:
+      +materialized: table
       +schema: "{{ env_var('BQ_DATASET_GOLD', 'mart_dev') }}"
-      +database: "{{ env_var('BQ_PROJECT', 'your-gcp-project-id') }}"
+      +database: "{{ env_var('BQ_PROJECT', 'opentrace-prod-5ga4') }}"
