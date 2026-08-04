@@ -35,6 +35,7 @@ fao_production as (
         element as indicator_name,
         'FAO Production' as source_name,
         unit as unit_name,
+        cast(null as string) as admin_region,
         item as crop_name,
         cast(null as string) as season_name,
         cast(null as string) as practice_name,

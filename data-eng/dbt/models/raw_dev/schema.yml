@@ -42,6 +42,4 @@ models:
       OpenAIRE full publication bronze — merged organisations, persons,
       projects, and data-source records.
 
-  - name: soil_dashboard_base
-    description: "ISDA + ISRIC soil join for dashboarding (also in staging_dev)."
 
