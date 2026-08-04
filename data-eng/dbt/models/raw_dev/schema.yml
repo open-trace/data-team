@@ -1,16 +1,45 @@
-# raw_dev models: read from landing and raw_dev sources; write to raw_dev dataset (BQ_DATASET_BRONZE).
-# Sources: source('landing', '...') and source('raw_dev', '...'). Tables/columns: models/sources.yml.
-# Run: dbt run --target raw_dev (or dbt run --select raw_dev.*)
+# raw_dev (bronze layer) — lightweight cleaning and type-casting from landing sources.
+# Sources: source('landing', ...) and source('raw_dev', ...) — see models/sources.yml.
+# Run: dbt run --select raw_dev
 
 version: 2
 
 models:
   - name: stg_example
-    description: "Example staging model. Replace with real logic from source('landing', ...) or source('raw_dev', ...)."
+    description: "Template bronze model. Copy and rename for real source tables."
     columns:
       - name: id
         description: "Placeholder primary key"
       - name: layer
-        description: "Pipeline layer (raw_dev)"
+        description: "Pipeline layer identifier (raw_dev)"
       - name: _loaded_at
-        description: "Load timestamp"
+        description: "Timestamp when row was loaded"
+
+  - name: isda_soil_bulk_master
+    description: >
+      ISDA Africa soil bulk master — aggregated soil property readings
+      (carbon, nitrogen, pH) with lat/lon coordinates.
+
+  - name: isda_soil_property
+    description: "ISDA soil property data for Africa."
+
+  - name: fews_net_food_security_master
+    description: >
+      FEWS NET food security master: joins classifications + time-series
+      into a single analysis-ready bronze table.
+
+  - name: africa_crop_production_bronze
+    description: "FAO Africa crop production data cleaned to bronze standard."
+
+  - name: yield_raw_data
+    description: "Raw crop yield data from landing, typed and renamed."
+
+  - name: cifor_icraf_raw
+    description: "CIFOR-ICRAF raw survey / experimental data."
+
+  - name: openaire_full_bronze
+    description: >
+      OpenAIRE full publication bronze — merged organisations, persons,
+      projects, and data-source records.
+
+
