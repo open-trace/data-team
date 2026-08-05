@@ -182,7 +182,7 @@ def model_for_plan(plan_type: str | None) -> str | None:
         Government     → meta-llama/llama-3.1-70b-instruct  (RAG_LLM_MODEL_GOVERNMENT)
         NGOs           → qwen/qwen-2.5-72b-instruct         (RAG_LLM_MODEL_NGOS)
         Agribusinesses → qwen/qwen-2.5-72b-instruct         (RAG_LLM_MODEL_AGRIBUSINESSES)
-        Integrated     → thudm/glm-4-plus                   (RAG_LLM_MODEL_INTEGRATED)
+        Integrated     → z-ai/glm-4.7                       (RAG_LLM_MODEL_INTEGRATED)
     """
     pt = (plan_type or "").strip()
     _env_keys: dict[str, str] = {
@@ -199,7 +199,7 @@ def model_for_plan(plan_type: str | None) -> str | None:
         "Government": "meta-llama/llama-3.1-70b-instruct",
         "NGOs": "qwen/qwen-2.5-72b-instruct",
         "Agribusinesses": "qwen/qwen-2.5-72b-instruct",
-        "Integrated": "thudm/glm-4-plus",
+        "Integrated": "z-ai/glm-4.7",
     }
     if not pt or pt not in _env_keys:
         return None  # unknown plan — caller falls back to RAG_LLM_MODEL_ID
