@@ -1,0 +1,10 @@
+version: 2
+
+sources:
+  - name: staging_prod
+    database: opentrace-prod-5ga4
+    schema: 'staging_prod'
+    description: 'BigQuery dataset `staging_prod`'
+    tables:
+      - name: _placeholder
+        description: No tables in catalog; run bq_schema_catalog.py then re-run this script.

@@ -1,0 +1,20 @@
+version: 2
+
+sources:
+  - name: ingestion_metadata
+    database: opentrace-prod-5ga4
+    schema: 'ingestion_metadata'
+    description: 'BigQuery dataset `ingestion_metadata`'
+    tables:
+      - name: afdb_manifest
+      - name: copernicus_full_discovery
+      - name: copernicus_source_catalog
+      - name: dataverse_africa_agriculture_dataset_catalog
+      - name: dataverse_africa_agriculture_dataset_catalog_curated
+      - name: dataverse_final_file_map
+      - name: dataverse_ingestion_queue
+      - name: geoglam_manifest
+      - name: iita_resource_inventory
+      - name: ilri_structured_file_manifest
+      - name: ingestion_log
+
