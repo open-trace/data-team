@@ -216,13 +216,17 @@ def model_for_plan(plan_type: str | None) -> str | None:
     Reads per-plan env vars; falls back to the tier default when unset.
     Returns None when plan_type is unknown — callers fall back to RAG_LLM_MODEL_ID.
 
-    Default model assignment:
-        Free           → meta-llama/llama-3.1-8b-instruct   (RAG_LLM_MODEL_FREE)
-        Farmers        → meta-llama/llama-3.1-70b-instruct  (RAG_LLM_MODEL_FARMERS)
-        Government     → meta-llama/llama-3.1-70b-instruct  (RAG_LLM_MODEL_GOVERNMENT)
-        NGOs           → qwen/qwen-2.5-72b-instruct         (RAG_LLM_MODEL_NGOS)
-        Agribusinesses → qwen/qwen-2.5-72b-instruct         (RAG_LLM_MODEL_AGRIBUSINESSES)
-        Integrated     → thudm/glm-4-plus                   (RAG_LLM_MODEL_INTEGRATED)
+    Default model assignment (ML-043 — aligned to v7/v10 cost model):
+        Free           → meta-llama/llama-3.1-8b-instruct      (RAG_LLM_MODEL_FREE)
+        Farmers        → meta-llama/llama-3.1-70b-instruct     (RAG_LLM_MODEL_FARMERS)
+        Government     → qwen/qwen-2.5-72b-instruct            (RAG_LLM_MODEL_GOVERNMENT)
+        NGOs           → qwen/qwen-2.5-72b-instruct            (RAG_LLM_MODEL_NGOS)
+        Agribusinesses → qwen/qwen3-235b-a22b-2507             (RAG_LLM_MODEL_AGRIBUSINESSES)
+        Integrated     → qwen/qwen3-235b-a22b-2507             (RAG_LLM_MODEL_INTEGRATED)
+
+    Note: qwen3-235b-a22b-2507 is the instruct (non-thinking) variant. The thinking
+    variant (qwen3-235b-a22b-thinking-2507) is reserved for future opt-in CoT per query
+    on Agribusinesses and Integrated — it must NOT be the always-on default.
     """
     pt = (plan_type or "").strip()
     _env_keys: dict[str, str] = {
@@ -236,10 +240,10 @@ def model_for_plan(plan_type: str | None) -> str | None:
     _defaults: dict[str, str] = {
         "Free": "meta-llama/llama-3.1-8b-instruct",
         "Farmers": "meta-llama/llama-3.1-70b-instruct",
-        "Government": "meta-llama/llama-3.1-70b-instruct",
+        "Government": "qwen/qwen-2.5-72b-instruct",
         "NGOs": "qwen/qwen-2.5-72b-instruct",
-        "Agribusinesses": "qwen/qwen-2.5-72b-instruct",
-        "Integrated": "thudm/glm-4-plus",
+        "Agribusinesses": "qwen/qwen3-235b-a22b-2507",
+        "Integrated": "qwen/qwen3-235b-a22b-2507",
     }
     if not pt or pt not in _env_keys:
         return None  # unknown plan — caller falls back to RAG_LLM_MODEL_ID
