@@ -1,0 +1,166 @@
+# intermediate_dev — staging → intermediate layer (DPL-044 continuation).
+# Reads: staging_dev stg_* models via ref()
+# Writes: BigQuery dataset intermediate_dev (materialized=table, set in dbt_project.yml)
+# Feeds: stg_silver_star_metrics → staging_dev dim_*/fact_* → mart_dev fct_*
+# STATUS: structure stubs (where false). Real SQL is the next phase.
+
+version: 2
+
+models:
+
+  # ── FAOSTAT ──────────────────────────────────────────────────────────────────
+
+  - name: int_faostat_production
+    description: >
+      Reads stg_faostat_production (Crops & Livestock, Production Indices,
+      Value of Agricultural Production). Maps area/item/element/year into the
+      spine contract with domain_name = 'production'.
+      Feeds stg_silver_star_metrics → fact_production → fct_production (Gold).
+    columns:
+      - name: domain_name
+        description: "Always 'production'."
+      - name: source_name
+        description: "Source label from source_natural_key."
+      - name: country_code
+        description: "FAOSTAT area_code_m49."
+      - name: country_name
+        description: "FAOSTAT area (country name)."
+      - name: period_year
+        description: "FAOSTAT year as float64."
+      - name: indicator_name
+        description: "FAOSTAT element (e.g. 'Production', 'Area harvested')."
+      - name: unit_name
+        description: "FAOSTAT unit."
+      - name: metric_value
+        description: "FAOSTAT value."
+      - name: crop_name
+        description: "FAOSTAT item (product name)."
+      - name: source_natural_key
+        description: "Lineage key preserved from stg_faostat_production."
+      - name: loaded_at
+        description: "Timestamp this row entered the intermediate layer."
+
+  - name: int_faostat_land_inputs
+    description: >
+      Reads stg_faostat_land_inputs (fertilizers, pesticides, land use, manure,
+      temperature, nutrient balance, livestock patterns, bioenergy, trade matrix).
+      Classifies rows into domain_name = 'land_use', 'fertilizer', or 'pesticide'
+      based on source_natural_key.
+      Feeds stg_silver_star_metrics → fact_land_use → fct_land_use (Gold).
+    columns:
+      - name: domain_name
+        description: "'land_use', 'fertilizer', or 'pesticide'."
+      - name: source_name
+        description: "Source label from source_natural_key."
+      - name: country_code
+        description: "FAOSTAT area_code_m49."
+      - name: country_name
+        description: "FAOSTAT area."
+      - name: period_year
+        description: "FAOSTAT year."
+      - name: indicator_name
+        description: "FAOSTAT element."
+      - name: unit_name
+        description: "FAOSTAT unit."
+      - name: metric_value
+        description: "FAOSTAT value."
+      - name: crop_name
+        description: "FAOSTAT item."
+      - name: source_natural_key
+        description: "Lineage key preserved from stg_faostat_land_inputs."
+      - name: loaded_at
+        description: "Timestamp this row entered the intermediate layer."
+
+  # ── FEWS ─────────────────────────────────────────────────────────────────────
+
+  - name: int_fews_food_security
+    description: >
+      Reads stg_fews_food_security (population estimates + classifications).
+      Maps country/admin/phase into the spine contract with
+      domain_name = 'humanitarian', ipc_phase_name = phase_name,
+      metric_value = value.
+      Feeds stg_silver_star_metrics → fact_humanitarian → fct_humanitarian (Gold).
+    columns:
+      - name: domain_name
+        description: "Always 'humanitarian'."
+      - name: source_name
+        description: "FEWS_NET_Food_insecure_population_estimates or FEWS_NET_food_security_classifications."
+      - name: country_code
+        description: "FEWS country_code (ISO 2-letter)."
+      - name: country_name
+        description: "FEWS country."
+      - name: admin_region
+        description: "FEWS admin_1."
+      - name: period_year
+        description: "Year extracted from projection_start."
+      - name: ipc_phase_name
+        description: "FEWS phase_name (IPC phase label)."
+      - name: ipc_phase_numeric
+        description: "FEWS phase code cast to float64."
+      - name: metric_value
+        description: "FEWS value (population count or classification score)."
+      - name: source_natural_key
+        description: "Lineage key preserved from stg_fews_food_security."
+      - name: loaded_at
+        description: "Timestamp this row entered the intermediate layer."
+
+  - name: int_fews_market_prices
+    description: >
+      Reads stg_fews_market_prices (FEWS_NET_market_Prices_time_series_data).
+      Maps country/market/product/value into the spine contract with
+      domain_name = 'market_access', crop_name = product_name, metric_value = value.
+      Feeds stg_silver_star_metrics → fact_market_access → fct_market_access (Gold).
+    columns:
+      - name: domain_name
+        description: "Always 'market_access'."
+      - name: source_name
+        description: "FEWS_NET_market_Prices."
+      - name: country_code
+        description: "FEWS country_code."
+      - name: country_name
+        description: "FEWS country."
+      - name: admin_region
+        description: "FEWS admin_1."
+      - name: period_year
+        description: "Year extracted from period_date."
+      - name: indicator_name
+        description: "FEWS price_type (retail, wholesale, etc.)."
+      - name: unit_name
+        description: "FEWS unit."
+      - name: metric_value
+        description: "FEWS value (market price)."
+      - name: crop_name
+        description: "FEWS product_name."
+      - name: source_natural_key
+        description: "Lineage key preserved from stg_fews_market_prices."
+      - name: loaded_at
+        description: "Timestamp this row entered the intermediate layer."
+
+  # ── CLIMATE ──────────────────────────────────────────────────────────────────
+
+  - name: int_climate_observations
+    description: >
+      Reads stg_nasa_power (daily + hourly NASA POWER data).
+      Maps country_code/admin_region and radiation columns into the spine contract
+      with domain_name = 'climate', metric_value = par_solar_at_noon.
+      Feeds stg_silver_star_metrics → fact_climate → fct_climate (Gold).
+    columns:
+      - name: domain_name
+        description: "Always 'climate'."
+      - name: source_name
+        description: "NASA_POWER_daily or NASA_POWER_hourly."
+      - name: country_code
+        description: "Country code from NASA POWER response."
+      - name: admin_region
+        description: "Admin region from NASA POWER response."
+      - name: indicator_name
+        description: "Climate variable label (e.g. 'par_solar_at_noon')."
+      - name: unit_name
+        description: "Unit for the climate variable."
+      - name: metric_value
+        description: "Primary scalar climate value (par_solar_at_noon)."
+      - name: source_natural_key
+        description: "Lineage key preserved from stg_nasa_power."
+      - name: loaded_at
+        description: "Timestamp this row entered the intermediate layer."
+
