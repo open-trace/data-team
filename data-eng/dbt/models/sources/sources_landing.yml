@@ -1,0 +1,42 @@
+version: 2
+
+sources:
+  - name: landing
+    database: opentrace-prod-5ga4
+    schema: landing
+    description: 'Raw landing data (ingestion writes here)'
+    tables:
+      - name: FAOstat_africa_Food_Security_and_Nutrition_Suite_of_Food_Security_Indicators
+      - name: FAOstat_africa_production_Crops_and_livestock
+      - name: FAOstat_africa_production_Production Indices
+      - name: FAOstat_africa_production_Value_of_Agricultural_Production
+      - name: FEWS_NET_Food_insecure_population_estimates_data_series
+      - name: FEWS_NET_Food_insecure_population_estimates_time_series_data
+      - name: FEWS_NET_cross_border_Trade_time_series_data
+      - name: FEWS_NET_cross_border_trade_data_series
+      - name: FEWS_NET_food_security_classifications_data_series
+      - name: FEWS_NET_food_security_classifications_time_series_data
+      - name: FEWS_NET_market_Prices_time_series_data
+      - name: FEWS_NET_market_prices_data_series
+      - name: WFP_VAMPIRE_Tool_global_food_prices
+      - name: africa_crop_production_full_melted
+      - name: africa_geoportals_top_100
+      - name: africa_nasa_power_raw
+      - name: ceda_climate_data
+      - name: climatewatch_emission_pathways_raw
+      - name: faostat_africa_bulk_trial
+      - name: gbif_occurrence_search
+      - name: isda_africa_carbon_bulk
+      - name: isda_africa_nitrogen_bulk
+      - name: isda_africa_ph_bulk
+      - name: isda_soil_bulk_master
+      - name: isric_africa_soil_data
+      - name: isric_full_metadata_catalog
+      - name: openaire_data_sources_raw
+      - name: openaire_organizations_raw
+      - name: openaire_persons_raw
+      - name: openaire_product_links_raw
+      - name: openaire_projects_raw
+      - name: world_Human_development_index
+      - name: world_gdp_ppp
+
