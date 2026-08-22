@@ -1,0 +1,11 @@
+version: 2
+
+sources:
+  - name: staging_dev
+    database: opentrace-prod-5ga4
+    schema: staging_dev
+    description: 'Staging layer (BigQuery dataset staging_dev; env BQ_DATASET_SILVER)'
+    tables:
+      - name: _placeholder
+        description: No tables in catalog; run bq_schema_catalog.py then re-run this script.
+

@@ -29,14 +29,14 @@ vars:
 models:
   open_trace:
     landing:
-      +schema: "{{ env_var('BQ_DATASET_LANDING', 'landing') }}"
-      +database: "{{ env_var('BQ_PROJECT', 'your-gcp-project-id') }}"
+      +schema: landing
+      +database: opentrace-prod-5ga4
     raw_dev:
-      +schema: "{{ env_var('BQ_DATASET_BRONZE', 'raw_dev') }}"
-      +database: "{{ env_var('BQ_PROJECT', 'your-gcp-project-id') }}"
+      +schema: raw_dev
+      +database: opentrace-prod-5ga4
     staging_dev:
-      +schema: "{{ env_var('BQ_DATASET_SILVER', 'staging_dev') }}"
-      +database: "{{ env_var('BQ_PROJECT', 'your-gcp-project-id') }}"
+      +schema: staging_dev
+      +database: opentrace-prod-5ga4
     mart_dev:
-      +schema: "{{ env_var('BQ_DATASET_GOLD', 'mart_dev') }}"
-      +database: "{{ env_var('BQ_PROJECT', 'your-gcp-project-id') }}"
+      +schema: mart_dev
+      +database: opentrace-prod-5ga4

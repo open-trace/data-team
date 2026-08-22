@@ -1,0 +1,55 @@
+version: 2
+
+sources:
+  - name: raw_dev
+    database: opentrace-prod-5ga4
+    schema: raw_dev
+    description: 'Raw layer (BigQuery dataset raw_dev; env BQ_DATASET_BRONZE)'
+    tables:
+      - name: FEWS_NET_Food_insecure_population_estimates_data_series
+      - name: FEWS_NET_Food_insecure_population_estimates_time_series_data
+      - name: FEWS_NET_cross_border_Trade_time_series_data
+      - name: FEWS_NET_cross_border_trade_data_series
+      - name: FEWS_NET_food_security_classifications_data_series
+      - name: FEWS_NET_food_security_classifications_time_series_data
+      - name: FEWS_NET_market_Prices_time_series_data
+      - name: FEWS_NET_market_prices_data_series
+      - name: WFP_VAMPIRE_Tool_global_food_prices_bronze
+      - name: africa_Human_development_index
+      - name: africa_climate_test_ingest
+      - name: africa_crop_production_bronze
+      - name: africa_gross_domestic_product_purchasing_power_parity_bronze
+      - name: africa_nasa_power_daily_summary_bronze
+      - name: africa_nasa_power_hourly_bronze
+      - name: arcgis_infrastructure_tourism_poi
+      - name: arcgis_land_protected_areas
+      - name: arcgis_layer_rice_germplasm_in_africa_3d2a9
+      - name: arcgis_rarity_80_birds_africa
+      - name: arcgis_south_africa_wards_demographics_2ce07
+      - name: arcgis_vegetation_ndvi
+      - name: cifor_icraf_raw
+      - name: climatewatch_climate_health_impacts
+      - name: copernicus_climate_raw_era5_stats_2023_06
+      - name: crop_germplasm_africa
+      - name: fao_fertilizers_nutrient_bronze
+      - name: fao_land_use_bronze
+      - name: fao_pesticides_use_bronze
+      - name: fao_trade_crops_livestock_bronze
+      - name: fao_trade_indices_bronze
+      - name: gbif_biodiversity_occurrence
+      - name: ilri_crp_household_food_security_v1
+      - name: ilri_vegetation_survey_v1
+      - name: isda_soil_property
+      - name: nakuru_air_quality_archive
+      - name: openaire_agriculture_and_environment_Research_publications_Data_sources_bronze
+      - name: openaire_agriculture_and_environment_Research_publications_Organizations_bronze
+      - name: openaire_agriculture_and_environment_Research_publications_Persons_bronze
+      - name: openaire_agriculture_and_environment_Research_publications_Product_links_bronze
+      - name: openaire_agriculture_and_environment_Research_publications_Projects_bronze
+      - name: yield_raw_data
+      - name: fao_tcl
+      - name: fao_rfn
+      - name: fao_rl
+      - name: fao_ti
+      - name: fao_rp
+      - name: OECD_Food_data_Africa_NEW

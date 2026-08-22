@@ -47,8 +47,9 @@ open_trace:
     mart_dev_sa:
       type: bigquery
       method: service-account
-      project: "{{ env_var('BQ_PROJECT', 'your-gcp-project-id') }}"
-      dataset: "{{ env_var('BQ_DATASET_GOLD', 'mart_dev') }}"
-      keyfile: "{{ env_var('GOOGLE_APPLICATION_CREDENTIALS', '') }}"
-      location: "{{ env_var('DBT_BIGQUERY_LOCATION', 'europe-west3') }}"
+      project: opentrace-prod-5ga4
+      dataset: mart_dev
+      keyfile: "c:/Users/BEST/OneDrive/Desktop/data-team/data-eng/data/local/keys/opentrace-bq-key.json"
+      location: europe-west3
       threads: 4
+      priority: interactive
