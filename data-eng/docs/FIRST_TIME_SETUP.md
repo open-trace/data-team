@@ -99,3 +99,6 @@ See [infra/README.md](../infra/README.md) (symlink to `data-eng/infra`) and [doc
 | Run all dbt models | `cd dbt && dbt run --target raw_dev` (or staging_dev/mart_dev) |
 | Run one layer only | `dbt run --target raw_dev --select raw_dev.*` |
 | Run dbt in Docker | `docker compose --profile dbt run --rm dbt dbt run --target raw_dev_sa` |
+
+
+khadytest
