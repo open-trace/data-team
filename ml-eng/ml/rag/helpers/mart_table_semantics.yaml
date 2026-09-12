@@ -175,6 +175,221 @@ tables:
     sql_generation_hints:
       - JOIN dim_geography, dim_product, dim_source on FK keys
 
+  agg_production_country_year:
+    indicator_classes: [PROD]
+    semantic_role:
+      primary_domain: production
+      supports: [production, faostat, PROD]
+    business_questions_supported:
+      - What was national crop production by country and year?
+      - Kenya rice / staple production panel questions
+    filtering_guidance:
+      - Default national production panel table (physical grain only)
+      - Filter country_iso3 or country_name; JOIN dim_product for crop name literals
+      - Group by source_key when comparing producers
+      - Do not mix with agg_production_country_season without stating grain
+      - Prefer over fct_production for country-year volume rollups
+    sql_generation_hints:
+      - LEFT JOIN dim_product p ON f.product_key = p.product_key; filter p.product_name
+      - LEFT JOIN dim_geography g ON f.geography_key = g.geography_key for country labels
+      - SUM production qty / area columns; filter year when question is time-bounded
+    semantic_relationships:
+      joins_with:
+        - {table: dim_geography, on: [geography_key], how: LEFT}
+        - {table: dim_product, on: [product_key], how: LEFT}
+        - {table: dim_source, on: [source_key], how: LEFT}
+
+  fct_land_inputs:
+    indicator_classes: [INP, SOIL]
+    semantic_role:
+      primary_domain: production
+      supports: [land_inputs, fertilizer, pesticide, INP, SOIL]
+    indicator_families:
+      - id: land_input_grain
+        filters: "Always filter input_grain before SUM/AVG"
+    business_questions_supported:
+      - What is fertilizer or pesticide use by country and year?
+      - Land input intensity for a crop/item
+    filtering_guidance:
+      - Always filter input_grain — one fact covers land use, fertilizer, pesticide, and related grains
+      - Prefer this table over fct_fertilizer / fct_pesticide when unified inputs are available
+      - Filter country_iso3 + year; JOIN dim_item / dim_element for item and element labels via spine
+      - Never filter place_scope ARRAY with =
+    sql_generation_hints:
+      - Filter input_grain first; then item_key/element_key via dim_item.item_name / dim_element.element_name
+      - LEFT JOIN dim_geography on geography_key for country names
+    semantic_relationships:
+      joins_with:
+        - {table: dim_geography, on: [geography_key], how: LEFT}
+        - {table: dim_item, on: [item_key], how: LEFT}
+        - {table: dim_element, on: [element_key], how: LEFT}
+      do_not_join:
+        - {table: fct_fertilizer, reason: Prefer fct_land_inputs with input_grain filter}
+
+  agg_hdi_latest:
+    indicator_classes: [HDI]
+    semantic_role:
+      primary_domain: hdi
+      supports: [hdi, HDI]
+    business_questions_supported:
+      - What is the latest HDI for a country?
+    filtering_guidance:
+      - Latest year per country only — not a time series
+      - Prefer over fct_hdi for current/snapshot HDI questions
+      - Use fct_hdi when the question asks for trends or multi-year history
+      - Filter country_name / country_iso3; skip null geography_key when mapping
+    sql_generation_hints:
+      - LEFT JOIN dim_geography on geography_key for country labels
+      - One row per country — no year range filter needed for snapshots
+    semantic_relationships:
+      joins_with:
+        - {table: dim_geography, on: [geography_key], how: LEFT}
+
+  fct_food_hazards:
+    indicator_classes: [AH]
+    semantic_role:
+      primary_domain: food_security
+      supports: [food_hazards, food_safety, AH]
+    business_questions_supported:
+      - Which foodborne hazards appear in study sites?
+      - Hazard prevalence by country when geo is available
+    filtering_guidance:
+      - Study × site × hazard × year grain — sparse geo; do not invent country coverage
+      - JOIN dim_disease for hazard labels; never invent disease_or_hazard literals
+      - Filter disease_key via spine / dim samples; use foodborne_hazard column when denormalized
+    sql_generation_hints:
+      - disease_key IN (SELECT disease_key FROM dim_disease WHERE disease_or_hazard = ...)
+      - LEFT JOIN dim_geography on geography_key when country is known
+    semantic_relationships:
+      joins_with:
+        - {table: dim_geography, on: [geography_key], how: LEFT}
+        - {table: dim_disease, on: [disease_key], how: LEFT}
+
+  fct_insurance:
+    indicator_classes: [AH]
+    semantic_role:
+      primary_domain: household
+      supports: [insurance, livestock_insurance, AH]
+    business_questions_supported:
+      - Livestock insurance uptake by household or country
+    filtering_guidance:
+      - Household insurance record grain — not national census
+      - JOIN dim_household for household attributes; filter metric and record_type when present
+      - Geo coverage may be weak — do not invent admin coverage
+    sql_generation_hints:
+      - LEFT JOIN dim_household on household_key; LEFT JOIN dim_geography on geography_key
+      - Filter metric / record_type from YAML samples — never invent values
+    semantic_relationships:
+      joins_with:
+        - {table: dim_geography, on: [geography_key], how: LEFT}
+        - {table: dim_household, on: [household_key], how: LEFT}
+
+  agg_prices_country_month:
+    indicator_classes: [PRC]
+    semantic_role:
+      primary_domain: prices
+      supports: [prices, market_price, PRC]
+    business_questions_supported:
+      - What is the national monthly price for a crop?
+    filtering_guidance:
+      - Prefer for country-month price rollups over market-level fct_prices
+      - Do not blend price_source rows in one SUM/AVG
+      - Filter country_iso3 + year/month; JOIN dim_product for crop labels
+    sql_generation_hints:
+      - Filter price_source first when comparing FEWS/WFP/FAOSTAT
+      - LEFT JOIN dim_geography / dim_product on spine keys
+
+  fct_emissions:
+    indicator_classes: [ENV]
+    semantic_role:
+      primary_domain: emissions
+      supports: [emissions, ghg, ENV]
+    business_questions_supported:
+      - Agricultural GHG emissions by country and item
+    filtering_guidance:
+      - Filter item/element via spine (dim_item / dim_element) — do not invent element labels
+      - Filter country_iso3 + year; never invent emission category literals
+    sql_generation_hints:
+      - item_key / element_key IN (SELECT … FROM dim_item / dim_element WHERE name = …)
+      - LEFT JOIN dim_geography on geography_key for country names
+
+  fct_soil_health:
+    indicator_classes: [SOIL]
+    semantic_role:
+      primary_domain: soil
+      supports: [soil_health, SOIL]
+    business_questions_supported:
+      - Soil property values at point or plot grain
+    filtering_guidance:
+      - Point / plot grain — prefer agg_soil_admin for admin or country OTAs
+      - Filter soil_property_key via dim_soil_property samples; compare source_key carefully
+      - Never average across iSDA vs ISRIC without stating source
+    sql_generation_hints:
+      - Prefer agg_soil_admin for national/admin rollups
+      - JOIN dim_soil_property / dim_geography via spine
+
+  agg_soil_admin:
+    indicator_classes: [SOIL]
+    semantic_role:
+      primary_domain: soil
+      supports: [soil_health, SOIL]
+    business_questions_supported:
+      - Admin-level soil property rollups for a country
+    filtering_guidance:
+      - Admin rollup companion to fct_soil_health — prefer for country/admin OTAs
+      - Filter country_iso3 / admin labels; do not invent soil property literals
+    sql_generation_hints:
+      - LEFT JOIN dim_geography on geography_key; filter soil property via spine
+
+  fct_animal_health:
+    indicator_classes: [AH]
+    semantic_role:
+      primary_domain: animal_health
+      supports: [animal_health, livestock, AH]
+    business_questions_supported:
+      - Livestock disease or health indicators from survey grain
+    filtering_guidance:
+      - Survey grain — JOIN dim_livestock / dim_household; do not treat as national census
+      - Filter livestock_key / disease_key via spine samples; never invent species labels
+    sql_generation_hints:
+      - LEFT JOIN dim_livestock on livestock_key; LEFT JOIN dim_household when present
+
+  fct_machinery:
+    indicator_classes: [INP]
+    semantic_role:
+      primary_domain: production
+      supports: [machinery, land_inputs, INP]
+    filtering_guidance:
+      - INP companion to fct_land_inputs — filter item/element via spine
+      - Prefer fct_land_inputs when unified input_grain covers the question
+
+  agg_emissions_country_year:
+    indicator_classes: [ENV]
+    semantic_role:
+      primary_domain: emissions
+      supports: [emissions, ENV]
+    filtering_guidance:
+      - National emissions panel — prefer for country-year GHG rollups
+      - Filter country_iso3 + year; do not invent element labels
+
+  agg_food_security_country_month:
+    indicator_classes: [FS]
+    semantic_role:
+      primary_domain: food_security
+      supports: [food_security, ipc, FS]
+    filtering_guidance:
+      - FS companion to agg_food_security_monthly — country-month IPC rollups
+      - Filter measure_type; do not blend population vs classification
+
+  fct_forestry:
+    indicator_classes: [ENV]
+    semantic_role:
+      primary_domain: forestry
+      supports: [forestry, ENV]
+    filtering_guidance:
+      - Filter item/element via spine — not product_key
+      - JOIN dim_item / dim_element for labels; never invent forestry item literals
+
   agg_food_security_monthly:
     indicator_classes: [FS]
     semantic_role:
@@ -188,8 +403,16 @@ tables:
     semantic_role:
       primary_domain: geography
       supports: [geography, join_dim]
+    filtering_guidance:
+      - Join on geography_key / geo_key — expose place grain, not country labels only
+      - Filter geo_level when asking country vs admin1/admin2/city/fnid
+      - Prefer admin_1_name / admin_2_name / city_name samples for subnational questions
+      - SELECT population, latitude, longitude, parent_geography_key when place context helps
+      - Never filter geography_key / geo_key with hash literals
     sql_generation_hints:
-      - Join target for country_name, admin labels; filter geo_level, country_iso3
+      - LEFT JOIN dim_geography g ON f.geography_key = g.geography_key (or f.geo_key = g.geography_key)
+      - SELECT g.geo_level, g.country_iso3, g.country_name, g.admin_1_name, g.admin_2_name, g.city_name, g.population
+      - Filter country_iso3 for national; AND admin/city columns from YAML samples only
 
   dim_product:
     indicator_classes: []

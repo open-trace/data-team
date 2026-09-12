@@ -2,7 +2,7 @@ table_name: opentrace-prod-5ga4.mart_dev.fct_employment
 description: Employment indicators with sex breakdown.
 source:
   layer: mart_dev
-profiled_at: '2026-08-28T17:53:44.421016+00:00'
+profiled_at: '2026-09-05T17:57:00.703130+00:00'
 grain: Country × indicator × sex × year
 entity_type: socio_economic
 columns:
@@ -88,71 +88,129 @@ employment_key_value_stats:
   is_truncated: true
   min_value: 00012feed7290516dbe0558d12815bcf
   max_value: ffff08f6bd12cffd9b3a4aec3d62cbd8
-country_iso3_value_samples:
+geography_key_value_stats:
+  distinct_count: 58
+  null_count: 0
+  is_truncated: false
+  min_value: 08d5d1fbcfbc008d33905868ea7a2dd7
+  max_value: ff2abe6b8f87b63b0a4d12a3dc2fb900
+geo_level_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: country
+  max_value: country
+country_iso3_value_stats:
+  distinct_count: 58
+  null_count: 0
+  is_truncated: false
+  min_value: AGO
+  max_value: ZWE
+item_key_value_stats:
+  distinct_count: 1
+  null_count: 44121
+  is_truncated: false
+  min_value: 82a753e3d428eeadeb4a7924c738b013
+  max_value: 82a753e3d428eeadeb4a7924c738b013
+element_key_value_stats:
+  distinct_count: 6
+  null_count: 0
+  is_truncated: false
+  min_value: 032f2d7916221f7f16ff5434ec7a6fe4
+  max_value: ca2c4ae7ddfba980b00320376ede3fed
+indicator_key_value_stats:
+  distinct_count: 53
+  null_count: 37465
+  is_truncated: false
+  min_value: 04a249113c3726d9e37ee1114cc9bd22
+  max_value: fead496d4772dc3abeaec2b76b098fcf
+sex_key_value_stats:
+  distinct_count: 4
+  null_count: 0
+  is_truncated: false
+  min_value: female
+  max_value: unknown
+source_key_value_stats:
+  distinct_count: 3
+  null_count: 0
+  is_truncated: false
+  min_value: 4dc1c2f09fdcdffe032efbb5f7c973cf
+  max_value: ed037e23bea4433dcb0c68bf50b30e14
+tier_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '1'
+  max_value: '1'
+data_level_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: national
+  max_value: national
+geo_scope_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: national
+  max_value: national
+place_scope_value_samples:
+- South Africa
 - ZAF
 - EGY
+- Egypt
 - TUN
+- Tunisia
+- Mauritius
 - MUS
+- Mali
 - MLI
+- Ghana
 - GHA
+- Zambia
 - ZMB
+- Rwanda
 - RWA
+- Uganda
 - UGA
 - ZWE
+- Zimbabwe
+- Tanzania
 - TZA
 - AGO
+- Angola
+- Namibia
 - NAM
 - BWA
+- Botswana
 - KEN
+- Kenya
 - CIV
+- Côte d’Ivoire
 - TGO
-- SEN
+- Togo
 - NGA
+- Senegal
+- SEN
+- Nigeria
 - BFA
+- Burkina Faso
+- Niger
 - NER
 - MDG
+- Madagascar
+- Ethiopia
 - ETH
+- Cabo Verde
 - CPV
 - GMB
-- BEN
-- LBR
-- COM
-- SWZ
-- GNB
-- SDN
-- MRT
-- BDI
-- COD
-- SLE
-- MWI
-- MOZ
-- CMR
-- MAR
-- LSO
-- SOM
-- TCD
-- SYC
-- GIN
-- DZA
-- COG
-- STP
-- DJI
-- CAF
-- GAB
-- GNQ
-- LBY
-- ESH
-- REU
-- ERI
-- SHN
-- MYT
-- SSD
+- Gambia, The
 metric_value_samples:
+- total_population_-_both_sexes
 - total_population_-_female
 - total_population_-_male
-- total_population_-_both_sexes
-- urban_population
 - rural_population
+- urban_population
 - employment_in_agriculture_-_ilo_modelled_estimates
 - share_of_employment_in_agriculture_in_total_employment_-_ilo_modelled_estimates
 - agriculture_value_added_per_worker_(constant_2015_us$)
@@ -160,14 +218,14 @@ metric_value_samples:
 - share_of_employment_in_agriculture_in_total_employment
 - share_of_afs_employment_in_total_employment
 - total_employment_in_agrifood_systems_(afs)
+- share_of_non-agricultural_afs_employment_in_total_employment
+- share_of_non-agricultural_afs_employment_in_total_afs_employment
 - share_of_agricultural_employment_in_total_afs_employment
 - total_non-agricultural_afs_employment
-- share_of_non-agricultural_afs_employment_in_total_afs_employment
-- share_of_non-agricultural_afs_employment_in_total_employment
 - employment_by_age,_total_(15+),_rural_areas
+- employment_in_agriculture_by_status_of_employment,_total
 - employment_in_agriculture_by_age,_25_to_54
 - employment_in_agriculture_by_age,_total_(15+)
-- employment_in_agriculture_by_status_of_employment,_total
 - employment_in_agriculture_by_status_of_employment,_self-employed
 - employment_in_agriculture_by_status_of_employment,_employees
 - employment_in_agriculture_by_age,_55_to_64
@@ -176,21 +234,21 @@ metric_value_samples:
 - employment-to-population_ratio_by_age,_total_(15+),_rural_areas
 - labour_force_participation_rate_by_age,_total_(15+),_rural_areas
 - mean_weekly_hours_actually_worked_per_employee_in_agriculture
-- employment_by_age,_15_to_24,_rural_areas
 - employment_by_age,_25_to_54,_rural_areas
+- employment_by_age,_15_to_24,_rural_areas
 - employment_by_age,_55_to_64,_rural_areas
 - employment_by_age,_65+,_rural_areas
-- employment-to-population_ratio_by_age,_15_to_24,_rural_areas
-- labour_force_participation_rate_by_age,_15_to_24,_rural_areas
 - employment-to-population_ratio_by_age,_25_to_54,_rural_areas
+- labour_force_participation_rate_by_age,_15_to_24,_rural_areas
 - labour_force_participation_rate_by_age,_25_to_54,_rural_areas
-- employment-to-population_ratio_by_age,_55_to_64,_rural_areas
+- employment-to-population_ratio_by_age,_15_to_24,_rural_areas
 - labour_force_participation_rate_by_age,_55_to_64,_rural_areas
+- employment-to-population_ratio_by_age,_55_to_64,_rural_areas
 - employment-to-population_ratio_by_age,_65+,_rural_areas
 - labour_force_participation_rate_by_age,_65+,_rural_areas
+- employment_by_status_of_employment,_total,_rural_areas
 - employment_by_status_of_employment,_self-employed,_rural_areas
 - employment_by_status_of_employment,_employees,_rural_areas
-- employment_by_status_of_employment,_total,_rural_areas
 - mean_weekly_hours_actually_worked_per_employed_person_in_agriculture
 - employment_in_crop_and_animal_production,_hunting_and_related_service_activities
 - share_of_female_employees_in_total_employees_in_agriculture
@@ -198,14 +256,12 @@ metric_value_samples:
 - employment_in_fishing_and_aquaculture
 - employment_by_status_of_employment,_workers_not_classified,_rural_areas
 - share_of_employment_in_fishing_and_aquaculture
-- share_of_females_in_total_employment_in_agriculture
-- employment_in_agriculture_by_status_of_employment,_workers_not_classified
-- share_of_employment_by_status_of_employment,_employees,_rural_areas
-- share_of_employment_by_status_of_employment,_self-employed,_rural_areas
-- share_of_employment_by_status_of_employment,_total,_rural_areas
-- share_of_employment_in_crop_and_animal_production,_hunting_and_related_service_activities
-- share_of_employment_in_forestry_and_logging
-- share_of_employment_by_status_of_employment,_workers_not_classified,_rural_areas
+source_id_value_stats:
+  distinct_count: 3
+  null_count: 0
+  is_truncated: false
+  min_value: 4dc1c2f09fdcdffe032efbb5f7c973cf
+  max_value: ed037e23bea4433dcb0c68bf50b30e14
 indicator_value_samples:
 - Share of employment in agriculture in total employment - ILO Modelled Estimates
 - Employment in agriculture - ILO modelled estimates
@@ -214,14 +270,14 @@ indicator_value_samples:
 - Share of employment in agriculture in total employment
 - Share of AFS employment in total employment
 - Total employment in agrifood systems (AFS)
-- Total non-agricultural AFS employment
-- Share of non-agricultural AFS employment in total AFS employment
-- Share of non-agricultural AFS employment in total employment
 - Share of agricultural employment in total AFS employment
+- Share of non-agricultural AFS employment in total employment
+- Share of non-agricultural AFS employment in total AFS employment
+- Total non-agricultural AFS employment
 - Employment by age, total (15+), rural areas
+- Employment in agriculture by status of employment, total
 - Employment in agriculture by age, total (15+)
 - Employment in agriculture by age, 25 to 54
-- Employment in agriculture by status of employment, total
 - Employment in agriculture by status of employment, self-employed
 - Employment in agriculture by status of employment, employees
 - Employment in agriculture by age, 55 to 64
@@ -230,20 +286,20 @@ indicator_value_samples:
 - Employment-to-population ratio by age, total (15+), rural areas
 - Labour force participation rate by age, total (15+), rural areas
 - Mean weekly hours actually worked per employee in agriculture
-- Employment by age, 15 to 24, rural areas
 - Employment by age, 25 to 54, rural areas
+- Employment by age, 15 to 24, rural areas
 - Employment by age, 55 to 64, rural areas
 - Employment by age, 65+, rural areas
-- Employment-to-population ratio by age, 15 to 24, rural areas
-- Employment-to-population ratio by age, 25 to 54, rural areas
 - Labour force participation rate by age, 25 to 54, rural areas
+- Employment-to-population ratio by age, 15 to 24, rural areas
 - Labour force participation rate by age, 15 to 24, rural areas
+- Employment-to-population ratio by age, 25 to 54, rural areas
 - Employment-to-population ratio by age, 55 to 64, rural areas
 - Labour force participation rate by age, 55 to 64, rural areas
 - Employment-to-population ratio by age, 65+, rural areas
 - Labour force participation rate by age, 65+, rural areas
-- Employment by status of employment, total, rural areas
 - Employment by status of employment, employees, rural areas
+- Employment by status of employment, total, rural areas
 - Employment by status of employment, self-employed, rural areas
 - Mean weekly hours actually worked per employed person in agriculture
 - Employment in crop and animal production, hunting and related service activities
@@ -254,12 +310,15 @@ indicator_value_samples:
 - Share of employment in fishing and aquaculture
 - Share of females in total employment in agriculture
 - Employment in agriculture by status of employment, workers not classified
-- Share of employment by status of employment, self-employed, rural areas
-- Share of employment by status of employment, employees, rural areas
 - Share of employment by status of employment, total, rural areas
-- Share of employment in crop and animal production, hunting and related service activities
-- Share of employment in forestry and logging
-- Share of employment by status of employment, workers not classified, rural areas
+- Share of employment by status of employment, employees, rural areas
+- Share of employment by status of employment, self-employed, rural areas
+sex_value_stats:
+  distinct_count: 3
+  null_count: 37465
+  is_truncated: false
+  min_value: Female
+  max_value: Total
 year_value_samples:
 - '2019'
 - '2022'
@@ -301,227 +360,79 @@ year_value_samples:
 - '1986'
 - '1985'
 - '1984'
-- '1987'
 - '1982'
-- '1979'
+- '1987'
 - '1977'
 - '1978'
+- '1979'
 - '1988'
 - '1980'
 - '1981'
-- '1976'
-- '1974'
 - '1975'
-- '1973'
-- '1972'
-- '1971'
-- '1970'
-- '2040'
-- '2046'
-- '2032'
-- '2036'
-- '2028'
-- '2037'
-- '2041'
-- '2044'
-- '2027'
-- '2045'
-- '2050'
-- '2039'
-- '2031'
-- '2049'
-- '2033'
-- '2038'
-- '2034'
-- '2026'
-- '2048'
-- '2043'
-- '2025'
-- '2035'
-- '2047'
-- '2029'
-- '2030'
-- '2042'
-- '1969'
-- '1967'
-- '1963'
-- '1961'
-- '1957'
-- '1954'
-- '1962'
-- '1955'
-- '1956'
-- '1951'
-- '1950'
-- '1965'
-- '1964'
-- '1960'
-- '1968'
-- '1966'
-- '1953'
-- '1952'
-- '1959'
-- '1958'
-- '2057'
-- '2090'
-- '2093'
-- '2065'
-- '2073'
-- '2091'
-- '2088'
-- '2072'
-- '2058'
-- '2068'
-- '2075'
-- '2078'
-- '2085'
-- '2089'
-- '2100'
-- '2066'
-- '2076'
-- '2098'
-- '2087'
-- '2096'
-- '2074'
-- '2095'
-- '2069'
-- '2051'
-- '2077'
-- '2056'
-- '2097'
-- '2070'
-- '2053'
-- '2079'
-- '2092'
-- '2080'
-- '2062'
-- '2060'
-- '2082'
-- '2067'
-- '2063'
-- '2083'
-- '2064'
-- '2055'
-- '2099'
-- '2071'
-- '2084'
-- '2059'
-- '2052'
-- '2094'
-- '2061'
-- '2054'
-- '2081'
-- '2086'
-unit_value_samples:
-- 1000 No
-- '%'
-- USD
-- 'No'
+- '1976'
+date_key_value_stats:
+  distinct_count: 151
+  null_count: 0
+  is_truncated: false
+  min_value: '19500101'
+  max_value: '21000101'
+as_of_date_value_stats:
+  distinct_count: 151
+  null_count: 0
+  is_truncated: false
+  min_value: '1950-12-31'
+  max_value: '2100-12-31'
+as_of_date_basis_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: observation
+  max_value: observation
+unit_value_stats:
+  distinct_count: 4
+  null_count: 0
+  is_truncated: false
+  min_value: '%'
+  max_value: USD
 value_value_stats:
   distinct_count: 59899
   null_count: 0
   is_truncated: true
   min_value: '0'
   max_value: '476747.781'
-indicator_classes:
-- EL
-- GYI
+source_natural_key_value_stats:
+  distinct_count: 3
+  null_count: 0
+  is_truncated: false
+  min_value: Unpivoted_FAOstat_africa_Population_and_Employment_Annual_population
+  max_value: Unpivoted_FAOstat_africa_Population_and_Employment_Employment_Indicators_Employment_Indicators_Rural
+loaded_at_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '2026-08-26 01:15:23.157492+00'
+  max_value: '2026-08-26 01:15:23.157492+00'
 filtering_guidance:
 - JOIN dim_indicator for indicator_name labels
 - Do not mix unit='%' with headcount in one SUM
 - Filter sex when question specifies gender
-sql_generation_hints:
-- 'Join keys: geography_key, item_key, element_key, indicator_key, sex_key, source_key,
-  date_key'
-- LEFT JOIN dim_geography on geography_key for country names
 semantic_role:
   primary_domain: employment
   supports:
   - employment
   - EL
   - GYI
-geography_key_value_stats:
-  distinct_count: 58
-  null_count: 0
-  is_truncated: false
-  patched: true
-geo_level_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-item_key_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-element_key_value_stats:
-  distinct_count: 6
-  null_count: 0
-  is_truncated: false
-  patched: true
-indicator_key_value_stats:
-  distinct_count: 53
-  null_count: 0
-  is_truncated: false
-  patched: true
-sex_key_value_stats:
-  distinct_count: 4
-  null_count: 0
-  is_truncated: false
-  patched: true
-source_key_value_stats:
-  distinct_count: 3
-  null_count: 0
-  is_truncated: false
-  patched: true
-tier_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-data_level_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-geo_scope_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-source_id_value_stats:
-  distinct_count: 3
-  null_count: 0
-  is_truncated: false
-  patched: true
-sex_value_stats:
-  distinct_count: 3
-  null_count: 0
-  is_truncated: false
-  patched: true
-date_key_value_stats:
-  distinct_count: 151
-  null_count: 0
-  is_truncated: false
-  patched: true
-as_of_date_value_stats:
-  distinct_count: 151
-  null_count: 0
-  is_truncated: false
-  patched: true
-as_of_date_basis_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-source_natural_key_value_stats:
-  distinct_count: 3
-  null_count: 0
-  is_truncated: false
-  patched: true
-loaded_at_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
+indicator_classes:
+- EL
+- GYI
+sql_generation_hints:
+- 'Join keys: geography_key, item_key, element_key, indicator_key, sex_key, source_key,
+  date_key'
+- LEFT JOIN dim_geography on geography_key for country names
+bind_spine:
+  geography_key: dim_geography.country_iso3
+  indicator_key: dim_indicator.indicator_name
+  source_key: dim_source.organisation_name
+  item_key: dim_item.item_name
+  element_key: dim_element.element_name
+  sex_key: dim_sex.sex_label

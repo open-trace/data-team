@@ -2,7 +2,7 @@ table_name: opentrace-prod-5ga4.mart_dev.bridge_season_calendar
 description: bridge season calendar
 source:
   layer: mart_dev
-profiled_at: '2026-08-28T17:53:44.421016+00:00'
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
 columns:
 - name: season_key
   type: STRING
@@ -17,14 +17,18 @@ season_key_value_stats:
   distinct_count: 33
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: 30823563a4c0c32053137945cceb0f08
+  max_value: fc4bd20ec58ba222cb010a8cfaa0da79
+is_typical_window_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: 'true'
+  max_value: 'true'
 time_key_value_stats:
   distinct_count: 25
   null_count: 0
   is_truncated: false
   patched: true
-is_typical_window_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
+bind_spine:
+  season_key: dim_season.season_name

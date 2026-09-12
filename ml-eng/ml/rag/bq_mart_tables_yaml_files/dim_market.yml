@@ -2,7 +2,7 @@ table_name: opentrace-prod-5ga4.mart_dev.dim_market
 description: Market identities for price facts.
 source:
   layer: mart_dev
-profiled_at: '2026-08-28T17:53:44.421016+00:00'
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
 grain: Country × market_name
 entity_type: prices
 columns:
@@ -27,39 +27,88 @@ market_key_value_stats:
   is_truncated: true
   min_value: 0006a06dc743367798d6e52e0100933d
   max_value: fffdab84332ddadab262bb00bf7043f9
+country_value_stats:
+  distinct_count: 103
+  null_count: 0
+  is_truncated: false
+  min_value: Afghanistan
+  max_value: Zimbabwe
 admin_1_value_stats:
   distinct_count: 687
   null_count: 879
   is_truncated: true
   min_value: ?Karas Region
   max_value: Zou
-market_name_value_stats:
-  distinct_count: 3619
+market_name_value_samples:
+- National Average
+- Santo Antao
+- Ouangolodougou
+- Man
+- San Vicente
+- Daloa
+- Korhogo
+- Mwanza
+- Boundiali
+- Ferkessedougou
+- Aba
+- Muhanga
+- Rosso
+- National
+- Bouake
+- Busia
+- Santiago
+- Maymana
+- Balkh
+- Luanda, 30 Market
+- Hilmand
+- Paktya
+- Maidan Wardak
+- Zabul
+- Bamyan
+- Kapisa
+- Laghman
+- Baghlan
+- Ghazni
+- Lubango, Joao de Almeida
+- Auserd
+- Kunduz
+- Nimroz
+- Tindouf
+- Faryab
+- Jalalabad
+- Mazar
+- Ghor
+- Boujdour
+- Algiers
+- Nangarhar
+- Farah
+- Khost
+- Paktika
+- Samara
+- Nuristan
+- Layoun
+- Kunar
+- Dakhla
+- Huambo, Alemanha
+loaded_at_value_stats:
+  distinct_count: 1
   null_count: 0
-  is_truncated: true
-  min_value: A'zaz
-  max_value: Échelle
-indicator_classes:
-- PRC
-filtering_guidance:
-- 'Grain: Country × market_name'
-- Market identities for price facts.
+  is_truncated: false
+  min_value: '2026-08-24 21:57:12.510726+00'
+  max_value: '2026-08-24 21:57:12.510726+00'
 sql_generation_hints:
 - 'Join keys: market_key'
 - LEFT JOIN dim_geography on geography_key for country names
+filtering_guidance:
+- 'Grain: Country × market_name'
+- Market identities for price facts.
 semantic_role:
   primary_domain: market
   supports:
   - market
   - prices
   - join_dim
-country_value_stats:
-  distinct_count: 103
-  null_count: 0
-  is_truncated: false
-  patched: true
-loaded_at_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
+indicator_classes:
+- PRC
+bind_spine:
+  market_key: dim_market.market_name

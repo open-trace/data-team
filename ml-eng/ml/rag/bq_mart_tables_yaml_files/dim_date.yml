@@ -1,0 +1,124 @@
+table_name: opentrace-prod-5ga4.mart_dev.dim_date
+description: Calendar spine (year/month/quarter helpers).
+source:
+  layer: mart_dev
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
+grain: One row per calendar day
+entity_type: calendar
+columns:
+- name: date_key
+  type: STRING
+  description: date key
+- name: date_day
+  type: DATE
+  description: date day
+- name: year
+  type: INT64
+  description: year
+- name: month
+  type: INT64
+  description: month
+- name: quarter
+  type: INT64
+  description: quarter
+- name: year_month
+  type: STRING
+  description: year month
+date_key_value_stats:
+  distinct_count: 27845
+  null_count: 0
+  is_truncated: true
+  min_value: '19600101'
+  max_value: '20351231'
+date_day_value_stats:
+  distinct_count: 27827
+  null_count: 0
+  is_truncated: true
+  min_value: '1960-01-01'
+  max_value: '2035-12-31'
+year_value_samples:
+- '1976'
+- '1968'
+- '2028'
+- '2008'
+- '1984'
+- '2004'
+- '1964'
+- '1972'
+- '2024'
+- '2000'
+- '1992'
+- '2020'
+- '1988'
+- '1960'
+- '1996'
+- '2012'
+- '2032'
+- '2016'
+- '1980'
+- '1971'
+- '1965'
+- '2009'
+- '1990'
+- '1974'
+- '1994'
+- '1995'
+- '1986'
+- '1977'
+- '1983'
+- '1978'
+- '1987'
+- '1962'
+- '1982'
+- '1970'
+- '1989'
+- '2002'
+- '1973'
+- '2006'
+- '1998'
+- '1966'
+- '1997'
+- '1999'
+- '1979'
+- '1969'
+- '2001'
+- '1985'
+- '2003'
+- '1981'
+- '2005'
+- '2007'
+month_value_samples:
+- '1'
+- '3'
+- '5'
+- '10'
+- '7'
+- '8'
+- '12'
+- '4'
+- '9'
+- '11'
+- '6'
+- '2'
+quarter_value_stats:
+  distinct_count: 4
+  null_count: 0
+  is_truncated: false
+  min_value: '1'
+  max_value: '4'
+year_month_value_stats:
+  distinct_count: 912
+  null_count: 0
+  is_truncated: true
+  min_value: 1960-01
+  max_value: 2035-12
+sql_generation_hints:
+- 'Join keys: date_key'
+- LEFT JOIN dim_geography on geography_key for country names
+filtering_guidance:
+- 'Grain: One row per calendar day'
+- Calendar spine (year/month/quarter helpers).
+semantic_role:
+  primary_domain: calendar
+  supports:
+  - calendar

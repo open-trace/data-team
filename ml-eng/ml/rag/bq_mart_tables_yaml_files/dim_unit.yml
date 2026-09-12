@@ -2,7 +2,7 @@ table_name: opentrace-prod-5ga4.mart_dev.dim_unit
 description: Quantity and currency units.
 source:
   layer: mart_dev
-profiled_at: '2026-08-28T17:53:44.421016+00:00'
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
 grain: Unit code × type
 entity_type: reference
 columns:
@@ -18,380 +18,81 @@ columns:
 - name: loaded_at
   type: TIMESTAMP
   description: loaded at
-unit_code_value_samples:
-- USD
-- KZT
-- 900_g
-- LKR
-- VEF
-- Kwanza
-- GEL
-- BDT
-- Seychelles Rupee
-- New Zaire
-- Somali Shilling
-- MZN
-- Cabo Verde Escudo
-- SDG
-- Malagasy Ariary
-- NIS
-- ZAR
-- GNF
-- IQD
-- STE
-- SSP
-- CDF
-- Liberian dollar
-- LSL
-- Zambian Kwacha
-- IRR
-- Kenyan Shilling
-- Guinea Franc
-- TZS
-- IDR
-- YER
-- MGA
-- Ghana Cedi
-- Malagasy Franc
-- New Leone
-- JOD
-- Euro
-- Loti
-- RUB
-- Madagascar and Comores CFA Franc
-- INR
-- Mali Franc
-- Ethiopian Dollar
-- NGN
-- TJS
-- MWK
-- AOA
-- Naira
-- XAF
-- Burundi Franc
-- Rhodesian Dollar
-- Kwanza readjusted
-- Zimbabwe Dollar (old)
-- SZL
-- BWP
-- AMD
-- Congolese Franc
-- Lilangeni
-- AZN
-- BYR
-- Malawi Kwacha
-- Mozambique Escudo
-- Financial Rand
-- PKR
-- Rand
-- ZMW
-- Namibia Dollar
-- Syli
-- AFN
-- UGX
-- Egyptian Pound
-- THB
-- MDL
-- HNL
-- Leone
-- Dalasi
-- Mauritius Rupee
-- MRU
-- Ghana Revalued Cedi
-- KGS
-- NAD
-- KES
-- DOP
-- Comoro Franc
-- XOF
-- South Sudanese Pound
-- UAH
-- MRO
-- Algerian Dinar
-- Dobra
-- Tanzanian Shilling
-- Affars and Issas Franc
-- CVE
-- KHR
-- JPY
-- Libyan Dinar
-- Guinea-Bissau Peso
-- ERN
-- DJF
-- MMK
-- Uganda Shilling
-- BIF
-- ARS
-- PYG
-- Angolan Escudo
-- CNY
-- SYP
-- GMD
-- MXN
-- Zaire
-- COP
-- PHP
-- New Kwanza
-- Zimbabwe Dollar
-- Second Zimbabwe Dollar 
-- SLL
-- BTN
-- Sudanese Pound
-- Portuguese Escudo
-- MNT
-- HTG
-- US Dollar
-- PAB
-- Djibouti Franc
-- ZWL
-- Cedi
-- RWF
-- GTQ
-- GHS
-- French Franc
-- NIO
-- Zimbabwe Gold
-- Pound Sterling
-- Moroccan Dirham
-- NPR
-- Ouguiya
-- TRY
-- EGP
-- ZWL_cash
-- Pula
-- Nakfa
-- Tunisian Dinar
-- SOS
-- DZD
-- CFA Franc BCEAO
-- VND
-- Ethiopian Birr
-- LAK
-- SLS
-- PEN
-- ETB
-- Rwanda Franc
-- CFA Franc BEAC
-- Mozambique Metical
-- BOB
-- LYD
-- LRD
-- Sudanese Dinar
-- Libyan Pound
-- LBP
-- 99_kg
-- An
-- 1.8 L
-- 125 G
-- Cart load
-- SLC
-- '%'
-- 73 KG
-- 160 KG
-- Heap
-- 20 G
-- 2 KG
-- 5_L
-- Pound
-- 10 KG
-- Packet
-- 400 G
-- 125_g
-- 115 G
-- 500_g
-- kg/ha
-- MT
-- 11.5 KG
-- 800 G
-- Head
-- 1.2 KG
-- 360 pcs
-- 100_kg
-- 100 Pounds
-- Unit
-- 12.5 KG
-- 750_ml
-- 250 KG
-- 500 ML
-- ea_18
-- 750 ML
-- 650 G
-- 150 G
-- USD/LCU
-- 160 G
-- 100 ML
-- 385 G
-- 500_ml
-- LCU/3.5kg
-- 45_kg
-- 52 KG
-- One_way_trip
-- Month
-- Pile
-- 200_L
-- 350 G
-- 185 G
-- 168 G
-- 700 G
-- 100 KG
-- t/ha
-- 200 ML
-- Pair
-- 0.5_L
-- Marmite
-- Sack
-- 500 G
-- cum
-- 28 pcs
-- 109_kg
-- ea_40
-- 12_kg
-- 1.4 KG
-- Cuartilla
-- 109 KG
-- 93_kg
-- 3.4 KG
-- Libra
-- 20 L
-- 12 KG
-- 20_kg
-- 18 KG
-- ea_6
-- ea_12
-- 98_kg
-- Bundle
-- Cubic meter
-- 3.1 KG
-- 380 G
-- 3.5 KG
-- 12.5_kg
-- ea
-- Gallon
-- LCU
-- 50 ML
-- tonnes
-- 1000 An
-- Bar
-- 20 KG
-- 0.8 KG
-- 5 KG
-- 6_kg
-- 5 pcs
-- 3.5_kg
-- ''
-- 800_g
-- 200_kwh
-- 1.5 KG
-- 90 KG
-- 20_L
-- 93 KG
-- Loaf
-- L
-- Brush
-- 100 L
-- 2_L
-- g/An
-- 2.25 KG
-- 25 KG
-- 1.8 KG
-- 46 KG
-- 50 pcs
-- 10_kg
-- Cylinder
-- KG
-- 1 GB
-- 1 piece
-- 900 ML
-- 10 pcs
-- 11 KG
-- cup
-- 'No'
-- Package
-- 5_kg
-- 15_kg
-- 50 Pounds
-- 110_kg
-- 2.1 KG
-- 100_g
-- 170 G
-- 100_tubers
-- Course
-- 90_kg
-- ea_80
-- 91_kg
-- 27 KG
-- 900 G
-- 70 G
-- 30 pcs
-- 200 G
-- 5 L
-- Bunch
-- 250 G
-- 60 KG
-- 68 KG
-- kWh
-- Day
-- 250_g
-- 150 ml
-- 2270_g
-- 2_kg
-- 3 L
-- 250_kg
-- ha
-- 700_g
-- 1.5 L
-- 84 KG
-- 100 Tubers
-- t
-- 16 KG
-- 1000 No
-- 85 G
-- 91 KG
-- 3 KG
-- 120 KG
-- Dozen
-- 2.5_kg
-- 15 KG
-- 1.6 KG
-- 50 KG
-- ea_30
-- gal
-- 1000_L
-- 100 pcs
-- 0.5 KG
-- kg/An
-- 750 G
-- 4 pcs
-- 45 KG
-- No/An
-- 300 G
-- 1.1 KG
-- Plate
-- 1.3 KG
-- 250 ML
-- 50_kg
-- 2.5 KG
-- Malawi Pound
-unit_type_value_samples:
-- quantity
-- currency
-filtering_guidance:
-- 'Grain: Unit code × type'
-- Quantity and currency units.
-sql_generation_hints:
-- 'Join keys: unit_key'
-- LEFT JOIN dim_geography on geography_key for country names
-semantic_role:
-  primary_domain: reference
-  supports:
-  - reference
 unit_key_value_stats:
   distinct_count: 354
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: 0037f24d4f04f9ab0ba91dafb28ec12a
+  max_value: fef7d84a38caf7465da3e3ae02ba8058
+unit_code_value_samples:
+- USD
+- LKR
+- TZS
+- ZAR
+- Liberian dollar
+- Burundi Franc
+- Ghana Cedi
+- JOD
+- YER
+- Loti
+- Seychelles Rupee
+- SSP
+- MWK
+- Somali Shilling
+- SDG
+- Malawi Pound
+- Kenyan Shilling
+- KZT
+- STE
+- NIS
+- GNF
+- Malagasy Franc
+- NGN
+- New Leone
+- New Zaire
+- Euro
+- VEF
+- CDF
+- INR
+- IRR
+- Ethiopian Dollar
+- Kwanza
+- TJS
+- Madagascar and Comores CFA Franc
+- AOA
+- Cabo Verde Escudo
+- XAF
+- IDR
+- Zambian Kwacha
+- GEL
+- Rwanda Franc
+- LSL
+- BDT
+- Malagasy Ariary
+- RUB
+- Naira
+- Guinea Franc
+- MZN
+- Mali Franc
+- IQD
+unit_type_value_samples:
+- quantity
+- currency
 loaded_at_value_stats:
   distinct_count: 1
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: '2026-08-25 23:48:08.507193+00'
+  max_value: '2026-08-25 23:48:08.507193+00'
+sql_generation_hints:
+- 'Join keys: unit_key'
+- LEFT JOIN dim_geography on geography_key for country names
+filtering_guidance:
+- 'Grain: Unit code × type'
+- Quantity and currency units.
+semantic_role:
+  primary_domain: reference
+  supports:
+  - reference
+bind_spine:
+  unit_key: dim_unit.unit_code

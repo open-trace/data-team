@@ -2,7 +2,7 @@ table_name: opentrace-prod-5ga4.mart_dev.fct_climate
 description: NASA POWER / ERA5 point climate and Climate Watch country indicators.
 source:
   layer: mart_dev
-profiled_at: '2026-08-28T17:53:44.421016+00:00'
+profiled_at: '2026-09-05T17:57:00.703130+00:00'
 grain: point_obs | country_model
 entity_type: climate
 columns:
@@ -85,140 +85,189 @@ geography_key_value_stats:
   is_truncated: true
   min_value: 0001600623fef7fd72830124b253ced3
   max_value: ffe04a83093866d63e5946dede21a358
-country_iso3_value_samples:
+geo_level_value_stats:
+  distinct_count: 2
+  null_count: 1564
+  is_truncated: false
+  min_value: city
+  max_value: country
+country_iso3_value_stats:
+  distinct_count: 56
+  null_count: 1564
+  is_truncated: false
+  min_value: AGO
+  max_value: ZWE
+source_key_value_stats:
+  distinct_count: 3
+  null_count: 0
+  is_truncated: false
+  min_value: 0eabe8bee8678e5dbc8639651ed7c70c
+  max_value: 3d24478639172a60481c1873c530e9a2
+tier_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '1'
+  max_value: '1'
+data_level_value_stats:
+  distinct_count: 3
+  null_count: 0
+  is_truncated: false
+  min_value: community
+  max_value: point
+geo_scope_value_stats:
+  distinct_count: 3
+  null_count: 0
+  is_truncated: false
+  min_value: community
+  max_value: point
+place_scope_value_samples:
+- Angola
 - AGO
 - MAR
+- Morocco
+- Madagascar
 - MDG
+- Congo (Kinshasa)
 - COD
+- South Africa
 - ZAF
+- Egypt
 - EGY
 - SOM
+- Somalia
 - LBY
+- Libya
+- Namibia
 - NAM
 - SDN
+- Sudan
 - MOZ
+- Mozambique
 - DZA
+- Algeria
+- Chad
 - TCD
 - ETH
+- Ethiopia
 - SHN
+- Ascension, Saint Helena and Tristan da Cunha
+- Niger
 - NER
+- Tanzania
 - TZA
+- Kenya
 - KEN
 - NGA
+- Nigeria
 - ZMB
+- Zambia
 - SSD
+- South Sudan
+- Central African Republic
 - CAF
 - BWA
+- Botswana
 - SYC
+- Seychelles
 - GAB
-- MRT
-- COG
-- CMR
-- MLI
-- GNQ
-- ZWE
-- ERI
-- TUN
-- MUS
-- UGA
-- LBR
-- GHA
-- BEN
-- MWI
-- CIV
-- BFA
-- SEN
-- TGO
-- GIN
-- SLE
-- COM
-- STP
-- LSO
-- DJI
-- SWZ
-- MYT
-- BDI
-- REU
-- RWA
-- GNB
-- GMB
+- Gabon
 metric_value_samples:
 - temperature_2m
-- par_solar_at_noon
 - shortwave_irradiance_at_noon
-- biomass
-- buildings
-- energy_crops
-- f-gases
-- forest
-- fossil_fuel_consumption
-- fossil_fuels
-- fossil_w/o_ccs
-- freight
-- liquefied_biomass_w/_ccs
-- liquefied_coal_w/o_ccs
-- liquefied_fossil_fuels
-- liquefied_fossil_fuels_w/o_ccs
-- liquids
-- natural_gas
-- oc
-- oil_w/o_ccs
-- other_renewables
-- passenger
-- solar
-- solids
-- wind
-- biomass_w/o_ccs
-- biomass_w/_ccs
-- co
-- gases
-- global_warming
-- heat
-- hydrogen
-- industry
-- liquefied_biomass
-- liquefied_biomass_w/o_ccs
-- liquefied_coal
-- liquefied_gas_w/_ccs
-- liquid_derivative_of_crude_oil
-- bc
-- ch4
-- coal
-- coal_w/o_ccs
-- energy_supply
-- hydro
-- land_use_and_forestry
-- liquefied_coal_w/_ccs
-- liquefied_fossil_fuels_w/_ccs
-- liquefied_gas
-- oil
-- oil_w/_ccs
-- solid_biomass_w/o_ccs
-- sulfur
-- total
-- total_carbon_price
-- co2
-- coal_w/_ccs
-- cropland
-- electricity
-- energy_demand
-- fossil
-- fossil_w/_ccs
-- gas
-- gas_w/_ccs
-- gas_w/o_ccs
-- gdp_mer
-- geothermal
-- liquefied_gas_w/o_ccs
-- n2o
-- nox
-- nuclear
-- pasture
+- par_solar_at_noon
 - solid_biomass_w/_ccs
+- industry
+- co2
+- nuclear
+- biomass_w/_ccs
+- liquids
 - transportation
+- fossil
+- global_warming
+- gas_w/_ccs
+- freight
+- oc
+- ch4
+- heat
+- biomass_w/o_ccs
+- fossil_w/o_ccs
+- solids
+- biomass
+- total
+- cropland
+- passenger
+- fossil_w/_ccs
+- solid_biomass_w/o_ccs
+- energy_supply
+- co
+- coal
+- geothermal
+- coal_w/o_ccs
+- electricity
+- energy_crops
+- gas_w/o_ccs
+- fossil_fuels
+- liquefied_gas_w/_ccs
+- gas
+- liquefied_fossil_fuels_w/o_ccs
+- gdp_mer
+- energy_demand
+- buildings
+- fossil_fuel_consumption
+- bc
+- f-gases
+- oil_w/_ccs
+- oil_w/o_ccs
+- hydrogen
+- liquefied_biomass
+- coal_w/_ccs
+- sulfur
+source_id_value_stats:
+  distinct_count: 3
+  null_count: 0
+  is_truncated: false
+  min_value: 0eabe8bee8678e5dbc8639651ed7c70c
+  max_value: 3d24478639172a60481c1873c530e9a2
+indicator_key_value_stats:
+  distinct_count: 70
+  null_count: 203386
+  is_truncated: false
+  min_value: 01e59f3908d0327400575e3dbd14909a
+  max_value: fee74eac0728a1bb5ff7d4666f8c4a88
 climate_grain_value_samples:
 - point_obs
 - country_model
+latitude_value_stats:
+  distinct_count: 293
+  null_count: 3080
+  is_truncated: false
+  min_value: '-35'
+  max_value: '38'
+longitude_value_stats:
+  distinct_count: 250
+  null_count: 3080
+  is_truncated: false
+  min_value: '-18'
+  max_value: '60'
+as_of_date_value_stats:
+  distinct_count: 14
+  null_count: 0
+  is_truncated: false
+  min_value: '2005-12-31'
+  max_value: '2100-12-31'
+as_of_date_basis_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: observation
+  max_value: observation
+date_key_value_stats:
+  distinct_count: 14
+  null_count: 0
+  is_truncated: false
+  min_value: '20050101'
+  max_value: '21000101'
 value_value_stats:
   distinct_count: 31375
   null_count: 0
@@ -229,85 +278,31 @@ unit_value_stats:
   distinct_count: 0
   null_count: 206466
   is_truncated: false
-indicator_classes:
-- CLIM
+source_natural_key_value_stats:
+  distinct_count: 3
+  null_count: 0
+  is_truncated: false
+  min_value: ClimateWatch_climate_health_impacts
+  max_value: NASA_POWER_hourly
+loaded_at_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '2026-08-28 14:33:12.583815+00'
+  max_value: '2026-08-28 14:33:12.583815+00'
 filtering_guidance:
 - Filter climate_grain (point_obs vs country_model)
 - JOIN dim_indicator for named climate series
-sql_generation_hints:
-- Filter metric + as_of_date range for time series
 semantic_role:
   primary_domain: climate
   supports:
   - climate
   - CLIM
-geo_level_value_stats:
-  distinct_count: 2
-  null_count: 0
-  is_truncated: false
-  patched: true
-source_key_value_stats:
-  distinct_count: 3
-  null_count: 0
-  is_truncated: false
-  patched: true
-tier_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-data_level_value_stats:
-  distinct_count: 3
-  null_count: 0
-  is_truncated: false
-  patched: true
-geo_scope_value_stats:
-  distinct_count: 3
-  null_count: 0
-  is_truncated: false
-  patched: true
-source_id_value_stats:
-  distinct_count: 3
-  null_count: 0
-  is_truncated: false
-  patched: true
-indicator_key_value_stats:
-  distinct_count: 70
-  null_count: 0
-  is_truncated: false
-  patched: true
-latitude_value_stats:
-  distinct_count: 293
-  null_count: 0
-  is_truncated: false
-  patched: true
-longitude_value_stats:
-  distinct_count: 250
-  null_count: 0
-  is_truncated: false
-  patched: true
-as_of_date_value_stats:
-  distinct_count: 14
-  null_count: 0
-  is_truncated: false
-  patched: true
-as_of_date_basis_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-date_key_value_stats:
-  distinct_count: 14
-  null_count: 0
-  is_truncated: false
-  patched: true
-source_natural_key_value_stats:
-  distinct_count: 3
-  null_count: 0
-  is_truncated: false
-  patched: true
-loaded_at_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
+indicator_classes:
+- CLIM
+sql_generation_hints:
+- Filter metric + as_of_date range for time series
+bind_spine:
+  geography_key: dim_geography.country_iso3
+  indicator_key: dim_indicator.indicator_name
+  source_key: dim_source.organisation_name

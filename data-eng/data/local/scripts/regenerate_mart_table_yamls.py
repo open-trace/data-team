@@ -8,11 +8,13 @@ Outputs:
 
 Usage (from repo root):
   python data-eng/data/local/scripts/regenerate_mart_table_yamls.py
+  python data-eng/data/local/scripts/regenerate_mart_table_yamls.py --tables fct_hdi,fct_production
 
 Requires: GOOGLE_APPLICATION_CREDENTIALS or gcloud auth; BQ_PROJECT in data/local/.env.
 """
 from __future__ import annotations
 
+import argparse
 import json
 import os
 import sys
@@ -63,7 +65,29 @@ FILTER_RELEVANT_LABEL_COLUMNS: dict[str, frozenset[str]] = {
     "dim_market": frozenset({"market_name"}),
     "dim_classification": frozenset({"phase_name", "phase_code"}),
     "dim_scenario": frozenset({"scenario_name", "scenario_code"}),
+    "dim_disease": frozenset({"disease_or_hazard", "disease_family"}),
+    "dim_livestock": frozenset({"species"}),
+    "dim_sex": frozenset({"sex_label"}),
+    "dim_soil_property": frozenset({"soil_property", "depth"}),
+    "dim_land_use": frozenset({"land_use_code", "land_use_class"}),
 }
+
+# Label columns that do not end in _name/_code/_type but must be sampled.
+EXTRA_FILTER_LABEL_COLS = frozenset(
+    {
+        "disease_or_hazard",
+        "disease_family",
+        "species",
+        "sex_label",
+        "soil_property",
+        "depth",
+        "land_use_class",
+        "place_scope",
+        "unit",
+        "country_iso3",
+        "country_iso2",
+    }
+)
 
 DIM_LABEL_BACKFILL: dict[tuple[str, str], tuple[str, str]] = {
     ("agg_food_security_monthly", "phase_name"): ("dim_classification", "phase_name"),
@@ -77,14 +101,18 @@ def _is_filter_relevant_label_column(table_name: str, column_name: str) -> bool:
     col_l = column_name.lower()
     if col_l in MEASURE_DISCRIMINATOR_COLS or col_l in TIME_DIM_COLS:
         return True
+    if col_l in EXTRA_FILTER_LABEL_COLS:
+        return True
     return col_l.endswith(HUMAN_LABEL_SUFFIXES)
 
 
 def _column_profile_mode(col: ColumnMeta, column_roles: dict[tuple[str, str], str]) -> str:
     """Return 'samples', 'stats', or 'omit' for YAML emission."""
+    col_l = col.column_name.lower()
+    if col_l == "place_scope" or _is_string_array_type(col.data_type):
+        return "samples"
     if _is_complex_type(col.data_type):
         return "stats"
-    col_l = col.column_name.lower()
     dtype = col.data_type.upper()
     role = column_roles.get((col.table_name, col.column_name), "").lower()
 
@@ -135,7 +163,7 @@ def _backfill_labels_from_dim(
     except Exception:
         return []
 
-# Preserved on regen (curated by patch_mart_yaml_semantics.py)
+# Preserved on regen (curated by patch_mart_yaml_semantics.py / bind spine)
 CURATED_YAML_KEYS = frozenset(
     {
         "semantic_role",
@@ -146,6 +174,7 @@ CURATED_YAML_KEYS = frozenset(
         "sql_generation_hints",
         "semantic_relationships",
         "relationships",
+        "bind_spine",
     }
 )
 
@@ -168,14 +197,17 @@ def _load_dotenv() -> None:
             os.environ[key] = value
 
 
-def _load_table_list() -> list[str]:
+def _load_table_list(only: list[str] | None = None) -> list[str]:
     names: list[str] = []
     for line in TABLES_FILE.read_text(encoding="utf-8").splitlines():
         line = line.strip()
         if not line or line.startswith("#"):
             continue
         names.append(line.split()[0])
-    return names
+    if not only:
+        return names
+    allow = {t.strip().lower() for t in only if str(t).strip()}
+    return [n for n in names if n.lower() in allow]
 
 
 def _load_entity_metadata() -> dict[str, dict[str, Any]]:
@@ -287,6 +319,12 @@ def _is_complex_type(data_type: str) -> bool:
     return base in COMPLEX_TYPES or base.startswith("ARRAY") or base.startswith("STRUCT")
 
 
+def _is_string_array_type(data_type: str) -> bool:
+    """True for ARRAY<STRING> (and ARRAY<STRING> nested variants from INFORMATION_SCHEMA)."""
+    dtype = (data_type or "").upper().replace(" ", "")
+    return dtype.startswith("ARRAY") and "STRING" in dtype
+
+
 def _fetch_live_tables(client, project: str, dataset: str, candidates: list[str]) -> list[str]:
     sql = f"""
     SELECT table_name
@@ -358,6 +396,32 @@ def _column_labels(
     return [(r.label_value, int(r.row_count)) for r in client.query(sql).result()]
 
 
+def _array_element_labels(
+    client,
+    project: str,
+    dataset: str,
+    col: ColumnMeta,
+    limit: int,
+) -> list[tuple[str, int]]:
+    """Top distinct values inside ARRAY<STRING> columns (e.g. place_scope)."""
+    if not _safe_ident(col.column_name):
+        return []
+    if not _is_string_array_type(col.data_type):
+        return []
+    sql = f"""
+    SELECT
+      CAST(elem AS STRING) AS label_value,
+      COUNT(*) AS row_count
+    FROM {_fq(project, dataset, col.table_name)} AS t,
+    UNNEST(t.{col.column_name}) AS elem
+    WHERE elem IS NOT NULL AND CAST(elem AS STRING) != ''
+    GROUP BY 1
+    ORDER BY row_count DESC
+    LIMIT {limit}
+    """
+    return [(r.label_value, int(r.row_count)) for r in client.query(sql).result() if r.label_value]
+
+
 def _numeric_bounds(client, project: str, dataset: str, col: ColumnMeta) -> tuple[str | None, str | None]:
     if not _safe_ident(col.column_name):
         return None, None
@@ -387,7 +451,10 @@ def profile_column(
     sample_limit = MAX_FILTER_SAMPLES if mode == "samples" else MAX_LABELS
 
     if mode == "samples":
-        raw_labels = _column_labels(client, project, dataset, col, sample_limit)
+        if _is_string_array_type(col.data_type):
+            raw_labels = _array_element_labels(client, project, dataset, col, sample_limit)
+        else:
+            raw_labels = _column_labels(client, project, dataset, col, sample_limit)
         if not raw_labels:
             raw_labels = [
                 (label, 0)
@@ -401,19 +468,43 @@ def profile_column(
             pct = (100.0 * count / non_null) if non_null and count else None
             label_rows.append((label_value, count, round(pct, 4) if pct is not None else None))
             labels.append(label_value)
+        # Complex-type stats leave distinct_count=0; treat hitting the sample cap as truncated.
+        effective_distinct = distinct_count if distinct_count > 0 else len(labels)
+        truncated = (
+            len(raw_labels) >= sample_limit
+            if _is_string_array_type(col.data_type)
+            else effective_distinct > sample_limit
+        )
         return ColumnProfile(
             table_name=col.table_name,
             column_name=col.column_name,
             data_type=col.data_type,
             profile_mode="labels",
-            distinct_count=distinct_count,
+            distinct_count=effective_distinct,
             null_count=null_count,
             total_rows=total_rows,
-            is_truncated=distinct_count > sample_limit,
+            is_truncated=truncated,
             labels=labels[:sample_limit],
             min_value=None,
             max_value=None,
             label_rows=label_rows[:sample_limit],
+            profiled_at=profiled_at,
+        )
+
+    if _is_complex_type(col.data_type):
+        return ColumnProfile(
+            table_name=col.table_name,
+            column_name=col.column_name,
+            data_type=col.data_type,
+            profile_mode="stats",
+            distinct_count=distinct_count,
+            null_count=null_count,
+            total_rows=total_rows,
+            is_truncated=False,
+            labels=[],
+            min_value=None,
+            max_value=None,
+            label_rows=[],
             profiled_at=profiled_at,
         )
 
@@ -498,7 +589,11 @@ def _build_table_yaml(
         except (OSError, yaml.YAMLError):
             pass
 
-    return payload
+    if str(REPO_ROOT / "ml-eng") not in sys.path:
+        sys.path.insert(0, str(REPO_ROOT / "ml-eng"))
+    from ml.rag.mart_yaml_contract import ensure_bind_contract_fields
+
+    return ensure_bind_contract_fields(table_name, payload)
 
 
 def _profiles_to_audit_rows(profiles: list[ColumnProfile]) -> list[AuditRow]:
@@ -648,7 +743,18 @@ def _write_markdown(
     print(f"Wrote {MD_OUT}")
 
 
-def main() -> int:
+def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
+    parser = argparse.ArgumentParser(description="Profile mart_dev tables into RAG YAML files.")
+    parser.add_argument(
+        "--tables",
+        default="",
+        help="Comma-separated table allowlist (default: all entries in mart_dev_tables.txt)",
+    )
+    return parser.parse_args(argv)
+
+
+def main(argv: list[str] | None = None) -> int:
+    args = _parse_args(argv)
     _load_dotenv()
     from google.cloud import bigquery
 
@@ -660,7 +766,12 @@ def main() -> int:
     acf_desc = _load_acf_descriptions()
     column_roles = _load_column_roles()
 
-    candidates = _load_table_list()
+    only = [t.strip() for t in str(args.tables or "").split(",") if t.strip()] or None
+    candidates = _load_table_list(only)
+    if only and not candidates:
+        print(f"No matching tables in allowlist for --tables={args.tables!r}", file=sys.stderr)
+        return 1
+
     client = bigquery.Client(project=project)
     tables = _fetch_live_tables(client, project, dataset, candidates)
     if not tables:

@@ -1,0 +1,171 @@
+table_name: opentrace-prod-5ga4.mart_dev.dim_ref_country
+description: Reference country attributes including Africa scope policy.
+source:
+  layer: mart_dev
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
+grain: One row per ISO3 country
+entity_type: geography
+columns:
+- name: country_name
+  type: STRING
+  description: country name
+- name: country_iso2
+  type: STRING
+  description: country iso2
+- name: country_iso3
+  type: STRING
+  description: ISO3 from dim or extractable geo even if key null
+- name: population
+  type: INT64
+  description: population
+- name: in_africa_scope
+  type: BOOL
+  description: in africa scope
+- name: m49_code
+  type: STRING
+  description: m49 code
+- name: loaded_at
+  type: TIMESTAMP
+  description: loaded at
+country_name_value_samples:
+- Sao Tome and Principe
+- Chad
+- Mauritania
+- South Sudan
+- Benin
+- Kenya
+- Sierra Leone
+- Madagascar
+- Burundi
+- Zimbabwe
+- Eswatini
+- Comoros
+- Morocco
+- Botswana
+- Lesotho
+- French Southern Territories
+- Malawi
+- Western Sahara
+- Djibouti
+- Rwanda
+- Guinea-Bissau
+- Libya
+- Congo (Brazzaville)
+- Senegal
+- Mauritius
+- Togo
+- Guinea
+- Gabon
+- Zambia
+- Eritrea
+- Algeria
+- Cabo Verde
+- Burkina Faso
+- Niger
+- Ghana
+- Reunion
+- Côte d’Ivoire
+- Mozambique
+- Saint Helena
+- Mayotte
+- Seychelles
+- Central African Republic
+- Namibia
+- Gambia, The
+- Mali
+- Uganda
+- Liberia
+- Equatorial Guinea
+- Somalia
+- Tunisia
+country_iso2_value_stats:
+  distinct_count: 59
+  null_count: 0
+  is_truncated: false
+  min_value: AO
+  max_value: ZW
+country_iso3_value_stats:
+  distinct_count: 59
+  null_count: 0
+  is_truncated: false
+  min_value: AGO
+  max_value: ZWE
+population_value_stats:
+  distinct_count: 56
+  null_count: 3
+  is_truncated: false
+  min_value: '24701'
+  max_value: '20296000'
+in_africa_scope_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: 'true'
+  max_value: 'true'
+m49_code_value_samples:
+- '678'
+- '148'
+- '478'
+- '728'
+- '204'
+- '404'
+- '694'
+- '450'
+- '108'
+- '716'
+- '748'
+- '174'
+- '504'
+- '072'
+- '426'
+- '260'
+- '454'
+- '732'
+- '262'
+- '646'
+- '624'
+- '434'
+- '178'
+- '686'
+- '480'
+- '768'
+- '324'
+- '266'
+- '894'
+- '232'
+- '012'
+- '132'
+- '854'
+- '562'
+- '288'
+- '638'
+- '384'
+- '508'
+- '654'
+- '175'
+- '690'
+- '140'
+- '516'
+- '270'
+- '466'
+- '800'
+- '430'
+- '226'
+- '706'
+- '788'
+loaded_at_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '2026-08-25 22:14:42.547523+00'
+  max_value: '2026-08-25 22:14:42.547523+00'
+sql_generation_hints:
+- 'Join keys: country_iso3'
+- LEFT JOIN dim_geography on geography_key for country names
+filtering_guidance:
+- 'Grain: One row per ISO3 country'
+- Reference country attributes including Africa scope policy.
+semantic_role:
+  primary_domain: geography
+  supports:
+  - geography

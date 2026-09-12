@@ -1,0 +1,235 @@
+table_name: opentrace-prod-5ga4.mart_dev.fct_insurance
+description: Livestock insurance records.
+source:
+  layer: mart_dev
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
+grain: Household insurance record
+entity_type: household
+columns:
+- name: insurance_key
+  type: STRING
+  description: insurance key
+- name: geography_key
+  type: STRING
+  description: FK to dim_geography (null if unmatched)
+- name: geo_level
+  type: STRING
+  description: geo level
+- name: country_iso3
+  type: STRING
+  description: ISO3 from dim or extractable geo even if key null
+- name: household_key
+  type: STRING
+  description: household key
+- name: source_key
+  type: STRING
+  description: FK to dim_source
+- name: tier
+  type: INT64
+  description: Producer scale (1=global, 2=national ministry, 3=community survey)
+- name: data_level
+  type: STRING
+  description: Resolution of the number (warehouse row resolution)
+- name: geo_scope
+  type: STRING
+  description: national / sub_national / community / point (null when geography_key
+    null)
+- name: place_scope
+  type: ARRAY<STRING>
+  description: ARRAY of comparable place labels for ACF geo overlap
+- name: metric
+  type: STRING
+  description: Stable slug for the measure
+- name: source_id
+  type: STRING
+  description: Lineage key (= dim_source.source_key)
+- name: household_id
+  type: STRING
+  description: household id
+- name: country
+  type: STRING
+  description: country
+- name: herd_size_category
+  type: STRING
+  description: herd size category
+- name: insurance_start_year
+  type: INT64
+  description: insurance start year
+- name: as_of_date
+  type: DATE
+  description: Observation date when known; else DATE(loaded_at)
+- name: as_of_date_basis
+  type: STRING
+  description: observation or loaded_at
+- name: value
+  type: FLOAT64
+  description: Numeric measure
+- name: unit
+  type: STRING
+  description: Unit of measure
+- name: record_type
+  type: STRING
+  description: record type
+- name: source_natural_key
+  type: STRING
+  description: source natural key
+- name: loaded_at
+  type: TIMESTAMP
+  description: loaded at
+insurance_key_value_stats:
+  distinct_count: 993
+  null_count: 0
+  is_truncated: true
+  min_value: 009cb0adffcd88042fe02149a403a916
+  max_value: fff6a31e5bf34e32beb969a8b7b9c9af
+geography_key_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: 82dc51dcf101cb11ff4c3346a530efbc
+  max_value: 82dc51dcf101cb11ff4c3346a530efbc
+geo_level_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: country
+  max_value: country
+country_iso3_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: TZA
+  max_value: TZA
+household_key_value_stats:
+  distinct_count: 994
+  null_count: 0
+  is_truncated: true
+  min_value: 0029acb4dc750b2d53b1399c738902a5
+  max_value: ffe47202ceff6628bfbe4257217171e2
+source_key_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: a883180f7f0d8a2ac4faa43777d07fad
+  max_value: a883180f7f0d8a2ac4faa43777d07fad
+tier_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '3'
+  max_value: '3'
+data_level_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: national
+  max_value: national
+geo_scope_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: national
+  max_value: national
+metric_value_samples:
+- insurance_farmer
+source_id_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: a883180f7f0d8a2ac4faa43777d07fad
+  max_value: a883180f7f0d8a2ac4faa43777d07fad
+household_id_value_stats:
+  distinct_count: 993
+  null_count: 0
+  is_truncated: true
+  min_value: '1047201'
+  max_value: '3258115'
+country_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: Tanzania
+  max_value: Tanzania
+herd_size_category_value_stats:
+  distinct_count: 4
+  null_count: 15
+  is_truncated: false
+  min_value: 1 to 5
+  max_value: 6 to 20
+insurance_start_year_value_stats:
+  distinct_count: 19
+  null_count: 191
+  is_truncated: false
+  min_value: '0'
+  max_value: '2017'
+as_of_date_value_stats:
+  distinct_count: 19
+  null_count: 0
+  is_truncated: false
+  min_value: '1997-12-31'
+  max_value: '2026-08-27'
+as_of_date_basis_value_stats:
+  distinct_count: 2
+  null_count: 0
+  is_truncated: false
+  min_value: loaded_at
+  max_value: observation
+value_value_stats:
+  distinct_count: 0
+  null_count: 994
+  is_truncated: false
+unit_value_stats:
+  distinct_count: 0
+  null_count: 994
+  is_truncated: false
+record_type_value_samples:
+- farmer
+source_natural_key_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: ilri_i4i_farmerdataanon
+  max_value: ilri_i4i_farmerdataanon
+loaded_at_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '2026-08-27 14:40:54.155901+00'
+  max_value: '2026-08-27 14:40:54.155901+00'
+sql_generation_hints:
+- LEFT JOIN dim_household on household_key; LEFT JOIN dim_geography on geography_key
+- Filter metric / record_type from YAML samples — never invent values
+filtering_guidance:
+- Household insurance record grain — not national census
+- JOIN dim_household for household attributes; filter metric and record_type when
+  present
+- Geo coverage may be weak — do not invent admin coverage
+semantic_role:
+  primary_domain: household
+  supports:
+  - insurance
+  - livestock_insurance
+  - AH
+place_scope_value_stats:
+  distinct_count: 0
+  null_count: 0
+  is_truncated: true
+  patched: true
+bind_spine:
+  geography_key: dim_geography.country_iso3
+  source_key: dim_source.organisation_name
+  household_key: dim_household.household_type
+semantic_relationships:
+  joins_with:
+  - table: dim_geography
+    true:
+    - geography_key
+    how: LEFT
+  - table: dim_household
+    true:
+    - household_key
+    how: LEFT
+business_questions_supported:
+- Livestock insurance uptake by household or country
+indicator_classes:
+- AH

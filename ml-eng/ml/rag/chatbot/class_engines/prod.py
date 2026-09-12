@@ -4,12 +4,11 @@ from __future__ import annotations
 from typing import Any
 
 from ml.rag.chatbot.bundle_metrics import (
-    is_multi_country_panel,
     resolve_staple_products,
     unsupported_grain_for_panel,
 )
 from ml.rag.chatbot.class_engines.base import ClassEngine, EngineResult
-from ml.rag.chatbot.class_engines.shared import bind_value_hits, build_planned_engine_result
+from ml.rag.chatbot.class_engines.shared import bind_value_hits, build_planned_multi_table_result
 from ml.rag.chatbot.class_table_router import select_table_plans
 from ml.rag.chatbot.intent_bundles import match_intent_bundles
 from ml.rag.chatbot.schema_card import load_schema_card
@@ -49,17 +48,26 @@ class ProdEngine(ClassEngine):
             card=card,
             iso_list=iso_list,
         )
-        table_id = plans[0].table_id if plans else str(card.get("default_table") or "agg_production_country_year")
-
-        if unsupported_grain_for_panel(table_id, iso_count=len(iso_list)):
+        if not plans:
             return EngineResult(
                 class_code="PROD",
-                status="unsupported_grain",
-                table_id=table_id,
+                status="planner_error",
+                table_id=str(card.get("default_table") or "agg_production_country_year"),
                 sql=None,
-                caveats=[f"panel grain unsupported on {table_id}"],
+                caveats=["no_table_plans"],
                 value_hits={"country_iso3": iso_list},
             )
+
+        for plan in plans:
+            if unsupported_grain_for_panel(plan.table_id, iso_count=len(iso_list)):
+                return EngineResult(
+                    class_code="PROD",
+                    status="unsupported_grain",
+                    table_id=plan.table_id,
+                    sql=None,
+                    caveats=[f"panel grain unsupported on {plan.table_id}"],
+                    value_hits={"country_iso3": iso_list},
+                )
 
         hits = bind_value_hits(card, query=query, facets=facets)
         hits["country_iso3"] = iso_list
@@ -67,9 +75,9 @@ class ProdEngine(ClassEngine):
         if products:
             hits["product_name"] = products
 
-        return build_planned_engine_result(
+        return build_planned_multi_table_result(
             class_code="PROD",
-            table_id=table_id,
+            plans=plans,
             query=query,
             facets=facets,
             card=card,

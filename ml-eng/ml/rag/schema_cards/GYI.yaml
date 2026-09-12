@@ -1,5 +1,7 @@
 class: GYI
 empty_policy: generate_weak
+warehouse_role: measurable
+web_policy: never
 default_table: fct_gender_inclusion
 tables:
 - fct_gender_inclusion

@@ -250,7 +250,7 @@ def _measure_kind(table_id: str, row: dict[str, Any]) -> str:
     bare = table_id.lower()
     if bare in ("fct_economics",) or "economics" in bare:
         return "macro_gdp"
-    if bare in ("fct_hdi", "agg_hdi_latest") or bare.endswith("_hdi") or "hdi" in bare:
+    if bare in ("fct_hdi",) or bare.endswith("_hdi") or "hdi" in bare:
         return "macro_hdi"
     if bare in ("fct_food_security", "agg_food_security_monthly") or "fews_food_security" in bare:
         return "fews_food_security"
@@ -375,7 +375,7 @@ def _resolve_measure_label(
             return "GDP per capita at purchasing power parity"
     if measure_col == "gdp_per_capita_ppp":
         return "GDP per capita at purchasing power parity"
-    if bare in ("fct_hdi", "agg_hdi_latest") or measure_col == "hdi_value":
+    if bare in ("fct_hdi",) or measure_col == "hdi_value":
         return "Human Development Index score"
     if measure_col == "hdi_value":
         return "Human Development Index score"
@@ -399,7 +399,7 @@ def _not_this_list(table_id: str, row: dict[str, Any], measure_col: str) -> list
 
     if "gdp" in bare or bare == "fct_economics" or measure_col == "gdp_per_capita_ppp":
         out.extend(["agricultural production volume", "crop yield", "food security IPC phase", "market retail price"])
-    elif "hdi" in bare or bare in ("fct_hdi", "agg_hdi_latest") or measure_col == "hdi_value":
+    elif "hdi" in bare or bare in ("fct_hdi",) or measure_col == "hdi_value":
         out.extend(["agricultural production", "crop yield", "GDP", "market price"])
     elif bare in ("fct_food_security", "agg_food_security_monthly") or "fews_food_security" in bare:
         if mt == "population":

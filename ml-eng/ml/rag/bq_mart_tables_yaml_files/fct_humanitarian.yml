@@ -2,7 +2,7 @@ table_name: opentrace-prod-5ga4.mart_dev.fct_humanitarian
 description: Food aid / humanitarian assistance.
 source:
   layer: mart_dev
-profiled_at: '2026-08-28T17:53:44.421016+00:00'
+profiled_at: '2026-09-05T17:57:00.703130+00:00'
 grain: Country × item × element × year
 entity_type: food_security
 columns:
@@ -76,71 +76,127 @@ humanitarian_key_value_stats:
   is_truncated: true
   min_value: 00129c7ec6aca42924546c23b3f5fbda
   max_value: fff7f0b7fc893ab5af43378ae1ca58ef
-country_iso3_value_samples:
+geography_key_value_stats:
+  distinct_count: 54
+  null_count: 0
+  is_truncated: false
+  min_value: 08d5d1fbcfbc008d33905868ea7a2dd7
+  max_value: ff2abe6b8f87b63b0a4d12a3dc2fb900
+geo_level_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: country
+  max_value: country
+country_iso3_value_stats:
+  distinct_count: 54
+  null_count: 0
+  is_truncated: false
+  min_value: AGO
+  max_value: ZWE
+item_key_value_stats:
+  distinct_count: 18
+  null_count: 0
+  is_truncated: false
+  min_value: 058dcba3a5d8bc4315a7586f4a5609bf
+  max_value: fe3f8c2d6c7128e8999480d3ccd113fc
+element_key_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: 633aa20ab302eea2235cc92fc4191868
+  max_value: 633aa20ab302eea2235cc92fc4191868
+source_key_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: 6132d9e9d3f48f709417ff5f5d95c747
+  max_value: 6132d9e9d3f48f709417ff5f5d95c747
+tier_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '1'
+  max_value: '1'
+data_level_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: national
+  max_value: national
+geo_scope_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: national
+  max_value: national
+place_scope_value_samples:
 - ETH
+- Ethiopia
+- Algeria
 - DZA
+- Mauritania
 - MRT
 - SDN
+- Sudan
+- Madagascar
 - MDG
 - NER
+- Niger
+- Congo (Kinshasa)
 - COD
 - BFA
-- TCD
+- Burkina Faso
+- Chad
 - LBR
+- Liberia
+- TCD
+- Djibouti
 - DJI
 - GHA
-- KEN
+- Ghana
+- Somalia
 - SOM
+- KEN
+- Kenya
 - SEN
+- Senegal
+- Benin
 - BEN
 - BDI
+- Burundi
 - UGA
+- Uganda
+- Sierra Leone
 - SLE
 - MOZ
+- Mozambique
+- Tanzania
 - TZA
+- Angola
 - AGO
 - RWA
+- Rwanda
+- Guinea
 - GIN
-- CPV
 - GNB
-- MLI
-- MWI
-- CIV
-- CAF
-- COG
-- ZWE
-- STP
-- ZMB
-- GMB
-- CMR
-- LSO
-- TGO
-- EGY
-- SWZ
-- ERI
-- NAM
-- MAR
-- TUN
-- GNQ
-- COM
-- MUS
-- BWA
-- ZAF
-- SSD
-- SYC
-- LBY
-- NGA
-- GAB
+- CPV
 metric_value_samples:
 - food_aid_received
+source_id_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: 6132d9e9d3f48f709417ff5f5d95c747
+  max_value: 6132d9e9d3f48f709417ff5f5d95c747
 year_value_samples:
 - '1993'
 - '1992'
 - '1990'
 - '1991'
 - '1988'
-- '1989'
 - '1994'
+- '1989'
 - '1995'
 - '1996'
 - '2011'
@@ -163,91 +219,60 @@ year_value_samples:
 - '2014'
 - '2015'
 - '2016'
-unit_value_samples:
-- t
+date_key_value_stats:
+  distinct_count: 29
+  null_count: 0
+  is_truncated: false
+  min_value: '19880101'
+  max_value: '20160101'
+as_of_date_value_stats:
+  distinct_count: 29
+  null_count: 0
+  is_truncated: false
+  min_value: '1988-12-31'
+  max_value: '2016-12-31'
+as_of_date_basis_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: observation
+  max_value: observation
+unit_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: t
+  max_value: t
 value_value_stats:
   distinct_count: 5985
   null_count: 0
   is_truncated: true
   min_value: '0'
   max_value: '1729024'
-filtering_guidance:
-- 'Grain: Country × item × element × year'
-- Food aid / humanitarian assistance.
-sql_generation_hints:
-- 'Join keys: geography_key, item_key, element_key, source_key, date_key'
-- LEFT JOIN dim_geography on geography_key for country names
-semantic_role:
-  primary_domain: food_security
-  supports:
-  - food_security
-geography_key_value_stats:
-  distinct_count: 54
-  null_count: 0
-  is_truncated: false
-  patched: true
-geo_level_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-item_key_value_stats:
-  distinct_count: 18
-  null_count: 0
-  is_truncated: false
-  patched: true
-element_key_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-source_key_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-tier_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-data_level_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-geo_scope_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-source_id_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-date_key_value_stats:
-  distinct_count: 29
-  null_count: 0
-  is_truncated: false
-  patched: true
-as_of_date_value_stats:
-  distinct_count: 29
-  null_count: 0
-  is_truncated: false
-  patched: true
-as_of_date_basis_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
 source_natural_key_value_stats:
   distinct_count: 1
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: Unpivoted_FAOstat_africa_Discontinued_archives_and_data_series_Food_Aid_Shipments_WFP
+  max_value: Unpivoted_FAOstat_africa_Discontinued_archives_and_data_series_Food_Aid_Shipments_WFP
 loaded_at_value_stats:
   distinct_count: 1
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: '2026-08-27 14:32:30.831655+00'
+  max_value: '2026-08-27 14:32:30.831655+00'
+filtering_guidance:
+- 'Grain: Country × item × element × year'
+- Food aid / humanitarian assistance.
+semantic_role:
+  primary_domain: food_security
+  supports:
+  - food_security
+sql_generation_hints:
+- 'Join keys: geography_key, item_key, element_key, source_key, date_key'
+- LEFT JOIN dim_geography on geography_key for country names
+bind_spine:
+  geography_key: dim_geography.country_iso3
+  source_key: dim_source.organisation_name
+  item_key: dim_item.item_name
+  element_key: dim_element.element_name

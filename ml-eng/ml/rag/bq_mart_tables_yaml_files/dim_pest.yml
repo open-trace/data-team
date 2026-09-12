@@ -2,7 +2,7 @@ table_name: opentrace-prod-5ga4.mart_dev.dim_pest
 description: dim pest
 source:
   layer: mart_dev
-profiled_at: '2026-08-28T17:53:44.421016+00:00'
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
 columns:
 - name: pest_key
   type: STRING
@@ -31,6 +31,18 @@ columns:
 - name: is_current
   type: BOOL
   description: is current
+pest_key_value_stats:
+  distinct_count: 10
+  null_count: 0
+  is_truncated: false
+  min_value: 0b3516a5bbb77566f904f9d3877f4710
+  max_value: eaa57458742e1b8b7962d7cebc759ff7
+pest_natural_key_value_stats:
+  distinct_count: 10
+  null_count: 0
+  is_truncated: false
+  min_value: 0b3516a5bbb77566f904f9d3877f4710
+  max_value: eaa57458742e1b8b7962d7cebc759ff7
 pest_name_value_samples:
 - Stem Borer
 - Tsetse Fly
@@ -47,36 +59,31 @@ pest_type_value_samples:
 - Arachnid
 - Fungal Pathogen
 - Weed
-description_value_stats:
-  distinct_count: 0
-  null_count: 10
-  is_truncated: false
-valid_to_value_stats:
-  distinct_count: 0
-  null_count: 10
-  is_truncated: false
-pest_key_value_stats:
-  distinct_count: 10
-  null_count: 0
-  is_truncated: false
-  patched: true
-pest_natural_key_value_stats:
-  distinct_count: 10
-  null_count: 0
-  is_truncated: false
-  patched: true
 target_crop_livestock_value_stats:
   distinct_count: 9
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: Banana
+  max_value: Vegetables
+description_value_stats:
+  distinct_count: 0
+  null_count: 10
+  is_truncated: false
 valid_from_value_stats:
   distinct_count: 1
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: '2000-01-01'
+  max_value: '2000-01-01'
+valid_to_value_stats:
+  distinct_count: 0
+  null_count: 10
+  is_truncated: false
 is_current_value_stats:
   distinct_count: 1
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: 'true'
+  max_value: 'true'
+bind_spine:
+  pest_key: dim_pest.pest_name

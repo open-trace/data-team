@@ -77,6 +77,26 @@ def facts_for_class(code: str) -> list[str]:
     return out
 
 
+def companion_facts_for_class(code: str) -> list[str]:
+    """Mart fact/agg companion_facts only (skip dims/bridges)."""
+    spec = _class_spec(code)
+    if not spec:
+        return []
+    out: list[str] = []
+    seen: set[str] = set()
+    for raw in spec.get("companion_facts") or []:
+        bare = _bare_table(str(raw))
+        if not bare or bare in seen:
+            continue
+        if bare.startswith(("dim_", "bridge_")):
+            continue
+        if not (bare.startswith("fct_") or bare.startswith("agg_")):
+            continue
+        seen.add(bare)
+        out.append(bare)
+    return out
+
+
 def facts_for_classes(codes: list[str]) -> list[str]:
     seen: set[str] = set()
     out: list[str] = []
@@ -167,6 +187,7 @@ def family_do_not_mix(family_id: str, other_family_id: str) -> bool:
 __all__ = [
     "all_class_codes",
     "class_for_query",
+    "companion_facts_for_class",
     "do_not_mix_tables",
     "facts_for_class",
     "facts_for_classes",

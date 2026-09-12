@@ -2,7 +2,7 @@ table_name: opentrace-prod-5ga4.mart_dev.dim_soil
 description: dim soil
 source:
   layer: mart_dev
-profiled_at: '2026-08-28T17:53:44.421016+00:00'
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
 columns:
 - name: soil_key
   type: STRING
@@ -23,24 +23,29 @@ soil_key_value_stats:
   distinct_count: 6
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: 33d58674cc8c5c482981ad614ddf0936
+  max_value: e59253548ffcb090ecc0cd0944afd27f
 depth_layer_value_stats:
   distinct_count: 6
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: 0-5
+  max_value: 60-100
 depth_min_cm_value_stats:
   distinct_count: 6
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: '0'
+  max_value: '100'
 depth_max_cm_value_stats:
   distinct_count: 6
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: '5'
+  max_value: '200'
 description_value_stats:
   distinct_count: 6
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: Deep soil (60–100 cm)
+  max_value: Very deep soil (100–200 cm)

@@ -1,0 +1,205 @@
+table_name: opentrace-prod-5ga4.mart_dev.agg_soil_admin
+description: Admin-level average soil properties.
+source:
+  layer: mart_dev
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
+grain: Admin geography × soil_property × depth × source
+entity_type: soil
+columns:
+- name: agg_soil_admin_key
+  type: STRING
+  description: agg soil admin key
+- name: geography_key
+  type: STRING
+  description: FK to dim_geography (null if unmatched)
+- name: country_name
+  type: STRING
+  description: country name
+- name: admin_1_name
+  type: STRING
+  description: admin 1 name
+- name: soil_property
+  type: STRING
+  description: soil property
+- name: depth
+  type: STRING
+  description: depth
+- name: source_key
+  type: STRING
+  description: FK to dim_source
+- name: value_avg
+  type: FLOAT64
+  description: value avg
+- name: point_count
+  type: INT64
+  description: point count
+- name: loaded_at
+  type: TIMESTAMP
+  description: loaded at
+agg_soil_admin_key_value_stats:
+  distinct_count: 262782
+  null_count: 0
+  is_truncated: true
+  min_value: 0001745d0078433c12ef3123bbc16a3e
+  max_value: ffffb077ddd91b27ec17f70fe90df28c
+geography_key_value_stats:
+  distinct_count: 5272
+  null_count: 0
+  is_truncated: true
+  min_value: 0001600623fef7fd72830124b253ced3
+  max_value: ffe04a83093866d63e5946dede21a358
+country_name_value_samples:
+- Madagascar
+- Morocco
+- Algeria
+- South Africa
+- Mali
+- Angola
+- Ethiopia
+- Egypt
+- Congo (Kinshasa)
+- Uganda
+- Nigeria
+- Benin
+- Tanzania
+- Tunisia
+- Cameroon
+- Kenya
+- Somalia
+- Ghana
+- Burkina Faso
+- Côte d’Ivoire
+- Libya
+- Mozambique
+- Chad
+- Sudan
+- Senegal
+- Zambia
+- Zimbabwe
+- Central African Republic
+- Botswana
+- Namibia
+- Congo (Brazzaville)
+- Guinea
+- Niger
+- Malawi
+- South Sudan
+- Mauritania
+- Sierra Leone
+- Gabon
+- Liberia
+- Rwanda
+- Lesotho
+- Togo
+- Eritrea
+- Burundi
+- Gambia, The
+- Guinea-Bissau
+- Equatorial Guinea
+- Eswatini
+- Djibouti
+- Comoros
+admin_1_name_value_samples:
+- Fianarantsoa
+- Toliara
+- Antananarivo
+- Mahajanga
+- Toamasina
+- Marrakech-Safi
+- Oromīya
+- Kayes
+- Fès-Meknès
+- Drâa-Tafilalet
+- Sikasso
+- Antsiranana
+- Koulikoro
+- North West
+- Tanger-Tétouan-Al Hoceïma
+- Free State
+- Casablanca-Settat
+- Ségou
+- Béni Mellal-Khénifra
+- KwaZulu-Natal
+- Western Cape
+- Āmara
+- Mopti
+- Eastern Cape
+- Oriental
+- Rabat-Salé-Kénitra
+- Souss-Massa
+- Northern
+- Mpumalanga
+- Northern Cape
+- Eastern
+- Limpopo
+- Atacora
+- Central
+- Borgou
+- Gauteng
+- Sumalē
+- Tombouctou
+- Centre
+- Huíla
+- Tigray
+- Est
+- Tizi Ouzou
+- Djelfa
+- Alibori
+- Boumerdes
+- Uíge
+- Southern
+- Western
+- Cuanza-Sul
+soil_property_value_stats:
+  distinct_count: 22
+  null_count: 0
+  is_truncated: false
+  min_value: aluminum
+  max_value: zinc
+depth_value_stats:
+  distinct_count: 7
+  null_count: 0
+  is_truncated: false
+  min_value: 0-20cm
+  max_value: 60_100cm
+source_key_value_stats:
+  distinct_count: 2
+  null_count: 0
+  is_truncated: false
+  min_value: 8662fb9815678e093d6bca7d5b691b21
+  max_value: abc50272abd451daead6421cea631639
+value_avg_value_stats:
+  distinct_count: 137699
+  null_count: 0
+  is_truncated: true
+  min_value: '0'
+  max_value: '1404'
+point_count_value_stats:
+  distinct_count: 1402
+  null_count: 0
+  is_truncated: true
+  min_value: '1'
+  max_value: '31315'
+loaded_at_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '2026-08-25 20:15:59.326369+00'
+  max_value: '2026-08-25 20:15:59.326369+00'
+sql_generation_hints:
+- LEFT JOIN dim_geography on geography_key; filter soil property via spine
+filtering_guidance:
+- Admin rollup companion to fct_soil_health — prefer for country/admin OTAs
+- Filter country_iso3 / admin labels; do not invent soil property literals
+semantic_role:
+  primary_domain: soil
+  supports:
+  - soil_health
+  - SOIL
+bind_spine:
+  geography_key: dim_geography.country_iso3
+  source_key: dim_source.organisation_name
+indicator_classes:
+- SOIL
+business_questions_supported:
+- Admin-level soil property rollups for a country

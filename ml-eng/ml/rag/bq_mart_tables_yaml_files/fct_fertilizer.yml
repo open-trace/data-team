@@ -2,7 +2,7 @@ table_name: opentrace-prod-5ga4.mart_dev.fct_fertilizer
 description: fct fertilizer
 source:
   layer: mart_dev
-profiled_at: '2026-08-28T17:53:44.421016+00:00'
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
 columns:
 - name: fertilizer_key
   type: STRING
@@ -32,39 +32,52 @@ fertilizer_key_value_stats:
   distinct_count: 315
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: 00a3edfd4f4ee3c1c940aa72b6a9e22d
+  max_value: ff2ec0c9ec2514b7b237d4ee09c59c0b
 geo_key_value_stats:
   distinct_count: 5
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: 3f261d4a5bdd5c2e5efc63303a061bc8
+  max_value: da38a542608245cb0ead3d6ea942144c
+source_key_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: c95bac44d0127f2f0d14c0dc82ac04e0
+  max_value: c95bac44d0127f2f0d14c0dc82ac04e0
+product_key_value_stats:
+  distinct_count: 3
+  null_count: 0
+  is_truncated: false
+  min_value: 2527b8646ea9fce459e77a83129ef6e1
+  max_value: e61be852613457e0b846de0ef1f1dcc0
+unit_key_value_stats:
+  distinct_count: 4
+  null_count: 0
+  is_truncated: false
+  min_value: 34a2d1c42d1d5ca5a55e3a9ecace240f
+  max_value: e358efa489f58062f10dd7316b65649e
+quantity_value_stats:
+  distinct_count: 249
+  null_count: 0
+  is_truncated: false
+  min_value: '0'
+  max_value: '1317150.98'
+source_record_id_value_stats:
+  distinct_count: 45
+  null_count: 0
+  is_truncated: false
+  min_value: 0768f568452b664be4df4aaf8ece35d7
+  max_value: f9e51c4d020968fc4332b17cddb1c6c0
 time_key_value_stats:
   distinct_count: 3
   null_count: 0
   is_truncated: false
   patched: true
-source_key_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-product_key_value_stats:
-  distinct_count: 3
-  null_count: 0
-  is_truncated: false
-  patched: true
-unit_key_value_stats:
-  distinct_count: 4
-  null_count: 0
-  is_truncated: false
-  patched: true
-quantity_value_stats:
-  distinct_count: 249
-  null_count: 0
-  is_truncated: false
-  patched: true
-source_record_id_value_stats:
-  distinct_count: 45
-  null_count: 0
-  is_truncated: false
-  patched: true
+grain: fct fertilizer
+bind_spine:
+  product_key: dim_product.product_name
+  source_key: dim_source.organisation_name
+  unit_key: dim_unit.unit_code
+  geo_key: dim_geography.country_iso3

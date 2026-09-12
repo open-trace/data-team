@@ -52,6 +52,43 @@ SEED_CASES: list[dict] = [
     {"query": "Sesame export opportunities Sudan", "plan_type": "Agribusinesses", "category": "Agribusinesses", "tag": "full_rag"},
     {"query": "Potato farming tips for Kenya smallholders", "plan_type": "Farmers", "category": "Farmers", "tag": "full_rag"},
     {"query": "How do I use OpenTrace for policy briefs?", "plan_type": "Integrated", "category": "Government", "tag": "product"},
+    # Planned-path / multi-bind / region-blend strata for Langfuse scans
+    {
+        "query": "West Africa agricultural activities by country 2015 to date",
+        "plan_type": "Government",
+        "category": "Government",
+        "tag": "planned_multi_class",
+    },
+    {
+        "query": "East Africa maize production by country 2020",
+        "plan_type": "Government",
+        "category": "Government",
+        "tag": "region_blend",
+    },
+    {
+        "query": "Food security risk assessment across the Sahel",
+        "plan_type": "NGOs",
+        "category": "NGOs",
+        "tag": "region_blend",
+    },
+    {
+        "query": "Compare rice production Kenya vs Tanzania 2018-2022",
+        "plan_type": "Agribusinesses",
+        "category": "Agribusinesses",
+        "tag": "compare_geo",
+    },
+    {
+        "query": "SADC agricultural activities by country including prices 2016 to date",
+        "plan_type": "Integrated",
+        "category": "Government",
+        "tag": "planned_multi_class",
+    },
+    {
+        "query": "Export a detailed analytical brief on continental agri-trade corridors with warehouse tables",
+        "plan_type": "Integrated",
+        "category": "Agribusinesses",
+        "tag": "nl2sql_stress",
+    },
 ]
 
 

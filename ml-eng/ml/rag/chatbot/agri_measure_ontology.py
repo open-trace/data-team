@@ -100,8 +100,10 @@ MEASURES: dict[str, MeasureSpec] = {
         aliases=(
             "export",
             "exports",
+            "exporting",
             "import",
             "imports",
+            "importing",
             "trade",
             "traded",
             "export volume",
@@ -161,6 +163,7 @@ MEASURES: dict[str, MeasureSpec] = {
         aliases=(
             "price",
             "prices",
+            "priced",
             "retail price",
             "retail prices",
             "market price",
@@ -419,15 +422,19 @@ MEASURES: dict[str, MeasureSpec] = {
         id="land_inputs",
         aliases=(
             "fertilizer",
+            "pesticide",
+            "fertilizer use",
+            "pesticide use",
             "land use",
             "cropland",
             "agricultural land",
             "inputs",
+            "land inputs",
         ),
         corpus_domains=("Land Use & Soil Health", "Agricultural Production & Yield"),
         bq_index_domains=("faostat", "inputs"),
-        candidate_tables=("fct_land_inputs", "fct_fertilizer", "fct_pesticide", "fct_machinery"),
-        filter_hints="input_grain for fertilizer use vs trade; country_iso3",
+        candidate_tables=("fct_land_inputs", "fct_machinery", "fct_fertilizer", "fct_pesticide"),
+        filter_hints="prefer fct_land_inputs; input_grain for fertilizer/pesticide use vs trade; country_iso3",
         crop_required=False,
         default_task_mode="fact_lookup",
         recency_tier="historical_ok",
@@ -678,6 +685,161 @@ def get_measure(measure_id: str) -> MeasureSpec | None:
     return MEASURES.get(measure_id)
 
 
+_MEASURE_BIND_SKIP_CACHE: frozenset[str] | None = None
+_MEASURE_ALIAS_INFLECTION_ROOTS: frozenset[str] | None = None
+_ALLOWED_INFLECTION_SUFFIXES = ("ing", "ed", "es", "s", "er", "tion")
+_PRODUCTION_VOLUME_RE = re.compile(
+    r"\b(total production|tonnes produced|tons produced|production volume|"
+    r"how much was produced|output in tonnes)\b",
+    re.IGNORECASE,
+)
+
+
+def _build_measure_bind_skip_cache() -> frozenset[str]:
+    tokens: set[str] = set()
+    for mid, spec in MEASURES.items():
+        if mid:
+            tokens.add(mid.lower().strip())
+        for alias in spec.aliases:
+            text = str(alias).strip().lower()
+            if text:
+                tokens.add(text)
+    return frozenset(tokens)
+
+
+def measure_bind_skip_tokens(
+    *,
+    primary_measures: list[str] | None = None,
+) -> frozenset[str]:
+    """Lowercase tokens that must not become product_name filters (measure ids + aliases)."""
+    global _MEASURE_BIND_SKIP_CACHE
+    if _MEASURE_BIND_SKIP_CACHE is None:
+        _MEASURE_BIND_SKIP_CACHE = _build_measure_bind_skip_cache()
+    extra = {
+        str(m).strip().lower()
+        for m in (primary_measures or [])
+        if str(m).strip()
+    }
+    if not extra:
+        return _MEASURE_BIND_SKIP_CACHE
+    return _MEASURE_BIND_SKIP_CACHE | frozenset(extra)
+
+
+def _measure_entity_fuzzy_enabled() -> bool:
+    return os.environ.get("RAG_MEASURE_ENTITY_FUZZY", "0").strip().lower() in (
+        "1",
+        "true",
+        "yes",
+        "on",
+    )
+
+
+def _build_measure_alias_inflection_roots() -> frozenset[str]:
+    roots: set[str] = set()
+    for spec in MEASURES.values():
+        for alias in spec.aliases:
+            text = str(alias).strip().lower()
+            if text and " " not in text and "/" not in text and len(text) >= 4:
+                roots.add(text)
+    return frozenset(roots)
+
+
+def _measure_alias_inflection_roots() -> frozenset[str]:
+    global _MEASURE_ALIAS_INFLECTION_ROOTS
+    if _MEASURE_ALIAS_INFLECTION_ROOTS is None:
+        _MEASURE_ALIAS_INFLECTION_ROOTS = _build_measure_alias_inflection_roots()
+    return _MEASURE_ALIAS_INFLECTION_ROOTS
+
+
+def _entity_grounded_in_query(entity: str, query: str) -> bool:
+    q = (query or "").lower()
+    v = str(entity or "").strip().lower()
+    if not v or not q:
+        return False
+    if v in q:
+        return True
+    return bool(re.search(rf"\b{re.escape(v)}\b", q))
+
+
+def _entity_matches_inflected_alias(entity_low: str) -> bool:
+    for root in _measure_alias_inflection_roots():
+        for suffix in _ALLOWED_INFLECTION_SUFFIXES:
+            if entity_low == root + suffix:
+                return True
+            if root.endswith("e") and entity_low == root[:-1] + suffix:
+                return True
+    return False
+
+
+def measure_own_tokens(measure_id: str) -> frozenset[str]:
+    """Lowercase measure id and aliases for one primary measure."""
+    mid = str(measure_id or "").strip().lower()
+    tokens: set[str] = set()
+    if mid:
+        tokens.add(mid)
+    spec = MEASURES.get(mid)
+    if spec:
+        for alias in spec.aliases:
+            text = str(alias).strip().lower()
+            if text:
+                tokens.add(text)
+    return frozenset(tokens)
+
+
+def conflicting_entities_for_measure(primary_measure: str) -> frozenset[str]:
+    """Measure tokens that conflict with the primary measure (all others in MEASURES)."""
+    own = measure_own_tokens(primary_measure)
+    return frozenset(t for t in measure_bind_skip_tokens() if t not in own)
+
+
+def entity_is_measure_noise(
+    entity: str,
+    *,
+    primary_measures: list[str] | None = None,
+    skip_tokens: frozenset[str] | None = None,
+    query: str | None = None,
+) -> bool:
+    """True when entity text is a measure id/alias (exact or multi-word phrase)."""
+    low = str(entity or "").strip().lower()
+    if not low:
+        return True
+    skip = skip_tokens if skip_tokens is not None else measure_bind_skip_tokens(
+        primary_measures=primary_measures
+    )
+    if low in skip:
+        return True
+    for token in skip:
+        if " " in token and token in low:
+            return True
+    if (
+        _measure_entity_fuzzy_enabled()
+        and query
+        and _entity_grounded_in_query(entity, query)
+        and _entity_matches_inflected_alias(low)
+    ):
+        return True
+    return False
+
+
+def conflicting_domain_tags_for_measure(primary_measure: str) -> frozenset[str]:
+    """Domain/decomposer tags belonging to non-primary measures."""
+    tags: set[str] = set()
+    primary = str(primary_measure or "").strip().lower()
+    for mid, spec in MEASURES.items():
+        if mid == primary:
+            continue
+        tags.add(mid)
+        for alias in spec.aliases:
+            text = str(alias).strip().lower()
+            if text:
+                tags.add(text)
+        for tag in spec.corpus_domains + spec.bq_index_domains:
+            text = str(tag).strip().lower()
+            if text:
+                tags.add(text)
+    return frozenset(tags)
+
+
 def _alias_score(query_lower: str, alias: str) -> int:
     a = alias.lower().strip()
     if not a:
@@ -866,6 +1028,68 @@ def resolve_measures(
                     ),
                 )
     return out[: max(k, len(out))]
+
+
+def measures_are_confusable(a: str, b: str) -> bool:
+    """True when two measures share a crop spine or mart do_not_mix tables."""
+    left = str(a or "").strip().lower()
+    right = str(b or "").strip().lower()
+    if not left or not right or left == right:
+        return False
+    spec_a = MEASURES.get(left)
+    spec_b = MEASURES.get(right)
+    if not spec_a or not spec_b:
+        return False
+    if spec_a.crop_required and spec_b.crop_required:
+        if set(spec_a.indicator_classes) & set(spec_b.indicator_classes):
+            return True
+    from ml.rag.chatbot.mart_indicator_classes import do_not_mix_tables
+
+    for table_a in spec_a.candidate_tables:
+        for table_b in spec_b.candidate_tables:
+            if do_not_mix_tables(table_a, table_b):
+                return True
+    return False
+
+
+def disambiguate_primary_measures(
+    query: str,
+    primary_measures: list[str],
+    decomposition: dict[str, Any] | None = None,
+) -> list[str]:
+    """Promote resolver top measure when it conflicts with declared primary_measures."""
+    pm = [str(m).strip().lower() for m in primary_measures if str(m).strip()]
+    if not pm:
+        return pm
+    declared = pm[0]
+    dec = decomposition if isinstance(decomposition, dict) else {}
+    entity_blob = " ".join(
+        str(e) for e in (dec.get("entities") or []) if str(e).strip()
+    ).lower()
+    query_blob = " ".join(
+        str(x)
+        for x in (
+            dec.get("query"),
+            dec.get("original_query"),
+            query,
+        )
+        if str(x).strip()
+    ).lower()
+    blob = f"{query_blob} {entity_blob}".strip()
+
+    hits = resolve_measures(query or query_blob, dec)
+    if not hits:
+        return pm
+    top = hits[0]
+    if top.measure.id == declared:
+        return pm
+    if top.score < 10:
+        return pm
+    if not measures_are_confusable(declared, top.measure.id):
+        return pm
+    if declared in ("production", "prod") and _PRODUCTION_VOLUME_RE.search(blob):
+        return pm
+    return [top.measure.id] + [m for m in pm[1:] if m != top.measure.id]
 
 
 def resolve_measure(
@@ -1101,15 +1325,40 @@ def fallback_plan(
     return plan
 
 
+def decompose_measure_vocabulary(*, max_measures: int = 16) -> str:
+    """Compact measure id + alias list for decompose LLM prompts."""
+    lines: list[str] = []
+    count = 0
+    for mid in _PRIORITY_IDS:
+        if count >= max_measures:
+            break
+        spec = MEASURES.get(mid)
+        if spec is None:
+            continue
+        aliases = [str(a).strip() for a in spec.aliases[:4] if str(a).strip()]
+        alias_csv = ", ".join(aliases) if aliases else mid
+        lines.append(f"- {mid}: {alias_csv}")
+        count += 1
+    return "\n".join(lines) if lines else "- production: production, output"
+
+
 __all__ = [
     "MEASURES",
     "MeasureHit",
     "MeasureSpec",
+    "decompose_measure_vocabulary",
     "effective_crop_required",
     "effective_filter_hints",
     "effective_tables",
     "fallback_plan",
     "get_measure",
+    "conflicting_domain_tags_for_measure",
+    "conflicting_entities_for_measure",
+    "disambiguate_primary_measures",
+    "entity_is_measure_noise",
+    "measure_bind_skip_tokens",
+    "measure_own_tokens",
+    "measures_are_confusable",
     "reasoner_scope",
     "resolve_measure",
     "resolve_measures",

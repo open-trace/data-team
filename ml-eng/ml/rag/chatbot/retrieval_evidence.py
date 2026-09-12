@@ -20,16 +20,17 @@ _NARRATIVE_KINDS = frozenset(
 
 
 def warehouse_was_attempted(state: dict[str, Any]) -> bool:
+    from ml.rag.chatbot.bq_execute_state import plan_indicates_warehouse_attempt
+
     plan = state.get("bq_sql_plan")
-    if isinstance(plan, dict):
-        if plan.get("bq_sql_queries") or plan.get("selected_tables") or plan.get("engine_results"):
-            return True
-        if not plan.get("skip_bq"):
-            return bool(plan.get("query_intents"))
+    if plan_indicates_warehouse_attempt(plan if isinstance(plan, dict) else None):
+        return True
     if state.get("bq_sql_queries") or state.get("bq_sql_debug"):
         return True
     for row in state.get("bq_sql_debug") or []:
-        if isinstance(row, dict) and str(row.get("sql") or "").strip():
+        if isinstance(row, dict) and (
+            str(row.get("sql") or "").strip() or row.get("job_id")
+        ):
             return True
     return False
 

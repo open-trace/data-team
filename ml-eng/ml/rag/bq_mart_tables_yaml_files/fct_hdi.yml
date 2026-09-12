@@ -2,7 +2,7 @@ table_name: opentrace-prod-5ga4.mart_dev.fct_hdi
 description: Human Development Index.
 source:
   layer: mart_dev
-profiled_at: '2026-08-28T17:53:44.421016+00:00'
+profiled_at: '2026-09-05T17:57:00.703130+00:00'
 grain: Country × year
 entity_type: socio_economic
 columns:
@@ -70,177 +70,195 @@ hdi_key_value_stats:
   is_truncated: true
   min_value: 001645cf85162b232ef5650934910279
   max_value: ffabb314246f0d8ecf355786521a987e
-country_iso3_value_samples:
-- BDI
-- CIV
-- TUN
-- ZWE
-- ZMB
+geography_key_value_stats:
+  distinct_count: 54
+  null_count: 0
+  is_truncated: false
+  min_value: 08d5d1fbcfbc008d33905868ea7a2dd7
+  max_value: ff2abe6b8f87b63b0a4d12a3dc2fb900
+geo_level_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: country
+  max_value: country
+country_iso3_value_stats:
+  distinct_count: 54
+  null_count: 0
+  is_truncated: false
+  min_value: AGO
+  max_value: ZWE
+source_key_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: 6b5647bc4ec2f5e1ab7297cc13718531
+  max_value: 6b5647bc4ec2f5e1ab7297cc13718531
+tier_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '1'
+  max_value: '1'
+data_level_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: national
+  max_value: national
+geo_scope_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: national
+  max_value: national
+place_scope_value_samples:
+- Morocco
+- Egypt
+- CMR
 - MRT
-- KEN
-- COG
-- NAM
-- BWA
-- MAR
-- DZA
-- MUS
-- LBY
+- Libya
+- Lesotho
+- Malawi
+- Botswana
+- Cameroon
+- MOZ
+- Guinea
+- South Africa
+- COD
+- NGA
+- BDI
+- Zimbabwe
+- Tanzania
+- Gambia, The
+- Nigeria
+- Ghana
 - GHA
 - MWI
-- MOZ
-- MLI
-- SLE
-- SEN
-- GMB
-- EGY
-- BEN
-- TZA
 - UGA
 - LSO
+- Mali
+- NAM
+- Togo
 - TGO
-- NGA
-- SWZ
+- Mauritius
+- ZWE
 - GAB
-- ZAF
-- CMR
-- COD
-- NER
-- GIN
-- CAF
-- DJI
-- RWA
-- AGO
-- MDG
-- LBR
-- ETH
-- COM
-- TCD
-- GNQ
-- CPV
-- STP
-- BFA
-- ERI
-- GNB
-- SDN
-- SYC
-- SSD
-- SOM
+- Mozambique
+- Tunisia
+- Côte d’Ivoire
+- KEN
+- Kenya
+- Senegal
+- COG
+- GMB
+- Eswatini
+- BWA
+- Sierra Leone
+- SLE
+- CIV
+- Congo (Kinshasa)
+- Uganda
+- MUS
+- Zambia
+- SEN
+- MLI
 metric_value_samples:
 - hdi
+source_id_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: 6b5647bc4ec2f5e1ab7297cc13718531
+  max_value: 6b5647bc4ec2f5e1ab7297cc13718531
 year_value_samples:
 - '2023'
-- '2018'
-- '2015'
+- '2020'
 - '2019'
+- '2013'
 - '2011'
+- '2015'
+- '2021'
+- '2014'
 - '2012'
+- '2022'
+- '2018'
+- '2010'
 - '2017'
 - '2016'
-- '2014'
-- '2020'
-- '2021'
-- '2022'
-- '2013'
-- '2010'
 - '2008'
-- '2005'
 - '2006'
+- '2005'
 - '2007'
 - '2009'
-- '2000'
+- '2002'
 - '2004'
 - '2003'
-- '2002'
+- '2000'
 - '2001'
 - '1999'
-- '1996'
 - '1995'
-- '1998'
 - '1997'
-- '1992'
+- '1996'
+- '1998'
 - '1991'
-- '1994'
-- '1990'
 - '1993'
+- '1992'
+- '1990'
+- '1994'
+date_key_value_stats:
+  distinct_count: 34
+  null_count: 0
+  is_truncated: false
+  min_value: '19900101'
+  max_value: '20230101'
+as_of_date_value_stats:
+  distinct_count: 34
+  null_count: 0
+  is_truncated: false
+  min_value: '1990-12-31'
+  max_value: '2023-12-31'
+as_of_date_basis_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: observation
+  max_value: observation
+value_value_stats:
+  distinct_count: 483
+  null_count: 0
+  is_truncated: false
+  min_value: '0.215'
+  max_value: '0.853'
 unit_value_stats:
   distinct_count: 0
   null_count: 1597
   is_truncated: false
-indicator_classes:
-- HDI
+source_natural_key_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: africa_Human_development_index
+  max_value: africa_Human_development_index
+loaded_at_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '2026-08-25 20:14:36.973995+00'
+  max_value: '2026-08-25 20:14:36.973995+00'
 filtering_guidance:
 - Country-year only; skip null geography_key rows for mapped insights
 - Prefer agg_hdi_latest for snapshots
-sql_generation_hints:
-- 'Join keys: geography_key, source_key, date_key'
-- LEFT JOIN dim_geography on geography_key for country names
 semantic_role:
   primary_domain: hdi
   supports:
   - hdi
   - HDI
-geography_key_value_stats:
-  distinct_count: 54
-  null_count: 0
-  is_truncated: false
-  patched: true
-geo_level_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-source_key_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-tier_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-data_level_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-geo_scope_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-source_id_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-date_key_value_stats:
-  distinct_count: 34
-  null_count: 0
-  is_truncated: false
-  patched: true
-as_of_date_value_stats:
-  distinct_count: 34
-  null_count: 0
-  is_truncated: false
-  patched: true
-as_of_date_basis_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-value_value_stats:
-  distinct_count: 483
-  null_count: 0
-  is_truncated: false
-  patched: true
-source_natural_key_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-loaded_at_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
+indicator_classes:
+- HDI
+sql_generation_hints:
+- 'Join keys: geography_key, source_key, date_key'
+- LEFT JOIN dim_geography on geography_key for country names
+bind_spine:
+  geography_key: dim_geography.country_iso3
+  source_key: dim_source.organisation_name

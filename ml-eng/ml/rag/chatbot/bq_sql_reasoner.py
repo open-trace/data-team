@@ -22,6 +22,7 @@ from ml.rag.chatbot.analytical_bq_plan import (
 )
 from ml.rag.chatbot.bq_sql_patterns import normalize_pattern_name
 from ml.rag.chatbot.bq_table_schema_yaml import (
+    compile_table_bind_contract,
     format_mart_reasoner_index,
     list_mart_table_index,
     pack_mart_table_hints,
@@ -36,6 +37,7 @@ from ml.rag.chatbot.query_decomposer import (
 )
 from ml.rag.chatbot.ontology_context import build_ontology_context
 from ml.rag.chatbot.retrieval_contract import build_retrieval_contract, contract_to_bq_plan
+from ml.rag.chatbot.sql_compiler import sql_compiler_enabled
 from ml.rag.llm_chat import llm_chat_complete, llm_default_timeout_s, llm_model_id
 from ml.rag.observability import observed_span, update_current_span_metadata
 
@@ -232,6 +234,33 @@ def _call_reasoner_llm(
     return raw, ""
 
 
+def _reasoner_bind_nomenclature(
+    query: str,
+    decomposition: dict[str, Any] | None,
+    *,
+    table_ids: list[str] | None = None,
+) -> str:
+    """Compact bind blocks for legacy/analytical reasoner prompts."""
+    dec = decomposition if isinstance(decomposition, dict) else {}
+    candidates = [str(t).strip() for t in (table_ids or []) if str(t).strip()]
+    if not candidates:
+        hit = resolve_measure(query, dec)
+        if hit and hit.measure.candidate_tables:
+            candidates = [str(t).strip() for t in hit.measure.candidate_tables[:2] if str(t).strip()]
+    blocks: list[str] = []
+    for tid in candidates[:3]:
+        try:
+            contract = compile_table_bind_contract(tid, facets=dec, query=query)
+        except Exception:
+            continue
+        nom = str(contract.nomenclature or "").strip()
+        if nom:
+            blocks.append(nom)
+    if not blocks:
+        return ""
+    return "Partial bind hints (when querying these tables):\n" + "\n---\n".join(blocks) + "\n\n"
+
+
 def reason_bq_sql_plan(
     query: str,
     *,
@@ -240,6 +269,7 @@ def reason_bq_sql_plan(
     category: str | None = None,
     analytical_mode: bool = False,
     task_mode: str | None = None,
+    bind_nomenclature: str = "",
 ) -> dict[str, Any]:
     """
     Decide which mart_dev tables and SQL intents to run.
@@ -290,7 +320,8 @@ def reason_bq_sql_plan(
     # Entity/domain contract: multi-measure tables + intents before LLM freelancing.
     # Specialized builders (e.g. food_security) run only when that measure is activated.
     contract = build_retrieval_contract(query, decomposition=dec, known_tables=known)
-    if contract.bq_tables and contract.bq_intents:
+    contract_tables_allowed = not (sql_compiler_enabled() and mode != "analytical")
+    if contract_tables_allowed and contract.bq_tables and contract.bq_intents:
         plan = contract_to_bq_plan(
             contract,
             query=query,
@@ -402,7 +433,12 @@ def reason_bq_sql_plan(
         "If structured tables cannot help, set skip_bq=true. "
         "Respond with JSON only, no markdown."
     )
+    bind_block = (bind_nomenclature or "").strip()
+    if not bind_block:
+        bind_block = _reasoner_bind_nomenclature(query, dec)
+
     user = (
+        f"{bind_block}"
         f"{measure_line}"
         f"{ontology_block}\n\n"
         f"Max tables: {max_tables}\n"

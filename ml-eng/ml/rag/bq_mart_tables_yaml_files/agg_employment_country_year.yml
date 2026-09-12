@@ -1,0 +1,264 @@
+table_name: opentrace-prod-5ga4.mart_dev.agg_employment_country_year
+description: Country-year employment averages.
+source:
+  layer: mart_dev
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
+grain: Country × indicator × sex × year × source
+entity_type: socio_economic
+columns:
+- name: agg_employment_country_year_key
+  type: STRING
+  description: agg employment country year key
+- name: geography_key
+  type: STRING
+  description: FK to dim_geography (null if unmatched)
+- name: date_key
+  type: STRING
+  description: date key
+- name: country_name
+  type: STRING
+  description: country name
+- name: indicator
+  type: STRING
+  description: indicator
+- name: sex
+  type: STRING
+  description: sex
+- name: unit
+  type: STRING
+  description: Unit of measure
+- name: year
+  type: INT64
+  description: year
+- name: source_key
+  type: STRING
+  description: FK to dim_source
+- name: value_avg
+  type: FLOAT64
+  description: value avg
+- name: row_count
+  type: INT64
+  description: row count
+- name: loaded_at
+  type: TIMESTAMP
+  description: loaded at
+agg_employment_country_year_key_value_stats:
+  distinct_count: 52460
+  null_count: 0
+  is_truncated: true
+  min_value: 000023b0ebb5bc1eaccc8be62023436d
+  max_value: ffffc86610bee4825de6115d6bfb635b
+geography_key_value_stats:
+  distinct_count: 60
+  null_count: 0
+  is_truncated: false
+  min_value: 08d5d1fbcfbc008d33905868ea7a2dd7
+  max_value: ff2abe6b8f87b63b0a4d12a3dc2fb900
+date_key_value_stats:
+  distinct_count: 151
+  null_count: 0
+  is_truncated: false
+  min_value: '19500101'
+  max_value: '21000101'
+country_name_value_samples:
+- South Africa
+- Egypt
+- Tunisia
+- Mauritius
+- Mali
+- Ghana
+- Zambia
+- Rwanda
+- Uganda
+- Zimbabwe
+- Tanzania
+- Angola
+- Namibia
+- Botswana
+- Kenya
+- Côte d’Ivoire
+- Togo
+- Nigeria
+- Senegal
+- Burkina Faso
+- Niger
+- Madagascar
+- Cabo Verde
+- Gambia, The
+- Benin
+- Ethiopia
+- Liberia
+- Comoros
+- Guinea-Bissau
+- Eswatini
+- Mauritania
+- Burundi
+- Congo (Kinshasa)
+- Sierra Leone
+- Malawi
+- Sudan
+- Mozambique
+- Cameroon
+- Morocco
+- Lesotho
+- Somalia
+- Chad
+- Seychelles
+- Guinea
+- Algeria
+- Congo (Brazzaville)
+- Sao Tome and Principe
+- Djibouti
+- Central African Republic
+- South Sudan
+indicator_value_samples:
+- Share of employment in agriculture in total employment - ILO Modelled Estimates
+- Employment in agriculture - ILO modelled estimates
+- Agriculture value added per worker (constant 2015 US$)
+- Share of employees in agriculture in total employees
+- Share of employment in agriculture in total employment
+- Total employment in agrifood systems (AFS)
+- Share of AFS employment in total employment
+- Share of agricultural employment in total AFS employment
+- Share of non-agricultural AFS employment in total AFS employment
+- Share of non-agricultural AFS employment in total employment
+- Total non-agricultural AFS employment
+- Employment by age, total (15+), rural areas
+- Employment in agriculture by status of employment, total
+- Employment in agriculture by age, total (15+)
+- Employment in agriculture by age, 25 to 54
+- Employment in agriculture by status of employment, self-employed
+- Employment in agriculture by status of employment, employees
+- Employment in agriculture by age, 55 to 64
+- Employment in agriculture by age, 15 to 24
+- Employment in agriculture by age, 65+
+- Employment-to-population ratio by age, total (15+), rural areas
+- Labour force participation rate by age, total (15+), rural areas
+- Mean weekly hours actually worked per employee in agriculture
+- Employment by age, 15 to 24, rural areas
+- Employment by age, 25 to 54, rural areas
+- Employment by age, 55 to 64, rural areas
+- Employment by age, 65+, rural areas
+- Employment-to-population ratio by age, 15 to 24, rural areas
+- Employment-to-population ratio by age, 25 to 54, rural areas
+- Labour force participation rate by age, 15 to 24, rural areas
+- Labour force participation rate by age, 25 to 54, rural areas
+- Employment-to-population ratio by age, 55 to 64, rural areas
+- Labour force participation rate by age, 55 to 64, rural areas
+- Employment-to-population ratio by age, 65+, rural areas
+- Labour force participation rate by age, 65+, rural areas
+- Employment by status of employment, self-employed, rural areas
+- Employment by status of employment, total, rural areas
+- Employment by status of employment, employees, rural areas
+- Mean weekly hours actually worked per employed person in agriculture
+- Employment in crop and animal production, hunting and related service activities
+- Share of female employees in total employees in agriculture
+- Employment in forestry and logging
+- Employment in fishing and aquaculture
+- Employment by status of employment, workers not classified, rural areas
+- Share of employment in fishing and aquaculture
+- Share of females in total employment in agriculture
+- Employment in agriculture by status of employment, workers not classified
+- Share of employment by status of employment, employees, rural areas
+- Share of employment by status of employment, self-employed, rural areas
+- Share of employment by status of employment, total, rural areas
+sex_value_stats:
+  distinct_count: 3
+  null_count: 8653
+  is_truncated: false
+  min_value: Female
+  max_value: Total
+unit_value_stats:
+  distinct_count: 4
+  null_count: 0
+  is_truncated: false
+  min_value: '%'
+  max_value: USD
+year_value_samples:
+- '2019'
+- '2022'
+- '2017'
+- '2014'
+- '2021'
+- '2011'
+- '2012'
+- '2015'
+- '2018'
+- '2013'
+- '2016'
+- '2020'
+- '2010'
+- '2023'
+- '2009'
+- '2006'
+- '2008'
+- '2005'
+- '2004'
+- '2001'
+- '2007'
+- '2002'
+- '2000'
+- '2003'
+- '1999'
+- '1996'
+- '1994'
+- '1991'
+- '1998'
+- '1993'
+- '1995'
+- '1992'
+- '1997'
+- '2024'
+- '1990'
+- '1983'
+- '1989'
+- '1986'
+- '1985'
+- '1984'
+- '1982'
+- '1987'
+- '1977'
+- '1978'
+- '1979'
+- '1988'
+- '1981'
+- '1980'
+- '1975'
+- '1976'
+source_key_value_stats:
+  distinct_count: 3
+  null_count: 0
+  is_truncated: false
+  min_value: 4dc1c2f09fdcdffe032efbb5f7c973cf
+  max_value: ed037e23bea4433dcb0c68bf50b30e14
+value_avg_value_stats:
+  distinct_count: 31673
+  null_count: 0
+  is_truncated: true
+  min_value: '0'
+  max_value: '317831.854'
+row_count_value_stats:
+  distinct_count: 3
+  null_count: 0
+  is_truncated: false
+  min_value: '1'
+  max_value: '5'
+loaded_at_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '2026-08-25 20:15:55.604482+00'
+  max_value: '2026-08-25 20:15:55.604482+00'
+sql_generation_hints:
+- 'Join keys: geography_key, source_key, date_key'
+- LEFT JOIN dim_geography on geography_key for country names
+filtering_guidance:
+- 'Grain: Country × indicator × sex × year × source'
+- Country-year employment averages.
+semantic_role:
+  primary_domain: socio_economic
+  supports:
+  - socio_economic
+bind_spine:
+  geography_key: dim_geography.country_iso3
+  source_key: dim_source.organisation_name

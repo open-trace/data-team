@@ -2,7 +2,7 @@ table_name: opentrace-prod-5ga4.mart_dev.fct_household
 description: ILRI household metrics (FIES, income, gender control, …).
 source:
   layer: mart_dev
-profiled_at: '2026-08-28T17:53:44.421016+00:00'
+profiled_at: '2026-09-05T17:57:00.703130+00:00'
 grain: Household survey snapshot
 entity_type: household
 columns:
@@ -124,10 +124,71 @@ household_key_value_stats:
   is_truncated: true
   min_value: 00022d90ac7c35cf5729ce405759f8a4
   max_value: ffb6b25cfdab4231165cf6da76dbd61f
-country_iso3_value_samples:
+geography_key_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: 629f6ee5a903f4bcce1aa6a327392f4a
+  max_value: 629f6ee5a903f4bcce1aa6a327392f4a
+geo_level_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: country
+  max_value: country
+country_iso3_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: UGA
+  max_value: UGA
+source_key_value_stats:
+  distinct_count: 2
+  null_count: 0
+  is_truncated: false
+  min_value: 7e4b3fbbdfb95d6d9015cf9d1c1d2b93
+  max_value: e957401463d16232b818c9f0b7b2b94d
+tier_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '3'
+  max_value: '3'
+data_level_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: national
+  max_value: national
+geo_scope_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: national
+  max_value: national
+place_scope_value_samples:
 - UGA
+- Uganda
 metric_value_samples:
 - household_snapshot
+source_id_value_stats:
+  distinct_count: 2
+  null_count: 0
+  is_truncated: false
+  min_value: 7e4b3fbbdfb95d6d9015cf9d1c1d2b93
+  max_value: e957401463d16232b818c9f0b7b2b94d
+as_of_date_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '2026-08-25'
+  max_value: '2026-08-25'
+as_of_date_basis_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: loaded_at
+  max_value: loaded_at
 value_value_stats:
   distinct_count: 0
   null_count: 1222
@@ -136,6 +197,54 @@ unit_value_stats:
   distinct_count: 0
   null_count: 1222
   is_truncated: false
+hh_size_value_stats:
+  distinct_count: 17
+  null_count: 82
+  is_truncated: false
+  min_value: '1'
+  max_value: '18'
+hh_size_mae_value_stats:
+  distinct_count: 271
+  null_count: 82
+  is_truncated: false
+  min_value: '0.6'
+  max_value: '15.22'
+land_cultivated_value_stats:
+  distinct_count: 59
+  null_count: 82
+  is_truncated: false
+  min_value: '0'
+  max_value: '14'
+livestock_holdings_value_stats:
+  distinct_count: 243
+  null_count: 0
+  is_truncated: false
+  min_value: '0'
+  max_value: '105'
+fies_score_value_stats:
+  distinct_count: 9
+  null_count: 0
+  is_truncated: false
+  min_value: '0'
+  max_value: '8'
+total_income_value_stats:
+  distinct_count: 458
+  null_count: 0
+  is_truncated: false
+  min_value: '0'
+  max_value: '859722.2117'
+farm_income_value_stats:
+  distinct_count: 431
+  null_count: 0
+  is_truncated: false
+  min_value: '0'
+  max_value: '257916.6635'
+offfarm_income_value_stats:
+  distinct_count: 320
+  null_count: 0
+  is_truncated: false
+  min_value: '0'
+  max_value: '601805.5482'
 food_availability_value_stats:
   distinct_count: 554
   null_count: 652
@@ -154,144 +263,71 @@ total_energy_available_value_stats:
   is_truncated: true
   min_value: '0'
   max_value: '8656714.572'
-indicator_classes:
-- EL
-- GYI
-- FS
+gender_male_control_value_stats:
+  distinct_count: 288
+  null_count: 690
+  is_truncated: false
+  min_value: '0'
+  max_value: '1'
+gender_female_control_value_stats:
+  distinct_count: 297
+  null_count: 690
+  is_truncated: false
+  min_value: '0'
+  max_value: '1'
+gender_male_youth_control_value_stats:
+  distinct_count: 70
+  null_count: 690
+  is_truncated: false
+  min_value: '0'
+  max_value: '1'
+gender_female_youth_control_value_stats:
+  distinct_count: 47
+  null_count: 690
+  is_truncated: false
+  min_value: '0'
+  max_value: '1'
+crop_diversity_value_stats:
+  distinct_count: 5
+  null_count: 699
+  is_truncated: false
+  min_value: '1'
+  max_value: '5'
+livestock_diversity_value_stats:
+  distinct_count: 4
+  null_count: 667
+  is_truncated: false
+  min_value: '1'
+  max_value: '4'
+source_natural_key_value_stats:
+  distinct_count: 2
+  null_count: 0
+  is_truncated: false
+  min_value: ilri_crp_household_food_security_v1
+  max_value: ilri_indicators_final_v1
+loaded_at_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '2026-08-25 22:18:07.461786+00'
+  max_value: '2026-08-25 22:18:07.461786+00'
 filtering_guidance:
 - Survey sample — not national census
 - Never union with fct_gender_inclusion SDG rows
-sql_generation_hints:
-- 'Join keys: household_key, geography_key, source_key'
-- LEFT JOIN dim_geography on geography_key for country names
 semantic_role:
   primary_domain: household
   supports:
   - household
   - FS
   - GYI
-geography_key_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-geo_level_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-source_key_value_stats:
-  distinct_count: 2
-  null_count: 0
-  is_truncated: false
-  patched: true
-tier_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-data_level_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-geo_scope_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-source_id_value_stats:
-  distinct_count: 2
-  null_count: 0
-  is_truncated: false
-  patched: true
-as_of_date_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-as_of_date_basis_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-hh_size_value_stats:
-  distinct_count: 17
-  null_count: 0
-  is_truncated: false
-  patched: true
-hh_size_mae_value_stats:
-  distinct_count: 271
-  null_count: 0
-  is_truncated: false
-  patched: true
-land_cultivated_value_stats:
-  distinct_count: 59
-  null_count: 0
-  is_truncated: false
-  patched: true
-livestock_holdings_value_stats:
-  distinct_count: 243
-  null_count: 0
-  is_truncated: false
-  patched: true
-fies_score_value_stats:
-  distinct_count: 9
-  null_count: 0
-  is_truncated: false
-  patched: true
-total_income_value_stats:
-  distinct_count: 458
-  null_count: 0
-  is_truncated: false
-  patched: true
-farm_income_value_stats:
-  distinct_count: 431
-  null_count: 0
-  is_truncated: false
-  patched: true
-offfarm_income_value_stats:
-  distinct_count: 320
-  null_count: 0
-  is_truncated: false
-  patched: true
-gender_male_control_value_stats:
-  distinct_count: 288
-  null_count: 0
-  is_truncated: false
-  patched: true
-gender_female_control_value_stats:
-  distinct_count: 297
-  null_count: 0
-  is_truncated: false
-  patched: true
-gender_male_youth_control_value_stats:
-  distinct_count: 70
-  null_count: 0
-  is_truncated: false
-  patched: true
-gender_female_youth_control_value_stats:
-  distinct_count: 47
-  null_count: 0
-  is_truncated: false
-  patched: true
-crop_diversity_value_stats:
-  distinct_count: 5
-  null_count: 0
-  is_truncated: false
-  patched: true
-livestock_diversity_value_stats:
-  distinct_count: 4
-  null_count: 0
-  is_truncated: false
-  patched: true
-source_natural_key_value_stats:
-  distinct_count: 2
-  null_count: 0
-  is_truncated: false
-  patched: true
-loaded_at_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
+indicator_classes:
+- EL
+- GYI
+- FS
+sql_generation_hints:
+- 'Join keys: household_key, geography_key, source_key'
+- LEFT JOIN dim_geography on geography_key for country names
+bind_spine:
+  geography_key: dim_geography.country_iso3
+  source_key: dim_source.organisation_name
+  household_key: dim_household.household_type

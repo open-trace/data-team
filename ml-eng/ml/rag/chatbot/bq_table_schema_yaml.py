@@ -23,6 +23,7 @@ from typing import Any
 
 import yaml
 
+from ml.rag.chatbot.agri_measure_ontology import entity_is_measure_noise
 from ml.rag.chatbot.bq_byte_budget import hint_max_bytes, pack_lines, reasoner_index_max_bytes, truncate_utf8, utf8_len
 from ml.rag.chatbot.mart_indicator_classes import (
     families_for_fact,
@@ -32,6 +33,7 @@ from ml.rag.helpers.mart_semantic_relationships import SEMANTIC_RELATIONSHIPS
 from ml.rag.helpers.mart_semantic_relationships import compact_rels_summary as mart_compact_rels_summary
 from ml.rag.helpers.mart_semantic_relationships import format_join_fragments_for_nl2sql as mart_join_fragments
 from ml.rag.helpers.staging_semantic_relationships import compact_rels_summary
+from ml.rag.mart_yaml_contract import dim_expose_columns
 
 # bq_table_schema_yaml.py lives at ml/rag/chatbot/, YAMLs live at ml/rag/bq_tables_yaml_files/.
 _DEFAULT_DIR = Path(__file__).resolve().parents[1] / "bq_tables_yaml_files"
@@ -192,6 +194,298 @@ def load_mart_table_schema(table_name: str) -> dict[str, Any] | None:
     if bare and bare in index:
         return index[bare]
     return None
+
+
+def bind_spine_map(table_id: str) -> dict[str, str]:
+    """FK column → dim_table.column join targets from mart YAML bind_spine block."""
+    schema = load_mart_table_schema(table_id) or {}
+    raw = schema.get("bind_spine")
+    if not isinstance(raw, dict):
+        return {}
+    out: dict[str, str] = {}
+    for fk_col, dim_ref in raw.items():
+        fk = str(fk_col or "").strip()
+        ref = str(dim_ref or "").strip()
+        if fk and ref and "." in ref:
+            out[fk] = ref
+    return out
+
+
+# Legacy facts use geo_key as FK to dim_geography.geography_key (same hash).
+_FK_DIM_SELECT_COL: dict[tuple[str, str], str] = {
+    ("geo_key", "dim_geography"): "geography_key",
+}
+
+_GEO_SUBNATIONAL_SAMPLE_COLS: tuple[str, ...] = (
+    "admin_1_name",
+    "admin_2_name",
+    "city_name",
+)
+
+
+def _compile_fk_spine_filter_sql(
+    table_id: str,
+    *,
+    fk_col: str,
+    dim_ref: str,
+    literals: list[str],
+    project_id: str,
+    dataset: str,
+    extra_predicates: list[tuple[str, str]] | None = None,
+) -> str:
+    dim_table, dim_col = dim_ref.split(".", 1)
+    dim_table = dim_table.strip()
+    dim_fqn = f"`{project_id}.{dataset}.{dim_table}`"
+    fk = fk_col.strip()
+    dcol = dim_col.strip()
+    select_col = _FK_DIM_SELECT_COL.get((fk.lower(), dim_table.lower()), fk)
+    where_parts: list[str] = []
+    if literals:
+        if len(literals) == 1:
+            where_parts.append(f"{dcol} = {_sql_literal(literals[0])}")
+        else:
+            lits = ", ".join(_sql_literal(v) for v in literals[:32])
+            where_parts.append(f"{dcol} IN ({lits})")
+    for ecol, eval_ in extra_predicates or []:
+        col = str(ecol or "").strip()
+        val = str(eval_ or "").strip()
+        if col and val:
+            where_parts.append(f"{col} = {_sql_literal(val)}")
+    if not where_parts:
+        return ""
+    where_sql = " AND ".join(where_parts)
+    return f"AND {fk} IN (SELECT {select_col} FROM {dim_fqn} WHERE {where_sql}) "
+
+
+def match_subnational_geo_labels(blob: str) -> list[tuple[str, str]]:
+    """Speech-match admin1/admin2/city samples on dim_geography (never invent)."""
+    text = (blob or "").strip()
+    if not text:
+        return []
+    out: list[tuple[str, str]] = []
+    seen_cols: set[str] = set()
+    for col in _GEO_SUBNATIONAL_SAMPLE_COLS:
+        samples = column_samples_for_table("dim_geography", col)
+        if not samples:
+            continue
+        matched = match_value_samples(text, samples)
+        for cand in matched:
+            cand_s = str(cand).strip()
+            if not cand_s:
+                continue
+            # Skip ultra-short single-token place names (Northern/Eastern noise).
+            toks = _alnum_tokens(cand_s)
+            if len(toks) < 2 and len(cand_s) <= 8:
+                blob_tokens = set(_alnum_tokens(expand_speech_text(text)))
+                if not toks or toks[0] not in blob_tokens:
+                    continue
+                # Still require multi-char distinctive match for short admin labels.
+                if len(cand_s) <= 5:
+                    continue
+            out.append((col, cand_s))
+            seen_cols.add(col)
+            break
+        if col in seen_cols:
+            continue
+    return out
+
+
+def match_geo_level_label(blob: str) -> str | None:
+    """Match geo_level sample when speech names a place grain."""
+    samples = column_samples_for_table("dim_geography", "geo_level")
+    if not samples:
+        return None
+    matched = match_value_samples(blob or "", samples)
+    for cand in matched:
+        cand_s = str(cand).strip()
+        if cand_s:
+            return cand_s
+    # Synonym grains not identical to sample tokens.
+    low = expand_speech_text(blob or "")
+    synonym_map = (
+        ("admin 1", "admin1"),
+        ("admin1", "admin1"),
+        ("province", "admin1"),
+        ("region", "admin1"),
+        ("admin 2", "admin2"),
+        ("admin2", "admin2"),
+        ("district", "admin2"),
+        ("city", "city"),
+        ("town", "city"),
+        ("fnid", "fnid"),
+    )
+    sample_by_low = {str(s).strip().lower(): str(s).strip() for s in samples if str(s).strip()}
+    for trigger, level in synonym_map:
+        if re.search(rf"\b{re.escape(trigger)}\b", low):
+            hit = sample_by_low.get(level)
+            if hit:
+                return hit
+    return None
+
+
+# FKs already bound by geo / product / lineage paths — not entity spine matching.
+_SPINE_ENTITY_SKIP_FKS = frozenset({"geography_key", "geo_key", "source_key", "product_key"})
+
+# Only these FKs auto-bind from speech (blocks noisy unit/sex/household/org/person keys).
+_SPINE_ENTITY_ALLOW_FKS = frozenset(
+    {
+        "land_use_key",
+        "disease_key",
+        "pest_key",
+        "item_key",
+        "element_key",
+        "season_key",
+        "classification_key",
+        "scenario_key",
+        "livestock_key",
+        "market_key",
+        "soil_property_key",
+    }
+)
+
+# Typed IR entity roles → bind_spine FK (Phase 5).
+_ENTITY_ROLE_TO_FK: dict[str, str] = {
+    "land_use": "land_use_key",
+    "hazard": "disease_key",
+    "item": "item_key",
+    "pest": "pest_key",
+    "season": "season_key",
+    "livestock": "livestock_key",
+}
+
+
+def _short_token_sample_ok(sample: str, blob: str) -> bool:
+    """Short single-token samples (≤3 chars) need exact token equality in blob."""
+    cand_s = (sample or "").strip()
+    toks = _alnum_tokens(cand_s)
+    if len(toks) >= 2 or len(cand_s) > 3:
+        return True
+    blob_tokens = set(_alnum_tokens(expand_speech_text(blob)))
+    return bool(toks) and toks[0] in blob_tokens and cand_s.lower() in blob_tokens
+
+
+def _preferred_labels_from_entity_roles(
+    entity_roles: dict[str, list[str]] | list[tuple[str, list[str]]] | None,
+) -> dict[str, list[str]]:
+    """Map role → labels into FK → labels for spine prefer path."""
+    out: dict[str, list[str]] = {}
+    if not entity_roles:
+        return out
+    items: list[tuple[str, list[str]]]
+    if isinstance(entity_roles, dict):
+        items = [(str(k), list(v) if isinstance(v, (list, tuple)) else []) for k, v in entity_roles.items()]
+    else:
+        items = [(str(k), list(v) if isinstance(v, (list, tuple)) else []) for k, v in entity_roles]
+    for role, labels in items:
+        fk = _ENTITY_ROLE_TO_FK.get(str(role).strip().lower())
+        if not fk:
+            continue
+        cleaned = [str(x).strip() for x in labels if str(x).strip()]
+        if cleaned:
+            out[fk] = cleaned
+    return out
+
+
+def compile_spine_entity_filters(
+    table_id: str,
+    *,
+    blob: str,
+    project_id: str,
+    dataset: str,
+    skip_fks: set[str] | frozenset[str] | None = None,
+    consumed_labels: list[str] | None = None,
+    entity_roles: dict[str, list[str]] | list[tuple[str, list[str]]] | None = None,
+) -> list[tuple[str, str, str]]:
+    """Match speech (or typed entity_roles) to bind_spine dim samples; emit FK subquery filters.
+
+    Returns ``(fk_col, matched_label, sql_fragment)`` — at most one match per FK.
+    Never invents literals: only YAML dim ``*_value_samples``.
+    """
+    bare = _strip_fqn(table_id).lower()
+    spine = bind_spine_map(bare)
+    preferred_by_fk = _preferred_labels_from_entity_roles(entity_roles)
+    if not spine:
+        return []
+    if not (blob or "").strip() and not preferred_by_fk:
+        return []
+
+    skip = set(_SPINE_ENTITY_SKIP_FKS)
+    if skip_fks:
+        skip |= {str(x).strip().lower() for x in skip_fks if str(x).strip()}
+
+    consumed_low = {
+        str(x).strip().lower() for x in (consumed_labels or []) if str(x).strip()
+    }
+    consumed_tokens: set[str] = set()
+    for lab in consumed_low:
+        consumed_tokens.update(_alnum_tokens(lab))
+
+    out: list[tuple[str, str, str]] = []
+    for fk_col, dim_ref in sorted(spine.items()):
+        fk = str(fk_col or "").strip()
+        ref = str(dim_ref or "").strip()
+        fk_l = fk.lower()
+        if not fk or fk_l in skip or "." not in ref:
+            continue
+        if fk_l not in _SPINE_ENTITY_ALLOW_FKS:
+            continue
+        dim_table, dim_col = ref.split(".", 1)
+        dim_table = dim_table.strip()
+        dim_col = dim_col.strip()
+        if not dim_table or not dim_col:
+            continue
+        samples = column_samples_for_table(dim_table, dim_col)
+        if not samples:
+            continue
+        sample_by_low = {str(s).strip().lower(): str(s).strip() for s in samples if str(s).strip()}
+
+        label: str | None = None
+        preferred = preferred_by_fk.get(fk) or preferred_by_fk.get(fk_l)
+        if preferred:
+            for raw in preferred:
+                hit = sample_by_low.get(str(raw).strip().lower())
+                if hit and hit.lower() not in consumed_low:
+                    label = hit
+                    break
+            if not label:
+                matched_pref = match_value_samples(" ".join(preferred), samples)
+                for cand in matched_pref:
+                    cand_s = str(cand).strip()
+                    if cand_s and cand_s.lower() not in consumed_low:
+                        label = cand_s
+                        break
+
+        if not label and (blob or "").strip():
+            matched = match_value_samples(blob, samples)
+            for cand in matched:
+                cand_s = str(cand).strip()
+                if not cand_s:
+                    continue
+                if cand_s.lower() in consumed_low:
+                    continue
+                cand_toks = set(_alnum_tokens(cand_s))
+                if cand_toks and cand_toks <= consumed_tokens:
+                    continue
+                if not _short_token_sample_ok(cand_s, blob):
+                    continue
+                label = cand_s
+                break
+        if not label:
+            continue
+        sql = _compile_fk_spine_filter_sql(
+            bare,
+            fk_col=fk,
+            dim_ref=ref,
+            literals=[label],
+            project_id=project_id,
+            dataset=dataset,
+        )
+        if not sql.strip():
+            continue
+        out.append((fk, label, sql.strip()))
+        consumed_low.add(label.lower())
+        consumed_tokens.update(_alnum_tokens(label))
+    return out
 
 
 # Aligned with bq_sql_validate metric-discriminator sets.
@@ -487,20 +781,6 @@ _PRODUCER_PRICE_QUERY_RE = re.compile(r"\b(producer|farm\s*gate)\b", re.IGNORECA
 _WHOLESALE_QUERY_RE = re.compile(r"\bwholesale\b", re.IGNORECASE)
 _POPULATION_QUERY_RE = re.compile(r"\b(population|people|ipc)\b", re.IGNORECASE)
 _CLASSIFICATION_QUERY_RE = re.compile(r"\b(classification|phase)\b", re.IGNORECASE)
-_DECOMPOSER_DOMAIN_ENTITIES = frozenset(
-    {
-        "production",
-        "yield",
-        "climate",
-        "rainfall",
-        "markets",
-        "prices",
-        "trade",
-        "food security",
-        "ipc",
-        "agriculture",
-    }
-)
 _MEASURE_DISCRIMINATOR_COLS = frozenset(
     {
         "element",
@@ -544,6 +824,11 @@ def geo_column_mart(table_id: str) -> str | None:
     for cand in _MART_GEO_COLUMN_CANDIDATES:
         if cand in by_low:
             return by_low[cand]
+    # Legacy facts: only geo_key (FK to dim_geography.geography_key).
+    if "geography_key" in by_low:
+        return by_low["geography_key"]
+    if "geo_key" in by_low:
+        return by_low["geo_key"]
     return None
 
 
@@ -604,6 +889,20 @@ def resolve_geo_literals_for_table(table_id: str, labels: list[str] | None) -> l
     spine = _labels_to_iso3_spine([str(g).strip() for g in labels if str(g).strip()])
     if not col:
         return spine
+    # geo_key / geography_key bind via dim_geography.country_iso3 — never hash literals.
+    if col in ("geo_key", "geography_key"):
+        out_iso: list[str] = []
+        seen_iso: set[str] = set()
+        for item in spine:
+            if _ISO3_RE.match(str(item).upper()):
+                val = str(item).upper()
+            else:
+                val = _AFRICA_COUNTRY_ISO3.get(str(item), str(item).upper())
+            key = val.lower()
+            if key not in seen_iso:
+                seen_iso.add(key)
+                out_iso.append(val)
+        return out_iso
     samples = column_samples_for_table(table_id, col)
     sample_by_low = {s.lower(): s for s in samples}
     out: list[str] = []
@@ -707,6 +1006,17 @@ def intent_pattern_for_query(
         return "rank_by_sum"
     ts = (time_start or "")[:10]
     te = (time_end or "")[:10]
+    if (
+        not multi_country
+        and not africa_panel
+        and not _SERIES_QUERY_RE.search(q)
+        and ts
+        and te
+        and ts[:4].isdigit()
+        and te[:4].isdigit()
+        and ts[:4] == te[:4]
+    ):
+        return "custom"
     if ts and te and ts[:4].isdigit():
         return "rank_by_sum"
     if re.search(r"\b(19|20)\d{2}\b", q):
@@ -1102,17 +1412,48 @@ def _fact_has_denormalized_product_name(table_id: str) -> bool:
     return bool(column_samples_for_table(table_id, _PRODUCT_LABEL_COL))
 
 
+def crop_entities_for_bind(
+    entities: list[str] | None,
+    *,
+    primary_measures: list[str] | None = None,
+) -> list[str]:
+    """Decomposition entities with measure/domain tokens removed for product binding."""
+    out: list[str] = []
+    for raw in entities or []:
+        text = str(raw).strip()
+        if not text or entity_is_measure_noise(text, primary_measures=primary_measures):
+            continue
+        out.append(text)
+    return out
+
+
+def _filter_measure_tokens_from_labels(
+    labels: list[str],
+    *,
+    primary_measures: list[str] | None = None,
+) -> list[str]:
+    return [
+        label
+        for label in labels
+        if not entity_is_measure_noise(label, primary_measures=primary_measures)
+    ]
+
+
 def _resolve_product_labels_for_table(
     table_id: str,
     *,
     blob: str,
     labels: list[str] | None = None,
+    primary_measures: list[str] | None = None,
 ) -> list[str]:
     """Resolve speech or hints to dictionary labels for one table's filter column."""
     bare = _strip_fqn(table_id).lower()
+    hinted = _filter_measure_tokens_from_labels(
+        [str(x).strip() for x in (labels or []) if str(x).strip()],
+        primary_measures=primary_measures,
+    )
     table_samples = column_samples_for_table(bare, _PRODUCT_LABEL_COL)
     if table_samples:
-        hinted = [str(x).strip() for x in (labels or []) if str(x).strip()]
         if hinted:
             in_table = [h for h in hinted if h in table_samples]
             if in_table:
@@ -1125,7 +1466,6 @@ def _resolve_product_labels_for_table(
         return []
 
     prefer = [bare, *_PRODUCT_PREFER_TABLES]
-    hinted = [str(x).strip() for x in (labels or []) if str(x).strip()]
     if hinted:
         return hinted[:6]
     return resolve_dictionary_labels(
@@ -1133,6 +1473,45 @@ def _resolve_product_labels_for_table(
         blob=blob,
         prefer_tables=prefer,
     )
+
+
+def _resolve_bind_product_labels(
+    table_id: str,
+    *,
+    query: str,
+    facets: dict[str, Any],
+    entities: list[str],
+    primary_measures: list[str] | None,
+    product_labels: list[str] | None,
+    product_blob_text: str,
+) -> list[str]:
+    """Product literals for bind contract: engine hits, staples, then crop entities."""
+    bare = _strip_fqn(table_id).lower()
+    explicit = [str(x).strip() for x in (product_labels or []) if str(x).strip()]
+    if explicit:
+        return explicit[:6]
+    from ml.rag.chatbot.bundle_metrics import resolve_staple_products
+
+    staples = resolve_staple_products(query, facets)
+    if staples:
+        return staples[:6]
+    crop_ents = crop_entities_for_bind(entities, primary_measures=primary_measures)
+    if crop_ents:
+        resolved = _resolve_product_labels_for_table(
+            bare,
+            blob=product_blob_text,
+            labels=crop_ents,
+            primary_measures=primary_measures,
+        )
+        if resolved:
+            return resolved[:6]
+    resolved = _resolve_product_labels_for_table(
+        bare,
+        blob=product_blob_text,
+        labels=None,
+        primary_measures=primary_measures,
+    )
+    return resolved[:6] if resolved else []
 
 
 def compile_product_filter_sql(
@@ -1153,12 +1532,31 @@ def compile_product_filter_sql(
     if not resolved:
         return "", []
 
+    spine = bind_spine_map(bare)
+    product_spine = spine.get(_PRODUCT_FK_COL) or spine.get("product_key")
+
     if _fact_has_denormalized_product_name(bare):
         col = _PRODUCT_LABEL_COL
         if len(resolved) == 1:
             return f"AND {col} = {_sql_literal(resolved[0])} ", resolved
         lits = ", ".join(_sql_literal(v) for v in resolved[:16])
         return f"AND {col} IN ({lits}) ", resolved
+
+    if product_spine:
+        fk_col = _PRODUCT_FK_COL if _PRODUCT_FK_COL in {
+            str(c.get("name") or "").strip().lower()
+            for c in (load_mart_table_schema(bare) or {}).get("columns") or []
+        } else (product_column_mart(bare) or _PRODUCT_FK_COL)
+        sql = _compile_fk_spine_filter_sql(
+            bare,
+            fk_col=fk_col,
+            dim_ref=product_spine,
+            literals=resolved,
+            project_id=project_id,
+            dataset=dataset,
+        )
+        if sql:
+            return sql, resolved
 
     dim = _product_join_dim(bare) or _PRODUCT_JOIN_DIM
     schema = load_mart_table_schema(bare) or {}
@@ -1193,8 +1591,7 @@ def product_blob(query: str, entities: list[str] | None = None) -> str:
         text = str(raw).strip()
         if not text:
             continue
-        low = text.lower()
-        if low in _DECOMPOSER_DOMAIN_ENTITIES:
+        if entity_is_measure_noise(text):
             continue
         if resolve_dictionary_label(column=_PRODUCT_LABEL_COL, blob=text):
             parts.append(text)
@@ -1469,18 +1866,76 @@ def compile_semantic_filter(
             labels=tuple(v for _, v in filters),
         )
     if facet_l == "geo":
-        if not country_labels:
+        resolved = resolve_geo_filter_values(table_id, country_labels) if country_labels else []
+        subnational = match_subnational_geo_labels(blob)
+        geo_level = match_geo_level_label(blob)
+        extra: list[tuple[str, str]] = list(subnational)
+        if geo_level:
+            extra.append(("geo_level", geo_level))
+        if not resolved and not extra:
             return None
-        resolved = resolve_geo_filter_values(table_id, country_labels)
-        if not resolved:
-            return None
+
         col = geo_column(table_id) or "country_name"
-        if len(resolved) == 1:
-            sql = f"AND {col} = {_sql_literal(resolved[0])} "
-        else:
-            lits = ", ".join(_sql_literal(v) for v in resolved[:32])
-            sql = f"AND {col} IN ({lits}) "
-        return SemanticFilterClause(sql=sql, label=resolved[0], labels=tuple(resolved))
+        spine = bind_spine_map(table_id)
+        schema = load_mart_table_schema(table_id) or {}
+        col_names = {
+            str(c.get("name") or "").strip().lower()
+            for c in (schema.get("columns") or [])
+            if str(c.get("name") or "").strip()
+        }
+
+        fk_for_dim: str | None = None
+        spine_ref: str | None = None
+        if col in ("geo_key", "geography_key"):
+            fk_for_dim = col
+            spine_ref = (
+                spine.get(col)
+                or spine.get("geography_key")
+                or spine.get("geo_key")
+                or "dim_geography.country_iso3"
+            )
+        elif extra:
+            if "geography_key" in col_names:
+                fk_for_dim = "geography_key"
+                spine_ref = spine.get("geography_key") or "dim_geography.country_iso3"
+            elif "geo_key" in col_names:
+                fk_for_dim = "geo_key"
+                spine_ref = spine.get("geo_key") or "dim_geography.country_iso3"
+
+        sql_parts: list[str] = []
+        # Denormalized country column on the fact (never hash-filter geo keys).
+        if col not in ("geo_key", "geography_key") and resolved:
+            if len(resolved) == 1:
+                sql_parts.append(f"AND {col} = {_sql_literal(resolved[0])}")
+            else:
+                lits = ", ".join(_sql_literal(v) for v in resolved[:32])
+                sql_parts.append(f"AND {col} IN ({lits})")
+
+        need_dim_subq = bool(fk_for_dim and spine_ref) and (
+            col in ("geo_key", "geography_key") or bool(extra)
+        )
+        if need_dim_subq and fk_for_dim and spine_ref:
+            sub_sql = _compile_fk_spine_filter_sql(
+                table_id,
+                fk_col=fk_for_dim,
+                dim_ref=spine_ref,
+                literals=resolved,
+                project_id=project_id,
+                dataset=dataset,
+                extra_predicates=extra or None,
+            )
+            if sub_sql.strip():
+                sql_parts.append(sub_sql.strip())
+
+        if not sql_parts:
+            return None
+        label = resolved[0] if resolved else (extra[0][1] if extra else None)
+        clause_labels = tuple(resolved) if resolved else tuple(v for _, v in extra)
+        return SemanticFilterClause(
+            sql=" ".join(sql_parts) + " ",
+            label=label,
+            labels=clause_labels,
+        )
     if facet_l == "time":
         sql = compile_time_filter_sql(
             table_id,
@@ -1507,9 +1962,11 @@ class TableBindContract:
     product_literals: list[str] = field(default_factory=list)
     measure_columns: list[str] = field(default_factory=list)
     measure_filters: list[tuple[str, str]] = field(default_factory=list)
+    spine_entity_filters: list[tuple[str, str]] = field(default_factory=list)
     required_filters_sql: str = ""
     nomenclature: str = ""
     anti_patterns: list[str] = field(default_factory=list)
+    bind_spine: dict[str, str] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -1522,9 +1979,11 @@ class TableBindContract:
             "product_literals": list(self.product_literals),
             "measure_columns": list(self.measure_columns),
             "measure_filters": [[c, v] for c, v in self.measure_filters],
+            "spine_entity_filters": [[fk, lab] for fk, lab in self.spine_entity_filters],
             "required_filters_sql": self.required_filters_sql,
             "nomenclature": self.nomenclature,
             "anti_patterns": list(self.anti_patterns),
+            "bind_spine": dict(self.bind_spine),
         }
 
     @classmethod
@@ -1536,6 +1995,11 @@ class TableBindContract:
         for item in mf_raw:
             if isinstance(item, (list, tuple)) and len(item) >= 2:
                 measure_filters.append((str(item[0]), str(item[1])))
+        se_raw = raw.get("spine_entity_filters") or []
+        spine_entity_filters: list[tuple[str, str]] = []
+        for item in se_raw:
+            if isinstance(item, (list, tuple)) and len(item) >= 2:
+                spine_entity_filters.append((str(item[0]), str(item[1])))
         return cls(
             table_id=str(raw.get("table_id") or ""),
             geo_column=str(raw.get("geo_column") or "") or None,
@@ -1546,9 +2010,15 @@ class TableBindContract:
             product_literals=[str(x) for x in (raw.get("product_literals") or []) if str(x).strip()],
             measure_columns=[str(x) for x in (raw.get("measure_columns") or []) if str(x).strip()],
             measure_filters=measure_filters,
+            spine_entity_filters=spine_entity_filters,
             required_filters_sql=str(raw.get("required_filters_sql") or ""),
             nomenclature=str(raw.get("nomenclature") or ""),
             anti_patterns=[str(x) for x in (raw.get("anti_patterns") or []) if str(x).strip()],
+            bind_spine={
+                str(k): str(v)
+                for k, v in (raw.get("bind_spine") or {}).items()
+                if str(k).strip() and str(v).strip()
+            },
         )
 
 
@@ -1577,8 +2047,25 @@ def format_bind_nomenclature(contract: TableBindContract) -> str:
         lines.append(f"MEASURE_COLUMNS: {', '.join(contract.measure_columns[:4])}")
     for col, val in contract.measure_filters:
         lines.append(f"DISCRIMINATOR: {col} = {_sql_literal(val)}")
+    for fk_col, label in contract.spine_entity_filters:
+        lines.append(f"SPINE_ENTITY: {fk_col} → {_sql_literal(label)}")
     for anti in contract.anti_patterns:
         lines.append(f"ANTI: {anti}")
+    dim_seen: set[str] = set()
+    for fk_col, dim_ref in sorted(contract.bind_spine.items()):
+        lines.append(f"JOIN_SPINE: {fk_col} → {dim_ref}")
+        dim_table = str(dim_ref).split(".", 1)[0].strip().lower()
+        if not dim_table or dim_table in dim_seen:
+            continue
+        dim_seen.add(dim_table)
+        expose = dim_expose_columns(dim_table)
+        if expose:
+            lines.append(f"DIM_CONTEXT: {dim_table} SELECT {', '.join(expose)}")
+        if dim_table == "dim_geography":
+            lines.append(
+                "DIM_GEO_HINT: filter geo_level + admin/city via samples; "
+                "SELECT population/coords when useful; never filter geo_key with hashes"
+            )
     if contract.required_filters_sql.strip():
         lines.append(f"REQUIRED_SQL_FRAGMENTS: {contract.required_filters_sql.strip()}")
     return "\n".join(lines)
@@ -1609,6 +2096,7 @@ def compile_table_bind_contract(
     card: dict[str, Any] | None = None,
     query: str = "",
     country_labels: list[str] | None = None,
+    product_labels: list[str] | None = None,
     project_id: str | None = None,
     dataset: str | None = None,
 ) -> TableBindContract:
@@ -1644,10 +2132,13 @@ def compile_table_bind_contract(
         year_hint = int(te[:4])
 
     parts: list[str] = []
+    geo_blob = " ".join(
+        [query or "", *[str(e).strip() for e in entities if str(e).strip()]]
+    ).strip()
     geo_clause = compile_semantic_filter(
         bare,
         "geo",
-        blob=query,
+        blob=geo_blob or query,
         project_id=proj,
         dataset=ds,
         country_labels=geo_labels or geo_literals,
@@ -1670,18 +2161,55 @@ def compile_table_bind_contract(
     if time_clause and time_clause.sql.strip():
         parts.append(time_clause.sql.strip())
 
+    bind_product_labels = _resolve_bind_product_labels(
+        bare,
+        query=query,
+        facets=dec,
+        entities=entities,
+        primary_measures=primary_measures,
+        product_labels=product_labels,
+        product_blob_text=pb,
+    )
     prod_clause = compile_semantic_filter(
         bare,
         "product",
         blob=pb,
         project_id=proj,
         dataset=ds,
-        labels=entities,
+        labels=bind_product_labels or None,
     )
     pcol = product_column(bare)
     product_literals = list(prod_clause.labels) if prod_clause and prod_clause.labels else []
     if prod_clause and prod_clause.sql.strip():
         parts.append(prod_clause.sql.strip())
+
+    roles_raw = dec.get("entity_roles")
+    entity_roles: dict[str, list[str]] | None = None
+    if isinstance(roles_raw, dict):
+        entity_roles = {
+            str(k): [str(x).strip() for x in (v or []) if str(x).strip()]
+            for k, v in roles_raw.items()
+            if str(k).strip()
+        }
+    elif isinstance(roles_raw, (list, tuple)):
+        entity_roles = {
+            str(k): [str(x).strip() for x in (v or []) if str(x).strip()]
+            for k, v in roles_raw
+            if str(k).strip()
+        }
+
+    spine_hits = compile_spine_entity_filters(
+        bare,
+        blob=pb or query,
+        project_id=proj,
+        dataset=ds,
+        consumed_labels=product_literals,
+        entity_roles=entity_roles,
+    )
+    spine_entity_filters = [(fk, lab) for fk, lab, _sql in spine_hits]
+    for _fk, _lab, sql in spine_hits:
+        if sql.strip():
+            parts.append(sql.strip())
 
     meas_clause = compile_semantic_filter(
         bare,
@@ -1717,9 +2245,11 @@ def compile_table_bind_contract(
         product_literals=product_literals,
         measure_columns=measure_cols,
         measure_filters=measure_filters,
+        spine_entity_filters=spine_entity_filters,
         required_filters_sql=required_sql,
         anti_patterns=anti,
         nomenclature="",
+        bind_spine=bind_spine_map(bare),
     )
     contract.nomenclature = format_bind_nomenclature(contract)
     return contract
@@ -2189,12 +2719,25 @@ def _format_list_field(label: str, value: Any) -> str | None:
     return None
 
 
-def _format_columns(columns: Any, *, max_columns: int = _MAX_COLUMNS) -> str:
+def _format_columns(
+    columns: Any,
+    *,
+    max_columns: int = _MAX_COLUMNS,
+    column_allowlist: set[str] | frozenset[str] | None = None,
+) -> str:
     """Render a YAML columns list as `name (type, role): description` lines."""
     if not isinstance(columns, list):
         return ""
+    allow = {c.lower() for c in column_allowlist} if column_allowlist else None
+    filtered = columns
+    if allow is not None:
+        filtered = [
+            col
+            for col in columns
+            if isinstance(col, dict) and str(col.get("name") or "").strip().lower() in allow
+        ]
     lines: list[str] = []
-    for col in columns[:max_columns]:
+    for col in filtered[:max_columns]:
         if not isinstance(col, dict):
             continue
         name = str(col.get("name") or "").strip()
@@ -2222,8 +2765,8 @@ def _format_columns(columns: Any, *, max_columns: int = _MAX_COLUMNS) -> str:
         )
         line = f"  - {head}" + (f": {_truncate(tail, desc_limit)}" if tail else "")
         lines.append(line)
-    if isinstance(columns, list) and len(columns) > max_columns:
-        lines.append(f"  - … {len(columns) - max_columns} more columns")
+    if isinstance(filtered, list) and len(filtered) > max_columns:
+        lines.append(f"  - … {len(filtered) - max_columns} more columns")
     return "\n".join(lines)
 
 
@@ -2342,6 +2885,7 @@ def format_table_schema(
     include_columns: bool = True,
     selected_tables: set[str] | None = None,
     query_terms: list[str] | None = None,
+    column_allowlist: set[str] | frozenset[str] | tuple[str, ...] | None = None,
     loader=None,
 ) -> str:
     """Compact, SQL-prompt-friendly rendering of a per-table YAML schema.
@@ -2349,21 +2893,33 @@ def format_table_schema(
     Returns "" when no YAML is known for the table. Output is bounded by
     ``max_bytes`` (preferred) or ``max_chars``. Value-sample lists prefer
     entries matching ``query_terms`` so large FAOSTAT enums fit the hint budget.
+    When ``column_allowlist`` is set, only those columns and their ``*_value_samples``
+    are packed (used for spine dim context snippets).
     """
     load_fn = loader or _schema_loader_for(table_name)
     schema = load_fn(table_name)
     if not schema:
         return ""
 
+    allow = {str(c).strip().lower() for c in column_allowlist} if column_allowlist else None
+
     fqn = str(schema.get("table_name") or table_name).strip().strip("`")
     header = f"Table: {fqn or table_name}"
     parts: list[str] = [header]
     deferred_samples: list[str] = []
 
+    def _sample_col_allowed(sample_key: str) -> bool:
+        if allow is None:
+            return True
+        col = sample_key[: -len(_SAMPLE_KEY_SUFFIX)] if sample_key.endswith(_SAMPLE_KEY_SUFFIX) else sample_key
+        return col.lower() in allow
+
     for key, label in _SECTION_ORDER:
         if key not in schema:
             continue
         if key == "semantic_relationships":
+            if allow is not None:
+                continue
             block = _format_semantic_relationships(
                 schema[key],
                 selected_tables=selected_tables,
@@ -2372,6 +2928,8 @@ def format_table_schema(
                 parts.append(block)
             continue
         if key.endswith(_SAMPLE_KEY_SUFFIX) or key in _VALUE_SAMPLE_KEYS:
+            if not _sample_col_allowed(key):
+                continue
             block = _format_value_samples(
                 label,
                 schema[key],
@@ -2385,6 +2943,8 @@ def format_table_schema(
             if block:
                 parts.append(block)
             continue
+        if allow is not None:
+            continue
         line = _format_list_field(label, schema[key])
         if line:
             parts.append(line)
@@ -2396,6 +2956,8 @@ def format_table_schema(
             continue
         if key in seen_sample_keys:
             continue
+        if not _sample_col_allowed(key):
+            continue
         label = key.replace("_", " ").strip().title()
         block = _format_value_samples(label, value, query_terms=query_terms)
         if block:
@@ -2403,7 +2965,10 @@ def format_table_schema(
 
     # Columns before enum samples so byte truncation keeps schema usable.
     if include_columns and isinstance(schema.get("columns"), list):
-        col_block = _format_columns(schema["columns"])
+        col_block = _format_columns(
+            schema["columns"],
+            column_allowlist=allow,
+        )
         if col_block:
             parts.append("Columns:")
             parts.append(col_block)
@@ -2673,17 +3238,35 @@ def pack_mart_table_hints(
     max_bytes: int | None = None,
     query_terms: list[str] | None = None,
 ) -> tuple[list[str], bool]:
-    """Full mart YAML packs for selected tables, truncated to the NL2SQL hint byte budget."""
+    """Full mart YAML packs for selected tables, truncated to the NL2SQL hint byte budget.
+
+    Also packs spine-target dim YAMLs (expose columns + samples) so FK joins carry
+    rich dim context without inventing filter literals.
+    """
     budget = hint_max_bytes() if max_bytes is None else max(0, max_bytes)
     if budget <= 0 or not table_ids:
         return [], bool(table_ids)
     selected = {str(t).strip().split(".")[-1].lower() for t in table_ids if str(t).strip()}
-    per = max(400, budget // max(1, len(table_ids)))
+    spine_dims: list[str] = []
+    seen_dims: set[str] = set()
+    for tid in table_ids:
+        bare = str(tid).strip().split(".")[-1].lower()
+        for _fk, dim_ref in bind_spine_map(bare).items():
+            dim = str(dim_ref).split(".", 1)[0].strip().lower()
+            if not dim or dim in selected or dim in seen_dims:
+                continue
+            if not dim_expose_columns(dim):
+                continue
+            seen_dims.add(dim)
+            spine_dims.append(dim)
+
+    pack_ids = list(table_ids) + spine_dims
+    per = max(400, budget // max(1, len(pack_ids)))
     hints: list[str] = []
     used = 0
     truncated = False
     known_count = 0
-    for tid in table_ids:
+    for tid in pack_ids:
         if not load_mart_table_schema(tid):
             continue
         known_count += 1
@@ -2691,12 +3274,17 @@ def pack_mart_table_hints(
         if remain_total <= 0:
             truncated = True
             break
+        bare = str(tid).strip().split(".")[-1].lower()
+        allow = dim_expose_columns(bare) if bare in seen_dims else None
+        # Dim packs get a smaller share so fact YAMLs stay primary.
+        dim_budget = min(per, remain_total, 900) if allow else min(per, remain_total)
         block = format_table_schema(
             tid,
-            max_bytes=min(per, remain_total),
+            max_bytes=dim_budget,
             include_columns=True,
-            selected_tables=selected,
+            selected_tables=selected | seen_dims,
             query_terms=query_terms,
+            column_allowlist=allow,
             loader=load_mart_table_schema,
         )
         if not block:

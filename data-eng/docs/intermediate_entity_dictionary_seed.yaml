@@ -1,0 +1,948 @@
+layer: intermediate_dev
+version: '2026.9'
+entity_count: 58
+entities:
+- table_name: int_food_hazards_conformed
+  layer: intermediate
+  domain: animal_health
+  grain: See SQL / schema tests for uniqueness
+  purpose: 'Intermediate animal_health model int_food_hazards_conformed: conformed
+    OpenTrace entity feeding mart_dev from stg_ilri_food_hazards.'
+  primary_key: ''
+  upstream: stg_ilri_food_hazards
+  upstream_refs:
+  - stg_ilri_food_hazards
+  joins: ''
+  path: dbt/models/intermediate_dev/animal_health/int_food_hazards_conformed.sql
+- table_name: int_i4i_insurance_conformed
+  layer: intermediate
+  domain: animal_health
+  grain: See SQL / schema tests for uniqueness
+  purpose: 'Intermediate animal_health model int_i4i_insurance_conformed: conformed
+    OpenTrace entity feeding mart_dev from stg_ilri_i4i_livestock_insurance.'
+  primary_key: ''
+  upstream: stg_ilri_i4i_livestock_insurance
+  upstream_refs:
+  - stg_ilri_i4i_livestock_insurance
+  joins: ''
+  path: dbt/models/intermediate_dev/animal_health/int_i4i_insurance_conformed.sql
+- table_name: int_ilri_animal_health_conformed
+  layer: intermediate
+  domain: animal_health
+  grain: See SQL / schema tests for uniqueness
+  purpose: ILRI animal health survey measures at household grain
+  primary_key: ''
+  upstream: stg_ilri_animal_health
+  upstream_refs:
+  - int_geography_conformed
+  - stg_ilri_animal_health
+  joins: ''
+  path: dbt/models/intermediate_dev/animal_health/int_ilri_animal_health_conformed.sql
+- table_name: int_climatewatch_conformed
+  layer: intermediate
+  domain: climate
+  grain: See SQL / schema tests for uniqueness
+  purpose: ClimateWatch climate-health impacts with country-name geo_key (iso_code2
+    often null in source)
+  primary_key: ''
+  upstream: stg_climatewatch_health
+  upstream_refs:
+  - int_ref_country
+  - stg_climatewatch_health
+  joins: ''
+  path: dbt/models/intermediate_dev/climate/int_climatewatch_conformed.sql
+- table_name: int_era5_conformed
+  layer: intermediate
+  domain: climate
+  grain: See SQL / schema tests for uniqueness
+  purpose: Copernicus ERA5 with city geo_key and Africa bbox
+  primary_key: ''
+  upstream: stg_copernicus_era5
+  upstream_refs:
+  - stg_copernicus_era5
+  joins: ''
+  path: dbt/models/intermediate_dev/climate/int_era5_conformed.sql
+- table_name: int_nakuru_air_conformed
+  layer: intermediate
+  domain: climate
+  grain: See SQL / schema tests for uniqueness
+  purpose: 'Intermediate climate model int_nakuru_air_conformed: conformed OpenTrace
+    entity feeding mart_dev from stg_nakuru_air_quality.'
+  primary_key: ''
+  upstream: stg_nakuru_air_quality
+  upstream_refs:
+  - stg_nakuru_air_quality
+  joins: ''
+  path: dbt/models/intermediate_dev/climate/int_nakuru_air_conformed.sql
+- table_name: int_nasa_power_conformed
+  layer: intermediate
+  domain: climate
+  grain: See SQL / schema tests for uniqueness
+  purpose: NASA POWER with city round-join and ISO2 country fallback
+  primary_key: ''
+  upstream: stg_nasa_power
+  upstream_refs:
+  - stg_nasa_power
+  joins: ''
+  path: dbt/models/intermediate_dev/climate/int_nasa_power_conformed.sql
+- table_name: int_employment_conformed
+  layer: intermediate
+  domain: economics
+  grain: See SQL / schema tests for uniqueness
+  purpose: FAOSTAT population and employment with country geo_key via area_code
+  primary_key: ''
+  upstream: stg_faostat_population_employment
+  upstream_refs:
+  - int_geography_conformed
+  - stg_faostat_population_employment
+  - int_faostat_area_iso
+  joins: ''
+  path: dbt/models/intermediate_dev/economics/int_employment_conformed.sql
+- table_name: int_faostat_macro_conformed
+  layer: intermediate
+  domain: economics
+  grain: See SQL / schema tests for uniqueness
+  purpose: FAOSTAT macro indicators with measurement_form and country geo_key
+  primary_key: ''
+  upstream: stg_faostat_macro
+  upstream_refs:
+  - int_geography_conformed
+  - stg_faostat_macro
+  - int_faostat_area_iso
+  joins: ''
+  path: dbt/models/intermediate_dev/economics/int_faostat_macro_conformed.sql
+- table_name: int_gdp_ppp_conformed
+  layer: intermediate
+  domain: economics
+  grain: See SQL / schema tests for uniqueness
+  purpose: Africa GDP PPP with ISO3 geo_key map; null GDP rows excluded
+  primary_key: ''
+  upstream: stg_africa_gdp_ppp
+  upstream_refs:
+  - int_geography_conformed
+  - stg_africa_gdp_ppp
+  joins: ''
+  path: dbt/models/intermediate_dev/economics/int_gdp_ppp_conformed.sql
+- table_name: int_hdi_conformed
+  layer: intermediate
+  domain: economics
+  grain: See SQL / schema tests for uniqueness
+  purpose: Africa HDI with ISO3 geo_key map; null HDI rows excluded
+  primary_key: ''
+  upstream: stg_africa_hdi
+  upstream_refs:
+  - int_geography_conformed
+  - stg_africa_hdi
+  joins: ''
+  path: dbt/models/intermediate_dev/economics/int_hdi_conformed.sql
+- table_name: int_investment_asti_conformed
+  layer: intermediate
+  domain: economics
+  grain: See SQL / schema tests for uniqueness
+  purpose: 'Intermediate economics model int_investment_asti_conformed: conformed
+    OpenTrace entity feeding mart_dev from stg_faostat_investment_asti.'
+  primary_key: ''
+  upstream: stg_faostat_investment_asti
+  upstream_refs:
+  - stg_faostat_investment_asti
+  joins: ''
+  path: dbt/models/intermediate_dev/economics/int_investment_asti_conformed.sql
+- table_name: int_faostat_emissions_conformed
+  layer: intermediate
+  domain: environment
+  grain: See SQL / schema tests for uniqueness
+  purpose: 'Intermediate environment model int_faostat_emissions_conformed: conformed
+    OpenTrace entity feeding mart_dev from stg_faostat_emissions.'
+  primary_key: ''
+  upstream: stg_faostat_emissions
+  upstream_refs:
+  - stg_faostat_emissions
+  joins: ''
+  path: dbt/models/intermediate_dev/environment/int_faostat_emissions_conformed.sql
+- table_name: int_faostat_food_balances_conformed
+  layer: intermediate
+  domain: food_security
+  grain: See SQL / schema tests for uniqueness
+  purpose: 'Intermediate food_security model int_faostat_food_balances_conformed:
+    conformed OpenTrace entity feeding mart_dev from stg_faostat_food_balances.'
+  primary_key: ''
+  upstream: stg_faostat_food_balances
+  upstream_refs:
+  - stg_faostat_food_balances
+  joins: ''
+  path: dbt/models/intermediate_dev/food_security/int_faostat_food_balances_conformed.sql
+- table_name: int_fews_food_security_conformed
+  layer: intermediate
+  domain: food_security
+  grain: See SQL / schema tests for uniqueness
+  purpose: FEWS food security conformed pass-through
+  primary_key: ''
+  upstream: stg_fews_food_security
+  upstream_refs:
+  - stg_fews_food_security
+  joins: ''
+  path: dbt/models/intermediate_dev/food_security/int_fews_food_security_conformed.sql
+- table_name: int_fews_food_security_with_geo
+  layer: intermediate
+  domain: food_security
+  grain: See SQL / schema tests for uniqueness
+  purpose: FEWS food security with fnid geo_key attach
+  primary_key: ''
+  upstream: int_fews_food_security_conformed, int_geography_conformed
+  upstream_refs:
+  - int_fews_food_security_conformed
+  - int_geography_conformed
+  joins: ''
+  path: dbt/models/intermediate_dev/food_security/int_fews_food_security_with_geo.sql
+- table_name: int_forestry_conformed
+  layer: intermediate
+  domain: forestry
+  grain: See SQL / schema tests for uniqueness
+  purpose: 'Intermediate forestry model int_forestry_conformed: conformed OpenTrace
+    entity feeding mart_dev from stg_faostat_forestry.'
+  primary_key: ''
+  upstream: stg_faostat_forestry
+  upstream_refs:
+  - stg_faostat_forestry
+  joins: ''
+  path: dbt/models/intermediate_dev/forestry/int_forestry_conformed.sql
+- table_name: int_admin0_africa
+  layer: intermediate
+  domain: geography
+  grain: See SQL / schema tests for uniqueness
+  purpose: Country ADM0 polygons from geoBoundaries (raw_dev.geoboundaries_admin0_africa)
+  primary_key: ''
+  upstream: raw_dev.geoboundaries_admin0_africa, staging_dev.stg_geo
+  upstream_refs:
+  - ref_m49_country
+  - raw_dev.geoboundaries_admin0_africa
+  - staging_dev.stg_geo
+  joins: ''
+  path: dbt/models/intermediate_dev/geography/int_admin0_africa.sql
+- table_name: int_aez_bridge
+  layer: intermediate
+  domain: geography
+  grain: See SQL / schema tests for uniqueness
+  purpose: 'Intermediate geography model int_aez_bridge: conformed OpenTrace entity
+    feeding mart_dev from stg_aez.'
+  primary_key: ''
+  upstream: stg_aez
+  upstream_refs:
+  - stg_aez
+  joins: ''
+  path: dbt/models/intermediate_dev/geography/int_aez_bridge.sql
+- table_name: int_faostat_area_iso
+  layer: intermediate
+  domain: geography
+  grain: See SQL / schema tests for uniqueness
+  purpose: Thin pass-through of int_faostat_area_reference (FAOSTAT area_code → ISO)
+  primary_key: ''
+  upstream: int_faostat_area_reference
+  upstream_refs:
+  - int_faostat_area_reference
+  joins: ''
+  path: dbt/models/intermediate_dev/geography/int_faostat_area_iso.sql
+- table_name: int_faostat_area_reference
+  layer: intermediate
+  domain: geography
+  grain: See SQL / schema tests for uniqueness
+  purpose: FAOSTAT area_code → ISO via M49, ref country, and aliases
+  primary_key: ''
+  upstream: int_faostat_areas_distinct, ref_m49_country, int_ref_country
+  upstream_refs:
+  - int_faostat_areas_distinct
+  - ref_m49_country
+  - int_ref_country
+  joins: ''
+  path: dbt/models/intermediate_dev/geography/int_faostat_area_reference.sql
+- table_name: int_faostat_areas_distinct
+  layer: intermediate
+  domain: geography
+  grain: See SQL / schema tests for uniqueness
+  purpose: Distinct FAOSTAT area_code rows from all FAOSTAT staging sources
+  primary_key: ''
+  upstream: stg_faostat_production, stg_faostat_population_employment, stg_faostat_food_balances
+  upstream_refs:
+  - stg_faostat_production
+  - stg_faostat_population_employment
+  - stg_faostat_food_balances
+  - stg_faostat_emissions
+  - stg_faostat_forestry
+  - stg_faostat_investment_asti
+  - stg_faostat_sdg_hdi
+  - stg_faostat_food_aid
+  - stg_faostat_land_inputs
+  - stg_faostat_discontinued_machinery
+  - stg_faostat_macro
+  - stg_faostat_trade
+  joins: ''
+  path: dbt/models/intermediate_dev/geography/int_faostat_areas_distinct.sql
+- table_name: int_geography_conformed
+  layer: intermediate
+  domain: geography
+  grain: One row per place × source_natural_key × native_id
+  purpose: Conformed geography spine from cities, FEWS, yield, and FAOSTAT sources
+  primary_key: geo_key
+  upstream: stg_fews_food_security, stg_fews_market_prices, stg_yield_raw_data
+  upstream_refs:
+  - int_ref_country
+  - stg_fews_food_security
+  - stg_fews_market_prices
+  - stg_yield_raw_data
+  - int_faostat_area_iso
+  - staging_dev.stg_geo
+  joins: Downstream facts join on geo_key; upstream cities/FEWS/yield/FAOSTAT geo
+    extracts
+  path: dbt/models/intermediate_dev/geography/int_geography_conformed.sql
+- table_name: int_latlon_country_grid
+  layer: intermediate
+  domain: geography
+  grain: See SQL / schema tests for uniqueness
+  purpose: 0.1° grid → country via int_admin0_africa bbox; point facts use ST_CONTAINS
+    on geog
+  primary_key: ''
+  upstream: int_admin0_africa
+  upstream_refs:
+  - int_admin0_africa
+  joins: ''
+  path: dbt/models/intermediate_dev/geography/int_latlon_country_grid.sql
+- table_name: int_ref_country
+  layer: intermediate
+  domain: geography
+  grain: One row per country_iso3
+  purpose: Canonical country reference with in_africa_scope (stg_geo + M49 seed)
+  primary_key: country_iso3
+  upstream: staging_dev.stg_geo
+  upstream_refs:
+  - ref_m49_country
+  - staging_dev.stg_geo
+  joins: Used by geography and area_code ISO resolution
+  path: dbt/models/intermediate_dev/geography/int_ref_country.sql
+- table_name: int_ilri_household_conformed
+  layer: intermediate
+  domain: household
+  grain: See SQL / schema tests for uniqueness
+  purpose: ILRI household food security with country-level geo_key
+  primary_key: ''
+  upstream: stg_ilri_household_food_security
+  upstream_refs:
+  - int_geography_conformed
+  - stg_ilri_household_food_security
+  joins: ''
+  path: dbt/models/intermediate_dev/household/int_ilri_household_conformed.sql
+- table_name: int_ilri_other_surveys
+  layer: intermediate
+  domain: household
+  grain: See SQL / schema tests for uniqueness
+  purpose: 'Intermediate household model int_ilri_other_surveys: conformed OpenTrace
+    entity feeding mart_dev from stg_ilri_other_surveys.'
+  primary_key: ''
+  upstream: stg_ilri_other_surveys
+  upstream_refs:
+  - stg_ilri_other_surveys
+  joins: ''
+  path: dbt/models/intermediate_dev/household/int_ilri_other_surveys.sql
+- table_name: int_food_aid_conformed
+  layer: intermediate
+  domain: humanitarian
+  grain: See SQL / schema tests for uniqueness
+  purpose: 'Intermediate humanitarian model int_food_aid_conformed: conformed OpenTrace
+    entity feeding mart_dev from stg_faostat_food_aid.'
+  primary_key: ''
+  upstream: stg_faostat_food_aid
+  upstream_refs:
+  - stg_faostat_food_aid
+  joins: ''
+  path: dbt/models/intermediate_dev/humanitarian/int_food_aid_conformed.sql
+- table_name: int_gender_sdg_conformed
+  layer: intermediate
+  domain: inclusion
+  grain: See SQL / schema tests for uniqueness
+  purpose: 'Intermediate inclusion model int_gender_sdg_conformed: conformed OpenTrace
+    entity feeding mart_dev from stg_faostat_sdg_hdi.'
+  primary_key: ''
+  upstream: stg_faostat_sdg_hdi
+  upstream_refs:
+  - stg_faostat_sdg_hdi
+  joins: ''
+  path: dbt/models/intermediate_dev/inclusion/int_gender_sdg_conformed.sql
+- table_name: int_discontinued_machinery
+  layer: intermediate
+  domain: inputs
+  grain: See SQL / schema tests for uniqueness
+  purpose: 'Intermediate inputs model int_discontinued_machinery: conformed OpenTrace
+    entity feeding mart_dev from stg_faostat_discontinued_machinery.'
+  primary_key: ''
+  upstream: stg_faostat_discontinued_machinery
+  upstream_refs:
+  - stg_faostat_discontinued_machinery
+  joins: ''
+  path: dbt/models/intermediate_dev/inputs/int_discontinued_machinery.sql
+- table_name: int_land_inputs_split
+  layer: intermediate
+  domain: land
+  grain: See SQL / schema tests for uniqueness
+  purpose: FAOSTAT land inputs tagged by trade/temperature/use_or_cover grain
+  primary_key: ''
+  upstream: stg_faostat_land_inputs
+  upstream_refs:
+  - stg_faostat_land_inputs
+  joins: ''
+  path: dbt/models/intermediate_dev/land/int_land_inputs_split.sql
+- table_name: int_unccd_conformed
+  layer: intermediate
+  domain: land
+  grain: See SQL / schema tests for uniqueness
+  purpose: 'Intermediate land model int_unccd_conformed: conformed OpenTrace entity
+    feeding mart_dev from stg_unccd_land_degradation.'
+  primary_key: ''
+  upstream: stg_unccd_land_degradation
+  upstream_refs:
+  - stg_unccd_land_degradation
+  joins: ''
+  path: dbt/models/intermediate_dev/land/int_unccd_conformed.sql
+- table_name: int_vendor_consumer
+  layer: intermediate
+  domain: markets
+  grain: See SQL / schema tests for uniqueness
+  purpose: 'Intermediate markets model int_vendor_consumer: conformed OpenTrace entity
+    feeding mart_dev from stg_ilri_vendor_consumer.'
+  primary_key: ''
+  upstream: stg_ilri_vendor_consumer
+  upstream_refs:
+  - stg_ilri_vendor_consumer
+  joins: ''
+  path: dbt/models/intermediate_dev/markets/int_vendor_consumer.sql
+- table_name: int_prices_harmonised
+  layer: intermediate
+  domain: prices
+  grain: See SQL / schema tests for uniqueness
+  purpose: Harmonised market prices from FEWS, WFP VAMPIRE, and FAOSTAT
+  primary_key: ''
+  upstream: stg_fews_market_prices, stg_wfp_vampire_prices, stg_faostat_prices
+  upstream_refs:
+  - stg_fews_market_prices
+  - stg_wfp_vampire_prices
+  - int_ref_country
+  - stg_faostat_prices
+  joins: ''
+  path: dbt/models/intermediate_dev/prices/int_prices_harmonised.sql
+- table_name: int_prices_with_geo
+  layer: intermediate
+  domain: prices
+  grain: See SQL / schema tests for uniqueness
+  purpose: Harmonised prices with geo_key from int_geography_conformed (admin hierarchy
+    or FAOSTAT area_code)
+  primary_key: ''
+  upstream: int_prices_harmonised, int_ref_country, int_geography_conformed
+  upstream_refs:
+  - int_prices_harmonised
+  - int_ref_country
+  - int_geography_conformed
+  joins: ''
+  path: dbt/models/intermediate_dev/prices/int_prices_with_geo.sql
+- table_name: int_faostat_production_conformed
+  layer: intermediate
+  domain: production
+  grain: area_code × item × element × year × source_natural_key
+  purpose: Long-form FAOSTAT production — one row per area/item/element/year/source
+  primary_key: composite (area_code, item_code, element_code, year, source_natural_key)
+  upstream: stg_faostat_production
+  upstream_refs:
+  - stg_faostat_production
+  joins: area_code → int_faostat_area_*; source_natural_key → int_source_registry
+  path: dbt/models/intermediate_dev/production/int_faostat_production_conformed.sql
+- table_name: int_yield_raw_enriched
+  layer: intermediate
+  domain: production
+  grain: See SQL / schema tests for uniqueness
+  purpose: Yield raw data with non-null country filter
+  primary_key: ''
+  upstream: stg_yield_raw_data
+  upstream_refs:
+  - stg_yield_raw_data
+  joins: ''
+  path: dbt/models/intermediate_dev/production/int_yield_raw_enriched.sql
+- table_name: int_yield_raw_with_geo
+  layer: intermediate
+  domain: production
+  grain: See SQL / schema tests for uniqueness
+  purpose: Yield enriched with season_country_key and geo_key (fnid or country/admin
+    fallback)
+  primary_key: ''
+  upstream: int_yield_raw_enriched, int_season_mapped, int_geography_conformed
+  upstream_refs:
+  - int_yield_raw_enriched
+  - int_season_mapped
+  - int_geography_conformed
+  joins: ''
+  path: dbt/models/intermediate_dev/production/int_yield_raw_with_geo.sql
+- table_name: int_openaire_links
+  layer: intermediate
+  domain: research
+  grain: See SQL / schema tests for uniqueness
+  purpose: 'Intermediate research model int_openaire_links: conformed OpenTrace entity
+    feeding mart_dev from stg_openaire_product_links.'
+  primary_key: ''
+  upstream: stg_openaire_product_links
+  upstream_refs:
+  - stg_openaire_product_links
+  joins: ''
+  path: dbt/models/intermediate_dev/research/int_openaire_links.sql
+- table_name: int_openaire_organisations
+  layer: intermediate
+  domain: research
+  grain: See SQL / schema tests for uniqueness
+  purpose: 'Intermediate research model int_openaire_organisations: conformed OpenTrace
+    entity feeding mart_dev from stg_openaire_organisations.'
+  primary_key: ''
+  upstream: stg_openaire_organisations
+  upstream_refs:
+  - stg_openaire_organisations
+  joins: ''
+  path: dbt/models/intermediate_dev/research/int_openaire_organisations.sql
+- table_name: int_openaire_persons
+  layer: intermediate
+  domain: research
+  grain: See SQL / schema tests for uniqueness
+  purpose: 'Intermediate research model int_openaire_persons: conformed OpenTrace
+    entity feeding mart_dev from stg_openaire_persons.'
+  primary_key: ''
+  upstream: stg_openaire_persons
+  upstream_refs:
+  - stg_openaire_persons
+  joins: ''
+  path: dbt/models/intermediate_dev/research/int_openaire_persons.sql
+- table_name: int_openaire_projects
+  layer: intermediate
+  domain: research
+  grain: See SQL / schema tests for uniqueness
+  purpose: 'Intermediate research model int_openaire_projects: conformed OpenTrace
+    entity feeding mart_dev from stg_openaire_projects.'
+  primary_key: ''
+  upstream: stg_openaire_projects
+  upstream_refs:
+  - stg_openaire_projects
+  joins: ''
+  path: dbt/models/intermediate_dev/research/int_openaire_projects.sql
+- table_name: int_peace_security_parsed
+  layer: intermediate
+  domain: socio
+  grain: See SQL / schema tests for uniqueness
+  purpose: 'Intermediate socio model int_peace_security_parsed: conformed OpenTrace
+    entity feeding mart_dev from stg_un_peace_security.'
+  primary_key: ''
+  upstream: stg_un_peace_security
+  upstream_refs:
+  - stg_un_peace_security
+  joins: ''
+  path: dbt/models/intermediate_dev/socio/int_peace_security_parsed.sql
+- table_name: int_isda_soil_with_geo
+  layer: intermediate
+  domain: soil
+  grain: See SQL / schema tests for uniqueness
+  purpose: iSDA soil with city match, country name, and lat/lon grid fallback
+  primary_key: ''
+  upstream: stg_isda_soil_enriched
+  upstream_refs:
+  - stg_isda_soil_enriched
+  joins: ''
+  path: dbt/models/intermediate_dev/soil/int_isda_soil_with_geo.sql
+- table_name: int_isric_soil_long
+  layer: intermediate
+  domain: soil
+  grain: See SQL / schema tests for uniqueness
+  purpose: ISRIC Africa soil wide-to-long unpivot with Africa bbox filter
+  primary_key: ''
+  upstream: stg_isric_africa_soil
+  upstream_refs:
+  - stg_isric_africa_soil
+  joins: ''
+  path: dbt/models/intermediate_dev/soil/int_isric_soil_long.sql
+- table_name: int_isric_soil_with_geo
+  layer: intermediate
+  domain: soil
+  grain: See SQL / schema tests for uniqueness
+  purpose: ISRIC soil points with city lat/lon match and 1dp grid country fallback
+  primary_key: ''
+  upstream: int_isric_soil_long
+  upstream_refs:
+  - int_isric_soil_long
+  joins: ''
+  path: dbt/models/intermediate_dev/soil/int_isric_soil_with_geo.sql
+- table_name: int_s4a_plots_geo
+  layer: intermediate
+  domain: soil
+  grain: See SQL / schema tests for uniqueness
+  purpose: S4A field survey plots filtered to Africa bbox
+  primary_key: ''
+  upstream: stg_s4a_field_surveys
+  upstream_refs:
+  - stg_s4a_field_surveys
+  joins: ''
+  path: dbt/models/intermediate_dev/soil/int_s4a_plots_geo.sql
+- table_name: int_source_registry
+  layer: intermediate
+  domain: source_and_lineage
+  grain: One row per source_natural_key
+  purpose: ACF Path B source registry keyed by source_natural_key
+  primary_key: source_natural_key
+  upstream: stg_fews_food_security, stg_fews_market_prices, stg_fews_cross_border_trade
+  upstream_refs:
+  - stg_fews_food_security
+  - stg_fews_market_prices
+  - stg_fews_cross_border_trade
+  - stg_fews_data_series_catalogue
+  - stg_faostat_production
+  - stg_faostat_macro
+  - stg_faostat_prices
+  - int_prices_harmonised
+  - stg_faostat_trade
+  - stg_faostat_land_inputs
+  - stg_faostat_food_balances
+  - stg_faostat_emissions
+  - stg_faostat_forestry
+  - stg_faostat_food_aid
+  - stg_faostat_discontinued_machinery
+  - stg_faostat_investment_asti
+  - stg_faostat_sdg_hdi
+  - stg_faostat_population_employment
+  - stg_wfp_vampire_prices
+  - stg_yield_raw_data
+  - stg_africa_hdi
+  - stg_africa_gdp_ppp
+  - stg_isda_soil_enriched
+  - stg_isric_africa_soil
+  - stg_unccd_land_degradation
+  - stg_s4a_field_surveys
+  - stg_cifor_icraf
+  - stg_nasa_power
+  - stg_copernicus_era5
+  - stg_climatewatch_health
+  - stg_nakuru_air_quality
+  - stg_un_peace_security
+  - stg_ilri_household_food_security
+  - stg_ilri_animal_health
+  - stg_ilri_food_hazards
+  - stg_ilri_i4i_livestock_insurance
+  - stg_ilri_vegetation_feed
+  - stg_ilri_vendor_consumer
+  - stg_ilri_other_surveys
+  - stg_ilri_dairy_genetics
+  - stg_ilri_genomics
+  - stg_ilri_buffel_silicosdart_markers
+  - stg_ilri_buffel_snp_markers
+  - stg_biodiversity
+  - stg_protected_areas
+  - stg_germplasm
+  - stg_vegetation_ndvi
+  - stg_aez
+  - stg_arcgis_poi
+  - stg_arcgis_sa_wards_demographics
+  - stg_openaire_projects
+  - stg_openaire_organisations
+  - stg_openaire_persons
+  - stg_openaire_product_links
+  - stg_openaire_data_sources
+  joins: Facts carry source_natural_key → this registry for ACF metadata
+  path: dbt/models/intermediate_dev/source_and_lineage/int_source_registry.sql
+- table_name: int_arcgis_poi
+  layer: intermediate
+  domain: spatial
+  grain: See SQL / schema tests for uniqueness
+  purpose: 'Intermediate spatial model int_arcgis_poi: conformed OpenTrace entity
+    feeding mart_dev from stg_arcgis_poi.'
+  primary_key: ''
+  upstream: stg_arcgis_poi
+  upstream_refs:
+  - stg_arcgis_poi
+  joins: ''
+  path: dbt/models/intermediate_dev/spatial/int_arcgis_poi.sql
+- table_name: int_biodiversity_conformed
+  layer: intermediate
+  domain: spatial
+  grain: See SQL / schema tests for uniqueness
+  purpose: Biodiversity occurrences and richness with Africa or country filter
+  primary_key: ''
+  upstream: stg_biodiversity
+  upstream_refs:
+  - int_geography_conformed
+  - stg_biodiversity
+  joins: ''
+  path: dbt/models/intermediate_dev/spatial/int_biodiversity_conformed.sql
+- table_name: int_germplasm_conformed
+  layer: intermediate
+  domain: spatial
+  grain: See SQL / schema tests for uniqueness
+  purpose: 'Intermediate spatial model int_germplasm_conformed: conformed OpenTrace
+    entity feeding mart_dev from stg_germplasm.'
+  primary_key: ''
+  upstream: stg_germplasm
+  upstream_refs:
+  - stg_germplasm
+  joins: ''
+  path: dbt/models/intermediate_dev/spatial/int_germplasm_conformed.sql
+- table_name: int_protected_areas
+  layer: intermediate
+  domain: spatial
+  grain: See SQL / schema tests for uniqueness
+  purpose: 'Intermediate spatial model int_protected_areas: conformed OpenTrace entity
+    feeding mart_dev from stg_protected_areas.'
+  primary_key: ''
+  upstream: stg_protected_areas
+  upstream_refs:
+  - stg_protected_areas
+  joins: ''
+  path: dbt/models/intermediate_dev/spatial/int_protected_areas.sql
+- table_name: int_sa_wards_demo
+  layer: intermediate
+  domain: spatial
+  grain: See SQL / schema tests for uniqueness
+  purpose: 'Intermediate spatial model int_sa_wards_demo: conformed OpenTrace entity
+    feeding mart_dev from stg_arcgis_sa_wards_demographics.'
+  primary_key: ''
+  upstream: stg_arcgis_sa_wards_demographics
+  upstream_refs:
+  - stg_arcgis_sa_wards_demographics
+  joins: ''
+  path: dbt/models/intermediate_dev/spatial/int_sa_wards_demo.sql
+- table_name: int_season_mapped
+  layer: intermediate
+  domain: time_and_season
+  grain: See SQL / schema tests for uniqueness
+  purpose: Yield seasons by country with median planting/harvest months and dual keys
+  primary_key: ''
+  upstream: stg_yield_raw_data
+  upstream_refs:
+  - stg_yield_raw_data
+  joins: ''
+  path: dbt/models/intermediate_dev/time_and_season/int_season_mapped.sql
+- table_name: int_faostat_trade_conformed
+  layer: intermediate
+  domain: trade
+  grain: See SQL / schema tests for uniqueness
+  purpose: 'Intermediate trade model int_faostat_trade_conformed: conformed OpenTrace
+    entity feeding mart_dev from stg_faostat_trade.'
+  primary_key: ''
+  upstream: stg_faostat_trade
+  upstream_refs:
+  - stg_faostat_trade
+  joins: ''
+  path: dbt/models/intermediate_dev/trade/int_faostat_trade_conformed.sql
+- table_name: int_fews_cross_border_trade_conformed
+  layer: intermediate
+  domain: trade
+  grain: See SQL / schema tests for uniqueness
+  purpose: 'Intermediate trade model int_fews_cross_border_trade_conformed: conformed
+    OpenTrace entity feeding mart_dev from stg_fews_cross_border_trade.'
+  primary_key: ''
+  upstream: stg_fews_cross_border_trade
+  upstream_refs:
+  - stg_fews_cross_border_trade
+  joins: ''
+  path: dbt/models/intermediate_dev/trade/int_fews_cross_border_trade_conformed.sql
+- table_name: int_ilri_vegetation_conformed
+  layer: intermediate
+  domain: vegetation
+  grain: See SQL / schema tests for uniqueness
+  purpose: 'Intermediate vegetation model int_ilri_vegetation_conformed: conformed
+    OpenTrace entity feeding mart_dev from stg_ilri_vegetation_feed.'
+  primary_key: ''
+  upstream: stg_ilri_vegetation_feed
+  upstream_refs:
+  - stg_ilri_vegetation_feed
+  joins: ''
+  path: dbt/models/intermediate_dev/vegetation/int_ilri_vegetation_conformed.sql
+- table_name: int_ndvi_conformed
+  layer: intermediate
+  domain: vegetation
+  grain: See SQL / schema tests for uniqueness
+  purpose: 'Intermediate vegetation model int_ndvi_conformed: conformed OpenTrace
+    entity feeding mart_dev from stg_vegetation_ndvi.'
+  primary_key: ''
+  upstream: stg_vegetation_ndvi
+  upstream_refs:
+  - stg_vegetation_ndvi
+  joins: ''
+  path: dbt/models/intermediate_dev/vegetation/int_ndvi_conformed.sql
+common_columns:
+  geo_key:
+    role: FK
+    description: Conformed geography key linking this row to int_geography_conformed.
+      Use this join key for place-level analysis; may be null when geo attach fails
+      (often warn-severity in tests).
+  geo_level:
+    role: dim
+    description: 'Geographic grain of the place row: country, admin1, admin2, city,
+      or fnid. Filter on geo_level before aggregating across unlike place grains.'
+  country_iso3:
+    role: dim
+    description: ISO 3166-1 alpha-3 country code. Enables consistent country filtering
+      and joins to int_ref_country / int_geography_conformed even when geo_key is
+      unmatched.
+  country_iso2:
+    role: dim
+    description: ISO 3166-1 alpha-2 country code. Often used as a bridge from FEWS
+      or city sources before resolving ISO3 via int_ref_country.
+  country_name:
+    role: dim
+    description: Human-readable country name as provided by the upstream source or
+      conformed reference. Prefer country_iso3 for joins; use country_name for display
+      and fuzzy matching.
+  country:
+    role: dim
+    description: Country label from the source feed (may be name or code depending
+      on upstream). Normalize via int_ref_country or int_geography_conformed before
+      cross-source compares.
+  admin_1_name:
+    role: dim
+    description: First-level administrative division name (state/region/province)
+      when present on the source.
+  admin_2_name:
+    role: dim
+    description: Second-level administrative division name (district/zone) when present
+      on the source.
+  city_name:
+    role: dim
+    description: City or locality name for city-grain geography rows.
+  fnid:
+    role: dim
+    description: FEWS NET livelihood / admin unit identifier used as a subnational
+      place key. Join to int_geography_conformed where geo_level = fnid.
+  latitude:
+    role: dim
+    description: Latitude in decimal degrees for point or city observations.
+  longitude:
+    role: dim
+    description: Longitude in decimal degrees for point or city observations.
+  source_natural_key:
+    role: dim
+    description: Stable natural key for the producing dataset (e.g. faostat_crops,
+      fews_fs). Joins to int_source_registry for ACF Path B producer metadata (tier,
+      data_level).
+  source_key:
+    role: FK
+    description: Surrogate or conformed source key used downstream in mart dims; aligns
+      with lineage carried from intermediate into mart_dev.
+  area_code:
+    role: dim
+    description: FAOSTAT area code identifying the geographic reporting unit. Resolve
+      to ISO via int_faostat_area_reference / int_faostat_area_iso before country
+      joins.
+  item_code:
+    role: dim
+    description: FAOSTAT item (commodity/product) code for the measure row.
+  element_code:
+    role: dim
+    description: FAOSTAT element code identifying the measure type (production, area
+      harvested, yield, etc.).
+  year:
+    role: dim
+    description: Calendar year of the observation or reporting period.
+  month:
+    role: dim
+    description: Calendar month (1–12) of the observation when the source is monthly.
+  value:
+    role: measure
+    description: Primary numeric measure for this conformed fact row. Interpret together
+      with unit and any grain discriminator (production_grain, measure_type, price_source,
+      etc.).
+  unit:
+    role: measure
+    description: Unit of measure for value (tonnes, people, USD, index points, etc.).
+  loaded_at:
+    role: meta
+    description: Pipeline load timestamp when the intermediate row was materialized.
+  native_id:
+    role: dim
+    description: Source-native identifier for the place or entity (city id, FNID,
+      ISO3, etc.) used when building geo_key uniqueness.
+  in_africa_scope:
+    role: dim
+    description: Boolean flag indicating the country is in OpenTrace Africa analysis
+      scope (from int_ref_country / M49 + geo seed).
+  production_grain:
+    role: dim
+    description: 'Discriminator for FAOSTAT production long-form rows: physical, index,
+      or gross_value. Filter production_grain before comparing quantities across elements.'
+  measure_type:
+    role: dim
+    description: 'Food-security product type: population counts versus classification
+      phases. Never union population and classification metrics without an explicit
+      grain caveat.'
+  price_value:
+    role: measure
+    description: Observed or reported market price amount after harmonisation.
+  price_source:
+    role: dim
+    description: 'Price feed origin after harmonisation: fews, wfp, or faostat. Keep
+      price_source when comparing volatility across markets.'
+  measurement_form:
+    role: dim
+    description: Macro indicator form (share_of_gdp, annual_growth, constant_price,
+      current_price). Filter before charting FAOSTAT macro series.
+  soil_property:
+    role: dim
+    description: Soil attribute name in long-form soil tables (e.g. organic carbon,
+      pH, texture class).
+  depth_band:
+    role: dim
+    description: Soil sampling depth interval label for the property value.
+  season_key:
+    role: FK
+    description: Normalized season identifier for yield/season calendars.
+  season_country_key:
+    role: FK
+    description: Composite season × country key used to attach yield rows to int_season_mapped.
+  season_name:
+    role: dim
+    description: Human-readable agricultural season name from the yield source.
+  tier:
+    role: acf
+    description: ACF producer-scale tier (1=global, 2=national ministry, 3=community
+      survey).
+  data_level:
+    role: acf
+    description: ACF warehouse resolution of the number (global, national, sub_national,
+      community, point).
+  organisation_name:
+    role: dim
+    description: Producing organisation name in the source registry.
+  default_data_level:
+    role: acf
+    description: Default ACF data_level for this source_natural_key in int_source_registry.
+  producer_scale:
+    role: acf
+    description: Producer scale band (global, regional, national, subnational) for
+      ACF scoring.
+  match_method:
+    role: dim
+    description: 'How FAOSTAT area_code was mapped to a country: m49, ref_country_name,
+      or alias. Null when unmatched.'
+  product:
+    role: dim
+    description: Crop or commodity name from the yield/production source feed.
+  population:
+    role: measure
+    description: Population count associated with the place or survey unit when provided
+      by the source.
+column_overrides:
+  int_geography_conformed:
+    geo_key:
+      role: PK
+      description: Primary place key for the OpenTrace intermediate geography spine.
+        Uniqueness is enforced with source_natural_key and native_id. All with_geo
+        intermediate facts should join here on geo_key.
+      example: geo_eth_fnid_ETR103
+  int_source_registry:
+    source_natural_key:
+      role: PK
+      description: Primary key of the ACF Path B source registry. One row per producing
+        dataset with organisation, tier, default_data_level, and producer_scale.
+      example: faostat_crops
+  int_ref_country:
+    country_iso3:
+      role: PK
+      description: Canonical ISO3 country code for Africa-scoped reference countries
+        (stg_geo + M49 seed). Use as the authoritative country list for filters.
+      example: KEN

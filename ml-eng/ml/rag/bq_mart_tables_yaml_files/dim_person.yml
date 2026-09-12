@@ -2,7 +2,7 @@ table_name: opentrace-prod-5ga4.mart_dev.dim_person
 description: OpenAIRE persons/authors.
 source:
   layer: mart_dev
-profiled_at: '2026-08-28T17:53:44.421016+00:00'
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
 grain: Person/author id
 entity_type: research
 columns:
@@ -42,18 +42,108 @@ person_id_value_stats:
   is_truncated: true
   min_value: orcid_______::0000017cd9b1bcfbdbb6f7aa5e42cb3e
   max_value: orcid_______::83c3aa214115547fb48a6f01868ead0d
-given_name_value_stats:
-  distinct_count: 1416017
-  null_count: 0
-  is_truncated: true
-  min_value: '"Elsie" Xu'
-  max_value: 🦢
-family_name_value_stats:
-  distinct_count: 1930824
-  null_count: 292312
-  is_truncated: true
-  min_value: '!'
-  max_value: 🌸
+given_name_value_samples:
+- David
+- Daniel
+- Michael
+- Anna
+- Alexander
+- Maria
+- Laura
+- Thomas
+- John
+- Sarah
+- Robert
+- Andrea
+- Andrew
+- Peter
+- James
+- Wei
+- Matthew
+- Sara
+- Ali
+- Elena
+- Christopher
+- Paul
+- Martin
+- Li
+- Yang
+- Yu
+- Julia
+- Ana
+- Jennifer
+- Natalia
+- Ahmed
+- Elizabeth
+- Jessica
+- Jonathan
+- Mark
+- Olga
+- Carlos
+- Richard
+- William
+- Christian
+- Jing
+- Gabriel
+- Benjamin
+- Muhammad
+- Yan
+- Mohamed
+- Mohammad
+- Amanda
+- Mariana
+- Xin
+family_name_value_samples:
+- Wang
+- Li
+- Zhang
+- Liu
+- Chen
+- Yang
+- Kim
+- Lee
+- Wu
+- Xu
+- Huang
+- Zhao
+- Zhou
+- Sun
+- Yu
+- Zhu
+- Lin
+- Ma
+- Hu
+- Guo
+- wang
+- Jiang
+- He
+- zhang
+- Gao
+- Lu
+- Singh
+- Park
+- Song
+- Silva
+- Han
+- Zheng
+- Tang
+- Kumar
+- li
+- Nguyen
+- Shi
+- Luo
+- Cheng
+- Yan
+- Wei
+- Sharma
+- Xie
+- liu
+- Khan
+- Cao
+- Liang
+- Feng
+- chen
+- Dong
 biography_value_stats:
   distinct_count: 384310
   null_count: 0
@@ -66,23 +156,27 @@ coauthor_count_value_stats:
   is_truncated: true
   min_value: '0'
   max_value: '501'
-filtering_guidance:
-- 'Grain: Person/author id'
-- OpenAIRE persons/authors.
-sql_generation_hints:
-- 'Join keys: person_key'
-- LEFT JOIN dim_geography on geography_key for country names
-semantic_role:
-  primary_domain: research
-  supports:
-  - research
 source_natural_key_value_stats:
   distinct_count: 1
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: openaire_persons
+  max_value: openaire_persons
 loaded_at_value_stats:
   distinct_count: 1
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: '2026-08-24 14:23:02.692114+00'
+  max_value: '2026-08-24 14:23:02.692114+00'
+sql_generation_hints:
+- 'Join keys: person_key'
+- LEFT JOIN dim_geography on geography_key for country names
+filtering_guidance:
+- 'Grain: Person/author id'
+- OpenAIRE persons/authors.
+semantic_role:
+  primary_domain: research
+  supports:
+  - research
+bind_spine:
+  person_key: dim_person.family_name

@@ -2,7 +2,7 @@ table_name: opentrace-prod-5ga4.mart_dev.bridge_geography_aez
 description: Many-to-many geography ↔ AEZ.
 source:
   layer: mart_dev
-profiled_at: '2026-08-28T17:53:44.421016+00:00'
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
 grain: geography_key × AEZ
 entity_type: geography
 columns:
@@ -69,13 +69,15 @@ loaded_at_value_stats:
   distinct_count: 0
   null_count: 0
   is_truncated: false
-filtering_guidance:
-- 'Grain: geography_key × AEZ'
-- Many-to-many geography ↔ AEZ.
 sql_generation_hints:
 - 'Join keys: geography_key, aez_key'
 - LEFT JOIN dim_geography on geography_key for country names
+filtering_guidance:
+- 'Grain: geography_key × AEZ'
+- Many-to-many geography ↔ AEZ.
 semantic_role:
   primary_domain: geography
   supports:
   - geography
+bind_spine:
+  geography_key: dim_geography.country_iso3

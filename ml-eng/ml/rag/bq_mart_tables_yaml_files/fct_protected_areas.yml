@@ -2,7 +2,7 @@ table_name: opentrace-prod-5ga4.mart_dev.fct_protected_areas
 description: Protected area extents.
 source:
   layer: mart_dev
-profiled_at: '2026-08-28T17:53:44.421016+00:00'
+profiled_at: '2026-09-05T17:57:00.703130+00:00'
 grain: Protected area feature
 entity_type: spatial
 columns:
@@ -82,61 +82,113 @@ geography_key_value_stats:
   is_truncated: true
   min_value: 0001600623fef7fd72830124b253ced3
   max_value: ffe04a83093866d63e5946dede21a358
-country_iso3_value_samples:
+geo_level_value_stats:
+  distinct_count: 2
+  null_count: 0
+  is_truncated: false
+  min_value: city
+  max_value: country
+country_iso3_value_stats:
+  distinct_count: 52
+  null_count: 0
+  is_truncated: false
+  min_value: AGO
+  max_value: ZWE
+source_key_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: 9a235ab0fae73596687afc9cdb25f920
+  max_value: 9a235ab0fae73596687afc9cdb25f920
+tier_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '2'
+  max_value: '2'
+data_level_value_stats:
+  distinct_count: 2
+  null_count: 0
+  is_truncated: false
+  min_value: community
+  max_value: national
+geo_scope_value_stats:
+  distinct_count: 2
+  null_count: 0
+  is_truncated: false
+  min_value: community
+  max_value: national
+place_scope_value_samples:
 - ZAF
+- South Africa
+- Nigeria
 - NGA
+- Uganda
 - UGA
 - TZA
+- Tanzania
 - ZMB
+- Zambia
+- Western Cape
+- Limpopo
+- Kenya
 - KEN
 - CIV
+- Côte d’Ivoire
 - MAR
+- Morocco
+- Ghana
 - GHA
+- Zimbabwe
 - ZWE
+- Free State
+- KwaZulu-Natal
+- Mpumalanga
+- Western
+- North West
+- Madagascar
 - MDG
+- Eastern
 - NAM
-- GIN
+- Namibia
+- Senegal
 - SEN
+- GIN
+- Guinea
 - MWI
+- Eastern Cape
+- Malawi
 - BFA
+- Burkina Faso
+- Niger
 - ETH
+- Ethiopia
+- Tanga
+- Katsina
+- Morogoro
+- Thabazimbi
 - TUN
-- BWA
-- CMR
-- BEN
-- GAB
-- EGY
-- MOZ
-- TGO
-- COD
-- NER
-- LSO
-- COG
-- SLE
-- SSD
-- SWZ
-- MLI
-- GNB
-- CAF
-- MUS
-- GMB
-- LBR
-- AGO
-- TCD
-- GNQ
-- BDI
-- DZA
-- SYC
-- RWA
-- CPV
-- COM
-- ERI
-- MRT
-- STP
-- DJI
-- SOM
+- Tunisia
 metric_value_samples:
 - protected_area_extent
+source_id_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: 9a235ab0fae73596687afc9cdb25f920
+  max_value: 9a235ab0fae73596687afc9cdb25f920
+as_of_date_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '2026-08-27'
+  max_value: '2026-08-27'
+as_of_date_basis_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: loaded_at
+  max_value: loaded_at
 value_value_stats:
   distinct_count: 6939
   null_count: 0
@@ -147,12 +199,57 @@ unit_value_stats:
   distinct_count: 0
   null_count: 6957
   is_truncated: false
-protected_area_name_value_stats:
-  distinct_count: 6958
-  null_count: 0
-  is_truncated: true
-  min_value: 91 Ammunisie Depo Private Nature Reserve
-  max_value: uThukela Marine Protected Area
+protected_area_name_value_samples:
+- Kunene River
+- Rusizi
+- Igangan
+- Faille de Nyakazu
+- Bururi Forest
+- Atchérigbé
+- Réserve de Nkayamba
+- Foge Islands
+- Odugebe
+- Atakora
+- Partial Reserve Namibe
+- Okanguati
+- Tchatchou Gokana
+- National Park Quiçãma
+- Integral Nature Reserve and the Luando
+- National Park Bicuar
+- Vyanda
+- National Park Cameia
+- Lacs du Nord
+- Kainji Lake
+- Chutes de Karera
+- Doro
+- Okpara
+- Borgu
+- Partial Reserve Buffalo
+- Tetetou-Nord
+- Kourtiagou
+- Ruvubu
+- Bellefoungou
+- Kigwena Forest
+- Opara
+- Uukolonkadhi Ruacana
+- L'Alibori Supérieur
+- Puissa
+- Tchaourou
+- Natural Regional Park Chimalavera
+- Ouémé Superieur
+- Meko
+- Swa-Kibula
+- Epupa
+- National Park Cangandala
+- Rumonge
+- Kibira
+- Réserve de Muyange
+- Djigbé
+- Djona
+- Illoka'oje
+- National Park Mupa
+- Ohumbe
+- Forêt de Murehe
 latitude_value_stats:
   distinct_count: 6944
   null_count: 0
@@ -207,63 +304,28 @@ geometry_wkt_value_stats:
     8.76730564472698 19.843427839463, 8.73671800930271 19.8775274342549, 8.74350927285065
     19.900740701527, 8.7556455123391 19.9246684282483, 8.75020172171734 19.9609374061887,
     8.74327571087678 19.982711676823, 9.995266705507 19.9869496690419))
-filtering_guidance:
-- 'Grain: Protected area feature'
-- Protected area extents.
-sql_generation_hints:
-- 'Join keys: geography_key, source_key'
-- LEFT JOIN dim_geography on geography_key for country names
-semantic_role:
-  primary_domain: spatial
-  supports:
-  - spatial
-geo_level_value_stats:
-  distinct_count: 2
-  null_count: 0
-  is_truncated: false
-  patched: true
-source_key_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-tier_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-data_level_value_stats:
-  distinct_count: 2
-  null_count: 0
-  is_truncated: false
-  patched: true
-geo_scope_value_stats:
-  distinct_count: 2
-  null_count: 0
-  is_truncated: false
-  patched: true
-source_id_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-as_of_date_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-as_of_date_basis_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
 source_natural_key_value_stats:
   distinct_count: 1
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: arcgis_land_protected_areas
+  max_value: arcgis_land_protected_areas
 loaded_at_value_stats:
   distinct_count: 1
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: '2026-08-27 14:41:21.108170+00'
+  max_value: '2026-08-27 14:41:21.108170+00'
+filtering_guidance:
+- 'Grain: Protected area feature'
+- Protected area extents.
+semantic_role:
+  primary_domain: spatial
+  supports:
+  - spatial
+sql_generation_hints:
+- 'Join keys: geography_key, source_key'
+- LEFT JOIN dim_geography on geography_key for country names
+bind_spine:
+  geography_key: dim_geography.country_iso3
+  source_key: dim_source.organisation_name

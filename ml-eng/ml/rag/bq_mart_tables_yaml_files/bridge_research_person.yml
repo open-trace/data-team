@@ -1,0 +1,76 @@
+table_name: opentrace-prod-5ga4.mart_dev.bridge_research_person
+description: OpenAIRE project–person/author relationships.
+source:
+  layer: mart_dev
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
+grain: Project ↔ person edge
+entity_type: research
+columns:
+- name: research_person_bridge_key
+  type: STRING
+  description: research person bridge key
+- name: openaire_id
+  type: STRING
+  description: openaire id
+- name: person_key
+  type: STRING
+  description: person key
+- name: target_id
+  type: STRING
+  description: target id
+- name: rel_name
+  type: STRING
+  description: rel name
+- name: target_type
+  type: STRING
+  description: target type
+- name: source_natural_key
+  type: STRING
+  description: source natural key
+- name: loaded_at
+  type: TIMESTAMP
+  description: loaded at
+research_person_bridge_key_value_stats:
+  distinct_count: 0
+  null_count: 0
+  is_truncated: false
+openaire_id_value_stats:
+  distinct_count: 0
+  null_count: 0
+  is_truncated: false
+person_key_value_stats:
+  distinct_count: 0
+  null_count: 0
+  is_truncated: false
+target_id_value_stats:
+  distinct_count: 0
+  null_count: 0
+  is_truncated: false
+rel_name_value_stats:
+  distinct_count: 0
+  null_count: 0
+  is_truncated: false
+target_type_value_stats:
+  distinct_count: 0
+  null_count: 0
+  is_truncated: false
+source_natural_key_value_stats:
+  distinct_count: 0
+  null_count: 0
+  is_truncated: false
+loaded_at_value_stats:
+  distinct_count: 0
+  null_count: 0
+  is_truncated: false
+sql_generation_hints:
+- 'Join keys: person_key (project via openaire_id)'
+- LEFT JOIN dim_geography on geography_key for country names
+filtering_guidance:
+- 'Grain: Project ↔ person edge'
+- OpenAIRE project–person/author relationships.
+semantic_role:
+  primary_domain: research
+  supports:
+  - research
+bind_spine:
+  person_key: dim_person.family_name

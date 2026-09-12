@@ -22,10 +22,14 @@ def test_igbo_yam_query_does_not_keep_hallucinated_nigeria() -> None:
         "time_end": "",
     }
     with mock.patch(
-        "ml.rag.chatbot.query_decomposer._call_llama_decompose",
-        return_value=fake_llm,
+        "ml.rag.chatbot.query_decomposer._decompose_backend_configured",
+        return_value=True,
     ):
-        out = decompose_query(q)
+        with mock.patch(
+            "ml.rag.chatbot.query_decomposer._call_llama_decompose",
+            return_value=fake_llm,
+        ):
+            out = decompose_query(q)
     geo_l = [g.lower() for g in out.get("geography") or []]
     ent_l = [e.lower() for e in out.get("entities") or []]
     assert "nigeria" not in geo_l
@@ -49,10 +53,14 @@ def test_which_country_agricultural_activity_africa_default() -> None:
         "time_end": "2020-12-31",
     }
     with mock.patch(
-        "ml.rag.chatbot.query_decomposer._call_llama_decompose",
-        return_value=fake_llm,
+        "ml.rag.chatbot.query_decomposer._decompose_backend_configured",
+        return_value=True,
     ):
-        out = decompose_query(q)
+        with mock.patch(
+            "ml.rag.chatbot.query_decomposer._call_llama_decompose",
+            return_value=fake_llm,
+        ):
+            out = decompose_query(q)
     assert "country" not in [g.lower() for g in out.get("geography") or []]
     assert out.get("africa_default") is True
     assert any(str(e).lower() == "africa" for e in (out.get("entities") or []))

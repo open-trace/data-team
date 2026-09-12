@@ -2,7 +2,7 @@ table_name: opentrace-prod-5ga4.mart_dev.dim_classification
 description: FEWS IPC phase classification dimension.
 source:
   layer: mart_dev
-profiled_at: '2026-08-28T17:53:44.421016+00:00'
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
 grain: IPC phase code/name
 entity_type: food_security
 columns:
@@ -21,6 +21,12 @@ columns:
 - name: loaded_at
   type: TIMESTAMP
   description: loaded at
+classification_key_value_stats:
+  distinct_count: 6
+  null_count: 0
+  is_truncated: false
+  min_value: 0edae0dfa0d0efae0cfb5d092251424a
+  max_value: f58202aa4c60ba414853392bec517aa3
 phase_code_value_samples:
 - 3+
 - '1'
@@ -35,28 +41,27 @@ phase_name_value_samples:
 - Stressed
 - Emergency
 - Crisis
-filtering_guidance:
-- 'Grain: IPC phase code/name'
-- FEWS IPC phase classification dimension.
-sql_generation_hints:
-- 'Join keys: classification_key'
-- LEFT JOIN dim_geography on geography_key for country names
-semantic_role:
-  primary_domain: food_security
-  supports:
-  - food_security
-classification_key_value_stats:
-  distinct_count: 6
-  null_count: 0
-  is_truncated: false
-  patched: true
 classification_scale_value_stats:
   distinct_count: 3
-  null_count: 0
+  null_count: 1
   is_truncated: false
-  patched: true
+  min_value: IPC 2.0
+  max_value: IPC Highest Household
 loaded_at_value_stats:
   distinct_count: 1
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: '2026-08-26 01:25:26.993393+00'
+  max_value: '2026-08-26 01:25:26.993393+00'
+sql_generation_hints:
+- 'Join keys: classification_key'
+- LEFT JOIN dim_geography on geography_key for country names
+filtering_guidance:
+- 'Grain: IPC phase code/name'
+- FEWS IPC phase classification dimension.
+semantic_role:
+  primary_domain: food_security
+  supports:
+  - food_security
+bind_spine:
+  classification_key: dim_classification.phase_name

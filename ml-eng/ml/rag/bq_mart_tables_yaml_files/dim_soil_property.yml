@@ -1,0 +1,75 @@
+table_name: opentrace-prod-5ga4.mart_dev.dim_soil_property
+description: Soil property catalogue from ISRIC/iSDA.
+source:
+  layer: mart_dev
+profiled_at: '2026-09-05T19:24:26.423104+00:00'
+grain: soil_property × depth
+entity_type: soil
+columns:
+- name: soil_property_key
+  type: STRING
+  description: soil property key
+- name: soil_property
+  type: STRING
+  description: soil property
+- name: depth
+  type: STRING
+  description: depth
+- name: loaded_at
+  type: TIMESTAMP
+  description: loaded at
+soil_property_key_value_stats:
+  distinct_count: 70
+  null_count: 0
+  is_truncated: false
+  min_value: 03aa8a764c69b9947354c5f62f4bef10
+  max_value: fdc05140d9d1ff8ad21d7eccebef6e51
+soil_property_value_samples:
+- cec
+- nitrogen
+- bdod
+- silt
+- clay
+- soc
+- phh2o
+- sand
+- sulfur
+- bulk_density
+- magnesium
+- stone_content
+- carbon_total
+- aluminum
+- ph
+- iron
+- potassium
+- zinc
+- carbon_organic
+- calcium
+- texture_class
+- bedrock_depth
+depth_value_samples:
+- 0-20cm
+- 20-50cm
+- 0_5cm
+- 15_30cm
+- 30_60cm
+- 5_15cm
+- 60_100cm
+loaded_at_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '2026-08-24 21:57:15.796122+00'
+  max_value: '2026-08-24 21:57:15.796122+00'
+semantic_role:
+  primary_domain: soil
+  supports:
+  - soil
+bind_spine:
+  soil_property_key: dim_soil_property.soil_property
+filtering_guidance:
+- 'Grain: soil_property × depth'
+- Soil property catalogue from ISRIC/iSDA.
+sql_generation_hints:
+- 'Join keys: soil_property_key'
+- LEFT JOIN dim_geography on geography_key for country names

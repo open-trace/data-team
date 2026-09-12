@@ -2,7 +2,7 @@ table_name: opentrace-prod-5ga4.mart_dev.dim_water
 description: dim water
 source:
   layer: mart_dev
-profiled_at: '2026-08-28T17:53:44.421016+00:00'
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
 columns:
 - name: water_key
   type: STRING
@@ -16,6 +16,18 @@ columns:
 - name: description
   type: STRING
   description: description
+water_key_value_stats:
+  distinct_count: 8
+  null_count: 0
+  is_truncated: false
+  min_value: 0cb4f0893e2a7c355004c431ea69bd15
+  max_value: d8c25b197559cd350c06b3ccccf06495
+water_source_value_stats:
+  distinct_count: 8
+  null_count: 0
+  is_truncated: false
+  min_value: BOREHOLE
+  max_value: UNPROTECTED_WELL
 water_access_type_value_samples:
 - Piped (yard)
 - Tanker/Truck
@@ -25,18 +37,9 @@ water_access_type_value_samples:
 - Rainwater Collection
 - Surface Water
 - Unprotected Well
-water_key_value_stats:
-  distinct_count: 8
-  null_count: 0
-  is_truncated: false
-  patched: true
-water_source_value_stats:
-  distinct_count: 8
-  null_count: 0
-  is_truncated: false
-  patched: true
 description_value_stats:
   distinct_count: 8
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: Piped water directly into dwelling
+  max_value: Water delivered by tanker or truck

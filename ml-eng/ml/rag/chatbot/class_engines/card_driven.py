@@ -4,7 +4,7 @@ from __future__ import annotations
 from typing import Any
 
 from ml.rag.chatbot.class_engines.base import ClassEngine, EngineResult
-from ml.rag.chatbot.class_engines.shared import bind_value_hits, build_planned_engine_result
+from ml.rag.chatbot.class_engines.shared import bind_value_hits, build_planned_multi_table_result
 from ml.rag.chatbot.class_table_router import select_table_plans
 from ml.rag.chatbot.intent_bundles import match_intent_bundles
 from ml.rag.chatbot.schema_card import load_schema_card
@@ -47,8 +47,6 @@ class CardDrivenEngine(ClassEngine):
                 caveats=["no_table_plans"],
             )
 
-        plan = plans[0]
-        table = plan.table_id
         hits = bind_value_hits(card, query=query, facets=facets)
         if iso_list:
             hits["country_iso3"] = iso_list
@@ -56,15 +54,15 @@ class CardDrivenEngine(ClassEngine):
             return EngineResult(
                 class_code=self.class_code,
                 status="planner_error",
-                table_id=table,
+                table_id=plans[0].table_id,
                 sql=None,
                 caveats=["missing_geography"],
                 value_hits=hits,
             )
 
-        return build_planned_engine_result(
+        return build_planned_multi_table_result(
             class_code=self.class_code,
-            table_id=table,
+            plans=plans,
             query=query,
             facets=facets,
             card=card,

@@ -2,7 +2,7 @@ table_name: opentrace-prod-5ga4.mart_dev.fct_food_balance
 description: FAOSTAT food balance long-form.
 source:
   layer: mart_dev
-profiled_at: '2026-08-28T17:53:44.421016+00:00'
+profiled_at: '2026-09-05T17:57:00.703130+00:00'
 grain: Country × item × element × year
 entity_type: food_security
 columns:
@@ -100,62 +100,111 @@ food_balance_key_value_stats:
   is_truncated: true
   min_value: 000005f80893e2c16aa8375af54a9b42
   max_value: fffffa555d7c0e39ddb80eeed401e6ae
-country_iso3_value_samples:
-- KEN
-- EGY
-- ZAF
-- MAR
-- TZA
-- CIV
-- CMR
-- ZWE
-- GHA
-- UGA
-- SEN
-- NGA
-- TUN
-- BWA
-- ZMB
-- MDG
-- DZA
-- MUS
-- NAM
-- MOZ
-- ETH
-- MWI
-- NER
-- SWZ
-- BFA
-- RWA
-- COG
-- GAB
-- AGO
-- GIN
-- CPV
-- GMB
-- MRT
-- SLE
-- DJI
-- LBR
-- STP
-- GNB
-- LSO
-- COD
-- SYC
-- LBY
-- SDN
-- BEN
-- TGO
-- MLI
-- COM
-- CAF
-- TCD
+geography_key_value_stats:
+  distinct_count: 49
+  null_count: 0
+  is_truncated: false
+  min_value: 08d5d1fbcfbc008d33905868ea7a2dd7
+  max_value: ff2abe6b8f87b63b0a4d12a3dc2fb900
+geo_level_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: country
+  max_value: country
+country_iso3_value_stats:
+  distinct_count: 49
+  null_count: 0
+  is_truncated: false
+  min_value: AGO
+  max_value: ZWE
 product_key_value_stats:
   distinct_count: 600
   null_count: 0
   is_truncated: true
   min_value: 013ae1638015cc77b5d179aef929e6eb
   max_value: ff64d6ae6ec04e13977dce54c43e596d
+element_key_value_stats:
+  distinct_count: 29
+  null_count: 0
+  is_truncated: false
+  min_value: 09353387931db36c8af0e1b3658ddffe
+  max_value: ff1523efdaf2fdee354276af47e7fc44
+source_key_value_stats:
+  distinct_count: 4
+  null_count: 0
+  is_truncated: false
+  min_value: 25c9a8f4314d1c30bd641f4a3b5659fa
+  max_value: f2d94edcc60f52e77ef0a79c6973e412
+tier_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '1'
+  max_value: '1'
+data_level_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: national
+  max_value: national
+geo_scope_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: national
+  max_value: national
+place_scope_value_samples:
+- Kenya
+- KEN
+- EGY
+- Egypt
+- ZAF
+- South Africa
+- MAR
+- Morocco
+- Tanzania
+- TZA
+- CIV
+- Côte d’Ivoire
+- CMR
+- Cameroon
+- Zimbabwe
+- ZWE
+- Ghana
+- GHA
+- Uganda
+- UGA
+- Senegal
+- SEN
+- NGA
+- Nigeria
+- TUN
+- Tunisia
+- Botswana
+- BWA
+- ZMB
+- Zambia
+- MDG
+- Madagascar
+- DZA
+- Algeria
+- Mauritius
+- MUS
+- Namibia
+- NAM
+- MOZ
+- Mozambique
+- Ethiopia
+- ETH
+- MWI
+- Malawi
+- NER
+- Niger
+- Eswatini
+- SWZ
+- BFA
+- Burkina Faso
 metric_value_samples:
 - food_balance_food_supply_(kcal/capita/day)
 - food_balance_import_quantity
@@ -177,15 +226,21 @@ metric_value_samples:
 - food_balance_other_uses_(non-food)
 - food_balance_losses
 - food_balance_feed
-- food_balance_food_supply_(kcal)
 - food_balance_protein_supply_quantity_(t)
 - food_balance_fat_supply_quantity_(t)
+- food_balance_food_supply_(kcal)
 - food_balance_seed
 - food_balance_processing
 - food_balance_loss
 - food_balance_tourist_consumption
 - food_balance_processed
 - food_balance_total_population_-_both_sexes
+source_id_value_stats:
+  distinct_count: 4
+  null_count: 0
+  is_truncated: false
+  min_value: 25c9a8f4314d1c30bd641f4a3b5659fa
+  max_value: f2d94edcc60f52e77ef0a79c6973e412
 element_value_samples:
 - Food supply (kcal/capita/day)
 - Fat supply quantity (g/capita/day)
@@ -201,17 +256,17 @@ element_value_samples:
 - Export Quantity
 - Food supply quantity (tonnes)
 - Food supply quantity (g/capita/day)
-- Fats/Year
-- Proteins/Year
 - Calories/Year
+- Proteins/Year
+- Fats/Year
 - Export quantity
 - Opening stocks
 - Other uses (non-food)
 - Losses
 - Feed
 - Fat supply quantity (t)
-- Protein supply quantity (t)
 - Food supply (kcal)
+- Protein supply quantity (t)
 - Seed
 - Processing
 - Loss
@@ -224,16 +279,16 @@ element_code_value_samples:
 - '674'
 - '5301'
 - '5611'
-- '5142'
 - '645'
+- '5142'
 - '5911'
 - '5166'
 - '5511'
 - '5610'
 - '5141'
 - '665'
-- '281'
 - '271'
+- '281'
 - '261'
 - '5074'
 - '5113'
@@ -273,55 +328,60 @@ year_value_samples:
 - '2016'
 - '2015'
 - '2014'
-- '2003'
-- '1998'
-- '2000'
-- '2005'
-- '2006'
-- '1995'
-- '2002'
-- '2001'
-- '1994'
-- '1999'
-- '2009'
 - '2007'
-- '2008'
-- '2004'
 - '1996'
+- '2005'
+- '2008'
+- '2002'
+- '1995'
+- '1994'
 - '1993'
+- '2003'
+- '1999'
+- '1998'
+- '2001'
+- '2009'
+- '2004'
 - '1997'
-- '1976'
-- '1986'
-- '1983'
-- '1965'
-- '1990'
-- '1961'
-- '1966'
-- '1988'
-- '1991'
+- '2000'
+- '2006'
+- '1979'
+- '1971'
 - '1992'
 - '1967'
-- '1985'
-- '1984'
-- '1978'
-- '1964'
-- '1971'
-- '1968'
-- '1962'
-- '1979'
-- '1982'
-- '1981'
+- '1986'
 - '1989'
-- '1972'
-- '1975'
-- '1987'
-- '1963'
-- '1980'
-- '1977'
-- '1974'
+- '1984'
+- '1962'
+- '1985'
+- '1983'
+- '1961'
 - '1973'
-- '1970'
-- '1969'
+- '1981'
+- '1974'
+- '1965'
+- '1977'
+- '1964'
+- '1976'
+- '1978'
+date_key_value_stats:
+  distinct_count: 63
+  null_count: 0
+  is_truncated: false
+  min_value: '19610101'
+  max_value: '20230101'
+as_of_date_value_stats:
+  distinct_count: 63
+  null_count: 0
+  is_truncated: false
+  min_value: '1961-12-31'
+  max_value: '2023-12-31'
+as_of_date_basis_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: observation
+  max_value: observation
 production_value_stats:
   distinct_count: 61646
   null_count: 5205751
@@ -358,97 +418,47 @@ losses_value_stats:
   is_truncated: true
   min_value: '0'
   max_value: '8030881.38'
-unit_value_samples:
-- 1000 t
-- t
-- g/cap/d
-- kcal/cap/d
-- kg/cap
-- million Kcal
-- 1000 No
+unit_value_stats:
+  distinct_count: 7
+  null_count: 0
+  is_truncated: false
+  min_value: 1000 No
+  max_value: t
 value_value_stats:
   distinct_count: 427915
   null_count: 0
   is_truncated: true
   min_value: '-2467397'
   max_value: '205457116.8'
-indicator_classes:
-- FS
-- FVC
+source_natural_key_value_stats:
+  distinct_count: 4
+  null_count: 0
+  is_truncated: false
+  min_value: Unpivoted_FAOstat_africa_Food Balances_Food_Balances_2010-23
+  max_value: Unpivoted_FAOstat_africa_Food_Balances_Supply_Utilization_Accounts_2010-23
+loaded_at_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '2026-08-26 11:24:41.165140+00'
+  max_value: '2026-08-26 11:24:41.165140+00'
 filtering_guidance:
 - Filter element_code for food vs feed vs losses
 - Losses are SUA disappearance not farm-gate waste
-sql_generation_hints:
-- 'Join keys: geography_key, product_key, element_key, source_key, date_key'
-- LEFT JOIN dim_geography on geography_key for country names
 semantic_role:
   primary_domain: food_balance
   supports:
   - food_balance
   - FS
   - FVC
-geography_key_value_stats:
-  distinct_count: 49
-  null_count: 0
-  is_truncated: false
-  patched: true
-geo_level_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-element_key_value_stats:
-  distinct_count: 29
-  null_count: 0
-  is_truncated: false
-  patched: true
-source_key_value_stats:
-  distinct_count: 4
-  null_count: 0
-  is_truncated: false
-  patched: true
-tier_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-data_level_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-geo_scope_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-source_id_value_stats:
-  distinct_count: 4
-  null_count: 0
-  is_truncated: false
-  patched: true
-date_key_value_stats:
-  distinct_count: 63
-  null_count: 0
-  is_truncated: false
-  patched: true
-as_of_date_value_stats:
-  distinct_count: 63
-  null_count: 0
-  is_truncated: false
-  patched: true
-as_of_date_basis_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-source_natural_key_value_stats:
-  distinct_count: 4
-  null_count: 0
-  is_truncated: false
-  patched: true
-loaded_at_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
+indicator_classes:
+- FS
+- FVC
+sql_generation_hints:
+- 'Join keys: geography_key, product_key, element_key, source_key, date_key'
+- LEFT JOIN dim_geography on geography_key for country names
+bind_spine:
+  geography_key: dim_geography.country_iso3
+  product_key: dim_product.product_name
+  source_key: dim_source.organisation_name
+  element_key: dim_element.element_name

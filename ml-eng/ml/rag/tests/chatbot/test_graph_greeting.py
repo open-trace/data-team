@@ -9,7 +9,7 @@ from ml.rag.chatbot.query_enricher import enrich_query_with_memory
 
 
 def test_node_decompose_greeting_skips_memory_and_decompose() -> None:
-    with mock.patch("ml.rag.chatbot.graph.enrich_query_with_memory") as enrich:
+    with mock.patch("ml.rag.chatbot.graph.build_query_views") as views:
         with mock.patch("ml.rag.chatbot.graph.decompose_query") as decompose:
             with mock.patch("ml.rag.chatbot.graph.observed_span") as span:
                 with mock.patch("ml.rag.chatbot.graph.update_current_span_metadata") as meta:
@@ -28,7 +28,7 @@ def test_node_decompose_greeting_skips_memory_and_decompose() -> None:
     assert out.get("early_short_circuit") is True
     assert out.get("skipped_retrieval") is True
     assert out.get("route_candidate") == "greeting"
-    enrich.assert_not_called()
+    views.assert_not_called()
     decompose.assert_not_called()
     meta.assert_called_once()
     flags = meta.call_args[0][0]
@@ -59,7 +59,7 @@ def test_node_decompose_product_skips_decompose() -> None:
 
 def test_node_decompose_incident_query_short_circuits() -> None:
     incident = "what is your use, and what can i use AskADZA for"
-    with mock.patch("ml.rag.chatbot.graph.enrich_query_with_memory") as enrich:
+    with mock.patch("ml.rag.chatbot.graph.build_query_views") as views:
         with mock.patch("ml.rag.chatbot.graph.decompose_query") as decompose:
             with mock.patch("ml.rag.chatbot.graph.observed_span") as span:
                 with mock.patch("ml.rag.chatbot.graph.update_current_span_metadata") as meta:
@@ -80,7 +80,7 @@ def test_node_decompose_incident_query_short_circuits() -> None:
     assert out.get("skipped_retrieval") is True
     assert out.get("route_candidate") == "help"
     assert out.get("decompose_llm_ms") == 0.0
-    enrich.assert_not_called()
+    views.assert_not_called()
     decompose.assert_not_called()
     meta.assert_called_once()
     flags = meta.call_args[0][0]

@@ -2,7 +2,7 @@ table_name: opentrace-prod-5ga4.mart_dev.fct_research_expenditure
 description: fct research expenditure
 source:
   layer: mart_dev
-profiled_at: '2026-08-28T17:53:44.421016+00:00'
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
 columns:
 - name: research_exp_key
   type: STRING
@@ -60,3 +60,9 @@ source_record_id_value_stats:
   distinct_count: 0
   null_count: 0
   is_truncated: false
+grain: fct research expenditure
+bind_spine:
+  source_key: dim_source.organisation_name
+  unit_key: dim_unit.unit_code
+  organisation_key: dim_organisation.short_name
+  geo_key: dim_geography.country_iso3

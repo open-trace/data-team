@@ -10,8 +10,12 @@ from ml.rag.chatbot.schema_card import load_schema_card
 from ml.rag.chatbot.turn_contract import NON_RAG_JOBS, TurnContract
 
 EmptyPolicy = Literal["typed_gap", "narrative_ok", "web_ok", "generate_weak"]
+WarehouseRole = Literal["measurable", "sparse", "narrative_primary"]
+WebPolicy = Literal["never", "if_empty_job", "companion"]
 
 PRODUCT_DEFAULT_EMPTY_POLICY: EmptyPolicy = "generate_weak"
+PRODUCT_DEFAULT_WAREHOUSE_ROLE: WarehouseRole = "measurable"
+PRODUCT_DEFAULT_WEB_POLICY: WebPolicy = "never"
 
 _BROKEN_RETRIEVE_FLAGS = frozenset(
     {
@@ -34,6 +38,41 @@ def empty_policy_for_class(class_code: str) -> EmptyPolicy:
     if not card:
         return PRODUCT_DEFAULT_EMPTY_POLICY
     return parse_empty_policy(str(card.get("empty_policy") or ""))
+
+
+def parse_warehouse_role(raw: str | None) -> WarehouseRole:
+    val = (raw or "").strip().lower()
+    if val in ("measurable", "sparse", "narrative_primary"):
+        return val  # type: ignore[return-value]
+    return PRODUCT_DEFAULT_WAREHOUSE_ROLE
+
+
+def parse_web_policy(raw: str | None) -> WebPolicy:
+    val = (raw or "").strip().lower()
+    if val in ("never", "if_empty_job", "companion"):
+        return val  # type: ignore[return-value]
+    return PRODUCT_DEFAULT_WEB_POLICY
+
+
+def warehouse_role_for_class(class_code: str) -> WarehouseRole:
+    card = load_schema_card(class_code)
+    if not card:
+        return PRODUCT_DEFAULT_WAREHOUSE_ROLE
+    return parse_warehouse_role(str(card.get("warehouse_role") or ""))
+
+
+def web_policy_for_class(class_code: str) -> WebPolicy:
+    card = load_schema_card(class_code)
+    if not card:
+        return PRODUCT_DEFAULT_WEB_POLICY
+    return parse_web_policy(str(card.get("web_policy") or ""))
+
+
+def resolve_web_policy(state: dict[str, Any]) -> WebPolicy:
+    code = primary_class_from_state(state)
+    if code:
+        return web_policy_for_class(code)
+    return PRODUCT_DEFAULT_WEB_POLICY
 
 
 def primary_class_from_state(state: dict[str, Any]) -> str:
@@ -193,15 +232,24 @@ def build_filter_miss_block(
 __all__ = [
     "EmptyPolicy",
     "PRODUCT_DEFAULT_EMPTY_POLICY",
+    "PRODUCT_DEFAULT_WAREHOUSE_ROLE",
+    "PRODUCT_DEFAULT_WEB_POLICY",
+    "WarehouseRole",
+    "WebPolicy",
     "build_filter_miss_block",
     "broken_retrieve",
     "empty_policy_for_class",
     "execute_miss_flag",
     "has_usable_evidence",
     "parse_empty_policy",
+    "parse_warehouse_role",
+    "parse_web_policy",
     "primary_class_from_state",
     "resolve_empty_policy",
+    "resolve_web_policy",
     "retrieval_was_executed",
     "should_generate_weak",
+    "warehouse_role_for_class",
     "weak_after_retrieval_failure_enabled",
+    "web_policy_for_class",
 ]

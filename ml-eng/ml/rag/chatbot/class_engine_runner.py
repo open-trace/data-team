@@ -80,7 +80,12 @@ def engine_results_to_bq_plan(
         value_hits_all[er.class_code] = er.value_hits
         table_id = str(er.table_id or "").strip()
 
-        if er.bind_contract and table_id:
+        if isinstance(er.bind_contracts, dict) and er.bind_contracts:
+            for tid, bc in er.bind_contracts.items():
+                key = str(tid or "").strip().split(".")[-1]
+                if key and isinstance(bc, dict):
+                    bind_contracts[key] = bc
+        elif er.bind_contract and table_id:
             bind_contracts[table_id] = er.bind_contract
         for hint in er.table_hints or []:
             if hint and hint not in table_hints:
@@ -127,6 +132,7 @@ def engine_results_to_bq_plan(
         "bind_contracts": bind_contracts,
         "sql_source": "bind_contract" if has_planned else None,
         "nl2sql_fallback": has_planned,
+        "plan_source": "class_engine",
     }
 
 

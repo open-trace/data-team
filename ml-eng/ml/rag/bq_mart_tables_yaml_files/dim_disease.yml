@@ -2,7 +2,7 @@ table_name: opentrace-prod-5ga4.mart_dev.dim_disease
 description: Foodborne hazard / disease labels.
 source:
   layer: mart_dev
-profiled_at: '2026-08-28T17:53:44.421016+00:00'
+profiled_at: '2026-09-05T19:24:26.423104+00:00'
 grain: Hazard/disease name
 entity_type: food_security
 columns:
@@ -18,33 +18,42 @@ columns:
 - name: loaded_at
   type: TIMESTAMP
   description: loaded at
+disease_key_value_stats:
+  distinct_count: 12
+  null_count: 0
+  is_truncated: false
+  min_value: 02422165190d7d1400a7075f707dd945
+  max_value: dfa16d993c5cc8ed35215f13552d0c2d
+disease_or_hazard_value_samples:
+- EIEC
+- Aspergillus spp
+- E.coli
+- 'EPEC '
+- 'Staphylococus '
+- 'ETEC '
+- 'EAEC '
+- 'STEC '
+- salmonella
+- Fusarium spp
+- Mycotoxins
+- Penicillium spp
+disease_family_value_samples:
+- foodborne
+loaded_at_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '2026-08-24 14:22:54.196250+00'
+  max_value: '2026-08-24 14:22:54.196250+00'
+semantic_role:
+  primary_domain: food_security
+  supports:
+  - food_security
+bind_spine:
+  disease_key: dim_disease.disease_or_hazard
 filtering_guidance:
 - 'Grain: Hazard/disease name'
 - Foodborne hazard / disease labels.
 sql_generation_hints:
 - 'Join keys: disease_key'
 - LEFT JOIN dim_geography on geography_key for country names
-semantic_role:
-  primary_domain: food_security
-  supports:
-  - food_security
-disease_key_value_stats:
-  distinct_count: 12
-  null_count: 0
-  is_truncated: false
-  patched: true
-disease_or_hazard_value_stats:
-  distinct_count: 12
-  null_count: 0
-  is_truncated: false
-  patched: true
-disease_family_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-loaded_at_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true

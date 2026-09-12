@@ -2,7 +2,7 @@ table_name: opentrace-prod-5ga4.mart_dev.dim_breed_variety
 description: dim breed variety
 source:
   layer: mart_dev
-profiled_at: '2026-08-28T17:53:44.421016+00:00'
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
 columns:
 - name: breed_variety_key
   type: STRING
@@ -28,6 +28,12 @@ columns:
 - name: is_current
   type: BOOL
   description: is current
+breed_variety_key_value_stats:
+  distinct_count: 18
+  null_count: 0
+  is_truncated: false
+  min_value: 07e9fe55719330c42f509e90e7ba9b25
+  max_value: fcc79658c26c34ae68781c148ceb2970
 variety_code_value_stats:
   distinct_count: 0
   null_count: 18
@@ -51,31 +57,29 @@ variety_name_value_samples:
 - Oryza glaberrima & sp.
 - Oryza wild species
 - Oryza sativa x nivara
-description_value_stats:
-  distinct_count: 0
-  null_count: 18
-  is_truncated: false
-valid_to_value_stats:
-  distinct_count: 0
-  null_count: 18
-  is_truncated: false
-breed_variety_key_value_stats:
-  distinct_count: 18
-  null_count: 0
-  is_truncated: false
-  patched: true
 species_value_stats:
   distinct_count: 1
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: crop
+  max_value: crop
+description_value_stats:
+  distinct_count: 0
+  null_count: 18
+  is_truncated: false
 valid_from_value_stats:
   distinct_count: 1
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: '2000-01-01'
+  max_value: '2000-01-01'
+valid_to_value_stats:
+  distinct_count: 0
+  null_count: 18
+  is_truncated: false
 is_current_value_stats:
   distinct_count: 1
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: 'true'
+  max_value: 'true'

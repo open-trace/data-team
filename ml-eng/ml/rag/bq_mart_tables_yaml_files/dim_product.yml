@@ -2,7 +2,7 @@ table_name: opentrace-prod-5ga4.mart_dev.dim_product
 description: Product dimension for production, prices, food balance, trade.
 source:
   layer: mart_dev
-profiled_at: '2026-08-28T17:53:44.421016+00:00'
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
 grain: Crop/commodity product identity
 entity_type: production
 columns:
@@ -27,62 +27,129 @@ product_key_value_stats:
   is_truncated: true
   min_value: 0073033c8d7889b37373e8646cff0e92
   max_value: ffdf5ced4479d19b73228a3c9735a722
-item_code_value_stats:
-  distinct_count: 1307
-  null_count: 939
-  is_truncated: true
-  min_value: '''0111'
-  max_value: S93199AA
-product_name_value_stats:
-  distinct_count: 1989
-  null_count: 0
-  is_truncated: true
-  min_value: Abaca, manila hemp, raw
-  max_value: hydrogenated oils and fats
+item_code_value_samples:
+- '2555'
+- '2515'
+- '2533'
+- '2922'
+- '2573'
+- '2511'
+- '2763'
+- '2655'
+- '2616'
+- '2556'
+- '2848'
+- '2620'
+- '2612'
+- '2580'
+- '2625'
+- '2899'
+- '2736'
+- '2617'
+- '2518'
+- '2743'
+- '2531'
+- '2619'
+- '2765'
+- '2571'
+- '2501'
+- '2581'
+- '2534'
+- '2549'
+- '2949'
+- '2570'
+- '2764'
+- '2761'
+- '2547'
+- '2645'
+- '2909'
+- '2542'
+- '2551'
+- '2782'
+- '2961'
+- '2948'
+- '2563'
+- '2659'
+- '2918'
+- '2641'
+- '2745'
+- '2908'
+- '2514'
+- '2781'
+- '2582'
+- '2630'
 product_name_value_samples:
-- Maize
+- Yams
 - Sorghum
 - Millet
-- Groundnuts (In Shell)
-- Rice
-- Cassava
-- Cowpea
-- Beans (mixed)
-- Sweet Potatoes
-- Sesame Seed
-- Wheat
-- Soybean
-- Banana
-- Potato
-- Yams
-- Sunflower Seed
-- Taro
-- Cotton
-- Bambara groundnut
-- Tomato
-- Pea
-- Okras
-- Coffee
-- Onions
+- Oats
 - Fonio
+- Sugar beet
+- Sesame seed
+- Rice
+- Eggs
+- Linseed
+- Spinach
+- Dates
+- Sugar cane
+- Taro
+- Onions
+- Wheat
+- Barley
+- Sunflower seed
+- Sweet potatoes
+- Bananas
+- Palm kernels
+- Cauliflowers and broccoli
+- Artichokes
+- Watermelons
+- Vegetables
+- Cucumbers and gherkins
+- Cantaloupes and other melons
+- Bovine Meat
+- Cereals n.e.c.
+- Milk - Excluding Butter
+- Pumpkins, squash and gourds
+- Pepper
+- Plantains
+- Infant food
+- Tomatoes
+- Buckwheat
+- Cottonseed
+- Asparagus
+- Pulses
+- Chillies and peppers, green (Capsicum spp. and Pimenta spp.)
+- Okra
+- Poultry Meat
+- Maize (corn)
+- Canary seed
+- Rye
+- Eggplants (aubergines)
+- Triticale
+- Miscellaneous
+- Cabbages
+- Lettuce and chicory
 cpcv2_value_stats:
   distinct_count: 993
   null_count: 1063
   is_truncated: true
   min_value: '''0111'
   max_value: S93199AA
+loaded_at_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '2026-08-26 01:20:03.802558+00'
+  max_value: '2026-08-26 01:20:03.802558+00'
+sql_generation_hints:
+- Join target for product_name labels on product_key
 filtering_guidance:
 - 'Grain: Crop/commodity product identity'
 - Product dimension for production, prices, food balance, trade.
-sql_generation_hints:
-- Join target for product_name labels on product_key
 semantic_role:
   primary_domain: product
   supports:
   - product
   - join_dim
-loaded_at_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
+bind_spine:
+  product_key: dim_product.product_name

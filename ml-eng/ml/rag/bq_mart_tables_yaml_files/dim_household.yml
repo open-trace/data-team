@@ -1,0 +1,154 @@
+table_name: opentrace-prod-5ga4.mart_dev.dim_household
+description: ILRI household identities.
+source:
+  layer: mart_dev
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
+grain: Survey household identity
+entity_type: household
+columns:
+- name: household_key
+  type: STRING
+  description: household key
+- name: household_id
+  type: STRING
+  description: household id
+- name: country
+  type: STRING
+  description: country
+- name: region
+  type: STRING
+  description: region
+- name: district
+  type: STRING
+  description: district
+- name: village_code
+  type: STRING
+  description: village code
+- name: household_type
+  type: STRING
+  description: household type
+- name: head_education_level
+  type: STRING
+  description: head education level
+- name: source_natural_key
+  type: STRING
+  description: source natural key
+- name: loaded_at
+  type: TIMESTAMP
+  description: loaded at
+household_key_value_stats:
+  distinct_count: 2215
+  null_count: 0
+  is_truncated: true
+  min_value: 00022d90ac7c35cf5729ce405759f8a4
+  max_value: ffe47202ceff6628bfbe4257217171e2
+household_id_value_stats:
+  distinct_count: 1605
+  null_count: 0
+  is_truncated: true
+  min_value: '1047201'
+  max_value: UG_2021_CRP_9_1
+country_value_stats:
+  distinct_count: 3
+  null_count: 0
+  is_truncated: false
+  min_value: Tanzania
+  max_value: uganda
+region_value_stats:
+  distinct_count: 1
+  null_count: 994
+  is_truncated: false
+  min_value: central
+  max_value: central
+district_value_stats:
+  distinct_count: 8
+  null_count: 994
+  is_truncated: false
+  min_value: Masaka
+  max_value: wakiso
+village_code_value_samples:
+- '910807'
+- '940412'
+- '920313'
+- '910801'
+- '910815'
+- '940410'
+- '920303'
+- '910601'
+- '940405'
+- '921018'
+- '940422'
+- '940419'
+- '911404'
+- '910606'
+- '920330'
+- '910103'
+- '940406'
+- '910808'
+- '920301'
+- '911703'
+- '940427'
+- '931106'
+- '940407'
+- '911501'
+- '920329'
+- '940431'
+- '921028'
+- '920308'
+- '931122'
+- '911803'
+- '920323'
+- '910904'
+- '910307'
+- '921014'
+- '931126'
+- '921038'
+- '920317'
+- '910306'
+- '940411'
+- '920902'
+- '910903'
+- '911702'
+- '931112'
+- '921004'
+- '931406'
+- '931304'
+- '931111'
+- '920310'
+- '910607'
+- '931408'
+household_type_value_samples:
+- couple
+- woman_single
+- man_single
+- no_answer
+head_education_level_value_stats:
+  distinct_count: 7
+  null_count: 1076
+  is_truncated: false
+  min_value: No_school
+  max_value: secondary
+source_natural_key_value_stats:
+  distinct_count: 3
+  null_count: 0
+  is_truncated: false
+  min_value: ilri_crp_household_food_security_v1
+  max_value: ilri_indicators_final_v1
+loaded_at_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '2026-08-27 14:40:46.099873+00'
+  max_value: '2026-08-27 14:40:46.099873+00'
+sql_generation_hints:
+- 'Join keys: household_key'
+- LEFT JOIN dim_geography on geography_key for country names
+filtering_guidance:
+- 'Grain: Survey household identity'
+- ILRI household identities.
+semantic_role:
+  primary_domain: household
+  supports:
+  - household
+bind_spine:
+  household_key: dim_household.household_type

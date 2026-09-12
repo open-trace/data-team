@@ -561,9 +561,40 @@ def is_usable_structured_bq_row(item: dict[str, Any]) -> bool:
     return True
 
 
+def is_mergeable_bq_evidence(item: dict[str, Any]) -> bool:
+    """True for warehouse success rows that may lack value_semantics enrichment.
+
+    Used for generation admission so bind+retrieve successes are not hidden when
+    enrich missed measure_value stamping.
+    """
+    if is_usable_structured_bq_row(item):
+        return True
+    if not is_usable_context_item(item):
+        return False
+    kind = str(item.get("_context_kind") or "").strip().lower()
+    source = str(item.get("source") or "").strip().lower()
+    if source != "bigquery" and kind != "bigquery":
+        return False
+    content = str(item.get("content") or item.get("text") or "").strip()
+    if not content:
+        return False
+    meta = _item_metadata(item)
+    status = str(meta.get("status") or "").strip().lower()
+    if status in {
+        "no_project",
+        "no_valid_sql",
+        "validation_failed",
+        "execution_error",
+        "empty_result",
+        "bq_timeout",
+    }:
+        return False
+    return True
+
+
 def _context_has_structured_numeric(context_items: list[dict[str, Any]] | None) -> bool:
     for item in filter_context_items(list(context_items or [])):
-        if is_usable_structured_bq_row(item):
+        if is_mergeable_bq_evidence(item):
             return True
         meta = _item_metadata(item)
         if meta.get("semantic_row_rejected"):
@@ -2203,6 +2234,39 @@ def generate(
                 ),
             )
 
+    # Warehouse attempted but no usable rows — typed gap before empty-context fallback.
+    if (
+        is_numeric_data_query(query, decomposition)
+        and not usable_bq
+        and not structured_bq_numeric_available
+        and not _context_has_structured_numeric(context_items)
+        and not generate_weak
+    ):
+        typed_flags = (
+            "structured_bq_empty",
+            "structured_bq_validation_failed",
+            "structured_bq_timed_out",
+            "structured_bq_never_executed",
+            "structured_bq_compile_error",
+        )
+        typed_flag = next((f for f in typed_flags if kwargs.get(f)), None)
+        if typed_flag:
+            from ml.rag.chatbot.bq_gap_messages import typed_bq_gap_answer
+
+            return GenerationResult(
+                answer=typed_bq_gap_answer(
+                    flag=typed_flag,
+                    decomposition=decomposition if isinstance(decomposition, dict) else None,
+                ),
+                citations=[],
+                acf=no_evidence_acf(
+                    explanation=(
+                        "Warehouse query did not yield scorable structured evidence "
+                        f"({typed_flag.replace('structured_bq_', '')})."
+                    )
+                ),
+            )
+
     shape = str((generation_plan or {}).get("answer_shape") or "")
     from ml.rag.chatbot.output_format import output_type_from_plan
 
@@ -2214,8 +2278,25 @@ def generate(
         and is_numeric_data_query(query, decomposition)
         and not _PRICE_TREND_RE.search(query or "")
         and not _context_has_structured_numeric(context_items)
+        and not structured_bq_numeric_available
+        and not usable_bq
         and not generate_weak
     ):
+        if kwargs.get("warehouse_was_attempted"):
+            from ml.rag.chatbot.bq_gap_messages import typed_bq_gap_answer
+
+            return GenerationResult(
+                answer=typed_bq_gap_answer(
+                    flag="structured_bq_empty",
+                    decomposition=decomposition if isinstance(decomposition, dict) else None,
+                ),
+                citations=[],
+                acf=no_evidence_acf(
+                    explanation=(
+                        "Warehouse query did not yield scorable structured evidence (empty)."
+                    )
+                ),
+            )
         return GenerationResult(
             answer=_no_data_fallback_message(query, decomposition),
             citations=[],

@@ -373,6 +373,8 @@ Root metadata includes corpus counts, `empty_retrieval`, BQ soft-fail flags, `we
 
 **Verify setup:** `PYTHONPATH=. python scripts/verify_langfuse_tracing.py` (from `ml-eng/`)
 
+**Planned-path / multi-bind scans:** see [`scripts/LANGFUSE_PLANNED_PATH_SCAN.md`](../../scripts/LANGFUSE_PLANNED_PATH_SCAN.md) (filter recipes for `multi_bind`, `multi_class`, `region_blend`, NL2SQL empty/validation).
+
 **User feedback:** `POST /feedback` with `{ "trace_id": "...", "score": 1.0, "comment": "..." }` (score 0–1). Serving chat returns `langfuse_trace_id` for the same.
 
 **Suggested dashboards (Langfuse UI):** latency p95 by `route:*` tag, token cost by `plan_type:*`, error rate on `full_rag` vs `meta`, filter `empty_retrieval` / `bq_failure` scores.

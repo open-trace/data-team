@@ -135,11 +135,118 @@ def _validate_table_bundle(tables: list[str], *, analytical: bool = False) -> tu
     return kept, "; ".join(notes)
 
 
+def _corpus_tags_from_hits(
+    hits: list[MeasureHit],
+    enriched: dict[str, Any],
+) -> list[str]:
+    corpus_tags: list[str] = []
+    seen_tags: set[str] = set()
+    for h in hits:
+        for tag in h.measure.corpus_domains:
+            tl = tag.strip()
+            if tl and tl.lower() not in seen_tags:
+                seen_tags.add(tl.lower())
+                corpus_tags.append(tl)
+        if h.child_measure_id and h.child_measure_id in MEASURES:
+            for tag in MEASURES[h.child_measure_id].corpus_domains:
+                tl = tag.strip()
+                if tl and tl.lower() not in seen_tags:
+                    seen_tags.add(tl.lower())
+                    corpus_tags.append(tl)
+    for d in enriched.get("domains") or []:
+        tl = str(d).strip()
+        if tl and tl.lower() not in seen_tags:
+            seen_tags.add(tl.lower())
+            corpus_tags.append(tl)
+    return corpus_tags
+
+
+def _resolve_measure_ids(
+    enriched: dict[str, Any],
+    hits: list[MeasureHit],
+    *,
+    query: str,
+) -> tuple[list[str], list[str]]:
+    primary_ids: list[str] = []
+    companion_ids: list[str] = []
+    declared_pm = enriched.get("primary_measures")
+    matched_bundles_raw = enriched.get("matched_bundles")
+    matched_bundle_ids = (
+        [str(b).strip() for b in matched_bundles_raw if str(b).strip()]
+        if isinstance(matched_bundles_raw, list)
+        else []
+    )
+    if isinstance(declared_pm, list) and declared_pm:
+        primary_ids = [str(m).strip().lower() for m in declared_pm if str(m).strip()]
+    else:
+        hints_raw = enriched.get("primary_measure_hints")
+        if isinstance(hints_raw, list) and hints_raw:
+            validated = [
+                str(h).strip().lower()
+                for h in hints_raw
+                if str(h).strip().lower() in MEASURES
+            ]
+            if validated:
+                primary_ids = validated[:3]
+    if not primary_ids:
+        if matched_bundle_ids:
+            bundles = bundles_from_ids(matched_bundle_ids)
+            primary_ids = list(bundle_primary_measures(bundles, query))
+        elif hits:
+            primary_ids.append(hits[0].measure.id)
+            declared = set(hits[0].measure.companions)
+            for h in hits[1:]:
+                if h.measure.id in declared or h.matched_alias.startswith("companion_of_"):
+                    companion_ids.append(h.measure.id)
+    return primary_ids, companion_ids
+
+
+def build_corpus_routing_contract(
+    query: str,
+    *,
+    decomposition: dict[str, Any] | None,
+) -> RetrievalContract:
+    """Corpus/measure routing only — no BQ table or intent materialization."""
+    enriched = enrich_decomposition_facets(query, decomposition)
+    hits = resolve_measures(query, enriched)
+    geo = _geo_list(enriched)
+    ts = str(enriched.get("time_start") or "")[:10]
+    te = str(enriched.get("time_end") or "")[:10]
+    primary_ids, companion_ids = _resolve_measure_ids(enriched, hits, query=query)
+    bq_hits = [
+        h
+        for h in hits
+        if h.measure.candidate_tables or h.measure.bq_index_domains
+    ]
+    corpus_tags = _corpus_tags_from_hits(hits, enriched)
+    skip_bq = bool(hits) and not bq_hits
+    indicator_classes = class_for_query(query)
+    rationale = "contract_from_entities"
+    if indicator_classes:
+        rationale = f"{rationale}; classes={','.join(indicator_classes[:4])}"
+    if primary_ids:
+        rationale = f"{rationale}:{','.join(primary_ids[:4])}"
+    return RetrievalContract(
+        primary_measures=primary_ids,
+        companion_measures=companion_ids,
+        measure_hits=hits,
+        bq_tables=[],
+        bq_intents=[],
+        corpus_domain_tags=corpus_tags,
+        geography=geo,
+        time_start=ts,
+        time_end=te,
+        skip_bq=skip_bq,
+        rationale=rationale,
+    )
+
+
 def build_retrieval_contract(
     query: str,
     *,
     decomposition: dict[str, Any] | None,
     known_tables: set[str] | None = None,
+    include_bq_tables: bool = True,
 ) -> RetrievalContract:
     """
     Build a multi-measure retrieval contract from decomposition facets.
@@ -167,26 +274,7 @@ def build_retrieval_contract(
         if h.measure.candidate_tables or h.measure.bq_index_domains
     ]
 
-    primary_ids: list[str] = []
-    companion_ids: list[str] = []
-    declared_pm = enriched.get("primary_measures")
-    matched_bundles_raw = enriched.get("matched_bundles")
-    matched_bundle_ids = (
-        [str(b).strip() for b in matched_bundles_raw if str(b).strip()]
-        if isinstance(matched_bundles_raw, list)
-        else []
-    )
-    if isinstance(declared_pm, list) and declared_pm:
-        primary_ids = [str(m).strip().lower() for m in declared_pm if str(m).strip()]
-    elif matched_bundle_ids:
-        bundles = bundles_from_ids(matched_bundle_ids)
-        primary_ids = list(bundle_primary_measures(bundles, query))
-    elif hits:
-        primary_ids.append(hits[0].measure.id)
-        declared = set(hits[0].measure.companions)
-        for h in hits[1:]:
-            if h.measure.id in declared or h.matched_alias.startswith("companion_of_"):
-                companion_ids.append(h.measure.id)
+    primary_ids, companion_ids = _resolve_measure_ids(enriched, hits, query=query)
 
     matched_bundles = enriched.get("matched_bundles")
     ag_activities = (
@@ -196,7 +284,7 @@ def build_retrieval_contract(
     # Prefer specialized multi-intent builder when food_security is the top activated measure.
     bq_tables: list[str] = []
     bq_intents: list[dict[str, Any]] = []
-    if not compiler_bq_disabled and (
+    if include_bq_tables and not compiler_bq_disabled and (
         not ag_activities
         and not enriched.get("reasoner_job")
         and hits
@@ -207,7 +295,7 @@ def build_retrieval_contract(
             bq_tables = [str(t) for t in (fs.get("selected_tables") or []) if str(t).strip()]
             bq_intents = list(fs.get("query_intents") or [])
 
-    if not compiler_bq_disabled and not bq_intents and bq_hits:
+    if include_bq_tables and not compiler_bq_disabled and not bq_intents and bq_hits:
         seen_tables: set[str] = set()
         target_measures = set(primary_ids + companion_ids) if primary_ids else None
         for h in bq_hits:
@@ -245,25 +333,7 @@ def build_retrieval_contract(
     if mix_note and not analytical:
         bq_intents = [i for i in bq_intents if i.get("tables", [None])[0] in bq_tables]
 
-    corpus_tags: list[str] = []
-    seen_tags: set[str] = set()
-    for h in hits:
-        for tag in h.measure.corpus_domains:
-            tl = tag.strip()
-            if tl and tl.lower() not in seen_tags:
-                seen_tags.add(tl.lower())
-                corpus_tags.append(tl)
-        if h.child_measure_id and h.child_measure_id in MEASURES:
-            for tag in MEASURES[h.child_measure_id].corpus_domains:
-                tl = tag.strip()
-                if tl and tl.lower() not in seen_tags:
-                    seen_tags.add(tl.lower())
-                    corpus_tags.append(tl)
-    for d in enriched.get("domains") or []:
-        tl = str(d).strip()
-        if tl and tl.lower() not in seen_tags:
-            seen_tags.add(tl.lower())
-            corpus_tags.append(tl)
+    corpus_tags = _corpus_tags_from_hits(hits, enriched)
 
     skip_bq = bool(hits) and not bq_hits and not bq_tables
 
@@ -311,6 +381,7 @@ def contract_to_bq_plan(
             "index_truncated": index_truncated,
             "table_hints": [],
             "hints_truncated": False,
+            "plan_source": "retrieval_contract",
         }
     terms: list[str] = [query[:80], *contract.primary_measures, *contract.geography[:5]]
     for e in (decomposition.get("entities") or [])[:6]:
@@ -330,11 +401,13 @@ def contract_to_bq_plan(
         "index_truncated": index_truncated,
         "table_hints": hints,
         "hints_truncated": hints_truncated,
+        "plan_source": "retrieval_contract",
     }
 
 
 __all__ = [
     "RetrievalContract",
+    "build_corpus_routing_contract",
     "build_retrieval_contract",
     "choose_agg_vs_fact",
     "contract_to_bq_plan",

@@ -1,0 +1,46 @@
+table_name: opentrace-prod-5ga4.mart_dev.dim_sex
+description: Sex categories for employment/investment.
+source:
+  layer: mart_dev
+profiled_at: '2026-09-05T19:24:26.423104+00:00'
+grain: Sex label
+entity_type: socio_economic
+columns:
+- name: sex_key
+  type: STRING
+  description: sex key
+- name: sex_label
+  type: STRING
+  description: sex label
+- name: loaded_at
+  type: TIMESTAMP
+  description: loaded at
+sex_key_value_stats:
+  distinct_count: 4
+  null_count: 0
+  is_truncated: false
+  min_value: female
+  max_value: unknown
+sex_label_value_samples:
+- Male
+- Female
+- Unknown
+- Total
+loaded_at_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '2026-08-24 14:23:05.627158+00'
+  max_value: '2026-08-24 14:23:05.627158+00'
+semantic_role:
+  primary_domain: socio_economic
+  supports:
+  - socio_economic
+bind_spine:
+  sex_key: dim_sex.sex_label
+filtering_guidance:
+- 'Grain: Sex label'
+- Sex categories for employment/investment.
+sql_generation_hints:
+- 'Join keys: sex_key'
+- LEFT JOIN dim_geography on geography_key for country names

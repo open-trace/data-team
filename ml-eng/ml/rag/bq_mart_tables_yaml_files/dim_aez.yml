@@ -1,0 +1,60 @@
+table_name: opentrace-prod-5ga4.mart_dev.dim_aez
+description: Agro-ecological zones.
+source:
+  layer: mart_dev
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
+grain: AEZ code × version
+entity_type: geography
+columns:
+- name: aez_key
+  type: STRING
+  description: aez key
+- name: aez_code
+  type: STRING
+  description: aez code
+- name: aez_name
+  type: STRING
+  description: aez name
+- name: aez_version
+  type: STRING
+  description: aez version
+- name: aez_source
+  type: STRING
+  description: aez source
+- name: loaded_at
+  type: TIMESTAMP
+  description: loaded at
+aez_key_value_stats:
+  distinct_count: 0
+  null_count: 0
+  is_truncated: false
+aez_code_value_stats:
+  distinct_count: 0
+  null_count: 0
+  is_truncated: false
+aez_name_value_stats:
+  distinct_count: 0
+  null_count: 0
+  is_truncated: false
+aez_version_value_stats:
+  distinct_count: 0
+  null_count: 0
+  is_truncated: false
+aez_source_value_stats:
+  distinct_count: 0
+  null_count: 0
+  is_truncated: false
+loaded_at_value_stats:
+  distinct_count: 0
+  null_count: 0
+  is_truncated: false
+sql_generation_hints:
+- 'Join keys: aez_key'
+- LEFT JOIN dim_geography on geography_key for country names
+filtering_guidance:
+- 'Grain: AEZ code × version'
+- Agro-ecological zones.
+semantic_role:
+  primary_domain: geography
+  supports:
+  - geography

@@ -2,7 +2,7 @@ table_name: opentrace-prod-5ga4.mart_dev.fct_pesticide
 description: fct pesticide
 source:
   layer: mart_dev
-profiled_at: '2026-08-28T17:53:44.421016+00:00'
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
 columns:
 - name: pesticide_key
   type: STRING
@@ -43,10 +43,46 @@ columns:
 - name: source_record_id
   type: STRING
   description: source record id
+pesticide_key_value_stats:
+  distinct_count: 165
+  null_count: 0
+  is_truncated: false
+  min_value: 018ff2c47cc31d424b97ba8876f27123
+  max_value: fb78375e835c8398f485b82f00f987cc
+geo_key_value_stats:
+  distinct_count: 5
+  null_count: 0
+  is_truncated: false
+  min_value: 3f261d4a5bdd5c2e5efc63303a061bc8
+  max_value: da38a542608245cb0ead3d6ea942144c
+source_key_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: 36e480af7c3d37030881158cd4976721
+  max_value: 36e480af7c3d37030881158cd4976721
+product_key_value_stats:
+  distinct_count: 34
+  null_count: 0
+  is_truncated: false
+  min_value: 00514501b826b1d1680c38e996a3d491
+  max_value: e23b103079c55f205187a4d3472066c9
 pest_key_value_stats:
   distinct_count: 0
   null_count: 222
   is_truncated: false
+unit_key_value_stats:
+  distinct_count: 4
+  null_count: 0
+  is_truncated: false
+  min_value: 34a2d1c42d1d5ca5a55e3a9ecace240f
+  max_value: e358efa489f58062f10dd7316b65649e
+quantity_value_stats:
+  distinct_count: 92
+  null_count: 0
+  is_truncated: false
+  min_value: '0'
+  max_value: '57638'
 application_frequency_value_stats:
   distinct_count: 0
   null_count: 222
@@ -63,43 +99,21 @@ treatment_misuse_flag_value_stats:
   distinct_count: 0
   null_count: 222
   is_truncated: false
-pesticide_key_value_stats:
-  distinct_count: 165
+source_record_id_value_stats:
+  distinct_count: 120
   null_count: 0
   is_truncated: false
-  patched: true
-geo_key_value_stats:
-  distinct_count: 5
-  null_count: 0
-  is_truncated: false
-  patched: true
+  min_value: 018920dd96a7c18f29208f2d4deec48d
+  max_value: ff807396cc22c7256983c33d433ec830
 time_key_value_stats:
   distinct_count: 3
   null_count: 0
   is_truncated: false
   patched: true
-source_key_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-product_key_value_stats:
-  distinct_count: 34
-  null_count: 0
-  is_truncated: false
-  patched: true
-unit_key_value_stats:
-  distinct_count: 4
-  null_count: 0
-  is_truncated: false
-  patched: true
-quantity_value_stats:
-  distinct_count: 92
-  null_count: 0
-  is_truncated: false
-  patched: true
-source_record_id_value_stats:
-  distinct_count: 120
-  null_count: 0
-  is_truncated: false
-  patched: true
+grain: fct pesticide
+bind_spine:
+  product_key: dim_product.product_name
+  source_key: dim_source.organisation_name
+  unit_key: dim_unit.unit_code
+  pest_key: dim_pest.pest_name
+  geo_key: dim_geography.country_iso3

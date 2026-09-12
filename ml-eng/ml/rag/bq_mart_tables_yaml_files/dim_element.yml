@@ -1,0 +1,146 @@
+table_name: opentrace-prod-5ga4.mart_dev.dim_element
+description: Element labels (production qty, area harvested, imports, …).
+source:
+  layer: mart_dev
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
+grain: FAOSTAT-style element
+entity_type: reference
+columns:
+- name: element_key
+  type: STRING
+  description: element key
+- name: element_name
+  type: STRING
+  description: element name
+- name: element_code
+  type: STRING
+  description: element code
+- name: loaded_at
+  type: TIMESTAMP
+  description: loaded at
+element_key_value_stats:
+  distinct_count: 226
+  null_count: 0
+  is_truncated: false
+  min_value: 000ebb03f9b20af0acfeb656da658c06
+  max_value: ff1523efdaf2fdee354276af47e7fc44
+element_name_value_samples:
+- Import Quantity Index (2014-2016 = 100)
+- Self-sufficiency ratio
+- Terms of trade
+- Area from WorldCover
+- Average persons per holding (household members)
+- Use per capita
+- Area
+- Opening stocks
+- Revealed comparative advantage index
+- Total Population - Female
+- Export Value Index (2014-2016 = 100)
+- Gross per capita Production Index Number (2014-2016 = 100)
+- Nitrogen fertilizer content applied that leaches
+- Export Quantity Index (2014-2016 = 100)
+- Area from MODIS
+- Fats/Year
+- Consumption
+- Proteins/Year
+- Average number of parcels per holding
+- Total Population - Both sexes
+- Loss
+- Stocks
+- Synthetic fertilizers (Agricultural use)
+- In Use
+- Export Unit/Value Index (2014-2016 = 100)
+- Losses
+- Processing
+- Average persons per holding (employees on the holding)
+- Food
+- Share of agricultural exports to GDP
+- Use per area of cropland
+- Import Value Index (2014-2016 = 100)
+- Nitrogen fertilizer content applied that volatilises
+- Total Population - Male
+- Tourist consumption
+- Area from CGLS
+- Residuals
+- Stock Variation
+- Calories/Year
+- Import Unit/Value Index (2014-2016 = 100)
+- Gross Production Index Number (2014-2016 = 100)
+- Processed
+- Import dependency ratio
+- Area from CCI_LC
+- Other uses (non-food)
+- Food supply quantity (tonnes)
+- Agricultural trade openness index
+- Food aid received
+- Agricultural Use
+- Average area
+element_code_value_samples:
+- '6225'
+- '432'
+- '506'
+- '5013'
+- '502'
+- '5172'
+- '5111'
+- '512'
+- '509.02'
+- '513'
+- '492'
+- '50190'
+- '516202'
+- '495'
+- '5007'
+- '281'
+- '5034'
+- '261'
+- '5018'
+- '501'
+- '5016'
+- '5113'
+- '5162'
+- '5116'
+- '494'
+- '5123'
+- '434'
+- '50191'
+- '5142'
+- '503'
+- '5159'
+- '462'
+- '516201'
+- '5141'
+- '5164'
+- '5006'
+- '5166'
+- '5071'
+- '50260'
+- '464'
+- '271'
+- '5023'
+- '465'
+- '5008'
+- '5131'
+- '5165'
+- '505'
+- '500'
+- '5157'
+- '5017'
+loaded_at_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '2026-08-26 01:20:14.474351+00'
+  max_value: '2026-08-26 01:20:14.474351+00'
+sql_generation_hints:
+- 'Join keys: element_key'
+- LEFT JOIN dim_geography on geography_key for country names
+filtering_guidance:
+- 'Grain: FAOSTAT-style element'
+- Element labels (production qty, area harvested, imports, …).
+semantic_role:
+  primary_domain: reference
+  supports:
+  - reference
+bind_spine:
+  element_key: dim_element.element_name

@@ -12,6 +12,7 @@ from ml.rag.chatbot.intent_bundles import (
     bundle_required_measures,
     bundles_block_primary,
 )
+from ml.rag.chatbot.decompose_context import JOB_ALLOWED
 from ml.rag.chatbot.continental_scope import (
     CONTINENTAL_COUNT_RE,
     decomposition_has_africa_scope,
@@ -142,6 +143,18 @@ def compile_time_spec(query: str, decomposition: dict[str, Any] | None) -> TimeS
 def compile_geo_grain(query: str, decomposition: dict[str, Any] | None) -> GeoGrain:
     dec = decomposition if isinstance(decomposition, dict) else {}
     q = (query or "").strip()
+    geo_scope = str(dec.get("geo_scope") or "").strip().lower()
+    if geo_scope == "continent":
+        return "africa"
+    if geo_scope == "region":
+        return "region"
+    if geo_scope == "multi_country":
+        geo = dec.get("geography")
+        if isinstance(geo, list) and len(geo) >= 2:
+            return "region"
+        return "country"
+    if geo_scope == "country":
+        return "country"
     if dec.get("africa_panel"):
         return "africa"
     if dec.get("africa_default"):
@@ -188,6 +201,10 @@ def compile_job(
     ql = q.lower()
     intent = str((decomposition or {}).get("intent") or "").strip().lower()
     mode = (task_mode_hint or "").strip().lower()
+
+    model_job = str((decomposition or {}).get("job") or "").strip().lower()
+    if model_job in JOB_ALLOWED:
+        return model_job  # type: ignore[return-value]
 
     if mode == "clarify":
         return "clarify"
