@@ -11,18 +11,21 @@ The RAG stack answers natural-language questions about African agriculture and f
 | Source | Technology | Role |
 |--------|------------|------|
 | **Unstructured text (VECTOR LEG)** | Qdrant Cloud (six corpora) | News, academic papers, policies, public reports, formation, OTA insights — via corpus router + E5/hybrid cascade |
-| **Structured tables (BQ LEG)** | BigQuery (`BQ_DATASET_GOLD` / `mart_dev`) | Measure ontology + mart YAML reasoner + deterministic SQL (templates/patterns) + NL2SQL fallback → row-level facts |
-| **Orchestration** | LangGraph in [`chatbot/graph.py`](chatbot/graph.py) | Control plane → **vector leg** (six Qdrant corpora) + **BQ leg** (YAML reasoner + NL2SQL) → merge → rerank → **generation strategy** → generate |
+| **Structured tables (BQ LEG)** | BigQuery (`BQ_DATASET_GOLD` / `mart_dev`) | Class supervisor → class engines → **`bind_contracts`** → planned NL2SQL execute → row-level facts |
+| **Orchestration** | LangGraph in [`chatbot/graph.py`](chatbot/graph.py) | Control plane → **vector leg** + **BQ leg** (bind-first planned path) → merge → rerank → **generation strategy** → generate |
 | **Generation** | [`llm_chat.py`](llm_chat.py) + [`generation_plan.py`](chatbot/generation_plan.py) | OpenAI-compatible backend; post-retrieval strategy shapes answer/evidence before the LLM call |
 
 **Design choices:**
 
 - **Vector and BQ are peers** — unstructured corpora are not an afterthought. The graph runs `parallel_retrieve` (six Qdrant corpora in a thread pool) then the BQ leg; both outputs fuse at `merge`. Neither leg waits on the other's *results* — only graph node ordering is sequential.
-- **Three-layer reasoner stack** — (1) **pre-retrieval**: enricher → decompose → ontology → `task_mode` → [`retrieval_contract`](chatbot/retrieval_contract.py); (2) **retrieval**: [`select_corpora`](chatbot/corpus_catalog.py) + [`bq_sql_reasoner`](chatbot/bq_sql_reasoner.py) + rerank; (3) **post-retrieval**: [`build_generation_plan`](chatbot/generation_plan.py) decides answer shape and evidence priority before `generate`.
-- **Ontology aids the BQ reasoner** (scoped tables/filters); does not replace the LLM; fallback only after retries.
+- **Bind-first warehouse path** — class engines emit `TableBindContract` / `bind_contracts` (SQL-less). [`BQRetriever`](retrievers/bq_retriever.py) with `retrieve_mode=planned` runs **NL2SQL only** (no template/pattern fact path). Mart YAML + dim spine pack filter/join context into the NL2SQL prompt.
+- **Three-layer reasoner stack** — (1) **pre-retrieval**: enricher → decompose → ontology → `task_mode` → [`retrieval_contract`](chatbot/retrieval_contract.py); (2) **retrieval**: [`select_corpora`](chatbot/corpus_catalog.py) + class engines / plan builder + rerank; (3) **post-retrieval**: [`build_generation_plan`](chatbot/generation_plan.py) decides answer shape and evidence priority before `generate`.
+- **Ontology aids table/measure scope** (not a substitute for bind + NL2SQL); fallback only after retries.
 - **Staging-only SQL** — live queries never target silver/gold; vector chunks may still *describe* other layers.
-- **Retrieval uses the working query** (optionally enriched from memory); prior turns affect enricher + generation.
+- **Three query views** — vector always embeds the full `user_query`; optional `context_rewrite` (related history + profile) and `detail_rewrite` (deterministic twin) are companions. Soft-fail `user_query_dropped` if retrieve omits the full user question. See §5.0.
+- **Session KV reuse** — prior-turn vector hits and BQ fact rows may be reused when fingerprints still match; never cache final report/compare/outlook answers.
 - **Fail-soft LLM** — empty LLM responses trigger ontology/heuristic fallbacks or “context only” answers.
+- **Legacy stubs** — [`sql_compiler.py`](chatbot/sql_compiler.py) / [`SqlRequest`](chatbot/sql_request.py) are **not** owners of fact-path SQL; they remain only as refuse/legacy flags. Do not revive compiler-assembled SELECTs on the default class path.
 
 ---
 
@@ -83,10 +86,11 @@ flowchart TB
 
   PR --> vectorLeg
 
-  subgraph bqLeg [BQ LEG — mart_dev]
-    YAML[bq_sql_reasoner plus ontology scope]
-    BR[BQRetriever NL2SQL execute]
-    BQR --> YAML --> BR
+  subgraph bqLeg [BQ LEG — mart_dev bind-first]
+    SUP[class_supervisor]
+    ENG[class engines bind_contracts]
+    BR[BQRetriever planned NL2SQL]
+    BQR --> SUP --> ENG --> BR
   end
 
   subgraph perCorpus [Per-corpus search cascade]
@@ -250,6 +254,31 @@ Passed from Streamlit, API, or CLI wrappers: `geo_override`, `time_start_overrid
 
 ## 5. Query understanding
 
+### 5.0 Query views + session KV ([`chatbot/query_views.py`](chatbot/query_views.py))
+
+Ask ADZA never replaces the user question as the sole embed string.
+
+| View | Content | Vector | BQ / decompose |
+|------|---------|--------|----------------|
+| `user_query` | `normalize_query_text(raw)` — never replaced | Always | Always |
+| `context_rewrite` | Chat history + profile prefs **only when related** to this turn | Yes if non-empty and ≠ user | Yes if `context_applied` |
+| `detail_rewrite` | Deterministic twin (geos, products, years, crop\|livestock, measures) | Yes if non-empty and ≠ others | **Never** (avoids SQL drift) |
+
+**Relatedness gate** (context rewrite): elliptical/anaphoric follow-ups, topic overlap with prior user turns, or explicit “same / that / what about”. Unrelated prior turns must not be glued on. Profile country / category / `plan_type` are **scope hints only** — they do not invent measures.
+
+**Vector retrieve:** run up to three Qdrant passes (one per distinct text), merge with `_merge_scored_hits`. Hybrid sparse uses the **same text** as that pass.
+
+**Session KV** (via [`session_store.py`](session_store.py); never cache final analytical answers):
+
+| Kind | Key shape | Value |
+|------|-----------|--------|
+| Vector | `adza:ret:v1:{session}:{text_hash}:{corpora}:{geo}:{year}` | Compact hits (id, score, corpus) |
+| BQ facts | `adza:bq:v1:{session}:{bind_fingerprint}` | Compact rows + job metadata |
+
+Reuse BQ only when context applied **or** current facets are a subset/refinement of the cached fingerprint; hard miss on new country/measure.
+
+**Soft-fail:** `user_query_dropped=true` if any vector path omits the full `user_query`.
+
 ### 5.1 [`chatbot/query_decomposer.py`](chatbot/query_decomposer.py)
 
 **Always runs heuristics** (country aliases, relative dates like “past decade”, domain keywords).
@@ -276,29 +305,54 @@ Passed from Streamlit, API, or CLI wrappers: `geo_override`, `time_start_overrid
 
 **Not used for:** academic vector filters today (academic also gets geo/time in `graph._retrieve_academic`).
 
-### 5.2 Mart YAML reasoner — [`chatbot/bq_sql_reasoner.py`](chatbot/bq_sql_reasoner.py)
+### 5.2 BQ plan builder + mart YAML context
 
-`node_bq_reason` selects **mart_dev** fact/aggregate tables using [`agri_measure_ontology`](chatbot/agri_measure_ontology.py) scope + the mart YAML index under [`bq_mart_tables_yaml_files/`](bq_mart_tables_yaml_files/) (via [`chatbot/bq_table_schema_yaml.py`](chatbot/bq_table_schema_yaml.py)). Forced plans for analytical / fact / export modes; otherwise LLM with retries; ontology `fallback_plan` last resort when a measure is known. Writes `bq_sql_plan` and `bq_table_candidates` for `bq_retrieve`.
+`node_bq_reason` builds `bq_sql_plan` via [`_build_bq_sql_plan`](chatbot/graph.py) (see priority below). On the default class path, engines write **`bind_contracts`** + `query_intents` (`sql=None`); they do not emit SELECT strings. Mart YAML under [`bq_mart_tables_yaml_files/`](bq_mart_tables_yaml_files/) (via [`bq_table_schema_yaml.py`](chatbot/bq_table_schema_yaml.py)) packs column allowlists, filter samples, and dim spine into NL2SQL hints.
 
-**Mart column YAML catalog (BQ reasoner):** Live `mart_dev` column allowlists are generated by `data-eng/data/local/scripts/regenerate_mart_table_yamls.py` into [`bq_mart_tables_yaml_files/`](bq_mart_tables_yaml_files/) (one YAML per table, `{column}_value_samples` / `{column}_value_stats`). Curated semantics merged via [`helpers/patch_mart_yaml_semantics.py`](helpers/patch_mart_yaml_semantics.py). Indicator classes in [`helpers/mart_indicator_classes.yaml`](helpers/mart_indicator_classes.yaml). Load with [`load_mart_table_schema()`](chatbot/bq_table_schema_yaml.py) / [`pack_mart_table_hints()`](chatbot/bq_table_schema_yaml.py). BQ retriever targets `mart_dev` (BQ_DATASET_GOLD).
+**Plan metadata** ([`bq_plan.py`](chatbot/bq_plan.py)):
 
-**BQ enrich + ACF stamping:** After execute, [`chatbot/bq_context_enrich.py`](chatbot/bq_context_enrich.py) resolves mart table semantics, stamps warehouse contract fields (`tier`, `place_scope`, `source_id`, …) via [`acf_metadata.project_bq_row_acf`](chatbot/acf_metadata.py), maps YoY SQL pairs through `stamp_temporal_direction`, and attaches ranked production trends via [`bq_trend_companion.fetch_mart_production_trend_companion`](chatbot/bq_trend_companion.py) on `fct_production`. NL2SQL prompts request contract columns on `fct_*` facts. Path B ACF ([`acf_scoring.py`](chatbot/acf_scoring.py)) scores **cited** evidence only at generation time.
+| Field | Meaning |
+|-------|---------|
+| `plan_source` | Who built the plan: `class_engine`, `slot_reasoner`, `analytical`, `compile_error`, `retrieval_contract`, … |
+| `retrieve_mode` | `planned` (NL2SQL-only) vs `legacy` (template/pattern allowed) |
+| `bind_contracts` | Per-table bind map for planned NL2SQL (`inject_bind` into prompts) |
+| `nl2sql_fallback` | Allow NL2SQL when bind/compile_error path needs it |
 
-### 5.3 Reasoner vs assembler (SQL ownership)
+**Planner priority** (do not reorder without tests):
 
-When `RAG_SQL_COMPILER=1` (default), **only class engines + [`sql_compiler.py`](chatbot/sql_compiler.py) write warehouse SQL**. Reasoning layers never emit SELECT strings on the default path.
+1. Slot reasoner (when active + `bq_subquestions`)
+2. Class engines → `bind_contracts` (planned)
+3. Analytical / export → `reason_bq_sql_plan` escape
+4. `compile_error` block when classes empty and compiler preference on
+5. Legacy `reason_bq_sql_plan` only when compiler preference off
+
+**Mart column YAML catalog:** Generated by `data-eng/data/local/scripts/regenerate_mart_table_yamls.py`. Curated semantics via [`helpers/patch_mart_yaml_semantics.py`](helpers/patch_mart_yaml_semantics.py). Indicator classes in [`helpers/mart_indicator_classes.yaml`](helpers/mart_indicator_classes.yaml).
+
+**BQ enrich + ACF stamping:** After execute, [`bq_context_enrich.py`](chatbot/bq_context_enrich.py) stamps warehouse contract fields via [`acf_metadata.project_bq_row_acf`](chatbot/acf_metadata.py). Path B ACF ([`acf_scoring.py`](chatbot/acf_scoring.py)) scores **cited** evidence only at generation time.
+
+### 5.3 Bind ownership vs legacy stubs (SQL ownership)
+
+**Fact-path SQL is produced by planned NL2SQL in the retriever**, constrained by bind contracts. Class engines never write SELECTs on the default path.
 
 | Layer | Owns | Must not |
 |-------|------|----------|
-| [`query_decomposer`](chatbot/query_decomposer.py) + [`facet_compiler`](chatbot/facet_compiler.py) | job, geos, time, entities, shape | SQL |
+| [`query_decomposer`](chatbot/query_decomposer.py) + [`facet_compiler`](chatbot/facet_compiler.py) | job, geos, time, entities, shape, `entity_roles` | SQL |
 | [`class_supervisor`](chatbot/class_supervisor.py) | 1–2 classes + secondary, out_of_scope, must_search_qdrant | SQL, skip_bq |
-| [`SqlRequest`](chatbot/sql_request.py) + class engines | SELECT from schema card + bound value hits | Question understanding |
-| [`bq_retriever`](retrievers/bq_retriever.py) | execute only (`engine_execute_only`) | NL2SQL for engine path |
-| [`generator`](chatbot/generator.py) | prose from evidence | Invent warehouse numbers |
+| Class engines + [`compile_table_bind_contract`](chatbot/bq_table_schema_yaml.py) | `bind_contracts`, intents, mart/dim hints | SELECT strings |
+| [`bq_retriever`](retrievers/bq_retriever.py) | Planned NL2SQL + execute; honors `retrieve_mode` | Invent filters outside bind/YAML |
+| [`generator`](chatbot/generator.py) | prose from evidence; typed BQ gaps | Invent warehouse numbers |
+| [`sql_compiler`](chatbot/sql_compiler.py) / [`SqlRequest`](chatbot/sql_request.py) | Legacy / refuse stubs only | Fact-path assembly |
 
-[`global_reasoner`](chatbot/global_reasoner.py) and [`intent_bundles.yaml`](chatbot/intent_bundles.yaml) remain for multi-measure **intent** (panel / compare / share / outlook shapes) until schema cards encode those shapes fully. `RAG_SLOT_REASONER=on` is a kill switch only; if both slot and compiler flags are set, **compiler wins for BQ** and slot metadata may still inform vectors.
+[`global_reasoner`](chatbot/global_reasoner.py) and [`intent_bundles.yaml`](chatbot/intent_bundles.yaml) remain for multi-measure **intent** (panel / compare / share). Analytical mode may still call `reason_bq_sql_plan`; that escape must not become the default class path.
 
-All class engines build [`SqlRequest`](chatbot/sql_request.py) from supervisor facets (geo list, time window, panel shape) via `build_sql_request_from_facets()` — they do not re-parse geography or years from raw query text. [`sql_compiler.py`](chatbot/sql_compiler.py) assembles and validates SQL only.
+#### Retrieve mode matrix
+
+| Mode | `plan_source` / signals | Retriever behavior |
+|------|-------------------------|-------------------|
+| **planned** | `bind_contracts` non-empty, `retrieve_mode=planned`, `nl2sql_fallback`, or `plan_source=class_engine` | NL2SQL only; templates/patterns skipped |
+| **legacy** | retrieval-contract / reasoner without bind | Template → pattern → NL2SQL cascade |
+| **analytical** | `plan_source=analytical` | Reasoner SQL plan escape (export/analytical) |
+| **compile_error** | empty engines + compiler preference | Block engine SELECT; optional NL2SQL escape via flag |
 
 ### 5.4 Fifteen-class routing spine
 
@@ -307,28 +361,34 @@ The control plane uses one taxonomy aligned with [OpenTrace Mart Complete Guide 
 | Artifact | Path | Role |
 |----------|------|------|
 | 15 indicator classes | [`helpers/mart_indicator_classes.yaml`](helpers/mart_indicator_classes.yaml) | Aliases, `primary_facts`, `families`, `do_not_mix` |
-| 15 schema cards | [`schema_cards/*.yaml`](schema_cards/) | SQL compiler tables, columns, `hard_rules` |
+| 15 schema cards | [`schema_cards/*.yaml`](schema_cards/) | Default tables, columns, `hard_rules` (bind routing, not compiler SQL) |
 | Mart table YAML | [`bq_mart_tables_yaml_files/`](bq_mart_tables_yaml_files/) | Column allowlists + value samples |
 | Routing plan | [`routing_plan.py`](chatbot/routing_plan.py) | Single spine after decompose: measure, classes, corpora |
 | Class supervisor | [`class_supervisor.py`](chatbot/class_supervisor.py) | Measure-first class routing (never writes SQL) |
 | Corpus policy | [`helpers/class_corpus_policy.yaml`](helpers/class_corpus_policy.yaml) | Vector corpora per indicator class |
 
-**Flow:** `normalize_query_text` → decompose → facet enrich → `resolve_measures` → `compile_supervisor_plan(measure_hit=…)` → `build_routing_plan` → class engines → BQ execute.
+**Flow:** `normalize_query_text` → decompose → facet enrich → `resolve_measures` → `compile_supervisor_plan` → `build_routing_plan` → class engines (**bind**) → planned NL2SQL → execute.
 
 **Hybrid engines** ([`class_engines/registry.py`](chatbot/class_engines/registry.py)):
 
 | Engine | Classes |
 |--------|---------|
-| [`prod.py`](chatbot/class_engines/prod.py), [`fvc.py`](chatbot/class_engines/fvc.py), [`prc.py`](chatbot/class_engines/prc.py), [`fs.py`](chatbot/class_engines/fs.py) | Bespoke panel/grain logic |
+| [`prod.py`](chatbot/class_engines/prod.py), [`fvc.py`](chatbot/class_engines/fvc.py), [`prc.py`](chatbot/class_engines/prc.py), [`fs.py`](chatbot/class_engines/fs.py) | Bespoke panel/grain + multi-table bind |
 | [`card_driven.py`](chatbot/class_engines/card_driven.py) | EL, GYI, CLIM, SOIL, AH, VEG, ENV, INP, HDI, BIO, RES |
 
-**BQ policy when `RAG_SQL_COMPILER=1` (default):**
+**Multi-bind (system-wide, not FVC-only):**
 
-- Class engines + compiler write SQL on the fact path — **not** `reason_bq_sql_plan` / retrieval-contract intents.
-- NL2SQL ([`retrievers/bq_retriever.py`](retrievers/bq_retriever.py)) is a **scoped escape hatch** only for analytical mode or when `RAG_BQ_NL2SQL_FALLBACK=1` after `compile_error`.
-- [`retrieval_contract.py`](chatbot/retrieval_contract.py) keeps corpus domain tags only on the compiler path (no duplicate BQ intents).
+- **Intra-class:** [`select_table_plans`](chatbot/class_table_router.py) returns primary + up to 2 taxonomy `companion_facts` (mart `fct_`/`agg_` only). Engines use [`build_planned_multi_table_result`](chatbot/class_engines/shared.py) so every plan gets a bind. FVC agri panels keep explicit food_balance + trade companions.
+- **Cross-class:** Supervisor secondary classes (e.g. agri → PROD+FVC±PRC) merge into one `bind_contracts` map via [`engine_results_to_bq_plan`](chatbot/class_engine_runner.py).
+- **Regions:** Same bind behavior for all geo catalog expansions (ECOWAS, SADC, Sahel, Horn, …)—not a single-region special case.
 
-**Anti-patterns removed:** parallel contract BQ planner on default path; academic-first corpora for PRC; intent-only plans with `sql_source=none`; gap answers with unrelated citations.
+**BQ policy (default):**
+
+- Class engines emit **`bind_contracts`** — **not** `reason_bq_sql_plan` / retrieval-contract intents on the class path.
+- Planned NL2SQL is the fact SQL producer when bind is present.
+- Analytical / export may use the reasoner escape; `compile_error` blocks accidental legacy SELECT assembly when compiler preference is on.
+
+**Anti-patterns removed:** engine SELECT strings on the fact path; parallel contract BQ planner on default path; academic-first corpora for PRC; intent-only plans with `sql_source=none`; gap answers with unrelated citations; hiding successful warehouse rows behind generic numeric ACF gaps.
 
 ---
 

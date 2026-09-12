@@ -2,7 +2,7 @@ table_name: opentrace-prod-5ga4.mart_dev.dim_geography
 description: Conformed place spine for all geo-aware facts.
 source:
   layer: mart_dev
-profiled_at: '2026-08-28T17:53:44.421016+00:00'
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
 grain: One row per place (country, admin, city, FNID, point)
 entity_type: geography
 columns:
@@ -66,6 +66,23 @@ geography_key_value_stats:
   is_truncated: true
   min_value: 0001600623fef7fd72830124b253ced3
   max_value: fffc6d5663f5659117af5ce37c24ccdf
+geo_level_value_stats:
+  distinct_count: 4
+  null_count: 0
+  is_truncated: false
+  min_value: admin1
+  max_value: fnid
+geo_level_value_samples:
+- admin1
+- admin2
+- city
+- fnid
+data_level_value_stats:
+  distinct_count: 3
+  null_count: 0
+  is_truncated: false
+  min_value: community
+  max_value: sub_national
 country_name_value_samples:
 - Ethiopia
 - Sudan
@@ -117,78 +134,12 @@ country_name_value_samples:
 - DRC
 - Gambia, The
 - Mauritius
-- Eritrea
-- Equatorial Guinea
-- Guinea-Bissau
-- Eswatini
-- Mayotte
-- Comoros
-- Sao Tome and Principe
-- Reunion
-- Seychelles
-- French Southern Territories
-- Western Sahara
-- Ascension, Saint Helena and Tristan da Cunha
-country_iso2_value_samples:
-- ET
-- SD
-- KE
-- UG
-- MG
-- NG
-- CD
-- SO
-- MZ
-- ML
-- MA
-- DZ
-- ZW
-- NE
-- MW
-- TD
-- ZA
-- BJ
-- ZM
-- BF
-- CM
-- SS
-- EG
-- MR
-- AO
-- TN
-- TZ
-- RW
-- GH
-- BI
-- SN
-- LR
-- SL
-- CI
-- GN
-- LY
-- TG
-- CF
-- DJ
-- NA
-- LS
-- BW
-- CG
-- CV
-- GA
-- GM
-- MU
-- ER
-- GQ
-- GW
-- SZ
-- YT
-- KM
-- ST
-- RE
-- SC
-- TF
-- EH
-- SH
+country_iso2_value_stats:
+  distinct_count: 59
+  null_count: 0
+  is_truncated: false
+  min_value: AO
+  max_value: ZW
 country_iso3_value_samples:
 - ETH
 - SDN
@@ -237,42 +188,180 @@ country_iso3_value_samples:
 - GAB
 - GMB
 - MUS
-- ERI
 - GNQ
+- ERI
 - GNB
-- SWZ
-- MYT
-- COM
-- STP
-- REU
-- SYC
-- ATF
-- ESH
-- SHN
-admin_1_name_value_stats:
-  distinct_count: 978
-  null_count: 15204
-  is_truncated: true
-  min_value: ''
-  max_value: ‘Anseba
-admin_2_name_value_stats:
-  distinct_count: 707
-  null_count: 20694
-  is_truncated: true
-  min_value: Aadan Yabaal
-  max_value: none
-city_name_value_stats:
-  distinct_count: 5245
-  null_count: 16404
-  is_truncated: true
-  min_value: '''Ain Abessa'
-  max_value: uMhlanga Rocks
+country_key_value_stats:
+  distinct_count: 59
+  null_count: 0
+  is_truncated: false
+  min_value: 08d5d1fbcfbc008d33905868ea7a2dd7
+  max_value: ff2abe6b8f87b63b0a4d12a3dc2fb900
+admin_1_name_value_samples:
+- Fianarantsoa
+- Antananarivo
+- Toliara
+- Mahajanga
+- Toamasina
+- Marrakech-Safi
+- Fès-Meknès
+- Northern
+- Eastern
+- Casablanca-Settat
+- Tanger-Tétouan-Al Hoceïma
+- Antsiranana
+- Béni Mellal-Khénifra
+- Sikasso
+- Kayes
+- Rabat-Salé-Kénitra
+- Central
+- Ségou
+- Koulikoro
+- Oromīya
+- Southern
+- Western
+- Drâa-Tafilalet
+- Mopti
+- KwaZulu-Natal
+- Oriental
+- North West
+- Western Cape
+- Souss-Massa
+- Free State
+- Atacora
+- Borgou
+- Eastern Cape
+- Gauteng
+- Āmara
+- Tizi Ouzou
+- Atlantique
+- Centre
+- Boumerdes
+- Ouémé
+- Mpumalanga
+- Couffo
+- Alibori
+- Chlef
+- Northern Cape
+- Zou
+- Médéa
+- Collines
+- Tipaza
+- Oran
+admin_2_name_value_samples:
+- none
+- Bale
+- North Shewa
+- West Wellega
+- Mefou et Akono
+- Mfoundi
+- North Wollo
+- West Tigray
+- Wouri
+- West Shewa
+- East Wellega
+- Sitti
+- North Gondar
+- Nyong et So'o
+- Sanaga Maritime
+- Lekie
+- East Tigray
+- Haute Sanaga
+- Kelem
+- Oromia
+- Arsi
+- Awi
+- Borena
+- Central Tigray
+- Nyong et Mfoumou
+- Nyong et Kelle
+- Gujii
+- West Hararge
+- Mbam et Kim
+- South Wollo
+- Awusi
+- Mefou et Afamba
+- South West Shewa
+- South Gondar
+- West Arsi
+- Nkam
+- Horo Guduru
+- Wag Himra
+- Argoba
+- Ilubabor
+- Mbam et Inoubou
+- Gabi
+- East Shewa
+- Northwest Tigray
+- West Gojam
+- South Tigray
+- East Gojam
+- Moungo
+- East Hararge
+- Jimma
+city_name_value_samples:
+- Morafeno
+- Befotaka
+- Ambatolahy
+- Miarinarivo
+- Ranomafana
+- Antanambao
+- Same
+- Wa
+- Ambatomainty
+- Mwanza
+- Ambohibary
+- Touba
+- Mora
+- Vohilengo
+- Ambohimandroso
+- Adjarra
+- Mangabe
+- Mahela
+- Marovato
+- Vohipeno
+- Gitega
+- Fenoarivo
+- Bedesa
+- Alexandria
+- Moyale
+- Sali
+- Gombe
+- Ruyigi
+- Ambalavao
+- Kayes
+- Budaka
+- Fierenana
+- Mandritsara
+- Ambodiriana
+- Fiadanana
+- Middelburg
+- Yoko
+- Tsaratanana
+- Antanandava
+- Segou
+- Save
+- Moanda
+- Tarrafal
+- Mahatsinjo
+- Antanifotsy
+- Oyo
+- Ambodiampana
+- Amborompotsy
+- Belobaka
+- Busia
 fnid_value_stats:
   distinct_count: 16151
   null_count: 5549
   is_truncated: true
   min_value: AO
   max_value: ZW2021C3999924
+parent_geography_key_value_stats:
+  distinct_count: 216
+  null_count: 59
+  is_truncated: false
+  min_value: 008f3e39b7ba51275eb1d03abd0eabf2
+  max_value: ff494f6d1039cd4ef26de8e28fa88482
 latitude_value_stats:
   distinct_count: 4630
   null_count: 16404
@@ -291,49 +380,40 @@ population_value_stats:
   is_truncated: true
   min_value: '10'
   max_value: '20296000'
+capital_status_value_stats:
+  distinct_count: 4
+  null_count: 16404
+  is_truncated: false
+  min_value: ''
+  max_value: primary
 native_id_value_stats:
   distinct_count: 21526
   null_count: 0
   is_truncated: true
   min_value: '1012000004'
   max_value: ZWE
-filtering_guidance:
-- 'Grain: One row per place (country, admin, city, FNID, point)'
-- Conformed place spine for all geo-aware facts.
+loaded_at_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '2026-08-27 23:19:50.729383+00'
+  max_value: '2026-08-27 23:19:50.729383+00'
 sql_generation_hints:
-- Join target for country_name, admin labels; filter geo_level, country_iso3
+- LEFT JOIN dim_geography g ON f.geography_key = g.geography_key (or f.geo_key = g.geography_key)
+- SELECT g.geo_level, g.country_iso3, g.country_name, g.admin_1_name, g.admin_2_name,
+  g.city_name, g.population
+- Filter country_iso3 for national; AND admin/city columns from YAML samples only
+filtering_guidance:
+- Join on geography_key / geo_key — expose place grain, not country labels only
+- Filter geo_level when asking country vs admin1/admin2/city/fnid
+- Prefer admin_1_name / admin_2_name / city_name samples for subnational questions
+- SELECT population, latitude, longitude, parent_geography_key when place context
+  helps
+- Never filter geography_key / geo_key with hash literals
 semantic_role:
   primary_domain: geography
   supports:
   - geography
   - join_dim
-geo_level_value_stats:
-  distinct_count: 4
-  null_count: 0
-  is_truncated: false
-  patched: true
-data_level_value_stats:
-  distinct_count: 3
-  null_count: 0
-  is_truncated: false
-  patched: true
-country_key_value_stats:
-  distinct_count: 59
-  null_count: 0
-  is_truncated: false
-  patched: true
-parent_geography_key_value_stats:
-  distinct_count: 216
-  null_count: 0
-  is_truncated: false
-  patched: true
-capital_status_value_stats:
-  distinct_count: 4
-  null_count: 0
-  is_truncated: false
-  patched: true
-loaded_at_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
+bind_spine:
+  geography_key: dim_geography.country_iso3

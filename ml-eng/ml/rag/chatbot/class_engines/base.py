@@ -27,6 +27,7 @@ class EngineResult:
     value_hits: dict[str, Any] = field(default_factory=dict)
     sql_plans: tuple[dict[str, Any], ...] = field(default_factory=tuple)
     bind_contract: dict[str, Any] | None = None
+    bind_contracts: dict[str, Any] = field(default_factory=dict)
     query_intents: list[dict[str, Any]] = field(default_factory=list)
     table_hints: list[str] = field(default_factory=list)
     hints_truncated: bool = False
@@ -42,6 +43,7 @@ class EngineResult:
             "value_hits": dict(self.value_hits),
             "sql_plans": list(self.sql_plans),
             "bind_contract": dict(self.bind_contract) if self.bind_contract else None,
+            "bind_contracts": dict(self.bind_contracts) if self.bind_contracts else {},
             "query_intents": list(self.query_intents),
             "table_hints": list(self.table_hints),
             "hints_truncated": self.hints_truncated,

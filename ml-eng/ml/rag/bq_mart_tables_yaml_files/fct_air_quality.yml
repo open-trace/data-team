@@ -2,7 +2,7 @@ table_name: opentrace-prod-5ga4.mart_dev.fct_air_quality
 description: Local air quality (e.g. Nakuru PM2.5) point observations.
 source:
   layer: mart_dev
-profiled_at: '2026-08-28T17:53:44.421016+00:00'
+profiled_at: '2026-09-05T17:57:00.703130+00:00'
 grain: Sensor observation timestamp
 entity_type: climate
 columns:
@@ -88,10 +88,80 @@ air_quality_key_value_stats:
   is_truncated: true
   min_value: 00000243e9f11ec55cda433e5c7d2561
   max_value: fffffb4a2fb265d2f33e9690763ff70b
-country_iso3_value_samples:
+geography_key_value_stats:
+  distinct_count: 2
+  null_count: 0
+  is_truncated: false
+  min_value: 7981bb29f32f0fdb249db41a056db76b
+  max_value: 7fbd0c1147454e838ef85442505e413a
+geo_level_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: city
+  max_value: city
+country_iso3_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: KEN
+  max_value: KEN
+source_key_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: ae98e5feb3c96d6b813bc779be707dd3
+  max_value: ae98e5feb3c96d6b813bc779be707dd3
+tier_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '2'
+  max_value: '2'
+data_level_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: community
+  max_value: community
+geo_scope_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: community
+  max_value: community
+place_scope_value_samples:
+- Kenya
 - KEN
+- Nakuru
+- Baringo
+- Kabarnet
 metric_value_samples:
 - pm2_5
+source_id_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: ae98e5feb3c96d6b813bc779be707dd3
+  max_value: ae98e5feb3c96d6b813bc779be707dd3
+sensor_id_value_stats:
+  distinct_count: 44
+  null_count: 0
+  is_truncated: false
+  min_value: '144'
+  max_value: '4973'
+latitude_value_stats:
+  distinct_count: 21
+  null_count: 0
+  is_truncated: false
+  min_value: '-0.369'
+  max_value: '0.371'
+longitude_value_stats:
+  distinct_count: 22
+  null_count: 0
+  is_truncated: false
+  min_value: '35.943'
+  max_value: '36.152'
 observed_at_value_stats:
   distinct_count: 2122565
   null_count: 0
@@ -104,6 +174,12 @@ as_of_date_value_stats:
   is_truncated: true
   min_value: '2021-08-03'
   max_value: '2026-03-10'
+as_of_date_basis_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: observation
+  max_value: observation
 value_value_stats:
   distinct_count: 4659
   null_count: 1065595
@@ -132,83 +208,34 @@ humidity_pct_value_stats:
   is_truncated: true
   min_value: '0'
   max_value: '73770'
-filtering_guidance:
-- 'Grain: Sensor observation timestamp'
-- Local air quality (e.g. Nakuru PM2.5) point observations.
-sql_generation_hints:
-- 'Join keys: geography_key, source_key'
-- LEFT JOIN dim_geography on geography_key for country names
-semantic_role:
-  primary_domain: climate
-  supports:
-  - climate
-geography_key_value_stats:
-  distinct_count: 2
-  null_count: 0
-  is_truncated: false
-  patched: true
-geo_level_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-source_key_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-tier_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-data_level_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-geo_scope_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-source_id_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-sensor_id_value_stats:
-  distinct_count: 44
-  null_count: 0
-  is_truncated: false
-  patched: true
-latitude_value_stats:
-  distinct_count: 21
-  null_count: 0
-  is_truncated: false
-  patched: true
-longitude_value_stats:
-  distinct_count: 22
-  null_count: 0
-  is_truncated: false
-  patched: true
-as_of_date_basis_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
 temperature_c_value_stats:
   distinct_count: 421
-  null_count: 0
+  null_count: 1078298
   is_truncated: false
-  patched: true
+  min_value: '0'
+  max_value: '65535'
 source_natural_key_value_stats:
   distinct_count: 1
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: nakuru_air_quality_archive
+  max_value: nakuru_air_quality_archive
 loaded_at_value_stats:
   distinct_count: 1
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: '2026-08-25 22:18:46.354601+00'
+  max_value: '2026-08-25 22:18:46.354601+00'
+filtering_guidance:
+- 'Grain: Sensor observation timestamp'
+- Local air quality (e.g. Nakuru PM2.5) point observations.
+semantic_role:
+  primary_domain: climate
+  supports:
+  - climate
+sql_generation_hints:
+- 'Join keys: geography_key, source_key'
+- LEFT JOIN dim_geography on geography_key for country names
+bind_spine:
+  geography_key: dim_geography.country_iso3
+  source_key: dim_source.organisation_name

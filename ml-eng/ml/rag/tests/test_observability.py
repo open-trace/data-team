@@ -10,6 +10,7 @@ import pytest
 from ml.rag.observability import (
     RagTraceHandle,
     _build_tags,
+    _planned_path_trace_fields,
     build_rag_invoke_config,
     get_observe_decorator,
     get_openrouter_run_id,
@@ -391,3 +392,65 @@ def test_rag_trace_context_propagates_body_exception(monkeypatch: pytest.MonkeyP
     with pytest.raises(ValueError, match="boom"):
         with rag_trace_context(session_id="s1", trace_input={"query": "hi"}):
             raise ValueError("boom")
+
+
+def test_planned_path_fields_multi_bind_multi_class_region() -> None:
+    result = {
+        "bq_sql_plan": {
+            "plan_source": "class_engine",
+            "retrieve_mode": "planned",
+            "bind_contracts": {
+                "agg_production_country_year": {},
+                "fct_food_balance": {},
+                "fct_trade": {},
+            },
+            "supervisor_plan": {"classes": ["PROD"], "secondary": ["FVC"]},
+            "value_hits": {"PROD": {"country_iso3": ["GHA", "NGA", "SEN", "BEN"]}},
+            "nl2sql_fallback": True,
+        },
+        "decomposition": {"expanded_regions": ["west_africa"], "geography": []},
+    }
+    fields = _planned_path_trace_fields(result)
+    assert fields["planned_path"] is True
+    assert fields["multi_bind"] is True
+    assert fields["bind_table_count"] == 3
+    assert fields["multi_class"] is True
+    assert fields["region_blend"] is True
+    assert fields.get("nl2sql_fallback") is True
+    summary = summarize_rag_result_for_trace(result)
+    assert summary["multi_bind"] is True
+    tags = _build_tags(planned_summary=summary, plan_type="Government", extra_tags=["seed:planned_multi_class"])
+    assert "planned:1" in tags
+    assert "multi_bind:1" in tags
+    assert "multi_class:1" in tags
+    assert "region_blend:1" in tags
+    assert "plan_type:Government" in tags
+    assert "seed:planned_multi_class" in tags
+
+
+def test_update_output_preserves_base_tags() -> None:
+    span = MagicMock()
+    handle = RagTraceHandle(
+        span=span,
+        plan_type="Farmers",
+        category="Government",
+        base_tags=["error_analysis_seed", "seed:region_blend"],
+    )
+    handle.update_output(
+        {
+            "answer": "ok",
+            "bq_sql_plan": {
+                "plan_source": "class_engine",
+                "retrieve_mode": "planned",
+                "bind_contracts": {"fct_production": {}},
+            },
+        }
+    )
+    assert span.update_trace.called
+    kwargs = span.update_trace.call_args.kwargs
+    tags = kwargs.get("tags") or []
+    assert "plan_type:Farmers" in tags
+    assert "category:Government" in tags
+    assert "error_analysis_seed" in tags
+    assert "seed:region_blend" in tags
+    assert "planned:1" in tags

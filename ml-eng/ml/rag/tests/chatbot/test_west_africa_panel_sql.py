@@ -46,6 +46,10 @@ def test_fvc_engine_agri_activities_planned() -> None:
     assert result.status == "planned", result.caveats
     assert result.bind_contract is not None
     assert result.table_id in ("fct_food_balance", "fct_trade")
+    binds = result.bind_contracts or {}
+    assert "fct_food_balance" in binds
+    assert "fct_trade" in binds
+    assert len(result.query_intents) >= 2
 
 
 def test_west_africa_multi_table_bq_plan() -> None:
@@ -61,6 +65,10 @@ def test_west_africa_multi_table_bq_plan() -> None:
     assert plan.get("bind_contracts")
     assert plan.get("query_intents")
     assert not plan.get("bq_sql_queries")
+    binds = plan.get("bind_contracts") or {}
+    assert "agg_production_country_year" in binds
+    assert "fct_food_balance" in binds
+    assert "fct_trade" in binds
     debug_tables = {row["table_id"] for row in plan.get("bq_sql_debug") or [] if row.get("table_id")}
     assert "agg_production_country_year" in debug_tables
     assert len(debug_tables) >= 2

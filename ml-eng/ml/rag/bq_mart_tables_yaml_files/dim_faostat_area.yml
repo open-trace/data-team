@@ -1,0 +1,200 @@
+table_name: opentrace-prod-5ga4.mart_dev.dim_faostat_area
+description: FAOSTAT area code reference mapped toward ISO/M49.
+source:
+  layer: mart_dev
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
+grain: One row per FAOSTAT area_code
+entity_type: geography
+columns:
+- name: faostat_area_key
+  type: STRING
+  description: faostat area key
+- name: area_code
+  type: STRING
+  description: area code
+- name: area_code_m49
+  type: STRING
+  description: area code m49
+- name: country_name
+  type: STRING
+  description: country name
+- name: country_iso2
+  type: STRING
+  description: country iso2
+- name: country_iso3
+  type: STRING
+  description: ISO3 from dim or extractable geo even if key null
+- name: match_method
+  type: STRING
+  description: match method
+- name: is_aggregate_area
+  type: BOOL
+  description: is aggregate area
+- name: aggregate_reason
+  type: STRING
+  description: aggregate reason
+- name: loaded_at
+  type: TIMESTAMP
+  description: loaded at
+faostat_area_key_value_stats:
+  distinct_count: 62
+  null_count: 0
+  is_truncated: false
+  min_value: '107'
+  max_value: '90'
+area_code_value_samples:
+- '46'
+- '7'
+- '217'
+- '193'
+- '195'
+- '147'
+- '187'
+- '144'
+- '276'
+- '90'
+- '226'
+- '24'
+- '37'
+- '270'
+- '158'
+- '136'
+- '123'
+- '197'
+- '159'
+- '251'
+- '53'
+- '122'
+- '35'
+- '45'
+- '133'
+- '114'
+- '182'
+- '39'
+- '75'
+- '215'
+- '209'
+- '130'
+- '129'
+- '250'
+- '143'
+- '238'
+- '222'
+- '71'
+- '201'
+- '181'
+- '61'
+- '277'
+- '124'
+- '175'
+- '20'
+- '107'
+- '29'
+- '4'
+- '233'
+- '81'
+area_code_m49_value_stats:
+  distinct_count: 62
+  null_count: 0
+  is_truncated: false
+  min_value: '012'
+  max_value: '894'
+country_name_value_samples:
+- Congo
+- Angola
+- Togo
+- Sao Tome and Principe
+- Senegal
+- Namibia
+- Ascension, Saint Helena and Tristan da Cunha
+- Mozambique
+- Sudan
+- Guinea
+- Uganda
+- Chagos Archipelago
+- Central African Republic
+- Mayotte
+- Niger
+- Mauritania
+- Liberia
+- Sierra Leone
+- Nigeria
+- Zambia
+- Benin
+- Lesotho
+- Cabo Verde
+- Comoros
+- Mali
+- Kenya
+- RÃ©union
+- Chad
+- Gambia
+- United Republic of Tanzania
+- Eswatini
+- Malawi
+- Madagascar
+- Democratic Republic of the Congo
+- Morocco
+- Ethiopia
+- Tunisia
+- French Southern Territories
+- Somalia
+- Zimbabwe
+- Equatorial Guinea
+- South Sudan
+- Libya
+- Guinea-Bissau
+- Botswana
+- CÃ´te d'Ivoire
+- Burundi
+- Algeria
+- Burkina Faso
+- Ghana
+country_iso2_value_stats:
+  distinct_count: 59
+  null_count: 1
+  is_truncated: false
+  min_value: AO
+  max_value: ZW
+country_iso3_value_stats:
+  distinct_count: 59
+  null_count: 1
+  is_truncated: false
+  min_value: AGO
+  max_value: ZWE
+match_method_value_stats:
+  distinct_count: 2
+  null_count: 1
+  is_truncated: false
+  min_value: alias
+  max_value: m49
+is_aggregate_area_value_stats:
+  distinct_count: 2
+  null_count: 0
+  is_truncated: false
+  min_value: 'false'
+  max_value: 'true'
+aggregate_reason_value_stats:
+  distinct_count: 1
+  null_count: 61
+  is_truncated: false
+  min_value: FAOSTAT territory outside Africa in_africa_scope; no ISO3 in spine; expected
+    null geography_key
+  max_value: FAOSTAT territory outside Africa in_africa_scope; no ISO3 in spine; expected
+    null geography_key
+loaded_at_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '2026-08-28 13:04:26.922829+00'
+  max_value: '2026-08-28 13:04:26.922829+00'
+sql_generation_hints:
+- 'Join keys: faostat_area_key, area_code'
+- LEFT JOIN dim_geography on geography_key for country names
+filtering_guidance:
+- 'Grain: One row per FAOSTAT area_code'
+- FAOSTAT area code reference mapped toward ISO/M49.
+semantic_role:
+  primary_domain: geography
+  supports:
+  - geography

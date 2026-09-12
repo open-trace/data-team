@@ -1157,12 +1157,34 @@ def expand_regions_in_decomposition(
     return out
 
 
+def decompose_region_vocabulary(*, max_zones: int = 24) -> str:
+    """Compact region alias list for decompose LLM prompts (no country expansion)."""
+    lines: list[str] = []
+    seen: set[str] = set()
+    for zone_key, spec in ZONE_SPEC.items():
+        if len(lines) >= max_zones:
+            break
+        aliases = spec.get("aliases") or ()
+        display = str(aliases[0]).strip() if aliases else zone_key.replace("_", " ")
+        label = display.lower()
+        if label in seen:
+            continue
+        seen.add(label)
+        extra = [str(a).strip() for a in aliases[1:3] if str(a).strip()]
+        if extra:
+            lines.append(f"- {display} (also: {', '.join(extra)})")
+        else:
+            lines.append(f"- {display}")
+    return "\n".join(lines) if lines else "- Africa"
+
+
 __all__ = [
     "DEFAULT_EXPAND_CAP",
     "REGION_COUNTRIES",
     "ZONE_SPEC",
     "all_non_country_geo_labels",
     "countries_for_regions",
+    "decompose_region_vocabulary",
     "detect_regions_in_text",
     "expand_regions_in_decomposition",
     "is_zone_label",

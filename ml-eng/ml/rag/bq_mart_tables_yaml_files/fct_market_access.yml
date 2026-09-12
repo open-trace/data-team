@@ -2,7 +2,7 @@ table_name: opentrace-prod-5ga4.mart_dev.fct_market_access
 description: fct market access
 source:
   layer: mart_dev
-profiled_at: '2026-08-28T17:53:44.421016+00:00'
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
 columns:
 - name: market_access_key
   type: STRING
@@ -67,6 +67,18 @@ market_access_key_value_stats:
   is_truncated: true
   min_value: 00136a221e1aa41ee6737b7af8cee6e3
   max_value: ffe47da408a7cec0eab3ddb81048aba5
+geo_key_value_stats:
+  distinct_count: 193
+  null_count: 0
+  is_truncated: false
+  min_value: 00dc09a1f680e513f3f6df2be6ee1daf
+  max_value: ff3770fc996f1df44afd0c42682b3dc9
+source_key_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: f33c4639421e90f1208bd87d9db2f959
+  max_value: f33c4639421e90f1208bd87d9db2f959
 market_key_value_stats:
   distinct_count: 0
   null_count: 562499
@@ -131,18 +143,13 @@ source_record_id_value_stats:
   is_truncated: true
   min_value: 00136a221e1aa41ee6737b7af8cee6e3
   max_value: ffe47da408a7cec0eab3ddb81048aba5
-geo_key_value_stats:
-  distinct_count: 193
-  null_count: 0
-  is_truncated: false
-  patched: true
 time_key_value_stats:
-  distinct_count: 64
+  distinct_count: 50
   null_count: 0
   is_truncated: false
   patched: true
-source_key_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
+grain: fct market access
+bind_spine:
+  source_key: dim_source.organisation_name
+  market_key: dim_market.market_name
+  geo_key: dim_geography.country_iso3

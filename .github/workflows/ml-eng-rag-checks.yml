@@ -32,4 +32,30 @@ jobs:
         run: |
           . .venv/bin/activate
           python -m compileall -q ml-eng/ml/rag
+      - name: Mart YAML contract + planned-path tests
+        run: |
+          . .venv/bin/activate
+          pip install pytest
+          PYTHONPATH=ml-eng pytest \
+            ml-eng/ml/rag/tests/chatbot/test_mart_*.py \
+            ml-eng/ml/rag/tests/chatbot/test_kenya_rice_planned_path.py \
+            ml-eng/ml/rag/tests/chatbot/test_facet_compiler.py \
+            ml-eng/ml/rag/tests/chatbot/test_query_decomposer_model_first.py \
+            ml-eng/ml/rag/tests/chatbot/test_generator_evidence_law.py \
+            ml-eng/ml/rag/tests/chatbot/test_bq_generate_admission.py \
+            ml-eng/ml/rag/tests/chatbot/test_bq_plan_unification.py \
+            ml-eng/ml/rag/tests/chatbot/test_inp_land_inputs_routing.py \
+            ml-eng/ml/rag/tests/chatbot/test_west_africa_panel_sql.py \
+            ml-eng/ml/rag/tests/chatbot/test_planned_multi_table_binds.py \
+            ml-eng/ml/rag/tests/chatbot/test_query_views.py \
+            ml-eng/ml/rag/tests/chatbot/test_retrieval_cache.py \
+            ml-eng/ml/rag/tests/chatbot/test_bq_fact_cache.py \
+            ml-eng/ml/rag/tests/chatbot/test_coverage_retry.py \
+            ml-eng/ml/rag/tests/chatbot/test_decompose_context.py \
+            ml-eng/ml/rag/tests/retrievers/test_bq_retriever_planned_path.py \
+            -v --tb=short
+      - name: Golden query views
+        run: |
+          . .venv/bin/activate
+          PYTHONPATH=ml-eng python -m ml.rag.eval.run_golden_query_views
 

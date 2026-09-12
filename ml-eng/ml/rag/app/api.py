@@ -443,6 +443,14 @@ async def _run_query(
                 "supervisor_plan": result.get("supervisor_plan"),
                 "value_hits": result.get("value_hits")
                 or (result.get("bq_sql_plan") or {}).get("value_hits"),
+                "user_query": result.get("user_query") or request.query,
+                "context_rewrite": result.get("context_rewrite"),
+                "detail_rewrite": result.get("detail_rewrite"),
+                "context_applied": result.get("context_applied"),
+                "user_query_dropped": result.get("user_query_dropped"),
+                "vector_cache_hit": result.get("vector_cache_hit"),
+                "coverage_retry": result.get("coverage_retry"),
+                "vector_texts_used": result.get("vector_texts_used"),
             }
 
         answer = result.get("answer", "") or ""

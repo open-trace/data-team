@@ -1,0 +1,41 @@
+# Golden checks for query views + honesty laws (offline / unit-level).
+# Runner: python -m ml.rag.eval.run_golden_query_views
+
+cases:
+  - id: panel_ghana_cameroon
+    kind: query_views
+    query: >
+      Compare crop and livestock production yearly for Ghana versus Cameroon
+    decomposition:
+      geography: [Ghana, Cameroon]
+      entities: [crop, livestock]
+      primary_measures: [production, livestock]
+    expect:
+      user_contains: [Ghana, Cameroon, livestock]
+      min_user_tokens: 8
+      user_query_dropped: false
+
+  - id: unrelated_history
+    kind: query_views
+    query: What is HDI in Senegal?
+    recent_turns:
+      - role: user
+        content: Show maize production in Kenya 2020
+    expect:
+      context_applied: false
+
+  - id: greeting_skip
+    kind: route
+    query: Hello
+    expect:
+      early_route: greeting
+
+  - id: generate_weak_cites
+    kind: static
+    expect:
+      weak_citations_empty: true
+
+  - id: bind_path_no_engine_select
+    kind: static
+    expect:
+      engines_sql_less: true

@@ -96,6 +96,42 @@ def test_generate_empty_context_skips_llm() -> None:
     assert result.acf.band == "no_evidence"
 
 
+def test_generate_honors_structured_bq_numeric_available_flag() -> None:
+    decomposition = {
+        "geography": ["Kenya"],
+        "entities": ["rice"],
+        "primary_measures": ["production"],
+    }
+    item = {
+        "content": "[Structured data] production for Kenya 2016",
+        "source": "bigquery",
+        "_context_kind": "bigquery",
+        "metadata": {
+            "country_name": "Kenya",
+            "year": 2016,
+            "product_name": "Rice",
+        },
+    }
+    with mock.patch("ml.rag.chatbot.generator._call_llama") as mock_llm:
+        mock_llm.return_value = "Kenya produced 100,000 tons of rice in 2016."
+        plan = build_generation_plan(
+            "what is the production of rice in kenya in 2016",
+            task_mode="fact_lookup",
+            reranked_context=[item],
+            decomposition=decomposition,
+        )
+        result = generate(
+            "what is the production of rice in kenya in 2016",
+            [item],
+            task_mode="fact_lookup",
+            decomposition=decomposition,
+            generation_plan=plan,
+            structured_bq_numeric_available=True,
+        )
+    mock_llm.assert_called_once()
+    assert "rice" in result.answer.lower()
+
+
 def test_generate_yield_only_adds_yield_rule_to_prompt() -> None:
     captured: dict = {}
 

@@ -1,0 +1,452 @@
+table_name: opentrace-prod-5ga4.mart_dev.fct_land_inputs
+description: Land use, fertilizer, pesticide and related inputs (one fact, many grains).
+source:
+  layer: mart_dev
+profiled_at: '2026-09-05T17:57:00.703130+00:00'
+grain: Country × item × element × input_grain × year
+entity_type: production
+columns:
+- name: land_input_key
+  type: STRING
+  description: land input key
+- name: geography_key
+  type: STRING
+  description: FK to dim_geography (null if unmatched)
+- name: geo_level
+  type: STRING
+  description: geo level
+- name: country_iso3
+  type: STRING
+  description: ISO3 from dim or extractable geo even if key null
+- name: source_key
+  type: STRING
+  description: FK to dim_source
+- name: tier
+  type: INT64
+  description: Producer scale (1=global, 2=national ministry, 3=community survey)
+- name: data_level
+  type: STRING
+  description: Resolution of the number (warehouse row resolution)
+- name: geo_scope
+  type: STRING
+  description: national / sub_national / community / point (null when geography_key
+    null)
+- name: place_scope
+  type: ARRAY<STRING>
+  description: ARRAY of comparable place labels for ACF geo overlap
+- name: metric
+  type: STRING
+  description: Stable slug for the measure
+- name: source_id
+  type: STRING
+  description: Lineage key (= dim_source.source_key)
+- name: item_key
+  type: STRING
+  description: item key
+- name: element_key
+  type: STRING
+  description: element key
+- name: input_grain
+  type: STRING
+  description: input grain
+- name: country_name
+  type: STRING
+  description: country name
+- name: partner_countries
+  type: STRING
+  description: partner countries
+- name: year
+  type: INT64
+  description: year
+- name: date_key
+  type: STRING
+  description: date key
+- name: as_of_date
+  type: DATE
+  description: Observation date when known; else DATE(loaded_at)
+- name: as_of_date_basis
+  type: STRING
+  description: observation or loaded_at
+- name: unit
+  type: STRING
+  description: Unit of measure
+- name: value
+  type: FLOAT64
+  description: Numeric measure
+- name: source_natural_key
+  type: STRING
+  description: source natural key
+- name: loaded_at
+  type: TIMESTAMP
+  description: loaded at
+land_input_key_value_stats:
+  distinct_count: 1980600
+  null_count: 0
+  is_truncated: true
+  min_value: 000001adc0db36e9447dbb198dbc73ec
+  max_value: fffffb98637cc6e49dd6b5b398f72849
+geography_key_value_stats:
+  distinct_count: 58
+  null_count: 51754
+  is_truncated: false
+  min_value: 08d5d1fbcfbc008d33905868ea7a2dd7
+  max_value: ff2abe6b8f87b63b0a4d12a3dc2fb900
+geo_level_value_stats:
+  distinct_count: 1
+  null_count: 51754
+  is_truncated: false
+  min_value: country
+  max_value: country
+country_iso3_value_stats:
+  distinct_count: 58
+  null_count: 51754
+  is_truncated: false
+  min_value: AGO
+  max_value: ZWE
+source_key_value_stats:
+  distinct_count: 12
+  null_count: 0
+  is_truncated: false
+  min_value: 25d570b988a49fd7034f57e3c7cceb21
+  max_value: f5009a1d76cbe70b1ef5027691d44e86
+tier_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '1'
+  max_value: '1'
+data_level_value_stats:
+  distinct_count: 1
+  null_count: 51754
+  is_truncated: false
+  min_value: national
+  max_value: national
+geo_scope_value_stats:
+  distinct_count: 1
+  null_count: 51754
+  is_truncated: false
+  min_value: national
+  max_value: national
+place_scope_value_samples:
+- South Africa
+- ZAF
+- MAR
+- Morocco
+- Egypt
+- EGY
+- Tunisia
+- TUN
+- KEN
+- Kenya
+- Algeria
+- DZA
+- MUS
+- Mauritius
+- SEN
+- Senegal
+- Ghana
+- GHA
+- Tanzania
+- TZA
+- NGA
+- Nigeria
+- Zambia
+- ZMB
+- CIV
+- Côte d’Ivoire
+- UGA
+- Uganda
+- CMR
+- Cameroon
+- ZWE
+- Zimbabwe
+- MOZ
+- Mozambique
+- Angola
+- AGO
+- Malawi
+- MWI
+- Madagascar
+- MDG
+- MLI
+- Mali
+- BFA
+- Burkina Faso
+- NAM
+- Namibia
+- Libya
+- LBY
+- Niger
+- NER
+metric_value_samples:
+- trade_import_quantity
+- trade_export_quantity
+- trade_import_value
+- use_or_cover_stocks
+- trade_import_quantity_(tonnes_n)
+- temperature_temperature_change
+- temperature_standard_deviation
+- use_or_cover_manure_management_(manure_treated,_n_content)
+- use_or_cover_manure_left_on_pasture_that_volatilises_(n_content)
+- use_or_cover_amount_excreted_in_manure_(n_content)
+- use_or_cover_manure_left_on_pasture_that_leaches_(n_content)
+- use_or_cover_manure_left_on_pasture_(n_content)
+- use_or_cover_manure_applied_to_soils_that_volatilises_(n_content)
+- use_or_cover_manure_applied_to_soils_(n_content)
+- use_or_cover_losses_from_manure_treated_(n_content)
+- use_or_cover_manure_applied_to_soils_that_leaches_(n_content)
+- use_or_cover_area
+- trade_export_value
+- use_or_cover_cropland_nitrogen_per_unit_area
+- use_or_cover_cropland_nitrogen
+- use_or_cover_livestock_units_per_agricultural_land_area
+- use_or_cover_share_in_total_livestock
+- use_or_cover_import_quantity
+- trade_import_quantity_(tonnes_k)
+- trade_import_quantity_(tonnes_p)
+- use_or_cover_import_value
+- use_or_cover_cropland_phosphorus_per_unit_area
+- use_or_cover_cropland_phosphorus
+- use_or_cover_agricultural_use
+- use_or_cover_cropland_potassium
+- use_or_cover_cropland_potassium_per_unit_area
+- trade_export_quantity_(tonnes_n)
+- use_or_cover_area_from_cci_lc
+- trade_export_quantity_(tonnes_p)
+- use_or_cover_export_quantity
+- use_or_cover_share_in_agricultural_land
+- use_or_cover_area_from_modis
+- use_or_cover_share_in_land_area
+- use_or_cover_export_value
+- use_or_cover_use_per_capita
+- use_or_cover_use_per_area_of_cropland
+- use_or_cover_use_per_value_of_agricultural_production
+- use_or_cover_energy_production
+- use_or_cover_energy_consumption
+- trade_export_quantity_(tonnes_k)
+- use_or_cover_production
+- use_or_cover_share_in_forest_land
+- use_or_cover_area_per_capita
+- use_or_cover_value_of_agricultural_production_(int._$)_per_area
+- use_or_cover_cropland_potassium_use_efficiency
+source_id_value_stats:
+  distinct_count: 12
+  null_count: 0
+  is_truncated: false
+  min_value: 25d570b988a49fd7034f57e3c7cceb21
+  max_value: f5009a1d76cbe70b1ef5027691d44e86
+item_key_value_stats:
+  distinct_count: 205
+  null_count: 124234
+  is_truncated: false
+  min_value: 00652f14a166753152683ad7182aff21
+  max_value: fe4c0f30aa359c41d9f9a5f69c8c4192
+element_key_value_stats:
+  distinct_count: 52
+  null_count: 0
+  is_truncated: false
+  min_value: 006306682b162b86e1b20f59c1813086
+  max_value: fd92cd7f6d79adddb2e4c0db1d1e58cc
+input_grain_value_samples:
+- use_or_cover
+- trade
+- temperature
+country_name_value_samples:
+- South Africa
+- Morocco
+- Egypt
+- Tunisia
+- Kenya
+- Algeria
+- Mauritius
+- Senegal
+- Ghana
+- United Republic of Tanzania
+- Nigeria
+- Zambia
+- Côte d'Ivoire
+- Uganda
+- Cameroon
+- Zimbabwe
+- Mozambique
+- Angola
+- Malawi
+- Madagascar
+- Mali
+- Burkina Faso
+- Namibia
+- Libya
+- Niger
+- Democratic Republic of the Congo
+- Togo
+- Eswatini
+- Ethiopia
+- Gabon
+- Botswana
+- Guinea
+- Rwanda
+- Benin
+- Congo
+- Gambia
+- Burundi
+- Chad
+- Mauritania
+- Cabo Verde
+- Lesotho
+- Sao Tome and Principe
+- Sierra Leone
+- Seychelles
+- Liberia
+- Central African Republic
+- Guinea-Bissau
+- Sudan (former)
+- Equatorial Guinea
+- Djibouti
+partner_countries_value_stats:
+  distinct_count: 223
+  null_count: 1309251
+  is_truncated: false
+  min_value: Afghanistan
+  max_value: Zimbabwe
+year_value_samples:
+- '2017'
+- '2018'
+- '2021'
+- '2022'
+- '2019'
+- '2016'
+- '2015'
+- '2023'
+- '2020'
+- '2013'
+- '2014'
+- '2012'
+- '2011'
+- '2010'
+- '2009'
+- '2008'
+- '2007'
+- '2006'
+- '2005'
+- '2004'
+- '2003'
+- '2002'
+- '2001'
+- '2000'
+- '1999'
+- '1998'
+- '1997'
+- '1996'
+- '1995'
+- '1994'
+- '1993'
+- '1992'
+- '1991'
+- '1990'
+- '1987'
+- '1988'
+- '1989'
+- '1982'
+- '1986'
+- '1983'
+- '1974'
+- '1973'
+- '1981'
+- '1980'
+- '1984'
+- '1979'
+- '1972'
+- '1978'
+- '1971'
+- '1985'
+date_key_value_stats:
+  distinct_count: 65
+  null_count: 0
+  is_truncated: false
+  min_value: '19610101'
+  max_value: '20250101'
+as_of_date_value_stats:
+  distinct_count: 65
+  null_count: 0
+  is_truncated: false
+  min_value: '1961-12-31'
+  max_value: '2025-12-31'
+as_of_date_basis_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: observation
+  max_value: observation
+unit_value_stats:
+  distinct_count: 17
+  null_count: 0
+  is_truncated: false
+  min_value: '%'
+  max_value: °C
+value_value_stats:
+  distinct_count: 673723
+  null_count: 0
+  is_truncated: true
+  min_value: '-783144.9458'
+  max_value: '4712801776'
+source_natural_key_value_stats:
+  distinct_count: 12
+  null_count: 0
+  is_truncated: false
+  min_value: Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Climate_Change_Indicators_Temperature_change_on_land
+  max_value: Unpivoted_FAOstat_africa_Land_Inputs_and_Sustainability_Sustainability_Indicators_Livestock_Patterns
+loaded_at_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '2026-08-25 22:08:59.575519+00'
+  max_value: '2026-08-25 22:08:59.575519+00'
+filtering_guidance:
+- Always filter input_grain — one fact covers land use, fertilizer, pesticide, and
+  related grains
+- Prefer this table over fct_fertilizer / fct_pesticide when unified inputs are available
+- Filter country_iso3 + year; JOIN dim_item / dim_element for item and element labels
+  via spine
+- Never filter place_scope ARRAY with =
+semantic_role:
+  primary_domain: production
+  supports:
+  - land_inputs
+  - fertilizer
+  - pesticide
+  - INP
+  - SOIL
+sql_generation_hints:
+- Filter input_grain first; then item_key/element_key via dim_item.item_name / dim_element.element_name
+- LEFT JOIN dim_geography on geography_key for country names
+bind_spine:
+  geography_key: dim_geography.country_iso3
+  source_key: dim_source.organisation_name
+  item_key: dim_item.item_name
+  element_key: dim_element.element_name
+semantic_relationships:
+  joins_with:
+  - table: dim_geography
+    true:
+    - geography_key
+    how: LEFT
+  - table: dim_item
+    true:
+    - item_key
+    how: LEFT
+  - table: dim_element
+    true:
+    - element_key
+    how: LEFT
+  do_not_join:
+  - table: fct_fertilizer
+    reason: Prefer fct_land_inputs with input_grain filter
+business_questions_supported:
+- What is fertilizer or pesticide use by country and year?
+- Land input intensity for a crop/item
+indicator_families:
+- id: land_input_grain
+  filters: Always filter input_grain before SUM/AVG
+indicator_classes:
+- INP
+- SOIL

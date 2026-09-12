@@ -1,9 +1,9 @@
 """
 Decompose a user query into semantic facets for retrieval routing and filtering.
 
-Intent is stakeholder-oriented (descriptive, diagnostic, predictive, monitoring, compare,
-locate, decision_support), not database- or channel-specific. Heuristics run by default;
-optional LLM enrichment when HF_API_TOKEN is set. Output is JSON-serializable for graph state.
+Model-first: when an LLM backend is configured, every non-empty query is decomposed via
+the model with full session/plan context (see ``decompose_context``). Heuristics remain
+as validators, provisional hints, and fallbacks for time ranges and geo grounding.
 """
 from __future__ import annotations
 
@@ -15,8 +15,18 @@ from datetime import date
 from typing import Any
 
 from ml.rag.llm_chat import llm_chat_complete, llm_model_id
+from ml.rag.chatbot.decompose_context import (
+    DECOMPOSE_MEASURE_HINTS,
+    DecomposeContext,
+    GEO_SCOPE_ALLOWED,
+    INTENT_ALLOWED,
+    JOB_ALLOWED,
+    format_decompose_system_prompt,
+    format_decompose_user_prompt,
+)
 from ml.rag.chatbot.query_normalize import normalize_query_text
 from ml.rag.chatbot.agri_entities import CROP_ENTITY_RE as _CROP_ENTITY_RE
+from ml.rag.chatbot.agri_measure_ontology import MEASURES
 from ml.rag.chatbot.continental_scope import (
     CONTINENTAL_PANEL_RE as _AFRICA_PANEL_RE,
     CONTINENTAL_RANK_RE as _RANKING_SCOPE_RE,
@@ -26,18 +36,7 @@ from ml.rag.chatbot.continental_scope import (
 from ml.rag.chatbot.geo_regions import all_non_country_geo_labels
 from ml.rag.observability import trace_elapsed_ms
 
-# Stakeholder-oriented insight intents (not DB/channel labels). Used in heuristics, LLM prompt, and normalization.
-INTENT_ALLOWED: tuple[str, ...] = (
-    "descriptive",
-    "diagnostic",
-    "predictive",
-    "monitoring",
-    "compare",
-    "locate",
-    "decision_support",
-)
-
-# One-line definitions for the LLM (no database vocabulary).
+# Re-export for callers that imported from here historically.
 _INTENT_LLM_LINES = (
     "descriptive: what happened, levels, trends, summaries from data or documents",
     "diagnostic: why, drivers, contributing factors (ground claims carefully)",
@@ -254,6 +253,10 @@ def apply_africa_default_scope(decomposition: dict[str, Any], query: str) -> dic
         out.pop("africa_default", None)
     if ranking:
         out["africa_default"] = True
+        entities = list(out.get("entities") or [])
+        if not any(str(e).strip().lower() == "africa" for e in entities):
+            entities.append("Africa")
+        out["entities"] = entities
     return out
 
 
@@ -504,13 +507,40 @@ _LLM_REQUIRED_INTENTS = frozenset(
     {"compare", "decision_support", "diagnostic", "predictive", "locate", "monitoring"}
 )
 
+_JOB_ALIASES: dict[str, str] = {
+    "diagnostic": "diagnose",
+    "monitoring": "brief",
+    "decision_support": "report",
+    "locate": "list",
+    "descriptive": "fact",
+    "predictive": "outlook",
+}
+
+_ENTITY_CANONICAL_ALIASES: dict[str, str] = {
+    "corn": "maize",
+    "paddy": "rice",
+    "soy": "soybean",
+    "groundnuts": "groundnut",
+    "ground nuts": "groundnut",
+    "cow peas": "cowpea",
+}
+
+
+def _decompose_backend_configured() -> bool:
+    return bool(os.environ.get("HF_API_TOKEN") or os.environ.get("RAG_LLM_BASE_URL", "").strip())
+
+
+def decompose_model_id() -> str:
+    """Dedicated decompose model when set; otherwise the global chat model."""
+    return (os.environ.get("RAG_DECOMPOSE_MODEL_ID") or "").strip() or llm_model_id()
+
 
 def should_use_llm_decompose(query: str) -> bool:
     """
-    Return True when the decompose LLM adds value beyond heuristics.
+    Legacy skip gate: True when the old hybrid path would have invoked the LLM.
 
-    Conservative: skip only for simple fact lookups, briefing cues, and
-    grounded single-intent descriptive queries.
+    Kept for tests and observability (``_legacy_would_skip_llm``). ``decompose_query``
+    now calls the model whenever a backend is configured regardless of this flag.
     """
     q = (query or "").strip()
     if not q:
@@ -541,34 +571,104 @@ def should_use_llm_decompose(query: str) -> bool:
     return True
 
 
-def _call_llama_decompose(query: str) -> dict[str, Any] | None:
-    model_id = llm_model_id()
-    if not os.environ.get("HF_API_TOKEN") and not os.environ.get("RAG_LLM_BASE_URL", "").strip():
+def _normalize_job(value: str | None) -> str:
+    if not value or not str(value).strip():
+        return ""
+    raw = str(value).strip().lower().replace(" ", "_")
+    if raw in JOB_ALLOWED:
+        return raw
+    return _JOB_ALIASES.get(raw, "")
+
+
+def _normalize_geo_scope(value: str | None) -> str:
+    if not value or not str(value).strip():
+        return ""
+    raw = str(value).strip().lower().replace(" ", "_")
+    if raw in GEO_SCOPE_ALLOWED:
+        return raw
+    return ""
+
+
+def _normalize_measure_hints(raw: Any) -> list[str]:
+    if not isinstance(raw, list):
+        return []
+    out: list[str] = []
+    allowed = set(DECOMPOSE_MEASURE_HINTS) | set(MEASURES.keys())
+    for item in raw[:6]:
+        mid = str(item).strip().lower()
+        if mid and mid in allowed and mid not in out:
+            out.append(mid)
+    return out
+
+
+def _entity_evidence_in_query(canonical: str, query: str) -> bool:
+    q = (query or "").lower()
+    cl = (canonical or "").strip().lower()
+    if not cl or not q:
+        return False
+    if _facet_grounded_in_query(canonical, query):
+        return True
+    for alias, canon in _ENTITY_CANONICAL_ALIASES.items():
+        if canon.lower() == cl and re.search(rf"\b{re.escape(alias)}\b", q):
+            return True
+    return False
+
+
+def _ground_entities_with_normalization(
+    values: list[str] | None,
+    query: str,
+) -> list[str]:
+    out: list[str] = []
+    for raw in values or []:
+        s = str(raw).strip()
+        if not s:
+            continue
+        sl = s.lower()
+        canonical = _ENTITY_CANONICAL_ALIASES.get(sl, s)
+        if _entity_evidence_in_query(canonical, query):
+            pick = canonical if sl in _ENTITY_CANONICAL_ALIASES else s
+            if pick not in out:
+                out.append(pick)
+    return out
+
+
+def build_provisional_decompose_hints(query: str) -> dict[str, Any]:
+    """Heuristic pre-parse passed to the decompose LLM for confirm/correct."""
+    q = (query or "").strip()
+    ts, te = _extract_year_range(q)
+    crops = [m.group(0).lower() for m in _CROP_ENTITY_RE.finditer(q)]
+    return {
+        "countries": _extract_countries(q),
+        "intent_heuristic": _infer_intent(q),
+        "domains": _infer_domains(q),
+        "time_start": ts or "",
+        "time_end": te or "",
+        "crops": crops[:8],
+    }
+
+
+def _call_llama_decompose(
+    query: str,
+    *,
+    context: DecomposeContext | None = None,
+    provisional: dict[str, Any] | None = None,
+) -> dict[str, Any] | None:
+    if not _decompose_backend_configured():
         return None
-    intent_block = "\n".join(f"  - {line}" for line in _INTENT_LLM_LINES)
-    allowed_csv = ", ".join(INTENT_ALLOWED)
-    prompt = (
-        "Users are government, NGOs, agribusiness, finance, and rural communities (often via programs). "
-        "They rarely mention databases. Extract structured fields for retrieval and answering.\n\n"
-        f"Return ONLY valid JSON with keys: intent (string, EXACTLY one of: {allowed_csv}), "
-        "entities (array of strings), geography (array of country names or empty), "
-        "domains (array of short topic tags), time_start (YYYY-MM-DD or empty string), "
-        "time_end (YYYY-MM-DD or empty string).\n\n"
-        "For time: use time_end = today's date when the question says 'till now', 'to date', "
-        "'until now', or 'since YEAR' with no fixed end year. Use empty time_start/time_end only "
-        "when no time period is implied.\n\n"
-        "intent must be one of these values; meanings:\n"
-        f"{intent_block}\n\n"
-        "No markdown, no extra keys.\n\nQuestion: "
-        + query
-    )
+    ctx = context or DecomposeContext.from_query(query)
+    prov = provisional if provisional is not None else build_provisional_decompose_hints(query)
+    system = format_decompose_system_prompt()
+    user = format_decompose_user_prompt(ctx, prov)
     try:
         raw = llm_chat_complete(
-            [{"role": "user", "content": prompt}],
-            model=model_id,
-            max_tokens=400,
+            [
+                {"role": "system", "content": system},
+                {"role": "user", "content": user},
+            ],
+            model=decompose_model_id(),
+            max_tokens=int(os.environ.get("RAG_DECOMPOSE_MAX_TOKENS", "600") or 600),
             temperature=0.0,
-            timeout_s=45,
+            timeout_s=float(os.environ.get("RAG_DECOMPOSE_TIMEOUT_S", "45") or 45),
             purpose="decompose",
         )
         if not raw:
@@ -582,15 +682,65 @@ def _call_llama_decompose(query: str) -> dict[str, Any] | None:
         return None
 
 
-def decompose_query(query: str, *, use_llm: bool = True) -> dict[str, Any]:
-    """
-    Return facets: intent (one of INTENT_ALLOWED), entities, geography, domains,
-    time_start, time_end (ISO dates or "").
+def _merge_llm_decompose(
+    out: dict[str, Any],
+    llm: dict[str, Any],
+    query: str,
+) -> None:
+    if isinstance(llm.get("intent"), str) and llm["intent"].strip():
+        out["intent"] = llm["intent"].strip()
+    job = _normalize_job(llm.get("job"))
+    if job:
+        out["job"] = job
+    geo_scope = _normalize_geo_scope(llm.get("geo_scope"))
+    if geo_scope:
+        out["geo_scope"] = geo_scope
+    measure_hints = _normalize_measure_hints(llm.get("primary_measure_hints"))
+    if measure_hints:
+        out["primary_measure_hints"] = measure_hints
+    if isinstance(llm.get("entities"), list):
+        out["entities"] = [str(x) for x in llm["entities"][:20]]
+    if isinstance(llm.get("geography"), list) and llm["geography"]:
+        geo = [str(x).strip() for x in llm["geography"] if str(x).strip()]
+        for c in geo:
+            if c not in out["geography"]:
+                out["geography"].append(c)
+    if isinstance(llm.get("domains"), list) and llm["domains"]:
+        for d in llm["domains"][:10]:
+            ds = str(d).strip().lower()
+            if ds and ds not in out["domains"]:
+                out["domains"].append(ds)
+    t0 = llm.get("time_start") or ""
+    t1 = llm.get("time_end") or ""
+    if isinstance(t0, str) and re.match(r"^\d{4}-\d{2}-\d{2}$", t0.strip()):
+        out["time_start"] = t0.strip()
+    if isinstance(t1, str) and re.match(r"^\d{4}-\d{2}-\d{2}$", t1.strip()):
+        out["time_end"] = t1.strip()
+    elif isinstance(t0, str) and re.match(r"^\d{4}-\d{2}-\d{2}$", t0.strip()) and not str(t1).strip():
+        if _is_open_ended_time(query) or _extract_since_year(query) is not None:
+            out["time_end"] = date.today().isoformat()
+    if llm.get("africa_panel") is True:
+        out["africa_panel"] = True
+    if llm.get("africa_default") is True:
+        out["africa_default"] = True
 
-    Internal keys ``_decompose_llm_ms`` and ``_skipped_decompose_llm`` are
-    attached for observability; callers should strip them before downstream use.
+
+def decompose_query(
+    query: str,
+    *,
+    use_llm: bool = True,
+    context: DecomposeContext | None = None,
+) -> dict[str, Any]:
+    """
+    Return facets: intent, entities, geography, domains, time_start, time_end,
+    plus optional job, geo_scope, primary_measure_hints.
+
+    Internal keys ``_decompose_llm_ms``, ``_skipped_decompose_llm``,
+    ``_decompose_llm_used``, and ``_legacy_would_skip_llm`` are attached for
+    observability; callers should strip them before downstream use.
     """
     q = normalize_query_text((query or "").strip())
+    ctx = context or DecomposeContext.from_query(q)
     if not q:
         return {
             "intent": "descriptive",
@@ -601,14 +751,18 @@ def decompose_query(query: str, *, use_llm: bool = True) -> dict[str, Any]:
             "time_end": "",
             "_decompose_llm_ms": 0.0,
             "_skipped_decompose_llm": True,
+            "_decompose_llm_used": False,
+            "_legacy_would_skip_llm": True,
         }
 
-    llm_needed = bool(use_llm and should_use_llm_decompose(q))
+    llm_attempted = bool(use_llm and _decompose_backend_configured())
+    provisional = build_provisional_decompose_hints(q)
     llm: dict[str, Any] | None = None
     llm_t0 = time.perf_counter()
-    if llm_needed:
-        llm = _call_llama_decompose(q)
-    decompose_llm_ms = trace_elapsed_ms(llm_t0) if llm_needed else 0.0
+    if llm_attempted:
+        llm = _call_llama_decompose(q, context=ctx, provisional=provisional)
+    decompose_llm_ms = trace_elapsed_ms(llm_t0) if llm_attempted else 0.0
+    llm_used = bool(llm and isinstance(llm, dict))
 
     countries = _extract_countries(q)
     domains = _infer_domains(q)
@@ -624,30 +778,8 @@ def decompose_query(query: str, *, use_llm: bool = True) -> dict[str, Any]:
         "time_end": te or "",
     }
 
-    if llm and isinstance(llm, dict):
-        if isinstance(llm.get("intent"), str) and llm["intent"].strip():
-            out["intent"] = llm["intent"].strip()
-        if isinstance(llm.get("entities"), list):
-            out["entities"] = [str(x) for x in llm["entities"][:20]]
-        if isinstance(llm.get("geography"), list) and llm["geography"]:
-            geo = [str(x).strip() for x in llm["geography"] if str(x).strip()]
-            for c in geo:
-                if c not in out["geography"]:
-                    out["geography"].append(c)
-        if isinstance(llm.get("domains"), list) and llm["domains"]:
-            for d in llm["domains"][:10]:
-                ds = str(d).strip().lower()
-                if ds and ds not in out["domains"]:
-                    out["domains"].append(ds)
-        t0 = llm.get("time_start") or ""
-        t1 = llm.get("time_end") or ""
-        if isinstance(t0, str) and re.match(r"^\d{4}-\d{2}-\d{2}$", t0.strip()):
-            out["time_start"] = t0.strip()
-        if isinstance(t1, str) and re.match(r"^\d{4}-\d{2}-\d{2}$", t1.strip()):
-            out["time_end"] = t1.strip()
-        elif isinstance(t0, str) and re.match(r"^\d{4}-\d{2}-\d{2}$", t0.strip()) and not str(t1).strip():
-            if _is_open_ended_time(q) or _extract_since_year(q) is not None:
-                out["time_end"] = date.today().isoformat()
+    if llm_used and llm is not None:
+        _merge_llm_decompose(out, llm, q)
 
     # Fill missing fields from heuristics (do not narrow an open-ended LLM start to one calendar year)
     if not out["time_start"] and ts:
@@ -667,9 +799,9 @@ def decompose_query(query: str, *, use_llm: bool = True) -> dict[str, Any]:
         out["time_start"] = ts
         out["time_end"] = te
 
-    # Drop LLM-hallucinated places/entities not evidenced in the user text.
+    # Strict geography grounding; permissive entity normalization.
     out["geography"] = _ground_facets_in_query(out.get("geography"), q)
-    out["entities"] = _ground_facets_in_query(out.get("entities"), q)
+    out["entities"] = _ground_entities_with_normalization(out.get("entities"), q)
     crop_hits = [m.group(0).lower() for m in _CROP_ENTITY_RE.finditer(q)]
     if crop_hits:
         seen = {str(e).strip().lower() for e in out["entities"]}
@@ -681,5 +813,7 @@ def decompose_query(query: str, *, use_llm: bool = True) -> dict[str, Any]:
     out["intent"] = _normalize_intent(out.get("intent"))
     out = apply_africa_default_scope(out, q)
     out["_decompose_llm_ms"] = decompose_llm_ms
-    out["_skipped_decompose_llm"] = not llm_needed
+    out["_skipped_decompose_llm"] = not llm_attempted
+    out["_decompose_llm_used"] = llm_used
+    out["_legacy_would_skip_llm"] = not should_use_llm_decompose(q)
     return out

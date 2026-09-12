@@ -241,4 +241,5 @@ def reasoner_plan_to_bq_plan(reasoner: ReasonerPlan) -> dict[str, Any]:
         "reasoner_shape": reasoner.shape,
         "crop_required": True,
         "geography_required": bool(reasoner.geos),
+        "plan_source": "slot_reasoner",
     }

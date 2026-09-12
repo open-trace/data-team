@@ -2,7 +2,7 @@ table_name: opentrace-prod-5ga4.mart_dev.dim_status
 description: dim status
 source:
   layer: mart_dev
-profiled_at: '2026-08-28T17:53:44.421016+00:00'
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
 columns:
 - name: status_key
   type: STRING
@@ -16,6 +16,12 @@ columns:
 - name: status_type
   type: STRING
   description: status type
+status_key_value_stats:
+  distinct_count: 8
+  null_count: 0
+  is_truncated: false
+  min_value: 3f754af8e7c813ce04e9998c3df74dc5
+  max_value: f10f22ce67d7252a5bf6b26ec7f6316f
 status_code_value_samples:
 - PENDING
 - INACTIVE
@@ -38,8 +44,3 @@ status_type_value_samples:
 - collection
 - quality
 - publication
-status_key_value_stats:
-  distinct_count: 8
-  null_count: 0
-  is_truncated: false
-  patched: true

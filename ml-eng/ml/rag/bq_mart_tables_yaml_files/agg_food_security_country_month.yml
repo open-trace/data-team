@@ -1,0 +1,188 @@
+table_name: opentrace-prod-5ga4.mart_dev.agg_food_security_country_month
+description: Country-month population-in-phase aggregates.
+source:
+  layer: mart_dev
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
+grain: Country × measure_type × month × source
+entity_type: food_security
+columns:
+- name: agg_food_security_country_month_key
+  type: STRING
+  description: agg food security country month key
+- name: geography_key
+  type: STRING
+  description: FK to dim_geography (null if unmatched)
+- name: date_key
+  type: STRING
+  description: date key
+- name: country_name
+  type: STRING
+  description: country name
+- name: country_iso2
+  type: STRING
+  description: country iso2
+- name: measure_type
+  type: STRING
+  description: measure type
+- name: year
+  type: INT64
+  description: year
+- name: month
+  type: INT64
+  description: month
+- name: source_key
+  type: STRING
+  description: FK to dim_source
+- name: value_sum
+  type: FLOAT64
+  description: value sum
+- name: pct_phase3_avg
+  type: FLOAT64
+  description: pct phase3 avg
+- name: pct_phase4_avg
+  type: FLOAT64
+  description: pct phase4 avg
+- name: pct_phase5_avg
+  type: FLOAT64
+  description: pct phase5 avg
+- name: unit_count
+  type: INT64
+  description: unit count
+- name: loaded_at
+  type: TIMESTAMP
+  description: loaded at
+agg_food_security_country_month_key_value_stats:
+  distinct_count: 1892
+  null_count: 0
+  is_truncated: true
+  min_value: 002c2b62c86f4a99b890e75c8f6789ce
+  max_value: fff6f846cc67c19daa1b842e9cfdedb9
+geography_key_value_stats:
+  distinct_count: 24
+  null_count: 0
+  is_truncated: false
+  min_value: 07f27e10fbfac3b47ae887113cd76536
+  max_value: faa85bfc7f699b3c314932606dc2eac2
+date_key_value_stats:
+  distinct_count: 86
+  null_count: 0
+  is_truncated: false
+  min_value: '20160101'
+  max_value: '20260701'
+country_name_value_samples:
+- Kenya
+- Mozambique
+- Burundi
+- Zimbabwe
+- South Sudan
+- Cameroon
+- Mali
+- Nigeria
+- Somalia
+- Chad
+- Madagascar
+- Democratic Republic of the Congo
+- Niger
+- Malawi
+- Ethiopia
+- Burkina Faso
+- Sudan
+- Uganda
+- Lesotho
+- Central African Republic
+- Mauritania
+- Rwanda
+- Angola
+- Togo
+country_iso2_value_stats:
+  distinct_count: 24
+  null_count: 0
+  is_truncated: false
+  min_value: AO
+  max_value: ZW
+measure_type_value_samples:
+- population
+year_value_samples:
+- '2024'
+- '2023'
+- '2022'
+- '2020'
+- '2021'
+- '2019'
+- '2025'
+- '2026'
+- '2016'
+- '2017'
+- '2018'
+month_value_samples:
+- '1'
+- '5'
+- '4'
+- '2'
+- '3'
+- '7'
+- '6'
+- '11'
+- '12'
+- '8'
+- '9'
+- '10'
+source_key_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: aaf56634935b56c40870c3597e4fa80f
+  max_value: aaf56634935b56c40870c3597e4fa80f
+value_sum_value_stats:
+  distinct_count: 76
+  null_count: 0
+  is_truncated: false
+  min_value: '0'
+  max_value: '42000000'
+pct_phase3_avg_value_stats:
+  distinct_count: 25
+  null_count: 1803
+  is_truncated: false
+  min_value: '55'
+  max_value: '100'
+pct_phase4_avg_value_stats:
+  distinct_count: 23
+  null_count: 1803
+  is_truncated: false
+  min_value: '0'
+  max_value: '37'
+pct_phase5_avg_value_stats:
+  distinct_count: 6
+  null_count: 1803
+  is_truncated: false
+  min_value: '0'
+  max_value: '10'
+unit_count_value_stats:
+  distinct_count: 3
+  null_count: 0
+  is_truncated: false
+  min_value: '1'
+  max_value: '3'
+loaded_at_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '2026-08-24 21:59:25.364122+00'
+  max_value: '2026-08-24 21:59:25.364122+00'
+sql_generation_hints:
+- 'Join keys: geography_key, source_key, date_key'
+- LEFT JOIN dim_geography on geography_key for country names
+filtering_guidance:
+- FS companion to agg_food_security_monthly — country-month IPC rollups
+- Filter measure_type; do not blend population vs classification
+semantic_role:
+  primary_domain: food_security
+  supports:
+  - food_security
+  - ipc
+  - FS
+bind_spine:
+  geography_key: dim_geography.country_iso3
+  source_key: dim_source.organisation_name
+indicator_classes:
+- FS

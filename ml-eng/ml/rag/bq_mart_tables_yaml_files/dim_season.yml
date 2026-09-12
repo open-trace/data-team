@@ -2,7 +2,7 @@ table_name: opentrace-prod-5ga4.mart_dev.dim_season
 description: Agricultural seasons by country (start/end months).
 source:
   layer: mart_dev
-profiled_at: '2026-08-28T17:53:44.421016+00:00'
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
 grain: Country × season_name
 entity_type: production
 columns:
@@ -36,6 +36,18 @@ columns:
 - name: loaded_at
   type: TIMESTAMP
   description: loaded at
+season_key_value_stats:
+  distinct_count: 75
+  null_count: 0
+  is_truncated: false
+  min_value: 02dbd70bbfce3d97b2f92c5d3e7d00d1
+  max_value: f41ea193a996061be6038093867df2d2
+country_value_stats:
+  distinct_count: 33
+  null_count: 0
+  is_truncated: false
+  min_value: Angola
+  max_value: Zimbabwe
 season_name_value_samples:
 - Main
 - Annual
@@ -70,58 +82,57 @@ season_name_value_samples:
 - Walo
 - Wet
 - 1st Season
-filtering_guidance:
-- 'Grain: Country × season_name'
-- Agricultural seasons by country (start/end months).
-sql_generation_hints:
-- 'Join keys: season_key'
-- LEFT JOIN dim_geography on geography_key for country names
-semantic_role:
-  primary_domain: production
-  supports:
-  - production
-season_key_value_stats:
-  distinct_count: 75
-  null_count: 0
-  is_truncated: false
-  patched: true
-country_value_stats:
-  distinct_count: 33
-  null_count: 0
-  is_truncated: false
-  patched: true
 season_name_norm_value_stats:
   distinct_count: 33
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: 1st season
+  max_value: winter
 start_month_value_stats:
   distinct_count: 10
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: '1'
+  max_value: '11'
 end_month_value_stats:
   distinct_count: 12
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: '1'
+  max_value: '12'
 crosses_year_value_stats:
   distinct_count: 2
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: 'false'
+  max_value: 'true'
 is_off_season_value_stats:
   distinct_count: 2
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: 'false'
+  max_value: 'true'
 n_rows_value_stats:
   distinct_count: 73
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: '8'
+  max_value: '17441'
 loaded_at_value_stats:
   distinct_count: 1
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: '2026-08-24 14:23:05.241391+00'
+  max_value: '2026-08-24 14:23:05.241391+00'
+sql_generation_hints:
+- 'Join keys: season_key'
+- LEFT JOIN dim_geography on geography_key for country names
+filtering_guidance:
+- 'Grain: Country × season_name'
+- Agricultural seasons by country (start/end months).
+semantic_role:
+  primary_domain: production
+  supports:
+  - production
+bind_spine:
+  season_key: dim_season.season_name

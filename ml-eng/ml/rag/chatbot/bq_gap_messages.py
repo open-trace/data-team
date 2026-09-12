@@ -95,24 +95,47 @@ def first_prep_error(bq_sql_debug: list[dict[str, Any]]) -> str:
 
 def warehouse_blocks_web(state: dict[str, Any]) -> bool:
     """Block web only to cover missing job_id / validation failure — not every BQ attempt."""
-    plan = state.get("bq_sql_plan") if isinstance(state.get("bq_sql_plan"), dict) else {}
-    pre_queries = list(plan.get("bq_sql_queries") or state.get("bq_sql_queries") or [])
-    if not pre_queries:
+    from ml.rag.chatbot.bq_execute_state import collect_pre_queries, plan_indicates_warehouse_attempt
+
+    plan: dict[str, Any] = {}
+    raw_plan = state.get("bq_sql_plan")
+    if isinstance(raw_plan, dict):
+        plan = raw_plan
+    debug_rows: list[Any] = []
+    for key, src in (("bq_sql_debug", state), ("bq_sql_debug", plan)):
+        raw = src.get(key)
+        if isinstance(raw, list):
+            debug_rows.extend(raw)
+    bq_debug = [d for d in debug_rows if isinstance(d, dict)]
+    state_queries = state.get("bq_sql_queries")
+    pre_queries = collect_pre_queries(
+        plan,
+        state_queries=list(state_queries) if isinstance(state_queries, list) else [],
+        bq_sql_debug=bq_debug,
+    )
+    if not pre_queries and not plan_indicates_warehouse_attempt(plan):
         return False
-    bq_debug = [
-        d
-        for d in list(state.get("bq_sql_debug") or []) + list(plan.get("bq_sql_debug") or [])
-        if isinstance(d, dict)
-    ]
-    bq_results = state.get("bq_results") or []
-    usable_bq = any(is_usable_structured_bq_row(r) for r in bq_results if isinstance(r, dict))
-    flags = bq_execute_flags(bq_debug, pre_queries=pre_queries, usable_bq=usable_bq)
+    bq_results = state.get("bq_results")
+    usable_bq = any(
+        is_usable_structured_bq_row(r)
+        for r in (bq_results if isinstance(bq_results, list) else [])
+        if isinstance(r, dict)
+    )
+    flags = bq_execute_flags(
+        bq_debug,
+        pre_queries=pre_queries,
+        usable_bq=usable_bq,
+        warehouse_attempted=plan_indicates_warehouse_attempt(plan) or bool(pre_queries or bq_debug),
+    )
     if flags.get("structured_bq_never_executed") or flags.get("structured_bq_validation_failed"):
         return True
     if flags.get("structured_bq_timed_out") and not any(d.get("job_id") for d in bq_debug):
         return True
     if flags.get("structured_bq_empty"):
-        return False
+        from ml.rag.chatbot.empty_policy import resolve_web_policy
+
+        # Card web_policy=never: do not paper over empty warehouse jobs with web/wiki
+        return resolve_web_policy(state) == "never"
     if flags.get("structured_bq_timed_out") and usable_bq:
         return False
     return False

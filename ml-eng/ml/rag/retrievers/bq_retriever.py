@@ -35,8 +35,7 @@ from ml.rag.chatbot.bq_sql_validate import (
     validate_sql_value_samples,
 )
 from ml.rag.chatbot.query_decomposer import _NON_COUNTRY_GEO
-from ml.rag.chatbot.sql_compiler import sql_compiler_enabled
-from ml.rag.chatbot.bq_table_schema_yaml import join_fragments_for_tables
+from ml.rag.chatbot.bq_table_schema_yaml import crop_entities_for_bind, join_fragments_for_tables
 from ml.rag.llm_chat import llm_chat_complete, llm_default_timeout_s, llm_model_id
 from ml.rag.local_env import load_rag_dotenv
 from ml.rag.observability import (
@@ -239,6 +238,52 @@ def _continental_scope_hint(
     )
 
 
+def _format_intent_block(
+    query_intents: list[Any] | None,
+    *,
+    primary_measures: list[str] | None = None,
+    task_mode: str = "",
+) -> str:
+    """Serialize class-engine query intents for NL2SQL (goal, tables, shape)."""
+    if not isinstance(query_intents, list) or not query_intents:
+        return ""
+    lines: list[str] = ["Structured query intents from the warehouse planner:"]
+    mode = str(task_mode or "").strip().lower()
+    for idx, raw in enumerate(query_intents):
+        if not isinstance(raw, dict):
+            continue
+        goal = str(raw.get("goal") or "").strip()
+        tables = raw.get("tables") or []
+        pattern = str(raw.get("pattern") or "custom").strip()
+        metric = str(raw.get("metric") or "").strip()
+        grain = raw.get("grain")
+        filters = str(raw.get("filters") or "").strip()
+        prefix = f"  Intent {idx + 1}:"
+        if goal:
+            lines.append(f"{prefix} goal={goal}")
+        if tables:
+            lines.append(f"{prefix} tables={tables}")
+        if pattern:
+            lines.append(f"{prefix} pattern={pattern}")
+        if metric:
+            lines.append(f"{prefix} metric column hint={metric}")
+        if isinstance(grain, list) and grain:
+            lines.append(f"{prefix} grain={grain}")
+        if filters:
+            lines.append(f"{prefix} filters={filters[:240]}")
+    if mode == "fact_lookup":
+        lines.append(
+            "  Shape: point fact for a single country and single year — "
+            "return ONE row with the measure column (LIMIT 1). "
+            "Do NOT rank or GROUP BY unless the question asks to compare or rank."
+        )
+    if primary_measures:
+        pm = [str(m).strip() for m in primary_measures if str(m).strip()]
+        if pm:
+            lines.append(f"  Primary measures (NOT crop/product filters): {', '.join(pm)}")
+    return "\n".join(lines)
+
+
 def _format_query_constraints(
     *,
     geo_country: str | None,
@@ -249,6 +294,9 @@ def _format_query_constraints(
     domains: list[str] | None,
     query: str | None = None,
     bind_contracts: dict[str, Any] | None = None,
+    query_intents: list[Any] | None = None,
+    primary_measures: list[str] | None = None,
+    task_mode: str = "",
 ) -> str:
     """Structured filters from query decomposition (must appear in generated SQL)."""
     lines: list[str] = []
@@ -262,8 +310,14 @@ def _format_query_constraints(
                 nomen = str(raw.get("nomenclature") or "").strip()
                 if nomen:
                     lines.append(nomen)
-        if lines:
-            return "Query constraints from decomposition (MUST honor in WHERE / GROUP BY):\n" + "\n".join(lines)
+
+    intent_block = _format_intent_block(
+        query_intents,
+        primary_measures=primary_measures,
+        task_mode=task_mode,
+    )
+    if intent_block:
+        lines.append(intent_block)
 
     countries = [str(c).strip() for c in (geo_countries or []) if str(c).strip()]
     if not countries and geo_country:
@@ -297,16 +351,22 @@ def _format_query_constraints(
                 "(use the time column from Columns: year, planting_year, harvest_year, "
                 "observation_year, etc.)"
             )
-    if entities:
-        ent = [str(e).strip() for e in entities if str(e).strip()]
-        if ent:
-            lines.append(f"- Key entities to cover in filters or SELECT: {', '.join(ent)}")
+    crop_ents = crop_entities_for_bind(entities, primary_measures=primary_measures)
+    if crop_ents:
+        lines.append(
+            f"- Crop/product entities (use in product filters): {', '.join(crop_ents)}"
+        )
+    if primary_measures:
+        pm = [str(m).strip() for m in primary_measures if str(m).strip()]
+        if pm:
+            lines.append(
+                f"- Primary measures (select these columns — NOT product_name filters): "
+                f"{', '.join(pm)}"
+            )
     if domains:
         dom = [str(d).strip() for d in domains if str(d).strip()]
         if dom:
             lines.append(f"- Topic domains: {', '.join(dom)}")
-    # Expanded country lists already encode regional scope; the continental hint
-    # forbids IN-lists and would push the model toward country_name = 'West Africa'.
     if len(countries) < 2:
         continental = _continental_scope_hint(query, entities)
         if continental:
@@ -409,6 +469,8 @@ def _bq_diagnostic_item(
     sql: str = "",
     prep_error: str | None = None,
     nl2sql_raw: str | None = None,
+    sql_source: str | None = None,
+    table_id: str | None = None,
 ) -> dict[str, Any]:
     """Inspector-visible BQ failure row (filtered out of generation context)."""
     meta: dict[str, Any] = {
@@ -420,6 +482,10 @@ def _bq_diagnostic_item(
         meta["prep_error"] = prep_error[:500]
     if nl2sql_raw:
         meta["nl2sql_raw"] = nl2sql_raw[:500]
+    if sql_source:
+        meta["sql_source"] = sql_source
+    if table_id:
+        meta["table_id"] = table_id
     return {
         "content": f"[BQ {status}: {message[:200]}]",
         "source": "bigquery",
@@ -551,6 +617,9 @@ class BQRetriever(BaseRetriever):
         selected_tables: list[str] | None = None,
         query: str | None = None,
         bind_contracts: dict[str, Any] | None = None,
+        query_intents: list[Any] | None = None,
+        primary_measures: list[str] | None = None,
+        task_mode: str = "",
     ) -> list[dict[str, str]]:
         schema_text = self._schema_for_nl2sql(table_hints)
         constraints_block = _format_query_constraints(
@@ -562,6 +631,9 @@ class BQRetriever(BaseRetriever):
             domains=domains,
             query=query or question,
             bind_contracts=bind_contracts,
+            query_intents=query_intents,
+            primary_measures=primary_measures,
+            task_mode=task_mode,
         )
         hints_block = ""
         hints_truncated = False
@@ -677,6 +749,9 @@ class BQRetriever(BaseRetriever):
         selected_tables: list[str] | None = None,
         query: str | None = None,
         bind_contracts: dict[str, Any] | None = None,
+        query_intents: list[Any] | None = None,
+        primary_measures: list[str] | None = None,
+        task_mode: str = "",
     ) -> str:
         """Generate one BigQuery SELECT (focused on a single table hint when provided)."""
         messages = self._build_nl2sql_messages(
@@ -693,6 +768,9 @@ class BQRetriever(BaseRetriever):
             selected_tables=selected_tables,
             query=query,
             bind_contracts=bind_contracts,
+            query_intents=query_intents,
+            primary_measures=primary_measures,
+            task_mode=task_mode,
         )
         raw = _call_llama_for_sql(messages)
         sql = _extract_single_select(raw)
@@ -725,6 +803,7 @@ class BQRetriever(BaseRetriever):
         sql_source: str = "",
         decomposition: dict[str, Any] | None = None,
         bind_contracts: dict[str, Any] | None = None,
+        query_intents: list[Any] | None = None,
     ) -> tuple[str | None, str | None]:
         """
         Validate SQL, enforce table allowlist, dry-run, and optionally retry once.
@@ -828,9 +907,23 @@ class BQRetriever(BaseRetriever):
         check_err = _post_checks(validated)
         if check_err and sql_retry_enabled() and not trusted:
             allowed_list = ", ".join(sorted(selected_tables)) or "(none)"
+            bind_block = ""
+            if bind_contracts:
+                nom_parts: list[str] = []
+                for tid, raw_bind in bind_contracts.items():
+                    if isinstance(raw_bind, dict):
+                        nom = str(raw_bind.get("nomenclature") or "").strip()
+                        if nom:
+                            nom_parts.append(nom)
+                if nom_parts:
+                    bind_block = (
+                        "\n\nMandatory bind contracts (preserve these filters exactly):\n"
+                        + "\n---\n".join(nom_parts[:4])
+                    )
             retry_question = (
                 f"{question}\n\n"
-                f"Previous SQL failed validation:\n{check_err}\n\n"
+                f"Previous SQL failed validation:\n{check_err}\n"
+                f"{bind_block}\n\n"
                 "Fix the SQL. Use ONLY columns from the Columns blocks in the table hints. "
                 "Equality-filter every metric discriminator that has *_value_samples "
                 "(element, price_type, measure_type, indicator, treatment, …) using exact sample strings. "
@@ -852,6 +945,9 @@ class BQRetriever(BaseRetriever):
                 domains=domains,
                 selected_tables=sorted(selected_tables),
                 query=query,
+                bind_contracts=bind_contracts,
+                query_intents=query_intents,
+                primary_measures=primary_measures,
             )
             if retry_sql:
                 retry_validated = _validate_sql(retry_sql, allowed_datasets, limit)
@@ -877,6 +973,9 @@ class BQRetriever(BaseRetriever):
         selected_tables: list[str] | None = None,
         query: str | None = None,
         bind_contracts: dict[str, Any] | None = None,
+        query_intents: list[Any] | None = None,
+        primary_measures: list[str] | None = None,
+        task_mode: str = "",
     ) -> list[str]:
         """
         Generate up to RAG_BQ_MAX_SQL_QUERIES (default 10) SELECT statements via NL-to-SQL.
@@ -922,6 +1021,9 @@ class BQRetriever(BaseRetriever):
                     selected_tables=selected_tables,
                     query=query,
                     bind_contracts=bind_contracts,
+                    query_intents=query_intents,
+                    primary_measures=primary_measures,
+                    task_mode=task_mode,
                 )
                 raw_batch = _call_llama_for_sql(messages)
                 parsed = _parse_sql_queries(raw_batch, max_queries)
@@ -951,6 +1053,9 @@ class BQRetriever(BaseRetriever):
                         selected_tables=selected_tables,
                         query=query,
                         bind_contracts=bind_contracts,
+                        query_intents=query_intents,
+                        primary_measures=primary_measures,
+                        task_mode=task_mode,
                     )
 
                 seen: set[str] = set()
@@ -1180,6 +1285,7 @@ class BQRetriever(BaseRetriever):
         sql_source = "none"
         pattern_sqls: list[str] = []
         nl2sql_sqls: list[str] = []
+        template_sqls: list[str] = []
         leftover_intents: list[Any] = []
         pattern_slot_ids: list[str] = []
         intent_slot_by_index: dict[int, str] = {}
@@ -1214,123 +1320,187 @@ class BQRetriever(BaseRetriever):
             sql_source = "template"
             return [str(hit["sql"])]
 
-        if not engine_execute_only and not sql_queries and not explicit_sql and (
-            not sql_compiler_enabled()
+        planned_path = (
+            str(kwargs.get("retrieve_mode") or "").strip().lower() == "planned"
+            or bool(bind_contracts)
             or bool(kwargs.get("nl2sql_fallback"))
-            or bool(kwargs.get("bind_contracts"))
-        ):
-            template_sqls = _try_template_sql()
-            if template_sqls:
-                sql_queries = template_sqls
-            else:
-                pattern_cap = 1 if fast_fact else None
-                pattern_hits = try_sql_patterns(
-                    query_intents,
-                    project_id=self.project_id,
-                    dataset=ds_name,
-                    query=query,
-                    entities=entities,
-                    time_start=time_start,
-                    time_end=time_end,
-                    selected_tables=selected_tables,
-                    limit=rows_per_query,
-                    geo_country=geo_country,
-                    geo_countries=geo_countries,
-                    max_queries=pattern_cap,
-                    primary_measures=primary_measures,
-                )
-                if pattern_hits:
-                    pattern_meta = {
-                        "hits": pattern_hits,
-                        "pattern": pattern_hits[0].get("pattern"),
-                    }
-                    pattern_sqls = [
-                        str(h["sql"]) for h in pattern_hits if str(h.get("sql") or "").strip()
-                    ]
-                    pattern_slot_ids = []
-                    for h in pattern_hits:
-                        if not str(h.get("sql") or "").strip():
-                            continue
-                        ii = h.get("intent_index")
-                        sid = intent_slot_by_index.get(ii, "") if isinstance(ii, int) else ""
-                        pattern_slot_ids.append(sid)
-                    compiled_idx = {h.get("intent_index") for h in pattern_hits}
-                    if isinstance(query_intents, list):
-                        leftover_intents = [
-                            intent
-                            for idx, intent in enumerate(query_intents)
-                            if idx not in compiled_idx and isinstance(intent, dict)
-                        ]
-                elif isinstance(query_intents, list):
-                    leftover_intents = [
-                        intent for intent in query_intents if isinstance(intent, dict)
-                    ]
-                    sql_source = "pattern"
+            or str(kwargs.get("plan_source") or "").strip() == "class_engine"
+        )
 
-                leftover_tables: list[str] = []
-                for intent in leftover_intents:
-                    for raw in intent.get("tables") or []:
-                        tid = str(raw).strip().split(".")[-1].lower()
-                        if _is_mart_table_id(tid) and tid not in leftover_tables:
-                            leftover_tables.append(tid)
-                custom_leftover = [
-                    intent
-                    for intent in leftover_intents
-                    if isinstance(intent, dict)
-                    and str(intent.get("pattern") or "custom").strip().lower() == "custom"
-                ]
-                need_nl2sql = self.nl2sql_enabled and (
-                    custom_leftover
-                    or (not pattern_sqls and not template_sqls and not query_intents)
+        if not engine_execute_only and not sql_queries and not explicit_sql:
+            if planned_path:
+                from ml.rag.chatbot.compile_sql_from_bind import (
+                    bind_sql_compiler_enabled,
+                    compile_sql_from_bind,
                 )
-                pm = [
-                    str(m).strip().lower()
-                    for m in (primary_measures or [])
-                    if str(m).strip()
-                ]
-                if fast_fact and (
-                    "market_price" in pm
-                    or "food_security_ipc" in pm
-                    or "food_security" in pm
-                ):
-                    need_nl2sql = False
-                if fast_fact and not custom_leftover:
-                    need_nl2sql = False
-                if contract_sql_only:
-                    need_nl2sql = False
-                if bind_contracts and not sql_queries and not pattern_sqls and not template_sqls:
-                    need_nl2sql = self.nl2sql_enabled and not contract_sql_only
-                if need_nl2sql:
-                    nl_tables = leftover_tables or (
-                        sorted(selected_tables) if selected_tables else None
-                    )
-                    prev_max = os.environ.get("RAG_BQ_MAX_SQL_QUERIES")
-                    if fast_fact:
-                        os.environ["RAG_BQ_MAX_SQL_QUERIES"] = "1"
-                    try:
-                        nl2sql_sqls = self._nl_to_sql_queries(
-                            query,
-                            table_hints=hint_list[:1] if fast_fact and hint_list else hint_list,
-                            geo_country=geo_country,
-                            geo_countries=geo_countries,
-                            time_start=time_start,
-                            time_end=time_end,
-                            entities=entities,
-                            domains=domains,
-                            selected_tables=nl_tables,
-                            query=query,
-                            bind_contracts=bind_contracts,
+
+                bind_sqls: list[str] = []
+                if bind_sql_compiler_enabled() and bind_contracts:
+                    row_limit = 1 if fast_fact else rows_per_query
+                    for tid in sorted(selected_tables):
+                        raw_bind = (bind_contracts or {}).get(tid)
+                        if not isinstance(raw_bind, dict):
+                            continue
+                        compiled = compile_sql_from_bind(
+                            raw_bind,
+                            project_id=self.project_id,
+                            dataset=ds_name,
+                            limit=row_limit,
                         )
-                    finally:
+                        if compiled:
+                            bind_sqls.append(compiled)
+                if bind_sqls:
+                    sql_source = "bind_compiler"
+                    sql_queries = bind_sqls
+                else:
+                    sql_source = "nl2sql"
+                    nl2sql_sqls: list[str] = []
+                    need_nl2sql = self.nl2sql_enabled and not contract_sql_only
+                    if need_nl2sql:
+                        nl_tables = sorted(selected_tables) if selected_tables else None
+                        prev_max = os.environ.get("RAG_BQ_MAX_SQL_QUERIES")
                         if fast_fact:
-                            if prev_max is None:
-                                os.environ.pop("RAG_BQ_MAX_SQL_QUERIES", None)
-                            else:
-                                os.environ["RAG_BQ_MAX_SQL_QUERIES"] = prev_max
-                    if nl2sql_sqls and not pattern_sqls:
-                        sql_source = "nl2sql"
-                if not sql_queries:
-                    sql_queries = list(pattern_sqls) + list(nl2sql_sqls)
+                            os.environ["RAG_BQ_MAX_SQL_QUERIES"] = "1"
+                        try:
+                            nl2sql_sqls = self._nl_to_sql_queries(
+                                query,
+                                table_hints=hint_list[:1] if fast_fact and hint_list else hint_list,
+                                geo_country=geo_country,
+                                geo_countries=geo_countries,
+                                time_start=time_start,
+                                time_end=time_end,
+                                entities=entities,
+                                domains=domains,
+                                selected_tables=nl_tables,
+                                query=query,
+                                bind_contracts=bind_contracts,
+                                query_intents=query_intents,
+                                primary_measures=primary_measures,
+                                task_mode=task_mode,
+                            )
+                        finally:
+                            if fast_fact:
+                                if prev_max is None:
+                                    os.environ.pop("RAG_BQ_MAX_SQL_QUERIES", None)
+                                else:
+                                    os.environ["RAG_BQ_MAX_SQL_QUERIES"] = prev_max
+                    sql_queries = list(nl2sql_sqls)
+            else:
+                template_sqls = _try_template_sql()
+                if template_sqls:
+                    sql_queries = template_sqls
+                else:
+                    pattern_cap = 1 if fast_fact else None
+                    pattern_hits = try_sql_patterns(
+                        query_intents,
+                        project_id=self.project_id,
+                        dataset=ds_name,
+                        query=query,
+                        entities=entities,
+                        time_start=time_start,
+                        time_end=time_end,
+                        selected_tables=selected_tables,
+                        limit=rows_per_query,
+                        geo_country=geo_country,
+                        geo_countries=geo_countries,
+                        max_queries=pattern_cap,
+                        primary_measures=primary_measures,
+                    )
+                    if pattern_hits:
+                        pattern_meta = {
+                            "hits": pattern_hits,
+                            "pattern": pattern_hits[0].get("pattern"),
+                        }
+                        pattern_sqls = [
+                            str(h["sql"]) for h in pattern_hits if str(h.get("sql") or "").strip()
+                        ]
+                        pattern_slot_ids = []
+                        for h in pattern_hits:
+                            if not str(h.get("sql") or "").strip():
+                                continue
+                            ii = h.get("intent_index")
+                            sid = intent_slot_by_index.get(ii, "") if isinstance(ii, int) else ""
+                            pattern_slot_ids.append(sid)
+                        compiled_idx = {h.get("intent_index") for h in pattern_hits}
+                        if isinstance(query_intents, list):
+                            leftover_intents = [
+                                intent
+                                for idx, intent in enumerate(query_intents)
+                                if idx not in compiled_idx and isinstance(intent, dict)
+                            ]
+                    elif isinstance(query_intents, list):
+                        leftover_intents = [
+                            intent for intent in query_intents if isinstance(intent, dict)
+                        ]
+                        sql_source = "pattern"
+
+                    leftover_tables: list[str] = []
+                    for intent in leftover_intents:
+                        for raw in intent.get("tables") or []:
+                            tid = str(raw).strip().split(".")[-1].lower()
+                            if _is_mart_table_id(tid) and tid not in leftover_tables:
+                                leftover_tables.append(tid)
+                    custom_leftover = [
+                        intent
+                        for intent in leftover_intents
+                        if isinstance(intent, dict)
+                        and str(intent.get("pattern") or "custom").strip().lower() == "custom"
+                    ]
+                    need_nl2sql = self.nl2sql_enabled and (
+                        custom_leftover
+                        or (not pattern_sqls and not template_sqls and not query_intents)
+                    )
+                    pm = [
+                        str(m).strip().lower()
+                        for m in (primary_measures or [])
+                        if str(m).strip()
+                    ]
+                    if fast_fact and (
+                        "market_price" in pm
+                        or "food_security_ipc" in pm
+                        or "food_security" in pm
+                    ):
+                        need_nl2sql = False
+                    if fast_fact and not custom_leftover:
+                        need_nl2sql = False
+                    if contract_sql_only:
+                        need_nl2sql = False
+                    if bind_contracts and not sql_queries and not pattern_sqls and not template_sqls:
+                        need_nl2sql = self.nl2sql_enabled and not contract_sql_only
+                    if need_nl2sql:
+                        nl_tables = leftover_tables or (
+                            sorted(selected_tables) if selected_tables else None
+                        )
+                        prev_max = os.environ.get("RAG_BQ_MAX_SQL_QUERIES")
+                        if fast_fact:
+                            os.environ["RAG_BQ_MAX_SQL_QUERIES"] = "1"
+                        try:
+                            nl2sql_sqls = self._nl_to_sql_queries(
+                                query,
+                                table_hints=hint_list[:1] if fast_fact and hint_list else hint_list,
+                                geo_country=geo_country,
+                                geo_countries=geo_countries,
+                                time_start=time_start,
+                                time_end=time_end,
+                                entities=entities,
+                                domains=domains,
+                                selected_tables=nl_tables,
+                                query=query,
+                                bind_contracts=bind_contracts,
+                                query_intents=query_intents,
+                                primary_measures=primary_measures,
+                                task_mode=task_mode,
+                            )
+                        finally:
+                            if fast_fact:
+                                if prev_max is None:
+                                    os.environ.pop("RAG_BQ_MAX_SQL_QUERIES", None)
+                                else:
+                                    os.environ["RAG_BQ_MAX_SQL_QUERIES"] = prev_max
+                        if nl2sql_sqls and not pattern_sqls:
+                            sql_source = "nl2sql"
+                    if not sql_queries:
+                        sql_queries = list(pattern_sqls) + list(nl2sql_sqls)
 
         if engine_execute_only:
             sql_source = "engine"
@@ -1353,8 +1523,13 @@ class BQRetriever(BaseRetriever):
             reason = (
                 "NL2SQL disabled and no explicit SQL provided"
                 if not self.nl2sql_enabled
-                else "NL2SQL produced 0 SELECT queries (no template match)"
+                else "NL2SQL produced 0 SELECT queries"
             )
+            fail_table = ""
+            if selected_tables:
+                fail_table = sorted(selected_tables)[0]
+            elif bind_contracts:
+                fail_table = next(iter(sorted(bind_contracts.keys())), "")
             update_current_span_metadata(
                 {
                     "table_hints_count": len(hint_list or []),
@@ -1364,6 +1539,7 @@ class BQRetriever(BaseRetriever):
                     "status": "no_valid_sql",
                     "nl2sql_model": _nl2sql_model_id(),
                     "sql_source": sql_source,
+                    "planned_path": planned_path,
                 }
             )
             self.last_sql_source = sql_source
@@ -1376,6 +1552,8 @@ class BQRetriever(BaseRetriever):
                     message=reason,
                     prep_error=f"{reason}; model={_nl2sql_model_id()}",
                     nl2sql_raw="; ".join(self._last_nl2sql_raws) if self._last_nl2sql_raws else None,
+                    sql_source=sql_source if sql_source != "none" else "nl2sql",
+                    table_id=fail_table or None,
                 )
             ]
 
@@ -1536,6 +1714,7 @@ class BQRetriever(BaseRetriever):
                             sql_source=source,
                             decomposition=decomp if isinstance(decomp, dict) else None,
                             bind_contracts=bind_contracts,
+                            query_intents=query_intents,
                         )
                         if revalidated:
                             try:
@@ -1654,6 +1833,7 @@ class BQRetriever(BaseRetriever):
                     sql_source=source,
                     decomposition=decomp if isinstance(decomp, dict) else None,
                     bind_contracts=bind_contracts,
+                    query_intents=query_intents,
                 )
                 if validated is None:
                     logger.warning(
@@ -1741,6 +1921,7 @@ class BQRetriever(BaseRetriever):
         # After NL2SQL/pattern prepare failures or 0-row success, try deterministic SQL.
         if (
             not engine_execute_only
+            and not planned_path
             and sql_source in {"nl2sql", "pattern"}
             and not any_usable_rows
             and selected_tables

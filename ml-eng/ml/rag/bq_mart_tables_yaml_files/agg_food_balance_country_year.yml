@@ -1,0 +1,246 @@
+table_name: opentrace-prod-5ga4.mart_dev.agg_food_balance_country_year
+description: Sums of production/imports/exports/food/feed/losses.
+source:
+  layer: mart_dev
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
+grain: Country × product × year × source
+entity_type: food_security
+columns:
+- name: agg_food_balance_country_year_key
+  type: STRING
+  description: agg food balance country year key
+- name: geography_key
+  type: STRING
+  description: FK to dim_geography (null if unmatched)
+- name: date_key
+  type: STRING
+  description: date key
+- name: country_name
+  type: STRING
+  description: country name
+- name: product_key
+  type: STRING
+  description: product key
+- name: year
+  type: INT64
+  description: year
+- name: source_key
+  type: STRING
+  description: FK to dim_source
+- name: production_sum
+  type: FLOAT64
+  description: production sum
+- name: imports_sum
+  type: FLOAT64
+  description: imports sum
+- name: exports_sum
+  type: FLOAT64
+  description: exports sum
+- name: food_sum
+  type: FLOAT64
+  description: food sum
+- name: feed_sum
+  type: FLOAT64
+  description: feed sum
+- name: losses_sum
+  type: FLOAT64
+  description: losses sum
+- name: row_count
+  type: INT64
+  description: row count
+- name: loaded_at
+  type: TIMESTAMP
+  description: loaded at
+agg_food_balance_country_year_key_value_stats:
+  distinct_count: 559941
+  null_count: 0
+  is_truncated: true
+  min_value: 00003294ecf22fb4e7277c1c32cafaff
+  max_value: fffffe646f3cf96566a5241d17adec44
+geography_key_value_stats:
+  distinct_count: 49
+  null_count: 0
+  is_truncated: false
+  min_value: 08d5d1fbcfbc008d33905868ea7a2dd7
+  max_value: ff2abe6b8f87b63b0a4d12a3dc2fb900
+date_key_value_stats:
+  distinct_count: 63
+  null_count: 0
+  is_truncated: false
+  min_value: '19610101'
+  max_value: '20230101'
+country_name_value_samples:
+- Kenya
+- Uganda
+- Tanzania
+- Cameroon
+- Côte d’Ivoire
+- Senegal
+- Zambia
+- Zimbabwe
+- Niger
+- Nigeria
+- Mozambique
+- Madagascar
+- Malawi
+- Rwanda
+- Egypt
+- Congo (Brazzaville)
+- Ethiopia
+- Ghana
+- Burkina Faso
+- South Africa
+- Morocco
+- Botswana
+- Guinea
+- Algeria
+- Namibia
+- Tunisia
+- Angola
+- Gabon
+- Mauritius
+- Eswatini
+- Mauritania
+- Cabo Verde
+- Gambia, The
+- Sierra Leone
+- Djibouti
+- Liberia
+- Guinea-Bissau
+- Sao Tome and Principe
+- Lesotho
+- Congo (Kinshasa)
+- Sudan
+- Mali
+- Benin
+- Libya
+- Seychelles
+- Togo
+- Central African Republic
+- Chad
+- Comoros
+product_key_value_stats:
+  distinct_count: 600
+  null_count: 0
+  is_truncated: true
+  min_value: 013ae1638015cc77b5d179aef929e6eb
+  max_value: ff64d6ae6ec04e13977dce54c43e596d
+year_value_samples:
+- '2013'
+- '2011'
+- '2010'
+- '2012'
+- '2023'
+- '2020'
+- '2021'
+- '2022'
+- '2019'
+- '2018'
+- '2016'
+- '2017'
+- '2014'
+- '2015'
+- '1994'
+- '1995'
+- '2008'
+- '1997'
+- '1998'
+- '2000'
+- '2001'
+- '2002'
+- '2004'
+- '1996'
+- '1999'
+- '1993'
+- '2005'
+- '2006'
+- '2009'
+- '2007'
+- '2003'
+- '1981'
+- '1982'
+- '1971'
+- '1984'
+- '1972'
+- '1966'
+- '1963'
+- '1985'
+- '1986'
+- '1973'
+- '1983'
+- '1987'
+- '1988'
+- '1974'
+- '1967'
+- '1989'
+- '1990'
+- '1975'
+- '1991'
+source_key_value_stats:
+  distinct_count: 4
+  null_count: 0
+  is_truncated: false
+  min_value: 25c9a8f4314d1c30bd641f4a3b5659fa
+  max_value: f2d94edcc60f52e77ef0a79c6973e412
+production_sum_value_stats:
+  distinct_count: 61646
+  null_count: 271430
+  is_truncated: true
+  min_value: '0'
+  max_value: '62690091.19'
+imports_sum_value_stats:
+  distinct_count: 59098
+  null_count: 87714
+  is_truncated: true
+  min_value: '0'
+  max_value: '11158939.87'
+exports_sum_value_stats:
+  distinct_count: 30856
+  null_count: 228722
+  is_truncated: true
+  min_value: '0'
+  max_value: '3978399.59'
+food_sum_value_stats:
+  distinct_count: 83674
+  null_count: 94674
+  is_truncated: true
+  min_value: '0'
+  max_value: '41604871'
+feed_sum_value_stats:
+  distinct_count: 19829
+  null_count: 481665
+  is_truncated: true
+  min_value: '0'
+  max_value: '12408137.62'
+losses_sum_value_stats:
+  distinct_count: 27749
+  null_count: 420857
+  is_truncated: true
+  min_value: '0'
+  max_value: '8030881.38'
+row_count_value_stats:
+  distinct_count: 20
+  null_count: 0
+  is_truncated: false
+  min_value: '1'
+  max_value: '20'
+loaded_at_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '2026-08-26 11:24:53.297629+00'
+  max_value: '2026-08-26 11:24:53.297629+00'
+sql_generation_hints:
+- 'Join keys: geography_key, product_key, source_key, date_key'
+- LEFT JOIN dim_geography on geography_key for country names
+filtering_guidance:
+- 'Grain: Country × product × year × source'
+- Sums of production/imports/exports/food/feed/losses.
+semantic_role:
+  primary_domain: food_security
+  supports:
+  - food_security
+bind_spine:
+  geography_key: dim_geography.country_iso3
+  product_key: dim_product.product_name
+  source_key: dim_source.organisation_name

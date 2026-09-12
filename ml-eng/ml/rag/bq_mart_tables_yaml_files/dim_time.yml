@@ -2,7 +2,7 @@ table_name: opentrace-prod-5ga4.mart_dev.dim_time
 description: dim time
 source:
   layer: mart_dev
-profiled_at: '2026-08-28T17:53:44.421016+00:00'
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
 columns:
 - name: time_key
   type: INT64
@@ -40,118 +40,111 @@ columns:
 - name: created_at
   type: TIMESTAMP
   description: created at
-year_value_samples:
-- '2007'
-- '1973'
-- '2001'
-- '1962'
-- '1968'
-- '1979'
-- '1990'
-- '2018'
-- '1996'
-- '2024'
-- '2002'
-- '1963'
-- '1974'
-- '2013'
-- '2008'
-- '1985'
-- '2019'
-- '1980'
-- '1991'
-- '2003'
-- '1964'
-- '1975'
-- '1992'
-- '2014'
-- '1986'
-- '1997'
-- '2020'
-- '1969'
-- '1981'
-- '1970'
-- '1987'
-- '2009'
-- '1998'
-- '2015'
-- '2004'
-- '1976'
-- '1988'
-- '2021'
-- '2016'
-- '2010'
-- '1982'
-- '1971'
-- '1965'
-- '1960'
-- '1993'
-- '1999'
-- '1983'
-- '1972'
-- '2000'
-- '1977'
-- '2011'
-- '2005'
-- '1994'
-- '2022'
-- '1966'
-- '2023'
-- '1978'
-- '1995'
-- '1984'
-- '2012'
-- '1967'
-- '1961'
-- '1989'
-- '2006'
-- '2017'
-month_value_samples:
-- '1'
-month_name_value_samples:
-- January
-time_key_value_stats:
-  distinct_count: 65
-  null_count: 0
-  is_truncated: false
-  patched: true
 date_actual_value_stats:
   distinct_count: 65
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: '1960-01-01'
+  max_value: '2024-01-01'
+year_value_samples:
+- '2018'
+- '1992'
+- '1981'
+- '2019'
+- '1964'
+- '1977'
+- '1986'
+- '2015'
+- '1987'
+- '2021'
+- '1996'
+- '1968'
+- '1999'
+- '2002'
+- '2013'
+- '2001'
+- '2020'
+- '1973'
+- '2003'
+- '2009'
+- '1980'
+- '1998'
+- '1960'
+- '2004'
+- '2024'
+- '1988'
+- '2016'
+- '1975'
+- '1982'
+- '1997'
+- '1965'
+- '1979'
+- '1993'
+- '1976'
+- '1983'
+- '1974'
+- '2000'
+- '1970'
+- '2007'
+- '1990'
+- '1962'
+- '2014'
+- '1985'
+- '2008'
+- '1972'
+- '2010'
+- '1969'
+- '1963'
+- '1971'
+- '1991'
 quarter_value_stats:
   distinct_count: 1
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: '1'
+  max_value: '1'
+month_value_samples:
+- '1'
+month_name_value_samples:
+- January
 day_of_month_value_stats:
   distinct_count: 1
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: '1'
+  max_value: '1'
 day_of_week_value_stats:
   distinct_count: 7
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: '1'
+  max_value: '7'
 week_of_year_value_stats:
   distinct_count: 2
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: '0'
+  max_value: '1'
 is_weekend_value_stats:
   distinct_count: 2
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: 'false'
+  max_value: 'true'
 fiscal_year_value_stats:
   distinct_count: 65
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: '1960'
+  max_value: '2024'
 created_at_value_stats:
   distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '2026-08-07 08:54:55.729019+00'
+  max_value: '2026-08-07 08:54:55.729019+00'
+time_key_value_stats:
+  distinct_count: 50
   null_count: 0
   is_truncated: false
   patched: true

@@ -2,7 +2,7 @@ table_name: opentrace-prod-5ga4.mart_dev.dim_production_system
 description: dim production system
 source:
   layer: mart_dev
-profiled_at: '2026-08-28T17:53:44.421016+00:00'
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
 columns:
 - name: production_system_key
   type: STRING
@@ -16,6 +16,12 @@ columns:
 - name: description
   type: STRING
   description: description
+production_system_key_value_stats:
+  distinct_count: 8
+  null_count: 0
+  is_truncated: false
+  min_value: 1868c2177fdc84d496f7784a23729d3b
+  max_value: eaa16acfa1104cb223a55fb03fdde12f
 system_code_value_samples:
 - COMM
 - RAIN
@@ -34,13 +40,9 @@ system_name_value_samples:
 - Peri-Urban
 - Mixed Crop-Livestock
 - Irrigated
-production_system_key_value_stats:
-  distinct_count: 8
-  null_count: 0
-  is_truncated: false
-  patched: true
 description_value_stats:
   distinct_count: 8
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: Agroforestry and forest-adjacent systems
+  max_value: Rain-dependent smallholder farming

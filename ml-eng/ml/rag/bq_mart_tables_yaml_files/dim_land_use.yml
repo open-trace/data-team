@@ -2,7 +2,7 @@ table_name: opentrace-prod-5ga4.mart_dev.dim_land_use
 description: dim land use
 source:
   layer: mart_dev
-profiled_at: '2026-08-28T17:53:44.421016+00:00'
+profiled_at: '2026-09-05T19:24:26.423104+00:00'
 columns:
 - name: land_use_key
   type: STRING
@@ -16,6 +16,12 @@ columns:
 - name: description
   type: STRING
   description: description
+land_use_key_value_stats:
+  distinct_count: 23
+  null_count: 0
+  is_truncated: false
+  min_value: 182c5d6bfa7830cadbae251d44af8cb2
+  max_value: fd21a7899e6e52e3d2484dc89c8e01f4
 land_use_code_value_samples:
 - cropland area under organic agric.
 - temporary fallow
@@ -40,17 +46,33 @@ land_use_code_value_samples:
 - arable land
 - planted forest
 - permanent meadows and pastures
+land_use_class_value_samples:
+- Cropland area under organic agric.
+- Temporary fallow
+- Country area
+- Agriculture area actually irrigated
+- Inland waters
+- Temporary meadows and pastures
+- Agricultural land
+- Cropland area certified organic
+- Cropland
+- Other land
+- Agriculture
+- Temporary crops
+- Agriculture area certified organic
+- Permanent crops
+- Agriculture area under organic agric.
+- Cropland area actually irrigated
+- Land area equipped for irrigation
+- Naturally regenerating forest
+- Forest land
+- Land area
+- Arable land
+- Planted Forest
+- Permanent meadows and pastures
 description_value_stats:
   distinct_count: 0
   null_count: 23
   is_truncated: false
-land_use_key_value_stats:
-  distinct_count: 23
-  null_count: 0
-  is_truncated: false
-  patched: true
-land_use_class_value_stats:
-  distinct_count: 23
-  null_count: 0
-  is_truncated: false
-  patched: true
+bind_spine:
+  land_use_key: dim_land_use.land_use_code

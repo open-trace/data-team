@@ -1,5 +1,7 @@
 class: INP
 empty_policy: generate_weak
+warehouse_role: measurable
+web_policy: never
 default_table: fct_land_inputs
 tables:
 - fct_land_inputs
@@ -7,7 +9,11 @@ tables:
 - fct_fertilizer
 - fct_pesticide
 columns: {}
-hard_rules: []
+hard_rules:
+- Prefer fct_land_inputs with input_grain filter for fertilizer/pesticide use and trade questions.
+- Do not use fct_fertilizer or fct_pesticide for country questions — use fct_land_inputs (legacy geo_key may not join dim_geography).
+- Do not invent fertilizer or pesticide product literals on legacy fct_fertilizer / fct_pesticide tables.
+- Never filter geo_key with hash literals; bind countries via dim_geography or use fct_land_inputs country_iso3.
 exclude_prompt_columns:
 - geo_key
 - scenario_key

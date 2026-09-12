@@ -2,7 +2,7 @@ table_name: opentrace-prod-5ga4.mart_dev.agg_food_security_monthly
 description: agg food security monthly
 source:
   layer: mart_dev
-profiled_at: '2026-08-28T17:53:44.421016+00:00'
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
 columns:
 - name: geo_key
   type: STRING
@@ -49,6 +49,12 @@ columns:
 - name: avg_pct_phase5
   type: NUMERIC
   description: avg pct phase5
+geo_key_value_stats:
+  distinct_count: 33
+  null_count: 0
+  is_truncated: false
+  min_value: 0f877bd0722aa02c3f5360b61555d2b6
+  max_value: f3e0844ce2ba0a4f463395a9ed618f49
 country_code_value_samples:
 - ML
 - ZW
@@ -57,20 +63,71 @@ country_name_value_samples:
 - Mali
 - Zimbabwe
 - Central African Republic
-phase_name_value_stats:
-  distinct_count: 0
-  null_count: 724
+classification_key_value_stats:
+  distinct_count: 1
+  null_count: 0
   is_truncated: false
+  min_value: 4b519bfeb5740c53a1bbeb85a25ba8f5
+  max_value: 4b519bfeb5740c53a1bbeb85a25ba8f5
+phase_name_value_samples:
+- Phase 3 and above
+- Minimal
+- Famine
+- Stressed
+- Emergency
+- Crisis
 phase_number_value_stats:
   distinct_count: 0
   null_count: 724
   is_truncated: false
-scenario_name_value_stats:
-  distinct_count: 0
-  null_count: 724
+scenario_key_value_stats:
+  distinct_count: 3
+  null_count: 0
   is_truncated: false
-indicator_classes:
-- FS
+  min_value: 356e12dd398bbf3e12cbf60bf87e6b8b
+  max_value: 6ecb2366108e8a9a8c59389d3413c532
+scenario_name_value_samples:
+- Projection
+- Optimistic/Worst
+- Business As Usual
+- Most Likely
+- Current Situation
+record_count_value_stats:
+  distinct_count: 28
+  null_count: 0
+  is_truncated: false
+  min_value: '1'
+  max_value: '5928'
+total_population_affected_value_stats:
+  distinct_count: 193
+  null_count: 0
+  is_truncated: false
+  min_value: '0'
+  max_value: '19760000000'
+avg_population_affected_value_stats:
+  distinct_count: 195
+  null_count: 0
+  is_truncated: false
+  min_value: '0'
+  max_value: '21000000'
+avg_pct_phase3_value_stats:
+  distinct_count: 27
+  null_count: 605
+  is_truncated: false
+  min_value: '55'
+  max_value: '100'
+avg_pct_phase4_value_stats:
+  distinct_count: 25
+  null_count: 605
+  is_truncated: false
+  min_value: '0'
+  max_value: '37'
+avg_pct_phase5_value_stats:
+  distinct_count: 7
+  null_count: 605
+  is_truncated: false
+  min_value: '0'
+  max_value: '10'
 filtering_guidance:
 - Country monthly IPC rollups; filter measure_type
 semantic_role:
@@ -79,66 +136,15 @@ semantic_role:
   - food_security
   - ipc
   - FS
-geo_key_value_stats:
-  distinct_count: 33
-  null_count: 0
-  is_truncated: false
-  patched: true
+indicator_classes:
+- FS
 time_key_value_stats:
   distinct_count: 11
   null_count: 0
   is_truncated: false
   patched: true
-classification_key_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-scenario_key_value_stats:
-  distinct_count: 3
-  null_count: 0
-  is_truncated: false
-  patched: true
-record_count_value_stats:
-  distinct_count: 28
-  null_count: 0
-  is_truncated: false
-  patched: true
-total_population_affected_value_stats:
-  distinct_count: 193
-  null_count: 0
-  is_truncated: false
-  patched: true
-avg_population_affected_value_stats:
-  distinct_count: 195
-  null_count: 0
-  is_truncated: false
-  patched: true
-avg_pct_phase3_value_stats:
-  distinct_count: 27
-  null_count: 0
-  is_truncated: false
-  patched: true
-avg_pct_phase4_value_stats:
-  distinct_count: 25
-  null_count: 0
-  is_truncated: false
-  patched: true
-avg_pct_phase5_value_stats:
-  distinct_count: 7
-  null_count: 0
-  is_truncated: false
-  patched: true
-phase_name_value_samples:
-- Phase 3 and above
-- Minimal
-- Famine
-- Stressed
-- Emergency
-- Crisis
-scenario_name_value_samples:
-- Projection
-- Optimistic/Worst
-- Business As Usual
-- Most Likely
-- Current Situation
+grain: agg food security monthly
+bind_spine:
+  classification_key: dim_classification.phase_name
+  scenario_key: dim_scenario.scenario_name
+  geo_key: dim_geography.country_iso3

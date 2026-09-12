@@ -2,7 +2,7 @@ table_name: opentrace-prod-5ga4.mart_dev.fct_animal_health
 description: ILRI livestock health status.
 source:
   layer: mart_dev
-profiled_at: '2026-08-28T17:53:44.421016+00:00'
+profiled_at: '2026-09-05T17:57:00.703130+00:00'
 grain: Household × species
 entity_type: animal_health
 columns:
@@ -115,14 +115,108 @@ animal_health_key_value_stats:
   is_truncated: true
   min_value: 0041158566326c82fd73a7ef243a38ed
   max_value: fff0e5a61aa5876d6304f07e72a1716f
-country_iso3_value_samples:
-- KEN
-- ETH
-- UGA
+geography_key_value_stats:
+  distinct_count: 4
+  null_count: 0
+  is_truncated: false
+  min_value: 629f6ee5a903f4bcce1aa6a327392f4a
+  max_value: f14bb4203a7073edd04952936c354fca
+geo_level_value_stats:
+  distinct_count: 2
+  null_count: 0
+  is_truncated: false
+  min_value: admin1
+  max_value: country
+country_iso3_value_stats:
+  distinct_count: 3
+  null_count: 0
+  is_truncated: false
+  min_value: ETH
+  max_value: UGA
 household_key_value_stats:
   distinct_count: 0
   null_count: 1045
   is_truncated: false
+livestock_key_value_stats:
+  distinct_count: 29
+  null_count: 0
+  is_truncated: false
+  min_value: 0e7ca3358e8cb5e835db2ff49904a173
+  max_value: fe480203b9d3f5f3088cb17ba2152029
+source_key_value_stats:
+  distinct_count: 3
+  null_count: 0
+  is_truncated: false
+  min_value: 057e39286a7cf96b34af09ea2c6f3e7c
+  max_value: 69ede85e4ef9ac93f8334cf6ed00be5c
+tier_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '3'
+  max_value: '3'
+data_level_value_stats:
+  distinct_count: 2
+  null_count: 0
+  is_truncated: false
+  min_value: national
+  max_value: sub_national
+geo_scope_value_stats:
+  distinct_count: 2
+  null_count: 0
+  is_truncated: false
+  min_value: national
+  max_value: sub_national
+place_scope_value_samples:
+- Kenya
+- KEN
+- Ethiopia
+- ETH
+- '1'
+- Nandi
+- ElgeyoMarakwet
+- '2'
+- Uasin Gishu
+- Uganda
+- UGA
+- '7'
+- '3'
+- Adekokwok
+- Bilwaqe
+- Dida Yabello
+- Keyafer
+- Dharito
+- Ade Galichati
+- '6'
+- Hidale
+- Tseteka
+- Railways
+- Telela
+- Ngetta
+- Akuriwoo
+- Ayago
+- Awangdiang
+- Ogengo
+- Boke Agali
+- Opelo
+- Central Div
+- Opila
+- Te Obira
+- Ayago East
+- Ginnery
+- Araki
+- Agali B
+- Core A
+- Dida yabello
+- Ocukuru A
+- Central Park
+- Agengo
+- Akitenino
+- Ojwina
+- Omito
+- Bar Opuu
+- Sub.county
+- 'Village '
 metric_value_samples:
 - animal_health_cattle
 - animal_health_pig
@@ -153,10 +247,40 @@ metric_value_samples:
 - animal_health_2 5 6
 - animal_health_1 2
 - animal_health_1
+source_id_value_stats:
+  distinct_count: 3
+  null_count: 0
+  is_truncated: false
+  min_value: 057e39286a7cf96b34af09ea2c6f3e7c
+  max_value: 69ede85e4ef9ac93f8334cf6ed00be5c
+as_of_date_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '2026-08-26'
+  max_value: '2026-08-26'
+as_of_date_basis_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: loaded_at
+  max_value: loaded_at
+value_value_stats:
+  distinct_count: 78
+  null_count: 167
+  is_truncated: false
+  min_value: '1'
+  max_value: '138.88'
 unit_value_stats:
   distinct_count: 0
   null_count: 1045
   is_truncated: false
+sub_county_value_stats:
+  distinct_count: 10
+  null_count: 166
+  is_truncated: false
+  min_value: '1'
+  max_value: UasinGishu
 village_name_value_samples:
 - '7'
 - '3'
@@ -191,6 +315,18 @@ village_name_value_samples:
 - Ojwina
 - Omito
 - 'Village '
+farmer_sex_value_stats:
+  distinct_count: 4
+  null_count: 578
+  is_truncated: false
+  min_value: '0'
+  max_value: Sex
+education_level_value_stats:
+  distinct_count: 8
+  null_count: 578
+  is_truncated: false
+  min_value: '0'
+  max_value: Educ_level
 housing_type_value_samples:
 - '1'
 - '0'
@@ -199,138 +335,89 @@ breed_type_value_samples:
 - '1'
 - '0'
 - Breed
-filtering_guidance:
-- 'Grain: Household × species'
-- ILRI livestock health status.
-sql_generation_hints:
-- 'Join keys: geography_key, household_key, livestock_key, source_key'
-- LEFT JOIN dim_geography on geography_key for country names
-semantic_role:
-  primary_domain: animal_health
-  supports:
-  - animal_health
-geography_key_value_stats:
-  distinct_count: 4
-  null_count: 0
-  is_truncated: false
-  patched: true
-geo_level_value_stats:
-  distinct_count: 2
-  null_count: 0
-  is_truncated: false
-  patched: true
-livestock_key_value_stats:
-  distinct_count: 29
-  null_count: 0
-  is_truncated: false
-  patched: true
-source_key_value_stats:
-  distinct_count: 3
-  null_count: 0
-  is_truncated: false
-  patched: true
-tier_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-data_level_value_stats:
-  distinct_count: 2
-  null_count: 0
-  is_truncated: false
-  patched: true
-geo_scope_value_stats:
-  distinct_count: 2
-  null_count: 0
-  is_truncated: false
-  patched: true
-source_id_value_stats:
-  distinct_count: 3
-  null_count: 0
-  is_truncated: false
-  patched: true
-as_of_date_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-as_of_date_basis_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-value_value_stats:
-  distinct_count: 78
-  null_count: 0
-  is_truncated: false
-  patched: true
-sub_county_value_stats:
-  distinct_count: 10
-  null_count: 0
-  is_truncated: false
-  patched: true
-farmer_sex_value_stats:
-  distinct_count: 4
-  null_count: 0
-  is_truncated: false
-  patched: true
-education_level_value_stats:
-  distinct_count: 8
-  null_count: 0
-  is_truncated: false
-  patched: true
 animals_sold_value_stats:
   distinct_count: 18
-  null_count: 0
+  null_count: 951
   is_truncated: false
-  patched: true
+  min_value: '0'
+  max_value: '135'
 cash_received_value_stats:
   distinct_count: 51
-  null_count: 0
+  null_count: 951
   is_truncated: false
-  patched: true
+  min_value: '0'
+  max_value: '29972.5'
 clinical_disease_score_value_stats:
   distinct_count: 3
-  null_count: 0
+  null_count: 951
   is_truncated: false
-  patched: true
+  min_value: '0'
+  max_value: '1'
 positive_cases_value_stats:
   distinct_count: 19
-  null_count: 0
+  null_count: 951
   is_truncated: false
-  patched: true
+  min_value: '0'
+  max_value: '37'
 incidence_rate_value_stats:
   distinct_count: 41
-  null_count: 0
+  null_count: 951
   is_truncated: false
-  patched: true
+  min_value: '0'
+  max_value: '1'
 treatment_cost_value_stats:
   distinct_count: 135
-  null_count: 0
+  null_count: 373
   is_truncated: false
-  patched: true
+  min_value: '0'
+  max_value: '6000'
 average_herd_size_value_stats:
   distinct_count: 78
-  null_count: 0
+  null_count: 167
   is_truncated: false
-  patched: true
+  min_value: '1'
+  max_value: '138.88'
 mortality_count_value_stats:
   distinct_count: 11
-  null_count: 0
+  null_count: 951
   is_truncated: false
-  patched: true
+  min_value: '0'
+  max_value: '18'
 species_value_stats:
   distinct_count: 29
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: '1'
+  max_value: pig
 source_natural_key_value_stats:
   distinct_count: 3
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: ilri_acaricide_use_final_analysis_dataverse
+  max_value: ilri_impact_assessment_data_lira_uganda_nov25
 loaded_at_value_stats:
   distinct_count: 1
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: '2026-08-26 01:17:57.168044+00'
+  max_value: '2026-08-26 01:17:57.168044+00'
+filtering_guidance:
+- Survey grain — JOIN dim_livestock / dim_household; do not treat as national census
+- Filter livestock_key / disease_key via spine samples; never invent species labels
+semantic_role:
+  primary_domain: animal_health
+  supports:
+  - animal_health
+  - livestock
+  - AH
+sql_generation_hints:
+- LEFT JOIN dim_livestock on livestock_key; LEFT JOIN dim_household when present
+bind_spine:
+  geography_key: dim_geography.country_iso3
+  source_key: dim_source.organisation_name
+  livestock_key: dim_livestock.species
+  household_key: dim_household.household_type
+indicator_classes:
+- AH
+business_questions_supported:
+- Livestock disease or health indicators from survey grain

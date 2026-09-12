@@ -4,6 +4,7 @@
 |-----|-----------------|
 | [OpenTrace_Mart_Complete_Guide.md](./OpenTrace_Mart_Complete_Guide.md) | Analysts — ERD + indicator-class writing (EL, GYI, PROD, FS, …) |
 | [OpenTrace_Mart_Complete_Guide.pdf](./OpenTrace_Mart_Complete_Guide.pdf) | Same Complete Guide as PDF (Mermaid ERDs rendered) |
+| [OpenTrace_Intermediate_Entity_Dictionary.xlsx](./OpenTrace_Intermediate_Entity_Dictionary.xlsx) | Engineers/analysts — intermediate_dev full table + column descriptions (incl. staging-style sheet) |
 | [OpenTrace_Mart_Entity_Dictionary.xlsx](./OpenTrace_Mart_Entity_Dictionary.xlsx) | Analysts — branded catalogue, class map, insight template, **full Columns + descriptions** |
 | [mart_dev_entity_dictionary.xlsx](./mart_dev_entity_dictionary.xlsx) | Engineers — Entities / Columns / Relationships / Recipes / ACF dump |
 | [MART_DEV_OTA_ANALYST_GUIDE.docx](./MART_DEV_OTA_ANALYST_GUIDE.docx) | OTA insights analysts — report-writing playbook (Word) |
@@ -19,6 +20,7 @@ Regenerate from `data-eng/`:
 ```powershell
 python scripts/build_mart_entity_dictionary.py
 python scripts/build_opentrace_mart_entity_dictionary.py
+python scripts/build_opentrace_intermediate_entity_dictionary.py
 python scripts/build_opentrace_mart_complete_guide_pdf.py
 python scripts/build_mart_ota_analyst_guide_docx.py
 ```

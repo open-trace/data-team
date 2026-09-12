@@ -2,7 +2,7 @@ table_name: opentrace-prod-5ga4.mart_dev.fct_trade
 description: Crop/livestock trade and FEWS cross-border flows.
 source:
   layer: mart_dev
-profiled_at: '2026-08-28T17:53:44.421016+00:00'
+profiled_at: '2026-09-05T17:57:00.703130+00:00'
 grain: faostat_country_year | fews_border_month
 entity_type: trade
 columns:
@@ -106,62 +106,24 @@ trade_key_value_stats:
   is_truncated: true
   min_value: 0000010dfb834f896aaf484bfe26ede6
   max_value: fffffcc22576af9f86a51c6d159a0e84
-country_iso3_value_samples:
-- ZAF
-- KEN
-- MAR
-- EGY
-- BWA
-- TZA
-- TUN
-- ZWE
-- SEN
-- CMR
-- MUS
-- CIV
-- ZMB
-- UGA
-- DZA
-- MDG
-- MWI
-- ETH
-- NGA
-- GHA
-- TGO
-- MOZ
-- MLI
-- SWZ
-- NER
-- AGO
-- BFA
-- COG
-- LBY
-- SOM
-- BEN
-- COD
-- GAB
-- SYC
-- NAM
-- CPV
-- RWA
-- DJI
-- LBR
-- CAF
-- BDI
-- SDN
-- MRT
-- GIN
-- GMB
-- SLE
-- LSO
-- TCD
-- GNB
-- COM
-- STP
-- GNQ
-- SSD
-- ERI
-- REU
+geography_key_value_stats:
+  distinct_count: 55
+  null_count: 0
+  is_truncated: false
+  min_value: 08d5d1fbcfbc008d33905868ea7a2dd7
+  max_value: ff2abe6b8f87b63b0a4d12a3dc2fb900
+geo_level_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: country
+  max_value: country
+country_iso3_value_stats:
+  distinct_count: 55
+  null_count: 0
+  is_truncated: false
+  min_value: AGO
+  max_value: ZWE
 product_key_value_stats:
   distinct_count: 689
   null_count: 0
@@ -174,6 +136,87 @@ item_key_value_stats:
   is_truncated: true
   min_value: 01107324b9e775665384503e76978f3a
   max_value: ff9b1e24b31eccf958ebfb6ea9997760
+element_key_value_stats:
+  distinct_count: 16
+  null_count: 122960
+  is_truncated: false
+  min_value: 006aa4bd1b692a5dd2bb7209d9731b6d
+  max_value: f76f1633e805f53ec1acc6ac8362898e
+source_key_value_stats:
+  distinct_count: 4
+  null_count: 0
+  is_truncated: false
+  min_value: 2d43a94089d58f11833345c01f214580
+  max_value: f8f9f00b2b682abccea90939038d2f2a
+tier_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '1'
+  max_value: '1'
+data_level_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: national
+  max_value: national
+geo_scope_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: national
+  max_value: national
+place_scope_value_samples:
+- South Africa
+- ZAF
+- Kenya
+- KEN
+- MAR
+- Morocco
+- EGY
+- Egypt
+- Botswana
+- BWA
+- TZA
+- Tanzania
+- TUN
+- Tunisia
+- ZWE
+- Zimbabwe
+- SEN
+- Senegal
+- Cameroon
+- CMR
+- MUS
+- Mauritius
+- CIV
+- Côte d’Ivoire
+- Zambia
+- ZMB
+- UGA
+- Uganda
+- DZA
+- Algeria
+- MDG
+- Madagascar
+- MWI
+- Malawi
+- Ethiopia
+- ETH
+- NGA
+- Nigeria
+- GHA
+- Ghana
+- TGO
+- Togo
+- Mozambique
+- MOZ
+- MLI
+- Mali
+- Eswatini
+- SWZ
+- NER
+- Niger
 metric_value_samples:
 - trade_import_value
 - trade_import_quantity
@@ -192,8 +235,8 @@ metric_value_samples:
 - trade_refined_sugar
 - trade_wheat_flour
 - trade_maize_grain_(yellow)
-- trade_import_dependency_ratio
 - trade_self-sufficiency_ratio
+- trade_import_dependency_ratio
 - trade_goats
 - trade_cattle
 - trade_terms_of_trade
@@ -225,87 +268,12 @@ metric_value_samples:
 - trade_sesame_seed
 - trade_cassava
 - trade_sorghum_(white)
-- trade_fish_(dried,_salted,_or_in_brine)
-- trade_pasta_(prepared,_unspecified)
-- trade_cattle_(export_quality)
-- trade_beans_(red)
-- trade_camels_(export_quality)
-- trade_tomato
-- trade_cassava_chips
-- trade_soybean_(unspecified)
-- trade_cassava_flour
-- trade_natural_gums_and_resins_(mixed)
-- trade_shoats
-- trade_raw_hides_and_skins_of_livestock_(mixed)
-- trade_sweet_potatoes
-- trade_maize_grain_(fresh)
-- trade_split_peas_(yellow)
-- trade_gram_pulse_(green)
-- trade_agricultural_trade_openness_index
-- trade_share_of_agricultural_exports_to_gdp
-- trade_spaghetti
-- trade_other_cereal_flours_(unspecified)
-- trade_oxen_(unspecified)
-- trade_date_(unspecified)
-- trade_groundnuts_(in_shell)
-- trade_natural_honey
-- trade_chick_peas
-- trade_sunflower-seed_oil_(refined)
-- trade_pea_(unspecified)
-- trade_garlic_(fresh)
-- trade_swine_/_pigs
-- trade_kerosene
-- trade_sorghum_(brown)
-- trade_yams
-- trade_sorghum_flour
-- trade_dried_peas_(green)
-- trade_high_energy_biscuits
-- trade_mixed_teff
-- trade_sunflower_seed
-- trade_beans_(yellow)
-- trade_coffee_(unspecified)
-- trade_maize_grain_(mixed)
-- trade_rabbits_and_hares
-- trade_rice_(paddy)
-- trade_cowpea_(unspecified)
-- trade_beans_(haricot)
-- trade_beans_(rosecoco)
-- trade_root/tuber_(unspecified)
-- trade_millet_(finger)
-- trade_millet_flour
-- trade_orange_(unspecified)
-- trade_lentils_(red)
-- trade_sorghum_(feterita)
-- trade_ginger
-- trade_rice_(husked,_unspecified)
-- trade_goats_(export_quality)
-- trade_wheat_grain_(food_aid)
-- trade_barley_(unspecified)
-- trade_beans_(black)
-- trade_fuel_(unspecified)
-- trade_oats_(unspecified)
-- trade_tea_leaves_(mixed)
-- trade_sheep_(export_quality)
-- trade_pigeon_peas
-- trade_millet_(pearl)
-- trade_pineapple_(unspecified)
-- trade_cereal_crops_(mixed)
-- trade_horses_and_other_equines
-- trade_cabbage_(unspecified)
-- trade_mango_(unspecified)
-- trade_millet_(bulrush)
-- trade_carrots
-- trade_vegetables_(unspecified)
-- trade_coconut_(in_shell)
-- trade_lemon_(unspecified)
-- trade_cumin
-- trade_tobacco_(unspecified)
-- trade_cotton_(unspecified)
-- trade_melon_(unspecified)
-- trade_watermelon
-- trade_avocado_(unspecified)
-- trade_kale
-- trade_rabbits
+source_id_value_stats:
+  distinct_count: 4
+  null_count: 0
+  is_truncated: false
+  min_value: 2d43a94089d58f11833345c01f214580
+  max_value: f8f9f00b2b682abccea90939038d2f2a
 trade_grain_value_samples:
 - faostat_country_year
 - fews_border_month
@@ -360,20 +328,82 @@ country_name_value_samples:
 - Guinea-Bissau
 - Comoros
 - Sao Tome and Principe
-- Sudan (former)
-- Equatorial Guinea
-- South Sudan
-- Sudan
-- Ethiopia PDR
-- Eritrea
-- Tanzania
-- Réunion
-product_name_value_stats:
-  distinct_count: 686
-  null_count: 0
-  is_truncated: true
-  min_value: Abaca, manila hemp, raw
-  max_value: hydrogenated oils and fats
+source_country_value_stats:
+  distinct_count: 32
+  null_count: 4216005
+  is_truncated: false
+  min_value: Angola
+  max_value: Zimbabwe
+destination_country_value_stats:
+  distinct_count: 50
+  null_count: 4217281
+  is_truncated: false
+  min_value: Angola
+  max_value: Zimbabwe
+border_point_value_stats:
+  distinct_count: 91
+  null_count: 4233642
+  is_truncated: false
+  min_value: Abu Matariga
+  max_value: Zombe
+trade_flow_value_stats:
+  distinct_count: 3
+  null_count: 4213134
+  is_truncated: false
+  min_value: Export
+  max_value: Transit
+product_name_value_samples:
+- Other food
+- Refined sugar
+- Other food nes
+- Fruit
+- Vegetable Oil and Fat
+- Vegetables
+- Cereals
+- Cereal preparations total
+- Sugar and Honey
+- Tobacco
+- Crops and livestock products
+- Alcoholic Beverages
+- Dairy Products
+- Beverages
+- Dairy Products, milk equivalent
+- Fodder and Feeding Stuff
+- Food Excluding Fish
+- Coffee, green
+- Wheat and meslin flour
+- Rice, milled
+- Roots and Tubers
+- Beer of barley, malted
+- Fruit prepared n.e.c.
+- Nuts
+- Vegetables preserved nes (o/t vinegar)
+- Maize (corn)
+- Pastry
+- Other vegetables, fresh n.e.c.
+- Tea leaves
+- Fruit and Vegetables
+- Non-food
+- Potatoes
+- Non-edible Crude Materials
+- Other stimulant, spice and aromatic crops, n.e.c.
+- Wine
+- Sugar confectionery
+- Textile Fibres
+- Other manufactured tobacco and manufactured tobacco substitutes; 'homogenized' or
+  'reconstituted' tobacco; tobacco extracts and essences
+- Other Meat
+- Other fruits, n.e.c.
+- Cereals and Preparations
+- Oilseeds
+- Fats and Oils (excluding Butter)
+- Butter and Ghee
+- Evaporated & Condensed Milk
+- Butter of cow milk
+- Bovine Meat
+- Cheese (All Kinds)
+- Chocolate products nes
+- Unmanufactured tobacco
 element_value_samples:
 - Import value
 - Import quantity
@@ -386,11 +416,11 @@ element_value_samples:
 - Export Quantity Index (2014-2016 = 100)
 - Export Unit/Value Index (2014-2016 = 100)
 - Revealed comparative advantage index
-- Self-sufficiency ratio
 - Import dependency ratio
+- Self-sufficiency ratio
 - Terms of trade
-- Share of agricultural exports to GDP
 - Agricultural trade openness index
+- Share of agricultural exports to GDP
 year_value_samples:
 - '2023'
 - '2024'
@@ -442,20 +472,6 @@ year_value_samples:
 - '1968'
 - '1969'
 - '1983'
-- '1982'
-- '1985'
-- '1967'
-- '1981'
-- '1980'
-- '1979'
-- '1977'
-- '1966'
-- '1978'
-- '1965'
-- '1964'
-- '1963'
-- '1962'
-- '1961'
 month_value_samples:
 - '8'
 - '9'
@@ -469,221 +485,63 @@ month_value_samples:
 - '11'
 - '12'
 - '10'
-unit_value_samples:
-- 1000 USD
-- t
-- An
-- 50_kg
-- ea
-- 100_kg
-- 1000 An
-- 90_kg
-- kg
-- 25_kg
-- '%'
-- 20_L
-- L
-- 10_kg
-- 'No'
-- 20_kg
-- 200_L
-- 18_kg
-- 5_L
-- 75_kg
-- 45_kg
-- 30_kg
-- 35_kg
-- 5_kg
-- 18_L
-- bundle
-- 1000_L
-- 80_kg
-- 70_kg
-- 15_kg
-- 120_kg
-- 25_L
-- 60_kg
-- 3_kg
-- 110_kg
-- 2_kg
-- 59_L
-- 4_kg
-- 12_kg
-- 50_L
-- 700_kg
-- 65_kg
-- 10_L
-- 102_L
-- 12.5_kg
-- 40_kg
-- 175_kg
-- 4.5_L
-- 100_L
-- 95_kg
-- 58_kg
-- 176_L
-- 57_kg
-- 70_L
-- 85_kg
-- 60_L
-- 250_L
-- 3_L
-- 200_kg
-- 105_kg
-- 350_kg
-- 198_L
-- 140_kg
-- 30_L
-- 55_kg
-- 24_kg
-- 108_kg
-- 98_kg
-- 300_kg
-- 16_L
-- 84_kg
-- 38_kg
-- 13_kg
-- 4_L
-- 53_kg
-- 56_kg
-- 180_kg
-- 81_kg
-- 30_t
-- 32_kg
-- 71_kg
-- 6_kg
-- 92_kg
-- 16_kg
-- 40_L
-- 17_kg
-- 450_kg
-- 33_kg
-- 8_kg
-- 72_kg
-- 48_kg
-- 3_t
-- 168_kg
-- 73_kg
-- 88_kg
-- 145_kg
-- 61_kg
-- 33.25_kg
-- 76_kg
-- 125_kg
-- 90_L
-- 86_kg
-- 150_kg
-- 54_kg
-- 68_kg
-- 109_kg
-- 160_kg
-- 80_L
-- 170_kg
-- 36_kg
-- 4.5_kg
-- 500_kg
-- 400_kg
-- 52_kg
+date_key_value_stats:
+  distinct_count: 402
+  null_count: 0
+  is_truncated: false
+  min_value: '19610101'
+  max_value: '20240901'
+as_of_date_value_stats:
+  distinct_count: 432
+  null_count: 0
+  is_truncated: false
+  min_value: '1961-12-31'
+  max_value: '2024-12-31'
+as_of_date_basis_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: observation
+  max_value: observation
+unit_value_stats:
+  distinct_count: 114
+  null_count: 1641233
+  is_truncated: false
+  min_value: '%'
+  max_value: t
 value_value_stats:
   distinct_count: 278585
   null_count: 0
   is_truncated: true
   min_value: '-129.43'
   max_value: '978145122'
-indicator_classes:
-- FVC
+source_natural_key_value_stats:
+  distinct_count: 4
+  null_count: 0
+  is_truncated: false
+  min_value: FEWS_NET_cross_border_Trade
+  max_value: Unpivoted_FAOstat_africa_Trade_Trade_Indices
+loaded_at_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '2026-08-27 23:20:04.494475+00'
+  max_value: '2026-08-27 23:20:04.494475+00'
 filtering_guidance:
 - Always filter trade_grain before analysis
 - FEWS border month vs FAOSTAT country-year — never blend silently
-sql_generation_hints:
-- Filter trade_grain='fews_border_month' or 'faostat_country_year' per question
 semantic_role:
   primary_domain: trade
   supports:
   - trade
   - FVC
-geography_key_value_stats:
-  distinct_count: 55
-  null_count: 0
-  is_truncated: false
-  patched: true
-geo_level_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-element_key_value_stats:
-  distinct_count: 16
-  null_count: 0
-  is_truncated: false
-  patched: true
-source_key_value_stats:
-  distinct_count: 4
-  null_count: 0
-  is_truncated: false
-  patched: true
-tier_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-data_level_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-geo_scope_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-source_id_value_stats:
-  distinct_count: 4
-  null_count: 0
-  is_truncated: false
-  patched: true
-source_country_value_stats:
-  distinct_count: 32
-  null_count: 0
-  is_truncated: false
-  patched: true
-destination_country_value_stats:
-  distinct_count: 50
-  null_count: 0
-  is_truncated: false
-  patched: true
-border_point_value_stats:
-  distinct_count: 91
-  null_count: 0
-  is_truncated: false
-  patched: true
-trade_flow_value_stats:
-  distinct_count: 3
-  null_count: 0
-  is_truncated: false
-  patched: true
-date_key_value_stats:
-  distinct_count: 402
-  null_count: 0
-  is_truncated: false
-  patched: true
-as_of_date_value_stats:
-  distinct_count: 433
-  null_count: 0
-  is_truncated: false
-  patched: true
-as_of_date_basis_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-source_natural_key_value_stats:
-  distinct_count: 4
-  null_count: 0
-  is_truncated: false
-  patched: true
-loaded_at_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
+indicator_classes:
+- FVC
+sql_generation_hints:
+- Filter trade_grain='fews_border_month' or 'faostat_country_year' per question
+bind_spine:
+  geography_key: dim_geography.country_iso3
+  product_key: dim_product.product_name
+  source_key: dim_source.organisation_name
+  item_key: dim_item.item_name
+  element_key: dim_element.element_name

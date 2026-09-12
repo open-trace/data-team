@@ -2,7 +2,7 @@ table_name: opentrace-prod-5ga4.mart_dev.fct_investment
 description: ASTI / agricultural research investment.
 source:
   layer: mart_dev
-profiled_at: '2026-08-28T17:53:44.421016+00:00'
+profiled_at: '2026-09-05T17:57:00.703130+00:00'
 grain: Country × donor/item/element/indicator/sex/institution × year
 entity_type: research
 columns:
@@ -100,63 +100,129 @@ investment_key_value_stats:
   is_truncated: true
   min_value: 000076bb1b306606b71e4ce21a7c51ce
   max_value: ffffec25347d6f1c564bddeae621b29b
-country_iso3_value_samples:
+geography_key_value_stats:
+  distinct_count: 56
+  null_count: 0
+  is_truncated: false
+  min_value: 08d5d1fbcfbc008d33905868ea7a2dd7
+  max_value: ff2abe6b8f87b63b0a4d12a3dc2fb900
+geo_level_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: country
+  max_value: country
+country_iso3_value_stats:
+  distinct_count: 56
+  null_count: 0
+  is_truncated: false
+  min_value: AGO
+  max_value: ZWE
+item_key_value_stats:
+  distinct_count: 70
+  null_count: 4171
+  is_truncated: false
+  min_value: 01f88895f18d645c9cfc87fec426c66b
+  max_value: fa00a328ef780b692adb5194e94292ed
+element_key_value_stats:
+  distinct_count: 19
+  null_count: 4171
+  is_truncated: false
+  min_value: 000ebb03f9b20af0acfeb656da658c06
+  max_value: e679b2bceda4bafdac2230fc54a335d9
+indicator_key_value_stats:
+  distinct_count: 7
+  null_count: 426572
+  is_truncated: false
+  min_value: 148d07b9af3a80ebeabdff1d32720fbc
+  max_value: ff1d1e22f1213670497a924bc671be08
+sex_key_value_stats:
+  distinct_count: 2
+  null_count: 0
+  is_truncated: false
+  min_value: total
+  max_value: unknown
+organisation_key_value_stats:
+  distinct_count: 1
+  null_count: 426572
+  is_truncated: false
+  min_value: 72e045f3894fa791558cf058a188f8b7
+  max_value: 72e045f3894fa791558cf058a188f8b7
+source_key_value_stats:
+  distinct_count: 7
+  null_count: 0
+  is_truncated: false
+  min_value: 3a3660277e605244fb09b7cda7f1f52b
+  max_value: f35cbd7f0e2cebf00fab3b258373b60b
+tier_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '1'
+  max_value: '1'
+data_level_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: national
+  max_value: national
+geo_scope_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: national
+  max_value: national
+place_scope_value_samples:
 - KEN
+- Kenya
+- Tanzania
 - TZA
 - MOZ
+- Mozambique
 - SEN
+- Senegal
 - EGY
+- Egypt
 - BFA
+- Burkina Faso
+- Uganda
 - UGA
+- Ethiopia
 - ETH
+- Zambia
 - ZMB
 - MLI
+- Mali
 - ZAF
+- South Africa
 - GHA
+- Ghana
+- Côte d’Ivoire
 - CIV
+- Niger
 - NER
+- Rwanda
 - RWA
 - AGO
+- Angola
 - MAR
+- Morocco
+- Madagascar
 - MDG
 - CMR
+- Cameroon
+- Nigeria
 - NGA
 - MWI
+- Malawi
 - BEN
+- Benin
+- Tunisia
 - TUN
 - COD
+- Congo (Kinshasa)
+- Zimbabwe
 - ZWE
-- TGO
-- GIN
-- BDI
-- SDN
-- GNB
-- TCD
-- GMB
-- NAM
-- MRT
-- MUS
-- BWA
-- CPV
-- SLE
-- LBR
-- LSO
-- COG
-- DZA
-- SWZ
-- SOM
-- CAF
-- GAB
-- SYC
-- STP
-- ERI
-- COM
-- GNQ
-- DJI
-- SSD
-- LBY
-- SHN
-- MYT
 metric_value_samples:
 - value_us$
 - value_us$,_2023_prices
@@ -171,28 +237,58 @@ metric_value_samples:
 - share_of_value_added_us$,_2015_prices
 - sdg_2.a.1:_agriculture_value_added_share_of_gdp
 - share_of_total_expenditure
-- sdg_2.a.1:_agriculture_share_of_government_expenditure
 - sdg_2.a.1:_agriculture_orientation_index_(aoi)_for_government_expenditure
-- share_of_total_credit_us$,_2015_prices
+- sdg_2.a.1:_agriculture_share_of_government_expenditure
 - ratio_of_value_added_(agriculture,_forestry_and_fishing)_us$,_2015_prices
-- agricultural_researchers_(fte)_per_100_000_agricultural_workers
+- share_of_total_credit_us$,_2015_prices
 - agricultural_researchers_(fte)
+- agricultural_researchers_(fte)_per_100_000_agricultural_workers
 - total_expenditure_in_agricultural_r&d_(us$,_2015_prices)
 - total_expenditure_in_agricultural_r&d_(standard_local_currency)
-- total_expenditure_in_agricultural_r&d_(standard_local_currency,_2015_prices)
 - total_expenditure_in_agricultural_r&d_(us$_ppp,_2015_prices)
+- total_expenditure_in_agricultural_r&d_(standard_local_currency,_2015_prices)
 - expenditure_in_agricultural_r&d_as_share_of_agricultural_value_added_(standard_local_currency)
 - share_of_total_fdi_inflows_us$,_2015_prices
 - share_of_total_fdi_outflows_us$,_2015_prices
+source_id_value_stats:
+  distinct_count: 7
+  null_count: 0
+  is_truncated: false
+  min_value: 3a3660277e605244fb09b7cda7f1f52b
+  max_value: f35cbd7f0e2cebf00fab3b258373b60b
+donor_value_stats:
+  distinct_count: 113
+  null_count: 88125
+  is_truncated: false
+  min_value: Adaptation Fund
+  max_value: World Trade Organization
+purpose_value_stats:
+  distinct_count: 55
+  null_count: 88125
+  is_truncated: false
+  min_value: Agrarian reform
+  max_value: Textiles, leather and substitutes
 indicator_value_samples:
 - Agricultural Researchers (FTE)
 - Agricultural Researchers (FTE) per 100 000 Agricultural Workers
-- Total Expenditure in Agricultural R&D (Standard Local Currency, 2015 prices)
+- Total Expenditure in Agricultural R&D (US$ PPP, 2015 prices)
 - Total Expenditure in Agricultural R&D (Standard Local Currency)
 - Total Expenditure in Agricultural R&D (US$, 2015 prices)
-- Total Expenditure in Agricultural R&D (US$ PPP, 2015 prices)
+- Total Expenditure in Agricultural R&D (Standard Local Currency, 2015 prices)
 - Expenditure in Agricultural R&D as Share of Agricultural Value Added (Standard Local
   Currency)
+institution_value_stats:
+  distinct_count: 1
+  null_count: 426572
+  is_truncated: false
+  min_value: Government, Higher Education and Private Non-profit
+  max_value: Government, Higher Education and Private Non-profit
+sex_value_stats:
+  distinct_count: 1
+  null_count: 429525
+  is_truncated: false
+  min_value: Total
+  max_value: Total
 year_value_samples:
 - '2022'
 - '2023'
@@ -244,135 +340,64 @@ year_value_samples:
 - '2024'
 - '1976'
 - '1975'
-- '1974'
-- '1973'
-- '1972'
-- '1971'
-- '1970'
-unit_value_samples:
-- million USD
-- '%'
-- million SLC
-- 'No'
+date_key_value_stats:
+  distinct_count: 55
+  null_count: 0
+  is_truncated: false
+  min_value: '19700101'
+  max_value: '20240101'
+as_of_date_value_stats:
+  distinct_count: 55
+  null_count: 0
+  is_truncated: false
+  min_value: '1970-12-31'
+  max_value: '2024-12-31'
+as_of_date_basis_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: observation
+  max_value: observation
+unit_value_stats:
+  distinct_count: 4
+  null_count: 12121
+  is_truncated: false
+  min_value: '%'
+  max_value: million USD
 value_value_stats:
   distinct_count: 175482
   null_count: 0
   is_truncated: true
   min_value: '-7397.3'
   max_value: '44536128'
-filtering_guidance:
-- 'Grain: Country × donor/item/element/indicator/sex/institution × year'
-- ASTI / agricultural research investment.
-sql_generation_hints:
-- 'Join keys: geography_key, item_key, element_key, indicator_key, sex_key, organisation_key,
-  source_key, date_key'
-- LEFT JOIN dim_geography on geography_key for country names
-semantic_role:
-  primary_domain: research
-  supports:
-  - research
-geography_key_value_stats:
-  distinct_count: 56
-  null_count: 0
-  is_truncated: false
-  patched: true
-geo_level_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-item_key_value_stats:
-  distinct_count: 70
-  null_count: 0
-  is_truncated: false
-  patched: true
-element_key_value_stats:
-  distinct_count: 19
-  null_count: 0
-  is_truncated: false
-  patched: true
-indicator_key_value_stats:
-  distinct_count: 7
-  null_count: 0
-  is_truncated: false
-  patched: true
-sex_key_value_stats:
-  distinct_count: 2
-  null_count: 0
-  is_truncated: false
-  patched: true
-organisation_key_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-source_key_value_stats:
-  distinct_count: 7
-  null_count: 0
-  is_truncated: false
-  patched: true
-tier_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-data_level_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-geo_scope_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-source_id_value_stats:
-  distinct_count: 7
-  null_count: 0
-  is_truncated: false
-  patched: true
-donor_value_stats:
-  distinct_count: 113
-  null_count: 0
-  is_truncated: false
-  patched: true
-purpose_value_stats:
-  distinct_count: 55
-  null_count: 0
-  is_truncated: false
-  patched: true
-institution_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-sex_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-date_key_value_stats:
-  distinct_count: 55
-  null_count: 0
-  is_truncated: false
-  patched: true
-as_of_date_value_stats:
-  distinct_count: 55
-  null_count: 0
-  is_truncated: false
-  patched: true
-as_of_date_basis_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
 source_natural_key_value_stats:
   distinct_count: 7
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: Unpivoted_FAOstat_africa_Agricultural_Science_and_Technology_ASTI-Expenditures
+  max_value: Unpivoted_FAOstat_africa_Investment_Government_Expenditure
 loaded_at_value_stats:
   distinct_count: 1
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: '2026-08-27 23:20:02.695922+00'
+  max_value: '2026-08-27 23:20:02.695922+00'
+filtering_guidance:
+- 'Grain: Country × donor/item/element/indicator/sex/institution × year'
+- ASTI / agricultural research investment.
+semantic_role:
+  primary_domain: research
+  supports:
+  - research
+sql_generation_hints:
+- 'Join keys: geography_key, item_key, element_key, indicator_key, sex_key, organisation_key,
+  source_key, date_key'
+- LEFT JOIN dim_geography on geography_key for country names
+bind_spine:
+  geography_key: dim_geography.country_iso3
+  indicator_key: dim_indicator.indicator_name
+  source_key: dim_source.organisation_name
+  item_key: dim_item.item_name
+  element_key: dim_element.element_name
+  organisation_key: dim_organisation.short_name
+  sex_key: dim_sex.sex_label

@@ -152,6 +152,7 @@ classes:
       - dim_geography
       - dim_source
       - agg_production_country_year
+      - agg_production_country_season
     do_not_mix:
       - tables: [fct_production, fct_yield]
         reason: FAOSTAT country-year production vs FNID-season yield — never mix
@@ -173,6 +174,9 @@ classes:
       - id: agg_production_country_year_panel
         table: agg_production_country_year
         filters: Multi-country national annual production panel
+      - id: agg_production_country_season_panel
+        table: agg_production_country_season
+        filters: National production by season when season grain is required
 
   PRC:
     code: PRC
@@ -313,8 +317,8 @@ classes:
       - land inputs
     primary_facts:
       - fct_land_inputs
-      - fct_machinery
       - fct_fertilizer
+      - fct_machinery
       - fct_pesticide
     families:
       - id: use_vs_trade

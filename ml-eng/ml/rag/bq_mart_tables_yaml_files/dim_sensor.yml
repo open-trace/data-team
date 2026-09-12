@@ -2,7 +2,7 @@ table_name: opentrace-prod-5ga4.mart_dev.dim_sensor
 description: dim sensor
 source:
   layer: mart_dev
-profiled_at: '2026-08-28T17:53:44.421016+00:00'
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
 columns:
 - name: sensor_key
   type: STRING
@@ -16,22 +16,25 @@ columns:
 - name: location_description
   type: STRING
   description: location description
-sensor_type_value_samples:
-- DHT22
-- pms5003
-- SDS011
 sensor_key_value_stats:
   distinct_count: 44
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: 01386bd6d8e091c2ab4c7c7de644d37b
+  max_value: fe131d7f5a6b38b23cc967316c13dae2
 sensor_id_value_stats:
   distinct_count: 44
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: '144'
+  max_value: '601'
+sensor_type_value_samples:
+- DHT22
+- pms5003
+- SDS011
 location_description_value_stats:
   distinct_count: 22
   null_count: 0
   is_truncated: false
-  patched: true
+  min_value: '3528'
+  max_value: '4010'

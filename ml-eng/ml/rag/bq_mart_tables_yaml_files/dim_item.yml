@@ -1,0 +1,146 @@
+table_name: opentrace-prod-5ga4.mart_dev.dim_item
+description: Items for emissions, employment, land inputs, investment, etc.
+source:
+  layer: mart_dev
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
+grain: FAOSTAT-style item name/code
+entity_type: reference
+columns:
+- name: item_key
+  type: STRING
+  description: item key
+- name: item_name
+  type: STRING
+  description: item name
+- name: item_code
+  type: STRING
+  description: item code
+- name: loaded_at
+  type: TIMESTAMP
+  description: loaded at
+item_key_value_stats:
+  distinct_count: 1387
+  null_count: 0
+  is_truncated: true
+  min_value: 00652f14a166753152683ad7182aff21
+  max_value: ff9b1e24b31eccf958ebfb6ea9997760
+item_name_value_samples:
+- Canary seed
+- Meat of pig boneless, fresh or chilled
+- Pig fat, rendered
+- Hair, goat, fine
+- Edible offal of pigs, fresh, chilled or frozen
+- Geese
+- Flour of mixed grain
+- Bran of mixed grain
+- Skins, pig nes
+- Chickens
+- Blended And Mix
+- Wool, shoddy
+- Fat of poultry
+- Meat of goat, fresh or chilled
+- Skins, goat, dry salted
+- Bulgur Wheat Total
+- Sausages and similar products of meat, offal or blood of pig
+- Skins, karakul
+- Meat of pig with the bone, fresh or chilled
+- Swine
+- Coarse goat hair
+- Swine, market
+- Eggs, liquid
+- Swine, breeding
+- Goats
+- Chickens, broilers
+- Meat of chickens, fresh or chilled
+- Fat of pigs
+- Fatty liver preparations
+- Pig, butcher fat
+- Hen eggs in shell, fresh
+- Hair, carded/combed
+- Eggs, dried
+- Chickens, layers
+- Poultry fat, rendered
+- Skins, wet-salted of goats
+- Meat of ducks, fresh or chilled
+- Skins, pig, wet salted
+- Total Merchandise Trade
+- Wool, hair waste
+- Rice Total
+- Pig meat, cuts, salted, dried or smoked (bacon and ham)
+- Mixed grain
+- Skins, goat nes
+- Ducks
+- Edible offals and liver of chickens and guinea fowl, fresh, chilled or frozen
+- Pig meat preparations
+- Raw milk of goats
+- Poultry meat preparations
+- Swine / pigs
+item_code_value_samples:
+- '1640'
+- '1633'
+- '1877'
+- '1052'
+- '1043'
+- '10'
+- '1030'
+- '1035'
+- '1047'
+- '1054'
+- '10109'
+- '1072'
+- '1038'
+- '1017'
+- '1027'
+- '10021'
+- '1041'
+- '1049'
+- '1068'
+- '10031'
+- '1059'
+- '1031'
+- '1063'
+- '1051'
+- '1016'
+- '1053'
+- '1065'
+- '1036'
+- '1060'
+- '1040'
+- '1062'
+- '1008'
+- '1064'
+- '1039'
+- '1066'
+- '1026'
+- '1069'
+- '1045'
+- '105'
+- '1009'
+- '104'
+- '1037'
+- '1007'
+- '1002'
+- '1028'
+- '1058'
+- '1042'
+- '1020'
+- '1061'
+- '1034'
+loaded_at_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '2026-08-24 17:07:46.397300+00'
+  max_value: '2026-08-24 17:07:46.397300+00'
+sql_generation_hints:
+- 'Join keys: item_key'
+- LEFT JOIN dim_geography on geography_key for country names
+filtering_guidance:
+- 'Grain: FAOSTAT-style item name/code'
+- Items for emissions, employment, land inputs, investment, etc.
+semantic_role:
+  primary_domain: reference
+  supports:
+  - reference
+bind_spine:
+  item_key: dim_item.item_name

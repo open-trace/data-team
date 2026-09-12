@@ -41,6 +41,7 @@ def _empty_session_blob() -> dict[str, Any]:
         "plan_type": None,
         "country": None,
         "last_structured_ranking": None,
+        "last_bq_facts": None,
     }
 
 
@@ -154,6 +155,8 @@ def persist_session_turn(
     }
     if blob.get("last_structured_ranking") is not None:
         new_blob["last_structured_ranking"] = blob["last_structured_ranking"]
+    if blob.get("last_bq_facts") is not None:
+        new_blob["last_bq_facts"] = blob["last_bq_facts"]
     save_session_blob(session_id, new_blob)
 
 
@@ -235,10 +238,17 @@ def execute_chat_turn(
         err_s = None
 
     if persist_to_session and history is None:
+        blob = get_session_blob(sid) or _empty_session_blob()
+        changed = False
         cache = result.get("structured_ranking_cache")
         if isinstance(cache, dict):
-            blob = get_session_blob(sid) or _empty_session_blob()
             blob["last_structured_ranking"] = cache
+            changed = True
+        facts = result.get("last_bq_facts")
+        if isinstance(facts, list) and facts:
+            blob["last_bq_facts"] = facts[:8]
+            changed = True
+        if changed:
             save_session_blob(sid, blob)
         persist_session_turn(
             sid,

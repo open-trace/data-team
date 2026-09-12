@@ -2,7 +2,7 @@ table_name: opentrace-prod-5ga4.mart_dev.dim_source
 description: Source registry for ACF tier and producer scale.
 source:
   layer: mart_dev
-profiled_at: '2026-08-28T17:53:44.421016+00:00'
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
 grain: One row per source_natural_key
 entity_type: lineage
 columns:
@@ -27,6 +27,18 @@ columns:
 - name: loaded_at
   type: TIMESTAMP
   description: loaded at
+source_key_value_stats:
+  distinct_count: 116
+  null_count: 0
+  is_truncated: false
+  min_value: 00a7dfad1f36052277a9286cf9ea4055
+  max_value: fae5707cc5176387b576c1f795a3f275
+source_natural_key_value_stats:
+  distinct_count: 116
+  null_count: 0
+  is_truncated: false
+  min_value: ClimateWatch_climate_health_impacts
+  max_value: yield_raw_data
 organisation_name_value_samples:
 - FAOSTAT
 - ILRI
@@ -46,44 +58,38 @@ organisation_name_value_samples:
 - Yield extract
 - CIFOR-ICRAF
 - S4A field surveys
-filtering_guidance:
-- 'Grain: One row per source_natural_key'
-- Source registry for ACF tier and producer scale.
+tier_value_stats:
+  distinct_count: 3
+  null_count: 0
+  is_truncated: false
+  min_value: '1'
+  max_value: '3'
+default_data_level_value_stats:
+  distinct_count: 4
+  null_count: 0
+  is_truncated: false
+  min_value: community
+  max_value: sub_national
+producer_scale_value_stats:
+  distinct_count: 4
+  null_count: 0
+  is_truncated: false
+  min_value: global
+  max_value: subnational
+loaded_at_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '2026-08-25 16:57:36.492964+00'
+  max_value: '2026-08-25 16:57:36.492964+00'
 sql_generation_hints:
 - 'Join keys: source_key, source_natural_key'
 - LEFT JOIN dim_geography on geography_key for country names
+filtering_guidance:
+- 'Grain: One row per source_natural_key'
+- Source registry for ACF tier and producer scale.
 semantic_role:
   primary_domain: source
   supports:
   - source
   - join_dim
-source_key_value_stats:
-  distinct_count: 116
-  null_count: 0
-  is_truncated: false
-  patched: true
-source_natural_key_value_stats:
-  distinct_count: 116
-  null_count: 0
-  is_truncated: false
-  patched: true
-tier_value_stats:
-  distinct_count: 3
-  null_count: 0
-  is_truncated: false
-  patched: true
-default_data_level_value_stats:
-  distinct_count: 4
-  null_count: 0
-  is_truncated: false
-  patched: true
-producer_scale_value_stats:
-  distinct_count: 4
-  null_count: 0
-  is_truncated: false
-  patched: true
-loaded_at_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true

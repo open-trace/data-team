@@ -8,7 +8,11 @@ from typing import Any
 from ml.rag.chatbot.bq_table_schema_yaml import known_mart_table_names
 from ml.rag.chatbot.bundle_metrics import is_agri_activities_panel, is_multi_country_panel
 from ml.rag.chatbot.intent_bundles import MatchedBundle, has_bundle
-from ml.rag.chatbot.mart_indicator_classes import facts_for_class, families_for_class
+from ml.rag.chatbot.mart_indicator_classes import (
+    companion_facts_for_class,
+    facts_for_class,
+    families_for_class,
+)
 from ml.rag.chatbot.retrieval_contract import choose_agg_vs_fact
 
 _YIELD_RE = re.compile(r"\b(yield|season|fnid|harvest\s+season)\b", re.I)
@@ -21,6 +25,7 @@ _PRICE_RE = re.compile(r"\b(price|prices|market|retail|wholesale)\b", re.I)
 _MARKET_DETAIL_RE = re.compile(r"\b(market|bamako|kano|nairobi|retail|wholesale|urban)\b", re.I)
 
 _TABLE_PREFIX_SKIP = ("dim_", "bridge_")
+_MAX_COMPANIONS = 2
 
 
 def _bare_table(table_id: str) -> str:
@@ -97,6 +102,31 @@ def _bundle_required_measures(bundles: tuple[MatchedBundle, ...]) -> set[str]:
     return out
 
 
+def _with_taxonomy_companions(
+    plans: list[TablePlan],
+    *,
+    class_code: str,
+    card: dict[str, Any],
+    known: set[str],
+    max_companions: int = _MAX_COMPANIONS,
+) -> list[TablePlan]:
+    """Append up to max_companions mart fact/agg tables from companion_facts."""
+    if not plans:
+        return plans
+    primary_ids = {p.table_id for p in plans}
+    do_not_use = {_bare_table(str(t)) for t in (card.get("do_not_use") or [])}
+    added: list[TablePlan] = []
+    for tid in companion_facts_for_class(class_code):
+        if tid in primary_ids or tid in do_not_use or tid not in known:
+            continue
+        if any(p.table_id == tid for p in added):
+            continue
+        added.append(TablePlan(table_id=tid, family_id=tid, role="companion"))
+        if len(added) >= max_companions:
+            break
+    return list(plans) + added
+
+
 def select_table_plans(
     class_code: str,
     *,
@@ -158,21 +188,25 @@ def select_table_plans(
             p = _plan(default)
             if p:
                 plans.append(p)
-        return plans
+        return _with_taxonomy_companions(plans, class_code=code, card=card, known=known)
 
     if code == "PRC":
         if _MARKET_DETAIL_RE.search(query) and len(iso) == 1:
             p = _plan("fct_prices", family_id="fews_market")
             if p:
-                return [p]
-        p = _plan("agg_prices_country_month", family_id="faostat_national")
-        if p:
-            return [p]
-        default = _bare_table(str(card.get("default_table") or "fct_prices"))
-        p = _plan(default)
-        return [p] if p else []
+                plans = [p]
+        else:
+            p = _plan("agg_prices_country_month", family_id="faostat_national")
+            if p:
+                plans = [p]
+            else:
+                default = _bare_table(str(card.get("default_table") or "fct_prices"))
+                p = _plan(default)
+                plans = [p] if p else []
+        return _with_taxonomy_companions(plans, class_code=code, card=card, known=known)
 
     if code == "FVC":
+        # Explicit panel+trade companions; taxonomy companion_facts are dims only.
         if panel or (multi and has_bundle(bundles, "agricultural_activities")):
             fb = _plan("fct_food_balance", family_id="food_losses", role="panel")
             tr = _plan("fct_trade", family_id="trade_grain", role="companion")
@@ -197,24 +231,43 @@ def select_table_plans(
             if _family_matches_query(fam, query):
                 p = _plan(str(fam.get("table") or ""), family_id=str(fam.get("id") or ""))
                 if p:
-                    return [p]
+                    return _with_taxonomy_companions([p], class_code=code, card=card, known=known)
         default = _bare_table(str(card.get("default_table") or "fct_food_balance"))
         p = _plan(default)
-        return [p] if p else []
+        return _with_taxonomy_companions([p] if p else [], class_code=code, card=card, known=known)
 
-    # Generic classes: family match then default
+    if code == "FS":
+        for fam in families_for_class(code):
+            if _family_matches_query(fam, query):
+                p = _plan(str(fam.get("table") or ""), family_id=str(fam.get("id") or ""))
+                if p:
+                    plans = [p]
+                    break
+        if not plans:
+            for tid in candidates:
+                p = _plan(tid)
+                if p:
+                    plans = [p]
+                    break
+        if not plans:
+            default = _bare_table(str(card.get("default_table") or "fct_food_security"))
+            p = _plan(default)
+            plans = [p] if p else []
+        return _with_taxonomy_companions(plans, class_code=code, card=card, known=known)
+
+    # Generic classes: family match then default, then taxonomy companions
     for fam in families_for_class(code):
         if _family_matches_query(fam, query):
             p = _plan(str(fam.get("table") or ""), family_id=str(fam.get("id") or ""))
             if p:
-                return [p]
+                return _with_taxonomy_companions([p], class_code=code, card=card, known=known)
     for tid in candidates:
         p = _plan(tid)
         if p:
-            return [p]
+            return _with_taxonomy_companions([p], class_code=code, card=card, known=known)
     default = _bare_table(str(card.get("default_table") or ""))
     p = _plan(default)
-    return [p] if p else []
+    return _with_taxonomy_companions([p] if p else [], class_code=code, card=card, known=known)
 
 
 __all__ = ["TablePlan", "select_table_plans"]

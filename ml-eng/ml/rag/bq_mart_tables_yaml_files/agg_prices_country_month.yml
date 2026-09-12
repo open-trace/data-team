@@ -1,56 +1,260 @@
 table_name: opentrace-prod-5ga4.mart_dev.agg_prices_country_month
-description: National monthly price rollups by product, price type, and source.
+description: Country-month average market prices.
 source:
   layer: mart_dev
-grain: Country × product × month × price source
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
+grain: Country × product × month × source
 entity_type: prices
 columns:
 - name: agg_prices_country_month_key
   type: STRING
-  description: Surrogate key
+  description: agg prices country month key
 - name: geography_key
   type: STRING
-  description: FK to dim_geography
+  description: FK to dim_geography (null if unmatched)
 - name: date_key
   type: STRING
-  description: YYYYMMDD observation anchor
+  description: date key
 - name: country_name
   type: STRING
-  description: Country label from dim_geography
+  description: country name
 - name: product_key
   type: STRING
-  description: FK to dim_product
+  description: product key
 - name: price_type
   type: STRING
-  description: Retail/wholesale/etc.
+  description: price type
 - name: price_source
   type: STRING
-  description: FEWS/FAOSTAT/WFP lineage
+  description: price source
 - name: source_key
   type: STRING
   description: FK to dim_source
 - name: year
   type: INT64
-  description: Calendar year
+  description: year
 - name: month
   type: INT64
-  description: Calendar month
+  description: month
 - name: price_avg
   type: FLOAT64
-  description: Average price in period
+  description: price avg
 - name: common_unit_price_avg
   type: FLOAT64
-  description: Normalised unit price average
+  description: common unit price avg
 - name: market_count
   type: INT64
-  description: Number of markets rolled up
+  description: market count
 - name: loaded_at
   type: TIMESTAMP
-  description: Warehouse load timestamp
-price_source_value_samples:
-- faostat
-- fews
-- wfp
+  description: loaded at
+agg_prices_country_month_key_value_stats:
+  distinct_count: 677211
+  null_count: 0
+  is_truncated: true
+  min_value: 00001ced6d48111f9b68b95f9600b094
+  max_value: ffffeaea725361703a27c3473ff023a3
+geography_key_value_stats:
+  distinct_count: 231
+  null_count: 0
+  is_truncated: false
+  min_value: 008f3e39b7ba51275eb1d03abd0eabf2
+  max_value: ff494f6d1039cd4ef26de8e28fa88482
+date_key_value_stats:
+  distinct_count: 765
+  null_count: 0
+  is_truncated: true
+  min_value: '19600101'
+  max_value: '20260101'
+country_name_value_samples:
+- Nigeria
+- Burundi
+- Somalia
+- Kenya
+- Sudan
+- Mauritania
+- Chad
+- Ethiopia
+- South Sudan
+- South Africa
+- Cameroon
+- Egypt
+- Rwanda
+- Namibia
+- Côte d’Ivoire
+- Madagascar
+- Morocco
+- Malawi
+- Ghana
+- Zimbabwe
+- Tunisia
+- Gambia, The
+- Mozambique
+- Mali
+- Guinea
+- Togo
+- Niger
+- Algeria
+- Cabo Verde
+- Senegal
+- Burkina Faso
+- Mauritius
+- Congo (Brazzaville)
+- Benin
+- Guinea-Bissau
+- Tanzania
+- Eswatini
+- Congo (Kinshasa)
+- Angola
+- Uganda
+- Central African Republic
+- Botswana
+- Djibouti
+- Sierra Leone
+- Eritrea
+- Zambia
+- Lesotho
+- Liberia
+- Libya
+- Equatorial Guinea
+product_key_value_stats:
+  distinct_count: 927
+  null_count: 6240
+  is_truncated: true
+  min_value: 00af54407e525b2f9da85ee60c81db0f
+  max_value: ffdf5ced4479d19b73228a3c9735a722
 price_type_value_samples:
-- retail
-- wholesale
+- Retail
+- Producer Price Index (2014-2016 = 100)
+- Wholesale
+- Producer Price (LCU/tonne)
+- Producer Price (SLC/tonne)
+- Producer Price (USD/tonne)
+- Value US$, 2015 prices
+- Value Standard Local Currency, 2015 prices
+- Wage
+- Value
+- Local currency units per USD
+- Standard local currency units per USD
+- Export
+- Spot
+- Producer
+price_source_value_samples:
+- fews
+- faostat
+- wfp
+source_key_value_stats:
+  distinct_count: 6
+  null_count: 0
+  is_truncated: false
+  min_value: 02bd78b6d416ebf2facb6567d75454e6
+  max_value: f33c4639421e90f1208bd87d9db2f959
+year_value_samples:
+- '2020'
+- '2019'
+- '2018'
+- '2017'
+- '2016'
+- '2021'
+- '2015'
+- '2014'
+- '2022'
+- '2013'
+- '2012'
+- '2011'
+- '2010'
+- '2009'
+- '2023'
+- '2008'
+- '2007'
+- '2006'
+- '2005'
+- '2004'
+- '2003'
+- '2002'
+- '2001'
+- '2000'
+- '1998'
+- '1999'
+- '1997'
+- '1996'
+- '1995'
+- '1994'
+- '1993'
+- '1992'
+- '1991'
+- '2024'
+- '2025'
+- '1990'
+- '1985'
+- '1986'
+- '1988'
+- '1970'
+- '1987'
+- '1989'
+- '1984'
+- '1980'
+- '1972'
+- '1975'
+- '1978'
+- '1983'
+- '1979'
+- '1974'
+month_value_samples:
+- '3'
+- '1'
+- '2'
+- '6'
+- '5'
+- '4'
+- '10'
+- '7'
+- '11'
+- '12'
+- '8'
+- '9'
+price_avg_value_stats:
+  distinct_count: 220926
+  null_count: 0
+  is_truncated: true
+  min_value: '-18.127214083333335'
+  max_value: '6723052073.2548122'
+common_unit_price_avg_value_stats:
+  distinct_count: 102901
+  null_count: 369267
+  is_truncated: true
+  min_value: '0.00068027142857142854'
+  max_value: '26300000'
+market_count_value_stats:
+  distinct_count: 108
+  null_count: 0
+  is_truncated: false
+  min_value: '1'
+  max_value: '109'
+loaded_at_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '2026-08-27 22:10:12.556038+00'
+  max_value: '2026-08-27 22:10:12.556038+00'
+sql_generation_hints:
+- Filter price_source first when comparing FEWS/WFP/FAOSTAT
+- LEFT JOIN dim_geography / dim_product on spine keys
+filtering_guidance:
+- Prefer for country-month price rollups over market-level fct_prices
+- Do not blend price_source rows in one SUM/AVG
+- Filter country_iso3 + year/month; JOIN dim_product for crop labels
+semantic_role:
+  primary_domain: prices
+  supports:
+  - prices
+  - market_price
+  - PRC
+bind_spine:
+  geography_key: dim_geography.country_iso3
+  product_key: dim_product.product_name
+  source_key: dim_source.organisation_name
+indicator_classes:
+- PRC
+business_questions_supported:
+- What is the national monthly price for a crop?

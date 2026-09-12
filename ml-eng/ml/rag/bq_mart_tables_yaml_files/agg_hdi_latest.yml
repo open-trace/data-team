@@ -1,0 +1,160 @@
+table_name: opentrace-prod-5ga4.mart_dev.agg_hdi_latest
+description: Latest HDI value per country.
+source:
+  layer: mart_dev
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
+grain: Latest year per country
+entity_type: socio_economic
+columns:
+- name: agg_hdi_latest_key
+  type: STRING
+  description: agg hdi latest key
+- name: geography_key
+  type: STRING
+  description: FK to dim_geography (null if unmatched)
+- name: date_key
+  type: STRING
+  description: date key
+- name: country_name
+  type: STRING
+  description: country name
+- name: country_iso3
+  type: STRING
+  description: ISO3 from dim or extractable geo even if key null
+- name: latest_year
+  type: INT64
+  description: latest year
+- name: hdi_value
+  type: FLOAT64
+  description: hdi value
+- name: source_key
+  type: STRING
+  description: FK to dim_source
+- name: loaded_at
+  type: TIMESTAMP
+  description: loaded at
+agg_hdi_latest_key_value_stats:
+  distinct_count: 54
+  null_count: 0
+  is_truncated: false
+  min_value: 0f379fa6ff759072339feed911702b26
+  max_value: f6cbb770e0c4b5502756a7075d894f2e
+geography_key_value_stats:
+  distinct_count: 54
+  null_count: 0
+  is_truncated: false
+  min_value: 08d5d1fbcfbc008d33905868ea7a2dd7
+  max_value: ff2abe6b8f87b63b0a4d12a3dc2fb900
+date_key_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '20230101'
+  max_value: '20230101'
+country_name_value_samples:
+- Burkina Faso
+- Senegal
+- Rwanda
+- Djibouti
+- Congo (Kinshasa)
+- Tunisia
+- Tanzania
+- Zimbabwe
+- Uganda
+- Ghana
+- Sierra Leone
+- Mali
+- Libya
+- Mozambique
+- Eritrea
+- Central African Republic
+- Mauritania
+- Somalia
+- Malawi
+- Cameroon
+- Guinea-Bissau
+- Zambia
+- Eswatini
+- Comoros
+- Madagascar
+- Kenya
+- Sao Tome and Principe
+- Gambia, The
+- Namibia
+- Nigeria
+- Equatorial Guinea
+- Niger
+- Morocco
+- Angola
+- Botswana
+- Guinea
+- South Africa
+- Côte d’Ivoire
+- South Sudan
+- Burundi
+- Chad
+- Lesotho
+- Sudan
+- Liberia
+- Gabon
+- Congo (Brazzaville)
+- Togo
+- Ethiopia
+- Cabo Verde
+- Benin
+country_iso3_value_stats:
+  distinct_count: 54
+  null_count: 0
+  is_truncated: false
+  min_value: AGO
+  max_value: ZWE
+latest_year_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '2023'
+  max_value: '2023'
+hdi_value_value_stats:
+  distinct_count: 51
+  null_count: 0
+  is_truncated: false
+  min_value: '0.388'
+  max_value: '0.848'
+source_key_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: 6b5647bc4ec2f5e1ab7297cc13718531
+  max_value: 6b5647bc4ec2f5e1ab7297cc13718531
+loaded_at_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '2026-08-25 20:15:57.283198+00'
+  max_value: '2026-08-25 20:15:57.283198+00'
+sql_generation_hints:
+- LEFT JOIN dim_geography on geography_key for country labels
+- One row per country — no year range filter needed for snapshots
+filtering_guidance:
+- Latest year per country only — not a time series
+- Prefer over fct_hdi for current/snapshot HDI questions
+- Use fct_hdi when the question asks for trends or multi-year history
+- Filter country_name / country_iso3; skip null geography_key when mapping
+semantic_role:
+  primary_domain: hdi
+  supports:
+  - hdi
+  - HDI
+bind_spine:
+  geography_key: dim_geography.country_iso3
+  source_key: dim_source.organisation_name
+semantic_relationships:
+  joins_with:
+  - table: dim_geography
+    true:
+    - geography_key
+    how: LEFT
+business_questions_supported:
+- What is the latest HDI for a country?
+indicator_classes:
+- HDI

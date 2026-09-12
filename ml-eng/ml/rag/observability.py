@@ -107,8 +107,11 @@ def is_tracing_enabled() -> bool:
 def _langfuse_client_cached() -> Any | None:
     """Cached client init — only called when tracing keys are present."""
     _ensure_langfuse_env()
+    client_factory = get_client
+    if client_factory is None:
+        return None
     try:
-        return get_client()
+        return client_factory()
     except Exception:
         return None
 
@@ -161,6 +164,30 @@ def tracing_release() -> str:
     return ""
 
 
+_SQL_SOURCE_TAG_ALLOW = frozenset(
+    {
+        "nl2sql",
+        "bind_contract",
+        "bind_compiler",
+        "template",
+        "pattern",
+        "reasoner",
+        "compile_error",
+        "engine",
+    }
+)
+_PLAN_SOURCE_TAG_ALLOW = frozenset(
+    {
+        "class_engine",
+        "slot_reasoner",
+        "analytical",
+        "retrieval_contract",
+        "compile_error",
+        "engine",
+    }
+)
+
+
 def _build_tags(
     *,
     plan_type: str | None = None,
@@ -169,6 +196,7 @@ def _build_tags(
     route: str | None = None,
     answer_lang: str | None = None,
     acf_band: str | None = None,
+    planned_summary: dict[str, Any] | None = None,
 ) -> list[str]:
     tags: list[str] = list(extra_tags or [])
     env = os.environ.get("LANGFUSE_TRACING_ENVIRONMENT", "").strip()
@@ -189,6 +217,38 @@ def _build_tags(
     band = (acf_band or "").strip()
     if band:
         tags.append(f"acf_band:{band}")
+    if planned_summary:
+        tags.extend(_planned_path_tags(planned_summary))
+    # Dedupe preserving order
+    seen: set[str] = set()
+    out: list[str] = []
+    for t in tags:
+        if t and t not in seen:
+            seen.add(t)
+            out.append(t)
+    return out
+
+
+def _planned_path_tags(summary: dict[str, Any]) -> list[str]:
+    """Low-cardinality tags for Langfuse UI filters / scans."""
+    tags: list[str] = []
+    if summary.get("planned_path"):
+        tags.append("planned:1")
+    mode = str(summary.get("retrieve_mode") or "").strip().lower()
+    if mode in ("planned", "legacy"):
+        tags.append(f"retrieve_mode:{mode}")
+    src = str(summary.get("plan_source") or "").strip()
+    if src in _PLAN_SOURCE_TAG_ALLOW:
+        tags.append(f"plan_source:{src}")
+    sql_src = str(summary.get("sql_source") or "").strip().lower()
+    if sql_src in _SQL_SOURCE_TAG_ALLOW:
+        tags.append(f"sql_source:{sql_src}")
+    if summary.get("multi_bind"):
+        tags.append("multi_bind:1")
+    if summary.get("multi_class"):
+        tags.append("multi_class:1")
+    if summary.get("region_blend"):
+        tags.append("region_blend:1")
     return tags
 
 
@@ -319,6 +379,41 @@ def summarize_rag_result_for_trace(result: dict[str, Any]) -> dict[str, Any]:
     task_mode = result.get("task_mode")
     if task_mode:
         summary["task_mode"] = str(task_mode)
+    # Query views (Ask ADZA embed honesty)
+    uq = str(result.get("user_query") or result.get("query") or "").strip()
+    if uq:
+        summary["user_query"] = uq[:500]
+        summary["user_query_len"] = len(uq)
+    for key in ("context_rewrite", "detail_rewrite"):
+        val = result.get(key)
+        if val:
+            summary[key] = str(val)[:500]
+            summary[f"{key}_len"] = len(str(val))
+    qv = result.get("query_views")
+    if isinstance(qv, dict):
+        summary["query_views"] = {
+            k: qv.get(k)
+            for k in (
+                "user_query",
+                "context_rewrite",
+                "detail_rewrite",
+                "context_applied",
+                "user_query_len",
+                "context_rewrite_len",
+                "detail_rewrite_len",
+            )
+            if k in qv
+        }
+    texts_used = result.get("vector_texts_used")
+    if isinstance(texts_used, list):
+        summary["vector_texts_used_count"] = len(texts_used)
+    job_ids: list[str] = []
+    for row in result.get("bq_sql_debug") or []:
+        if isinstance(row, dict) and row.get("job_id"):
+            job_ids.append(str(row.get("job_id")))
+    if job_ids:
+        summary["job_ids"] = job_ids[:12]
+    summary["bq_row_count"] = len(result.get("bq_results") or [])
     for key in (
         "early_short_circuit",
         "skipped_decompose_llm",
@@ -338,9 +433,15 @@ def summarize_rag_result_for_trace(result: dict[str, Any]) -> dict[str, Any]:
         "generate_input_tokens",
         "bq_timeout",
         "route_candidate",
+        "context_applied",
+        "vector_cache_hit",
+        "bq_cache_hit",
+        "user_query_dropped",
+        "coverage_retry",
     ):
         if result.get(key) is not None:
             summary[key] = result.get(key)
+    summary.update(_planned_path_trace_fields(result))
     corpus_sel = result.get("corpus_selection")
     if isinstance(corpus_sel, dict) and corpus_sel.get("active"):
         summary["corpus_count"] = summary.get("corpus_count") or len(corpus_sel.get("active") or [])
@@ -351,6 +452,88 @@ def summarize_rag_result_for_trace(result: dict[str, Any]) -> dict[str, Any]:
         except (TypeError, ValueError):
             pass
     return summary
+
+
+def _planned_path_trace_fields(result: dict[str, Any]) -> dict[str, Any]:
+    """planned / bind / NL2SQL / multi-class signals for Langfuse filterability."""
+    plan: dict[str, Any] = {}
+    raw_plan = result.get("bq_sql_plan")
+    if isinstance(raw_plan, dict):
+        plan = raw_plan
+
+    bind: dict[str, Any] = {}
+    raw_bind = plan.get("bind_contracts")
+    if isinstance(raw_bind, dict):
+        bind = raw_bind
+    elif isinstance(result.get("bind_contracts"), dict):
+        alt_bind = result.get("bind_contracts")
+        if isinstance(alt_bind, dict):
+            bind = alt_bind
+
+    retrieve_mode = str(plan.get("retrieve_mode") or result.get("retrieve_mode") or "").strip().lower()
+    plan_source = str(plan.get("plan_source") or result.get("plan_source") or "").strip()
+    planned = (
+        retrieve_mode == "planned"
+        or bool(bind)
+        or plan_source == "class_engine"
+        or bool(plan.get("nl2sql_fallback"))
+    )
+    bind_count = len(bind)
+    sp: dict[str, Any] = {}
+    for candidate in (result.get("supervisor_plan"), plan.get("supervisor_plan")):
+        if isinstance(candidate, dict):
+            sp = candidate
+            break
+    classes = list(sp.get("classes") or [])
+    secondary = list(sp.get("secondary") or [])
+    class_count = len([c for c in (*classes, *secondary) if str(c).strip()])
+
+    iso_count = _iso_count_from_result(result, plan)
+    expanded: dict[str, Any] = {}
+    raw_dec = result.get("decomposition")
+    if isinstance(raw_dec, dict):
+        expanded = raw_dec
+    expanded_regions = expanded.get("expanded_regions")
+    has_expanded = isinstance(expanded_regions, list) and bool(expanded_regions)
+    region_blend = has_expanded or iso_count >= 3
+
+    out: dict[str, Any] = {
+        "planned_path": planned,
+        "bind_present": bool(bind),
+        "bind_table_count": bind_count,
+        "multi_bind": bind_count >= 2,
+        "multi_class": class_count >= 2,
+        "region_blend": region_blend,
+        "class_count": class_count,
+    }
+    if plan_source:
+        out["plan_source"] = plan_source
+    if retrieve_mode:
+        out["retrieve_mode"] = retrieve_mode
+    if plan.get("nl2sql_fallback") or result.get("nl2sql_fallback"):
+        out["nl2sql_fallback"] = True
+    if plan.get("compile_error") or result.get("compile_error") or plan_source == "compile_error":
+        out["compile_error"] = True
+    if result.get("structured_bq_empty"):
+        out["nl2sql_empty"] = True
+    bq_flags = _bq_soft_fail_flags(result)
+    if bq_flags.get("bq_validation_failed"):
+        out["nl2sql_validation_failed"] = True
+    return out
+
+
+def _iso_count_from_result(result: dict[str, Any], plan: dict[str, Any]) -> int:
+    value_hits = plan.get("value_hits") if isinstance(plan.get("value_hits"), dict) else {}
+    for _cls, hits in value_hits.items() if isinstance(value_hits, dict) else []:
+        if isinstance(hits, dict):
+            iso = hits.get("country_iso3")
+            if isinstance(iso, list) and iso:
+                return len(iso)
+    dec = result.get("decomposition") if isinstance(result.get("decomposition"), dict) else {}
+    geo = dec.get("geography") if isinstance(dec, dict) else None
+    if isinstance(geo, list):
+        return len([g for g in geo if str(g).strip()])
+    return 0
 
 
 def _record_soft_fail_scores(result: dict[str, Any], summary: dict[str, Any]) -> None:
@@ -366,10 +549,37 @@ def _record_soft_fail_scores(result: dict[str, Any], summary: dict[str, Any]) ->
             bool(summary.get("bq_validation_failed") or summary.get("bq_execution_failed")),
         ),
         ("web_fallback_used", bool(summary.get("web_fallback_used"))),
+        ("user_query_dropped", bool(summary.get("user_query_dropped"))),
     )
     for name, on in flags:
         if on:
             record_trace_score(name=name, value=True, trace_id=tid)
+    _record_planned_path_scores(summary, trace_id=tid)
+
+
+def _record_planned_path_scores(summary: dict[str, Any], *, trace_id: str | None = None) -> None:
+    """Tag planned vs legacy warehouse turns for Langfuse filtering / scans."""
+    tid = trace_id or get_current_trace_id()
+    if not tid:
+        return
+    for name in (
+        "planned_path",
+        "bind_present",
+        "multi_bind",
+        "multi_class",
+        "region_blend",
+        "nl2sql_empty",
+        "nl2sql_validation_failed",
+        "nl2sql_fallback",
+        "compile_error",
+    ):
+        if summary.get(name):
+            record_trace_score(name=name, value=True, trace_id=tid)
+    src = str(summary.get("sql_source") or "").strip().lower()
+    if src == "nl2sql":
+        record_trace_score(name="sql_source_nl2sql", value=True, trace_id=tid)
+    elif src == "bind_contract":
+        record_trace_score(name="sql_source_bind_contract", value=True, trace_id=tid)
 
 
 def _record_acf_score(summary: dict[str, Any]) -> None:
@@ -437,6 +647,9 @@ class RagTraceHandle:
 
     span: Any | None = None
     _closed: bool = field(default=False, repr=False)
+    plan_type: str | None = None
+    category: str | None = None
+    base_tags: list[str] = field(default_factory=list)
 
     def update_output(
         self,
@@ -462,9 +675,13 @@ class RagTraceHandle:
             **retrieval_summary,
         }
         tag_list = _build_tags(
+            plan_type=self.plan_type or str(result.get("plan_type") or "") or None,
+            category=self.category or str(result.get("category") or "") or None,
+            extra_tags=list(self.base_tags),
             route=route_label,
             answer_lang=str(retrieval_summary.get("answer_lang") or "") or None,
             acf_band=str(retrieval_summary.get("acf_band") or "") or None,
+            planned_summary=retrieval_summary,
         )
         try:
             self.span.update_trace(
@@ -504,7 +721,11 @@ def rag_trace_context(
     Yields a :class:`RagTraceHandle` — call ``update_output(result)`` after ``run_rag()``.
     Also sets OpenRouter ``session_id`` (trace id) for LLM cost bundling when enabled.
     """
-    handle = RagTraceHandle()
+    handle = RagTraceHandle(
+        plan_type=plan_type,
+        category=category,
+        base_tags=list(tags or []),
+    )
     client = get_langfuse_client()
     fallback_run_id = uuid.uuid4().hex
 

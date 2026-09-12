@@ -1,11 +1,17 @@
 """Unified ontology context for BQ compile, reason, validate, and UX."""
 from __future__ import annotations
 
-import re
 from dataclasses import dataclass, field
 from typing import Any
 
-from ml.rag.chatbot.agri_measure_ontology import MEASURES, MeasureHit, resolve_measures
+from ml.rag.chatbot.agri_measure_ontology import (
+    MEASURES,
+    MeasureHit,
+    conflicting_domain_tags_for_measure,
+    disambiguate_primary_measures,
+    entity_is_measure_noise,
+    resolve_measures,
+)
 from ml.rag.chatbot.mart_indicator_classes import class_for_query, facts_for_classes
 
 
@@ -172,16 +178,17 @@ def build_ontology_context(
     )
 
 
-_CONFLICTING_ENTITIES: dict[str, frozenset[str]] = {
-    "production": frozenset({"yield", "climate", "rainfall", "temperature", "ipc", "food security"}),
-    "yield": frozenset({"production", "trade", "export", "import"}),
-}
-
-_PRODUCTION_VOLUME_RE = re.compile(
-    r"\b(total production|tonnes produced|tons produced|production volume|"
-    r"how much was produced|output in tonnes)\b",
-    re.IGNORECASE,
-)
+def _domain_is_measure_noise(domain: str, *, primary: str) -> bool:
+    low = str(domain or "").strip().lower()
+    if not low:
+        return True
+    drop = conflicting_domain_tags_for_measure(primary)
+    if low in drop:
+        return True
+    for tag in drop:
+        if " " in tag and tag in low:
+            return True
+    return False
 
 
 def sanitize_decomposition_for_bq(
@@ -201,45 +208,32 @@ def sanitize_decomposition_for_bq(
     if not pm:
         return dec
 
+    query_text = str(
+        dec.get("query") or dec.get("original_query") or ""
+    ).strip()
+    pm = disambiguate_primary_measures(query_text, pm, dec)
+    dec["primary_measures"] = pm
     primary = pm[0]
-    entity_blob = " ".join(
-        str(e) for e in (dec.get("entities") or []) if str(e).strip()
-    ).lower()
-    query_blob = " ".join(
-        str(x)
-        for x in (
-            dec.get("query"),
-            dec.get("original_query"),
-        )
-        if str(x).strip()
-    ).lower()
-    blob = f"{query_blob} {entity_blob}".strip()
-    if (
-        primary in ("production", "prod")
-        and re.search(r"\byields?\b", query_blob)
-        and not _PRODUCTION_VOLUME_RE.search(blob)
-    ):
-        primary = "yield"
-        dec["primary_measures"] = ["yield"] + [m for m in pm[1:] if m != "yield"]
-
-    drop = _CONFLICTING_ENTITIES.get(primary, frozenset())
 
     entities = dec.get("entities")
     if isinstance(entities, list):
         cleaned = [str(e).strip() for e in entities if str(e).strip()]
-        cleaned = [e for e in cleaned if e.lower() not in drop and e.lower() != primary]
+        cleaned = [
+            e
+            for e in cleaned
+            if not entity_is_measure_noise(e, primary_measures=pm, query=query_text)
+            and e.lower() != primary
+        ]
         if primary not in {e.lower() for e in cleaned}:
             cleaned.insert(0, primary)
         dec["entities"] = cleaned
 
     domains = dec.get("domains")
-    if isinstance(domains, list) and primary == "production":
+    if isinstance(domains, list):
         dec["domains"] = [
-            d for d in domains
-            if str(d).strip()
-            and "climate" not in str(d).lower()
-            and "rainfall" not in str(d).lower()
-            and str(d).lower() not in ("yield",)
+            d
+            for d in domains
+            if str(d).strip() and not _domain_is_measure_noise(str(d), primary=primary)
         ]
 
     return dec

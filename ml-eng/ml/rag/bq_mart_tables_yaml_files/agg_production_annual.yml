@@ -2,7 +2,7 @@ table_name: opentrace-prod-5ga4.mart_dev.agg_production_annual
 description: agg production annual
 source:
   layer: mart_dev
-profiled_at: '2026-08-28T17:53:44.421016+00:00'
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
 columns:
 - name: geo_key
   type: STRING
@@ -43,6 +43,12 @@ columns:
 - name: avg_yield
   type: NUMERIC
   description: avg yield
+geo_key_value_stats:
+  distinct_count: 440
+  null_count: 0
+  is_truncated: false
+  min_value: 03a1543feca93e6598f3f66cb306d18d
+  max_value: ff3770fc996f1df44afd0c42682b3dc9
 country_code_value_samples:
 - KE
 - NG
@@ -111,6 +117,12 @@ country_name_value_samples:
 - Guinea
 - Sierra Leone
 - Uganda
+product_key_value_stats:
+  distinct_count: 94
+  null_count: 0
+  is_truncated: false
+  min_value: 039892fd59a649c7eeeae20450afb4b6
+  max_value: ff71ff25b2b0033b0d9f68830728b4cc
 product_name_value_samples:
 - Maize
 - Sorghum
@@ -162,52 +174,20 @@ product_name_value_samples:
 - Chick Peas
 - Cottonseed
 - Rape
-- Coriander
-- Garlic
-- Cashew (unshelled)
-- Beans (White)
-- Macadamia
-- Mango
-- Pole Bean
-- Bush Bean
-- Cotton (American)
-- Sorrel
-- Teff
-- Linseed
-- Jute
-- Cucumber
-- Fava Bean
-- Geocarpa groundnut
-- Squash and Melon Seeds
-- Green Bean
-- Molokhia
-- Lemon
-- Lentils
-- Ginger
-- Fenugreek
-- Pam Nut
-- Neug
-- Squash
-- Canola Seed
-- Orange
-- Bean (Hyacinth)
-- Papaya
-- Hops
-- Paprika
-- Oats
-- Avocado
-- Capsicum Chinense
-- Cotton (Acala)
-- Velvet Bean
-- Green Peppers
-- Pepper
-- Ethiopian Cabbage
-- Beet
-- Cereal Crops
-- Green Pea
-- Celery
+source_key_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: 5b1d9dba309a8873f7a6f2425b657768
+  max_value: 5b1d9dba309a8873f7a6f2425b657768
 source_name_value_samples:
 - yield_raw_data
+record_count_value_stats:
+  distinct_count: 380
+  null_count: 0
+  is_truncated: false
+  min_value: '3'
+  max_value: '2919240'
 total_production_qty_value_stats:
   distinct_count: 82975
   null_count: 0
@@ -228,40 +208,25 @@ avg_yield_value_stats:
   distinct_count: 0
   null_count: 86439
   is_truncated: false
-indicator_classes:
-- PROD
+sql_generation_hints:
+- JOIN dim_geography, dim_product, dim_source on FK keys
 filtering_guidance:
 - Prefer for national annual production rollups
 - production_grain='physical' for volume questions
-sql_generation_hints:
-- JOIN dim_geography, dim_product, dim_source on FK keys
 semantic_role:
   primary_domain: production
   supports:
   - production
   - PROD
-geo_key_value_stats:
-  distinct_count: 440
-  null_count: 0
-  is_truncated: false
-  patched: true
+indicator_classes:
+- PROD
 time_key_value_stats:
-  distinct_count: 65
+  distinct_count: 50
   null_count: 0
   is_truncated: false
   patched: true
-product_key_value_stats:
-  distinct_count: 94
-  null_count: 0
-  is_truncated: false
-  patched: true
-source_key_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-record_count_value_stats:
-  distinct_count: 380
-  null_count: 0
-  is_truncated: false
-  patched: true
+grain: agg production annual
+bind_spine:
+  product_key: dim_product.product_name
+  source_key: dim_source.organisation_name
+  geo_key: dim_geography.country_iso3

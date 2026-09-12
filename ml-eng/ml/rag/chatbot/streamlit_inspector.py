@@ -249,6 +249,13 @@ def normalize_query_response(
         "bq_cache_hit": trace.get("bq_cache_hit") if trace else None,
         "bq_nl2sql_ms": trace.get("bq_nl2sql_ms") if trace else None,
         "bq_execute_ms": trace.get("bq_execute_ms") if trace else None,
+        "user_query": trace.get("user_query") if trace else query,
+        "context_rewrite": trace.get("context_rewrite") if trace else None,
+        "detail_rewrite": trace.get("detail_rewrite") if trace else None,
+        "context_applied": trace.get("context_applied") if trace else None,
+        "user_query_dropped": trace.get("user_query_dropped") if trace else None,
+        "vector_cache_hit": trace.get("vector_cache_hit") if trace else None,
+        "coverage_retry": trace.get("coverage_retry") if trace else None,
         "bq_table_candidates": [],
         "vector_news_results": [],
         "vector_academic_papers_results": [],
@@ -940,6 +947,18 @@ def render_pipeline_inspector(
         )
 
         dec = result.get("decomposition") or {}
+        st.subheader("Query views")
+        st.json(
+            {
+                "user_query": result.get("user_query") or query,
+                "context_rewrite": result.get("context_rewrite"),
+                "detail_rewrite": result.get("detail_rewrite"),
+                "context_applied": result.get("context_applied"),
+                "user_query_dropped": result.get("user_query_dropped"),
+                "vector_cache_hit": result.get("vector_cache_hit"),
+                "coverage_retry": result.get("coverage_retry"),
+            }
+        )
         st.subheader("Query decomposition")
         st.json(dec if isinstance(dec, dict) else {})
 

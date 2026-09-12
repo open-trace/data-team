@@ -2,7 +2,7 @@ table_name: opentrace-prod-5ga4.mart_dev.fct_food_security
 description: FEWS NET IPC classification and population measures.
 source:
   layer: mart_dev
-profiled_at: '2026-08-28T17:53:44.421016+00:00'
+profiled_at: '2026-09-05T17:57:00.703130+00:00'
 grain: FNID × measure_type × month (FEWS)
 entity_type: food_security
 columns:
@@ -103,35 +103,99 @@ geography_key_value_stats:
   is_truncated: true
   min_value: 00044bdc188ac228af06a02aefa9e609
   max_value: fffc6d5663f5659117af5ce37c24ccdf
-country_iso3_value_samples:
+geo_level_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: fnid
+  max_value: fnid
+country_iso3_value_stats:
+  distinct_count: 28
+  null_count: 0
+  is_truncated: false
+  min_value: AGO
+  max_value: ZWE
+classification_key_value_stats:
+  distinct_count: 6
+  null_count: 20165
+  is_truncated: false
+  min_value: 0edae0dfa0d0efae0cfb5d092251424a
+  max_value: f58202aa4c60ba414853392bec517aa3
+source_key_value_stats:
+  distinct_count: 2
+  null_count: 0
+  is_truncated: false
+  min_value: 2e64aad8d9120f5ee31d16ba42fb0a59
+  max_value: aaf56634935b56c40870c3597e4fa80f
+tier_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '1'
+  max_value: '1'
+data_level_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: sub_national
+  max_value: sub_national
+geo_scope_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: sub_national
+  max_value: sub_national
+place_scope_value_samples:
 - ETH
+- Ethiopia
+- Kenya
 - KEN
+- Uganda
 - UGA
+- Somalia
 - SOM
 - SDN
+- Sudan
+- Mozambique
 - MOZ
+- Nigeria
 - NGA
 - ZWE
+- Zimbabwe
 - COD
+- Democratic Republic of the Congo
 - NER
+- Niger
 - MDG
+- Madagascar
 - MLI
+- Mali
+- Malawi
 - MWI
+- Chad
 - TCD
 - SSD
+- South Sudan
+- Burkina Faso
 - BFA
+- Cameroon
 - CMR
 - ZMB
+- Zambia
+- Mauritania
 - MRT
 - BDI
+- Burundi
+- Djibouti
 - DJI
+- Rwanda
 - RWA
 - LBR
+- Liberia
+- Sierra Leone
 - SLE
+- Lesotho
 - LSO
-- CAF
-- AGO
-- TGO
 metric_value_samples:
 - classification_1
 - classification_2
@@ -140,6 +204,12 @@ metric_value_samples:
 - classification_
 - population_3+
 - classification_5
+source_id_value_stats:
+  distinct_count: 2
+  null_count: 0
+  is_truncated: false
+  min_value: 2e64aad8d9120f5ee31d16ba42fb0a59
+  max_value: aaf56634935b56c40870c3597e4fa80f
 measure_type_value_samples:
 - classification
 - population
@@ -179,118 +249,101 @@ month_value_samples:
 - '3'
 - '8'
 - '9'
-unit_value_samples:
-- IPC phase
-- persons
-indicator_families:
-- id: ipc_population
-  filters: measure_type='population'
-- id: ipc_classification
-  filters: measure_type='classification'
-business_questions_supported:
-- How many people are in IPC phase 3+?
-- What is the IPC classification for a district?
-indicator_classes:
-- FS
+date_key_value_stats:
+  distinct_count: 121
+  null_count: 0
+  is_truncated: false
+  min_value: '20110101'
+  max_value: '20260701'
+as_of_date_value_stats:
+  distinct_count: 120
+  null_count: 0
+  is_truncated: false
+  min_value: '2011-01-01'
+  max_value: '2026-07-01'
+as_of_date_basis_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: observation
+  max_value: observation
+value_value_stats:
+  distinct_count: 35
+  null_count: 20150
+  is_truncated: false
+  min_value: '0'
+  max_value: '21000000'
+unit_value_stats:
+  distinct_count: 2
+  null_count: 0
+  is_truncated: false
+  min_value: IPC phase
+  max_value: persons
+low_value_value_stats:
+  distinct_count: 33
+  null_count: 742461
+  is_truncated: false
+  min_value: '0'
+  max_value: '21000000'
+high_value_value_stats:
+  distinct_count: 34
+  null_count: 742461
+  is_truncated: false
+  min_value: '99999'
+  max_value: '9999999999'
+pct_phase3_value_stats:
+  distinct_count: 25
+  null_count: 745828
+  is_truncated: false
+  min_value: '55'
+  max_value: '100'
+pct_phase4_value_stats:
+  distinct_count: 23
+  null_count: 745828
+  is_truncated: false
+  min_value: '0'
+  max_value: '37'
+pct_phase5_value_stats:
+  distinct_count: 6
+  null_count: 745828
+  is_truncated: false
+  min_value: '0'
+  max_value: '10'
+source_natural_key_value_stats:
+  distinct_count: 2
+  null_count: 0
+  is_truncated: false
+  min_value: FEWS_NET_Food_insecure_population_estimates
+  max_value: FEWS_NET_food_security_classifications
+loaded_at_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '2026-08-26 01:25:31.453337+00'
+  max_value: '2026-08-26 01:25:31.453337+00'
 filtering_guidance:
 - Population vs classification rows — never UNION
 - Filter scenario_name for outlook vs current
 - JOIN dim_classification for phase labels
-sql_generation_hints:
-- Prefer agg_food_security_monthly for national monthly rollups
+business_questions_supported:
+- How many people are in IPC phase 3+?
+- What is the IPC classification for a district?
 semantic_role:
   primary_domain: food_security
   supports:
   - food_security
   - ipc
   - FS
-geo_level_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-classification_key_value_stats:
-  distinct_count: 6
-  null_count: 0
-  is_truncated: false
-  patched: true
-source_key_value_stats:
-  distinct_count: 2
-  null_count: 0
-  is_truncated: false
-  patched: true
-tier_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-data_level_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-geo_scope_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-source_id_value_stats:
-  distinct_count: 2
-  null_count: 0
-  is_truncated: false
-  patched: true
-date_key_value_stats:
-  distinct_count: 121
-  null_count: 0
-  is_truncated: false
-  patched: true
-as_of_date_value_stats:
-  distinct_count: 121
-  null_count: 0
-  is_truncated: false
-  patched: true
-as_of_date_basis_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
-value_value_stats:
-  distinct_count: 35
-  null_count: 0
-  is_truncated: false
-  patched: true
-low_value_value_stats:
-  distinct_count: 33
-  null_count: 0
-  is_truncated: false
-  patched: true
-high_value_value_stats:
-  distinct_count: 34
-  null_count: 0
-  is_truncated: false
-  patched: true
-pct_phase3_value_stats:
-  distinct_count: 25
-  null_count: 0
-  is_truncated: false
-  patched: true
-pct_phase4_value_stats:
-  distinct_count: 23
-  null_count: 0
-  is_truncated: false
-  patched: true
-pct_phase5_value_stats:
-  distinct_count: 6
-  null_count: 0
-  is_truncated: false
-  patched: true
-source_natural_key_value_stats:
-  distinct_count: 2
-  null_count: 0
-  is_truncated: false
-  patched: true
-loaded_at_value_stats:
-  distinct_count: 1
-  null_count: 0
-  is_truncated: false
-  patched: true
+indicator_classes:
+- FS
+indicator_families:
+- id: ipc_population
+  filters: measure_type='population'
+- id: ipc_classification
+  filters: measure_type='classification'
+sql_generation_hints:
+- Prefer agg_food_security_monthly for national monthly rollups
+bind_spine:
+  geography_key: dim_geography.country_iso3
+  source_key: dim_source.organisation_name
+  classification_key: dim_classification.phase_name

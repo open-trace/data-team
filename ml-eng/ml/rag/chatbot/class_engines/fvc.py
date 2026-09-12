@@ -4,7 +4,7 @@ from __future__ import annotations
 from typing import Any
 
 from ml.rag.chatbot.class_engines.base import ClassEngine, EngineResult
-from ml.rag.chatbot.class_engines.shared import bind_value_hits, build_planned_engine_result
+from ml.rag.chatbot.class_engines.shared import bind_value_hits, build_planned_multi_table_result
 from ml.rag.chatbot.class_table_router import select_table_plans
 from ml.rag.chatbot.intent_bundles import match_intent_bundles
 from ml.rag.chatbot.schema_card import load_schema_card
@@ -58,15 +58,19 @@ class FvcEngine(ClassEngine):
                 value_hits=base_hits,
             )
 
-        return build_planned_engine_result(
+        return build_planned_multi_table_result(
             class_code="FVC",
-            table_id=plans[0].table_id,
+            plans=plans,
             query=query,
             facets=facets,
             card=card,
             value_hits=base_hits,
             iso_list=iso_list,
-            measure_id="food_availability",
+            measure_by_table={
+                "fct_food_balance": "food_availability",
+                "fct_trade": "trade",
+                "fct_prices": "market_price",
+            },
         )
 
 

@@ -20,6 +20,7 @@ def _summary_model_id() -> str:
 def resolved_llm_models() -> dict[str, Any]:
     """Return effective model slugs per pipeline purpose (non-secret)."""
     from ml.rag.chatbot.bq_sql_reasoner import _reasoner_model
+    from ml.rag.chatbot.query_decomposer import decompose_model_id
     from ml.rag.retrievers.bq_retriever import _nl2sql_model_id
 
     plan_models = {
@@ -29,6 +30,7 @@ def resolved_llm_models() -> dict[str, Any]:
     return {
         "chat_default": llm_model_id(),
         "summary": _summary_model_id(),
+        "decompose": decompose_model_id(),
         "bq_nl2sql": _nl2sql_model_id(),
         "bq_reasoner": _reasoner_model("Government"),
         "plan_models": plan_models,
@@ -48,6 +50,7 @@ def warn_router_models(models: dict[str, Any] | None = None) -> list[str]:
 
     _check(str(snapshot.get("chat_default") or ""), "chat_default")
     _check(str(snapshot.get("summary") or ""), "summary")
+    _check(str(snapshot.get("decompose") or ""), "decompose")
     _check(str(snapshot.get("bq_nl2sql") or ""), "bq_nl2sql")
     _check(str(snapshot.get("bq_reasoner") or ""), "bq_reasoner")
     for plan_id, slug in (snapshot.get("plan_models") or {}).items():
@@ -67,9 +70,10 @@ def log_resolved_llm_models() -> dict[str, Any]:
     models = resolved_llm_models()
     warn_router_models(models)
     logger.info(
-        "LLM models: chat_default=%s summary=%s bq_nl2sql=%s bq_reasoner=%s",
+        "LLM models: chat_default=%s summary=%s decompose=%s bq_nl2sql=%s bq_reasoner=%s",
         models["chat_default"],
         models["summary"],
+        models["decompose"],
         models["bq_nl2sql"],
         models["bq_reasoner"],
     )

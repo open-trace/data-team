@@ -1,6 +1,9 @@
 """System regression tests for BQ semantic compile → validate → enrich."""
 from __future__ import annotations
 
+import pytest
+
+from ml.rag.chatbot.agri_measure_ontology import entity_is_measure_noise, measure_bind_skip_tokens
 from ml.rag.chatbot.bq_context_enrich import enrich_bq_results
 from ml.rag.chatbot.bq_sql_templates import build_mart_point_fact_sql, try_sql_template
 from ml.rag.chatbot.bq_sql_validate import (
@@ -15,6 +18,118 @@ from ml.rag.chatbot.bq_table_schema_yaml import (
 )
 from ml.rag.chatbot.ontology_context import sanitize_decomposition_for_bq
 from ml.rag.chatbot.retrieval_contract import choose_agg_vs_fact
+
+
+def test_measure_bind_skip_tokens_includes_ontology_aliases() -> None:
+    skip = measure_bind_skip_tokens()
+    for token in ("exports", "export", "trade", "ipc", "market_price", "yield", "production"):
+        assert token in skip
+
+
+def test_product_blob_strips_measure_alias_entities() -> None:
+    blob = product_blob(
+        "maize from Nigeria in 2020",
+        entities=["maize", "exports"],
+    )
+    assert "maize" in blob.lower()
+    assert "exports" not in blob.lower()
+
+
+def test_product_blob_strips_multi_word_measure_entity() -> None:
+    blob = product_blob(
+        "rice production in Kenya 2016",
+        entities=["rice", "food security"],
+    )
+    assert "rice" in blob.lower()
+    assert "food security" not in blob.lower()
+
+
+def test_entity_is_measure_noise_phrase_and_explicit_aliases() -> None:
+    assert entity_is_measure_noise(
+        "food security phase",
+        primary_measures=["food_security_ipc"],
+    )
+    assert entity_is_measure_noise("exporting", primary_measures=["trade"])
+    assert entity_is_measure_noise("priced", primary_measures=["market_price"])
+
+
+def test_entity_is_measure_noise_fuzzy_inflection_gated(monkeypatch) -> None:
+    monkeypatch.delenv("RAG_MEASURE_ENTITY_FUZZY", raising=False)
+    assert not entity_is_measure_noise("pricing", query="maize pricing in Mali 2024")
+
+    monkeypatch.setenv("RAG_MEASURE_ENTITY_FUZZY", "1")
+    assert entity_is_measure_noise(
+        "pricing",
+        query="maize pricing in Mali 2024",
+        primary_measures=["market_price"],
+    )
+    assert not entity_is_measure_noise("pricing")
+    assert not entity_is_measure_noise("maize", query="maize pricing in Mali 2024")
+
+
+def test_disambiguate_promotes_yield_over_production_for_yield_question() -> None:
+    from ml.rag.chatbot.agri_measure_ontology import disambiguate_primary_measures
+
+    query = "What sorghum yield can farmers expect in Tahoua, Niger this harvest season?"
+    dec = {
+        "query": query,
+        "entities": ["sorghum", "Tahoua", "Niger"],
+        "primary_measures": ["production"],
+    }
+    assert disambiguate_primary_measures(query, ["production"], dec)[0] == "yield"
+
+
+def test_disambiguate_keeps_production_for_volume_phrasing() -> None:
+    from ml.rag.chatbot.agri_measure_ontology import disambiguate_primary_measures
+
+    query = "What was total production of maize in Nigeria in 2022?"
+    dec = {
+        "query": query,
+        "entities": ["maize", "yield"],
+        "primary_measures": ["production"],
+    }
+    assert disambiguate_primary_measures(query, ["production"], dec)[0] == "production"
+
+
+def test_disambiguate_keeps_declared_trade() -> None:
+    from ml.rag.chatbot.agri_measure_ontology import disambiguate_primary_measures
+
+    query = "maize exports from Nigeria in 2020"
+    dec = {
+        "query": query,
+        "entities": ["maize", "exports"],
+        "primary_measures": ["trade"],
+    }
+    assert disambiguate_primary_measures(query, ["trade"], dec)[0] == "trade"
+
+
+def test_sanitize_decomposition_strips_trade_conflicts() -> None:
+    dec = sanitize_decomposition_for_bq(
+        {
+            "entities": ["maize", "exports", "production"],
+            "primary_measures": ["trade"],
+        },
+        primary_measures=["trade"],
+    )
+    ents = [e.lower() for e in dec.get("entities") or []]
+    assert "exports" not in ents
+    assert "production" not in ents
+    assert "maize" in ents
+    assert "trade" in ents
+
+
+def test_sanitize_decomposition_strips_price_for_market_price() -> None:
+    dec = sanitize_decomposition_for_bq(
+        {
+            "entities": ["maize", "price"],
+            "primary_measures": ["market_price"],
+        },
+        primary_measures=["market_price"],
+    )
+    ents = [e.lower() for e in dec.get("entities") or []]
+    assert "price" not in ents
+    assert "maize" in ents
+    assert "market_price" in ents
 
 
 def test_measure_blob_ignores_decomposer_yield_noise_for_production() -> None:

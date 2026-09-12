@@ -1,0 +1,217 @@
+table_name: opentrace-prod-5ga4.mart_dev.agg_forestry_country_year
+description: Country-year forestry averages by grain.
+source:
+  layer: mart_dev
+profiled_at: '2026-09-05T16:30:41.711672+00:00'
+grain: Country × item × forestry_grain × year × source
+entity_type: production
+columns:
+- name: agg_forestry_country_year_key
+  type: STRING
+  description: agg forestry country year key
+- name: geography_key
+  type: STRING
+  description: FK to dim_geography (null if unmatched)
+- name: date_key
+  type: STRING
+  description: date key
+- name: country_name
+  type: STRING
+  description: country name
+- name: item_key
+  type: STRING
+  description: item key
+- name: forestry_grain
+  type: STRING
+  description: forestry grain
+- name: unit
+  type: STRING
+  description: Unit of measure
+- name: year
+  type: INT64
+  description: year
+- name: source_key
+  type: STRING
+  description: FK to dim_source
+- name: value_avg
+  type: FLOAT64
+  description: value avg
+- name: row_count
+  type: INT64
+  description: row count
+- name: loaded_at
+  type: TIMESTAMP
+  description: loaded at
+agg_forestry_country_year_key_value_stats:
+  distinct_count: 276675
+  null_count: 0
+  is_truncated: true
+  min_value: 0000406abf726e6088460f1040b8035e
+  max_value: ffffc8c3d47e1e4c1730b9838a430e73
+geography_key_value_stats:
+  distinct_count: 60
+  null_count: 867
+  is_truncated: false
+  min_value: 08d5d1fbcfbc008d33905868ea7a2dd7
+  max_value: ff2abe6b8f87b63b0a4d12a3dc2fb900
+date_key_value_stats:
+  distinct_count: 66
+  null_count: 0
+  is_truncated: false
+  min_value: '19610101'
+  max_value: '20260101'
+country_name_value_samples:
+- South Africa
+- Morocco
+- Algeria
+- Tunisia
+- Zimbabwe
+- Kenya
+- Egypt
+- Nigeria
+- Tanzania
+- Mauritius
+- Madagascar
+- Zambia
+- Angola
+- Uganda
+- Libya
+- Ghana
+- Mozambique
+- Côte d’Ivoire
+- Congo (Kinshasa)
+- Malawi
+- Cameroon
+- Sierra Leone
+- Senegal
+- Gabon
+- Congo (Brazzaville)
+- Mali
+- Togo
+- Liberia
+- Benin
+- Burkina Faso
+- Gambia, The
+- Cabo Verde
+- Somalia
+- Niger
+- Guinea
+- Rwanda
+- Ethiopia
+- Mauritania
+- Burundi
+- Central African Republic
+- Eswatini
+- Chad
+- Djibouti
+- Guinea-Bissau
+- Sudan (former)
+- Sao Tome and Principe
+- Equatorial Guinea
+- RÃ©union
+- Namibia
+- Botswana
+item_key_value_stats:
+  distinct_count: 129
+  null_count: 0
+  is_truncated: false
+  min_value: 03b2c61c8fa2e09928b21c85c431cee3
+  max_value: ff14c22d5d7fd339bc3bc96227b70439
+forestry_grain_value_samples:
+- production_or_capacity
+- trade_flow
+unit_value_stats:
+  distinct_count: 3
+  null_count: 0
+  is_truncated: false
+  min_value: 1000 USD
+  max_value: t
+year_value_samples:
+- '2016'
+- '2018'
+- '2015'
+- '2017'
+- '2013'
+- '2014'
+- '2012'
+- '2024'
+- '2010'
+- '2011'
+- '2009'
+- '2023'
+- '2022'
+- '2008'
+- '2021'
+- '2020'
+- '2019'
+- '2007'
+- '2006'
+- '2004'
+- '2005'
+- '2003'
+- '2002'
+- '2001'
+- '2000'
+- '1999'
+- '1998'
+- '1997'
+- '1996'
+- '1995'
+- '1994'
+- '1993'
+- '1992'
+- '1991'
+- '1990'
+- '1987'
+- '1988'
+- '1989'
+- '1986'
+- '1985'
+- '1984'
+- '1982'
+- '1983'
+- '1981'
+- '1978'
+- '1977'
+- '1976'
+- '1980'
+- '1979'
+- '1975'
+source_key_value_stats:
+  distinct_count: 3
+  null_count: 0
+  is_truncated: false
+  min_value: 3c0da5496ac74e479dd7583f44f903c2
+  max_value: e12e36382d31e6a74891004b363c333e
+value_avg_value_stats:
+  distinct_count: 77597
+  null_count: 0
+  is_truncated: true
+  min_value: '-46.666666666666671'
+  max_value: '117040732'
+row_count_value_stats:
+  distinct_count: 172
+  null_count: 0
+  is_truncated: false
+  min_value: '1'
+  max_value: '219'
+loaded_at_value_stats:
+  distinct_count: 1
+  null_count: 0
+  is_truncated: false
+  min_value: '2026-08-25 20:15:58.199971+00'
+  max_value: '2026-08-25 20:15:58.199971+00'
+sql_generation_hints:
+- 'Join keys: geography_key, item_key, source_key, date_key'
+- LEFT JOIN dim_geography on geography_key for country names
+filtering_guidance:
+- 'Grain: Country × item × forestry_grain × year × source'
+- Country-year forestry averages by grain.
+semantic_role:
+  primary_domain: production
+  supports:
+  - production
+bind_spine:
+  geography_key: dim_geography.country_iso3
+  source_key: dim_source.organisation_name
+  item_key: dim_item.item_name

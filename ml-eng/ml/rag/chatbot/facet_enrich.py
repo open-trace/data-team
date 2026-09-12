@@ -8,6 +8,8 @@ from __future__ import annotations
 import re
 from typing import Any
 
+from ml.rag.chatbot.bq_table_schema_yaml import column_samples_for_table, match_value_samples
+
 # Canonical corpus domain labels (aligned with domain_taxonomy / agri_measure_ontology).
 _D_PROD = "Agricultural Production & Yield"
 _D_TRADE = "Agricultural International Trade (Exports & Imports)"
@@ -813,6 +815,52 @@ def _trigger_in_blob(trigger: str, blob: str) -> bool:
     return bool(re.search(rf"\b{re.escape(t)}\b", blob, flags=re.IGNORECASE))
 
 
+# Role → (dim_table, label_column) — samples only; never invent labels.
+_ENTITY_ROLE_DIMS: dict[str, tuple[str, str]] = {
+    "land_use": ("dim_land_use", "land_use_code"),
+    "hazard": ("dim_disease", "disease_or_hazard"),
+    "item": ("dim_item", "item_name"),
+    "pest": ("dim_pest", "pest_name"),
+    "season": ("dim_season", "season_name"),
+    "livestock": ("dim_livestock", "species"),
+}
+
+
+def ground_entity_roles(
+    query: str,
+    *,
+    entities: list[str] | None = None,
+) -> dict[str, list[str]]:
+    """Match query/entities against dim sample dictionaries for typed roles."""
+    blob = " ".join(
+        [
+            (query or "").strip(),
+            *[str(e).strip() for e in (entities or []) if str(e).strip()],
+        ]
+    )
+    if not blob.strip():
+        return {}
+    out: dict[str, list[str]] = {}
+    for role, (dim_table, dim_col) in _ENTITY_ROLE_DIMS.items():
+        samples = column_samples_for_table(dim_table, dim_col)
+        if not samples:
+            continue
+        matched = match_value_samples(blob, samples)
+        labels: list[str] = []
+        seen: set[str] = set()
+        for raw in matched:
+            lab = str(raw).strip()
+            if not lab or lab.lower() in seen:
+                continue
+            seen.add(lab.lower())
+            labels.append(lab)
+            if len(labels) >= 3:
+                break
+        if labels:
+            out[role] = labels
+    return out
+
+
 def enrich_decomposition_facets(
     query: str,
     decomposition: dict[str, Any] | None,
@@ -844,7 +892,21 @@ def enrich_decomposition_facets(
 
     out["entities"] = entities[:48]
     out["domains"] = domains[:24]
+
+    roles = ground_entity_roles(q, entities=entities)
+    if roles:
+        existing_roles = out.get("entity_roles")
+        merged: dict[str, list[str]] = {}
+        if isinstance(existing_roles, dict):
+            for k, v in existing_roles.items():
+                labs = [str(x).strip() for x in (v or []) if str(x).strip()]
+                if labs:
+                    merged[str(k).strip().lower()] = labs
+        for role, labs in roles.items():
+            if role not in merged:
+                merged[role] = labs
+        out["entity_roles"] = merged
     return out
 
 
-__all__ = ["enrich_decomposition_facets"]
+__all__ = ["enrich_decomposition_facets", "ground_entity_roles"]
