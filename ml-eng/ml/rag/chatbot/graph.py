@@ -107,6 +107,7 @@ from ml.rag.chatbot.retrieval_contract import build_corpus_routing_contract
 from ml.rag.chatbot.decompose_context import DecomposeContext
 from ml.rag.chatbot.query_decomposer import (
     decompose_query,
+    facet_grounded_in_query,
     normalize_geography_for_filter,
     resolve_retrieval_geographies,
 )
@@ -949,7 +950,15 @@ def node_decompose(state: RAGGraphState) -> dict[str, Any]:
             dec["reasoner_job"] = rp.job
             dec["reasoner_shape"] = rp.shape
             if rp.geos:
-                dec["geography"] = list(rp.geos)
+                # Defensive re-grounding: rp.geos can originate from a prior
+                # turn's contract (context carried forward) as well as the
+                # current decomposition. Reject any country not evidenced in
+                # the raw current-turn query text so a stale/unrelated
+                # geography can never silently overwrite a correctly grounded
+                # one (see Sprint 2 "Geography: France" routing bug).
+                grounded_geos = [g for g in rp.geos if facet_grounded_in_query(g, q)]
+                if grounded_geos:
+                    dec["geography"] = grounded_geos
             if rp.time_start:
                 dec["time_start"] = rp.time_start
             if rp.time_end:
