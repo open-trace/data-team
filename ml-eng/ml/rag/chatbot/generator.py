@@ -12,7 +12,13 @@ from dataclasses import dataclass
 from datetime import date
 from typing import Any, Literal
 
-from ml.rag.llm_chat import llm_chat_complete, llm_configured, llm_default_timeout_s, llm_model_id
+from ml.rag.llm_chat import (
+    answer_was_length_capped,
+    llm_chat_complete,
+    llm_configured,
+    llm_default_timeout_s,
+    llm_model_id,
+)
 from ml.rag.chatbot.plan_policy import model_for_plan
 
 from ml.rag.chat_history import normalize_messages, truncate_chat_history
@@ -427,10 +433,44 @@ _NARRATIVE_KINDS = frozenset(
 )
 
 
+# Modes that legitimately produce long, multi-part answers (multi-country
+# comparisons, cross-domain synthesis). For these, RAG_GENERATE_MAX_TOKENS is
+# treated as the real ceiling instead of being clamped down to the per-mode
+# default -- a 5-country comparison with citations does not fit in 1536 tokens
+# and was being cut off mid-sentence (ML-054).
+_MULTIPART_TASK_MODES = frozenset({"analytical", "research", "briefing"})
+
+
+_TRUNCATION_NOTICE = (
+    "\n\n_Note: this answer was cut short because it reached the maximum "
+    "response length, so it may be incomplete. Ask about fewer countries, "
+    "a narrower time range, or one topic at a time for a full answer._"
+)
+
+
+def _append_truncation_notice(answer: str) -> str:
+    """
+    Append an explicit notice when the model stopped on the max_tokens ceiling.
+
+    ML-054: multi-part answers (multi-country comparisons especially) were
+    ending mid-sentence with no error and no indication to the user. A visible,
+    honest notice is strictly better than a silent cut-off.
+    """
+    text = (answer or "").rstrip()
+    if not text or not answer_was_length_capped():
+        return answer
+    if "reached the maximum" in text:
+        return text
+    return text + _TRUNCATION_NOTICE
+
+
 def _generate_max_tokens(task_mode: str | None = None) -> int:
     env_ceiling = int(os.environ.get("RAG_GENERATE_MAX_TOKENS", "2048") or 2048)
     mode = (task_mode or "chat").strip().lower()
     default = _TASK_MODE_MAX_TOKENS.get(mode, 512)
+    if mode in _MULTIPART_TASK_MODES:
+        # Use the larger of the two so a raised env ceiling actually applies.
+        return max(default, env_ceiling)
     return min(env_ceiling, default)
 
 
@@ -2025,6 +2065,9 @@ def _finalize_generation_result(
     bq_sql_debug: list[dict[str, Any]] | None = None,
 ) -> GenerationResult:
     """Attach structured citations and score ACF Path B on cited sources only."""
+    # ML-054: single funnel for successful answers -- flag a max_tokens cut-off
+    # here so no caller can return a silently truncated answer.
+    answer = _append_truncation_notice(answer)
     t0 = time.perf_counter()
     with observed_span("citations", input_data={"registry_size": len(source_registry)}):
         prose = _strip_model_sources_appendix(answer)

@@ -64,13 +64,20 @@ def _news_item() -> dict:
 
 
 def test_generate_max_tokens_default_and_env() -> None:
+    # ML-054: multi-part modes (analytical/research/briefing) now treat
+    # RAG_GENERATE_MAX_TOKENS as the real ceiling instead of clamping down to
+    # the per-mode default, because multi-country comparisons were being cut
+    # off mid-sentence at 1536. Short modes are unchanged.
     with mock.patch.dict(os.environ, {}, clear=False):
         os.environ.pop("RAG_GENERATE_MAX_TOKENS", None)
         assert _generate_max_tokens("fact_lookup") == 512
-        assert _generate_max_tokens("analytical") == 1536
+        # env default (2048) now wins over the 1536 per-mode default
+        assert _generate_max_tokens("analytical") == 2048
         assert _generate_max_tokens("fact_lookup") < _generate_max_tokens("analytical")
     with mock.patch.dict(os.environ, {"RAG_GENERATE_MAX_TOKENS": "512"}):
-        assert _generate_max_tokens("analytical") == 512
+        # A low env ceiling must not shrink a multi-part mode below its floor.
+        assert _generate_max_tokens("analytical") == 1536
+        assert _generate_max_tokens("fact_lookup") == 512
 
 
 def test_context_max_chars_memory_reduces_budget() -> None:

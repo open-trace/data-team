@@ -116,7 +116,12 @@ from ml.rag.chatbot.routing_plan import RoutingPlan, build_routing_plan
 from ml.rag.chatbot.reranker import last_rerank_mode, rerank
 from ml.rag.retrievers.bq_retriever import BQRetriever
 from ml.rag.retrievers.vector_retriever import VectorRetriever
-from ml.rag.llm_chat import get_llm_usage, reset_llm_usage
+from ml.rag.llm_chat import (
+    get_llm_usage,
+    length_capped_call_count,
+    reset_llm_truncation,
+    reset_llm_usage,
+)
 from ml.rag.retrievers.web_retriever import (
     _warehouse_attempt_blocks_web,
     format_web_chunk_for_context,
@@ -671,6 +676,7 @@ class RAGGraphState(TypedDict, total=False):
     generate_ms: float | None
     generate_max_tokens: int | None
     generate_input_chars: int | None
+    generate_length_capped_calls: int | None
 
 
 def _reasoner_from_state(state: RAGGraphState) -> ReasonerPlan | None:
@@ -3012,6 +3018,10 @@ def node_generate(state: RAGGraphState) -> dict[str, Any]:
         "generate_ms": trace_elapsed_ms(gen_t0),
         "generate_max_tokens": gen_max,
         "generate_input_chars": getattr(gen_result, "generate_input_chars", None),
+        # ML-054: how many LLM calls this request stopped on the max_tokens
+        # ceiling. Surfaced to Langfuse so truncation frequency is measurable
+        # instead of invisible; tune RAG_GENERATE_MAX_TOKENS from real data.
+        "generate_length_capped_calls": length_capped_call_count(),
         **acf_result_to_state(acf),
         **{k: True for k in exec_flags if exec_flags.get(k)},
     }
@@ -3282,6 +3292,7 @@ def _get_compiled_graph():
 def run_rag(query: str, **kwargs: Any) -> dict[str, Any]:
     """Run the RAG pipeline and return the state (including answer)."""
     reset_llm_usage()
+    reset_llm_truncation()  # ML-054
     graph = _get_compiled_graph()
     initial: RAGGraphState = {"query": query}
     user_profile = kwargs.get("user_profile") if isinstance(kwargs.get("user_profile"), dict) else None
