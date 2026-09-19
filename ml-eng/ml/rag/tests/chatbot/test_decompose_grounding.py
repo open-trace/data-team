@@ -6,6 +6,7 @@ from unittest import mock
 
 from ml.rag.chatbot.query_decomposer import (
     decompose_query,
+    facet_grounded_in_query,
     normalize_geography_for_filter,
     wants_africa_default_scope,
 )
@@ -70,3 +71,32 @@ def test_which_country_agricultural_activity_africa_default() -> None:
 def test_named_country_skips_africa_default() -> None:
     q = "which region in Nigeria has the highest maize production in 2020"
     assert wants_africa_default_scope(q) is False
+
+
+def test_facet_grounded_in_query_public_wrapper_rejects_unrelated_country() -> None:
+    """Regression: Sprint 2 'Geography: France'/'Geography: Netherlands' routing bug.
+
+    A country that only exists in stale conversation context (or any source
+    other than the raw current-turn query) must never be treated as grounded,
+    even when it is a real, well-known country name. This backs the defensive
+    re-grounding guard applied to reasoner-plan ``geos`` in
+    ``graph.py::node_decompose`` before they overwrite ``dec["geography"]``.
+    """
+    q = "What is the coffee yield from Nigeria over the last year"
+    assert facet_grounded_in_query("Nigeria", q) is True
+    assert facet_grounded_in_query("Netherlands", q) is False
+    assert facet_grounded_in_query("France", q) is False
+
+
+def test_reasoner_geos_reground_drops_ungrounded_country() -> None:
+    """Simulates the exact graph.py list-comprehension guard against a
+    reasoner plan carrying a stale/unrelated country from a prior turn.
+    """
+    q = "What is the coffee yield from Nigeria over the last year"
+    stale_reasoner_geos = ("Netherlands",)
+    grounded = [g for g in stale_reasoner_geos if facet_grounded_in_query(g, q)]
+    assert grounded == []
+
+    correct_reasoner_geos = ("Nigeria",)
+    grounded = [g for g in correct_reasoner_geos if facet_grounded_in_query(g, q)]
+    assert grounded == ["Nigeria"]
