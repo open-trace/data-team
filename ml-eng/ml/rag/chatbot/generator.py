@@ -34,6 +34,8 @@ from ml.rag.chatbot.answer_language import (
     insufficient_context_answer,
     is_english_answer_lang,
     language_instruction,
+    language_not_yet_supported_answer,
+    looks_like_degenerate_repetition,
 )
 from ml.rag.chatbot.context_diversity import dedupe_context_items, normalize_context_kind
 from ml.rag.chatbot.export_intent import want_inline_citations
@@ -464,6 +466,23 @@ def _append_truncation_notice(answer: str) -> str:
     return text + _TRUNCATION_NOTICE
 
 
+def _guard_degenerate_language_output(answer: str, query: str) -> str:
+    """
+    Replace repetitive/looping output with a clean not-yet-supported message.
+
+    ML-055 (Sprint 2 P0): Swahili/French answers sometimes degenerated into the
+    same phrase repeated up to five times. Only guards non-English answers --
+    English generation was not reported as affected, and gating it too would
+    risk false positives on legitimately repetitive English content (e.g. a
+    table of the same crop name per row).
+    """
+    text = (answer or "").strip()
+    if not text or not looks_like_degenerate_repetition(text):
+        return answer
+    lang = detect_answer_language(query)
+    if is_english_answer_lang(lang):
+        return answer
+    return language_not_yet_supported_answer(lang)
 def _generate_max_tokens(task_mode: str | None = None) -> int:
     env_ceiling = int(os.environ.get("RAG_GENERATE_MAX_TOKENS", "2048") or 2048)
     mode = (task_mode or "chat").strip().lower()
@@ -2065,6 +2084,9 @@ def _finalize_generation_result(
     bq_sql_debug: list[dict[str, Any]] | None = None,
 ) -> GenerationResult:
     """Attach structured citations and score ACF Path B on cited sources only."""
+    # ML-055: single funnel for successful answers -- catch degenerate/looping
+    # non-English output here before it reaches the user (Sprint 2 P0).
+    answer = _guard_degenerate_language_output(answer, query)
     # ML-054: single funnel for successful answers -- flag a max_tokens cut-off
     # here so no caller can return a silently truncated answer.
     answer = _append_truncation_notice(answer)
