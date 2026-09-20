@@ -1,4 +1,4 @@
-"""Job-typed context packing — zero passages on fail closed."""
+"""Job-typed context packing — warehouse fail-closed keeps narrative, not warehouse rows."""
 from __future__ import annotations
 
 import re
@@ -26,6 +26,10 @@ def _is_narrative_item(item: dict[str, Any]) -> bool:
     meta = item.get("metadata") if isinstance(item.get("metadata"), dict) else {}
     kind = str(meta.get("context_kind") or meta.get("source_kind") or "").lower()
     return kind not in ("bigquery", "web")
+
+
+def _is_prose_item(item: dict[str, Any]) -> bool:
+    return not _is_bq_item(item)
 
 
 def _years_in_item(item: dict[str, Any]) -> set[int]:
@@ -145,6 +149,10 @@ def _cap_narrative(items: list[dict[str, Any]], max_news: int = 2) -> list[dict[
     return news[:max_news] + other[: max(0, max_news - len(news[:max_news]))]
 
 
+def _cap_prose(items: list[dict[str, Any]], max_n: int = 3) -> list[dict[str, Any]]:
+    return [it for it in items if _is_prose_item(it)][:max_n]
+
+
 def _has_bq_timeout(items: list[dict[str, Any]]) -> bool:
     for it in items:
         meta = item_meta(it)
@@ -167,6 +175,8 @@ def should_zero_pack(
         return False
     if contract.is_fail_closed():
         if contract.job not in NUMERIC_JOBS:
+            return False
+        if any(_is_prose_item(it) for it in (context_items or [])):
             return False
         return True
     if bq_failed and contract.job in NUMERIC_JOBS:
@@ -198,6 +208,12 @@ def typed_context_pack(
     job = contract.job
     bq_items = [it for it in usable if _is_bq_item(it)]
     narrative = [it for it in usable if _is_narrative_item(it)]
+
+    if contract.is_fail_closed() and contract.serve_status != "clarify":
+        packed = _cap_prose(usable, max_n=3)
+        if top_k and len(packed) > top_k:
+            packed = packed[:top_k]
+        return packed
 
     if contract.vector_policy == "fallback_only":
         packed = _cap_narrative(narrative, max_news=3)

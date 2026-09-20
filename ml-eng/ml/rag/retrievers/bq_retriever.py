@@ -36,6 +36,7 @@ from ml.rag.chatbot.bq_sql_validate import (
 )
 from ml.rag.chatbot.query_decomposer import _NON_COUNTRY_GEO
 from ml.rag.chatbot.bq_table_schema_yaml import crop_entities_for_bind, join_fragments_for_tables
+from ml.rag.chatbot.compile_sql_from_bind import bind_contract_for_table, compile_sql_from_bind
 from ml.rag.llm_chat import llm_chat_complete, llm_default_timeout_s, llm_model_id
 from ml.rag.local_env import load_rag_dotenv
 from ml.rag.observability import (
@@ -1329,23 +1330,17 @@ class BQRetriever(BaseRetriever):
 
         if not engine_execute_only and not sql_queries and not explicit_sql:
             if planned_path:
-                from ml.rag.chatbot.compile_sql_from_bind import (
-                    bind_sql_compiler_enabled,
-                    compile_sql_from_bind,
-                )
-
                 bind_sqls: list[str] = []
-                if bind_sql_compiler_enabled() and bind_contracts:
-                    row_limit = 1 if fast_fact else rows_per_query
+                if fast_fact and bind_contracts:
                     for tid in sorted(selected_tables):
-                        raw_bind = (bind_contracts or {}).get(tid)
-                        if not isinstance(raw_bind, dict):
+                        raw_bind = bind_contract_for_table(bind_contracts, tid)
+                        if raw_bind is None:
                             continue
                         compiled = compile_sql_from_bind(
                             raw_bind,
                             project_id=self.project_id,
                             dataset=ds_name,
-                            limit=row_limit,
+                            limit=1,
                         )
                         if compiled:
                             bind_sqls.append(compiled)
@@ -1354,7 +1349,6 @@ class BQRetriever(BaseRetriever):
                     sql_queries = bind_sqls
                 else:
                     sql_source = "nl2sql"
-                    nl2sql_sqls: list[str] = []
                     need_nl2sql = self.nl2sql_enabled and not contract_sql_only
                     if need_nl2sql:
                         nl_tables = sorted(selected_tables) if selected_tables else None

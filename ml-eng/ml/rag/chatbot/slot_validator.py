@@ -62,7 +62,7 @@ def crop_satisfied(
 ) -> bool:
     if measure is None or not measure.crop_required:
         return True
-    if contract.entities and multi_measure_panel:
+    if multi_measure_panel:
         return True
     if query_has_crop_or_commodity(query, decomposition):
         return True

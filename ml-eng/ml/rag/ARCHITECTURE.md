@@ -11,14 +11,14 @@ The RAG stack answers natural-language questions about African agriculture and f
 | Source | Technology | Role |
 |--------|------------|------|
 | **Unstructured text (VECTOR LEG)** | Qdrant Cloud (six corpora) | News, academic papers, policies, public reports, formation, OTA insights — via corpus router + E5/hybrid cascade |
-| **Structured tables (BQ LEG)** | BigQuery (`BQ_DATASET_GOLD` / `mart_dev`) | Class supervisor → class engines → **`bind_contracts`** → planned NL2SQL execute → row-level facts |
+| **Structured tables (BQ LEG)** | BigQuery (`BQ_DATASET_GOLD` / `mart_dev`) | Class supervisor → class engines → **`bind_contracts`** → fact_lookup bind-compile (NL2SQL fallback) → row-level facts |
 | **Orchestration** | LangGraph in [`chatbot/graph.py`](chatbot/graph.py) | Control plane → **vector leg** + **BQ leg** (bind-first planned path) → merge → rerank → **generation strategy** → generate |
 | **Generation** | [`llm_chat.py`](llm_chat.py) + [`generation_plan.py`](chatbot/generation_plan.py) | OpenAI-compatible backend; post-retrieval strategy shapes answer/evidence before the LLM call |
 
 **Design choices:**
 
-- **Vector and BQ are peers** — unstructured corpora are not an afterthought. The graph runs `parallel_retrieve` (six Qdrant corpora in a thread pool) then the BQ leg; both outputs fuse at `merge`. Neither leg waits on the other's *results* — only graph node ordering is sequential.
-- **Bind-first warehouse path** — class engines emit `TableBindContract` / `bind_contracts` (SQL-less). [`BQRetriever`](retrievers/bq_retriever.py) with `retrieve_mode=planned` runs **NL2SQL only** (no template/pattern fact path). Mart YAML + dim spine pack filter/join context into the NL2SQL prompt.
+- **Vector and BQ are peers** — unstructured corpora are not an afterthought. After decompose, `retrieve_legs` runs Qdrant and BQ reason+retrieve in a thread pool; both fuse at `merge`. Warehouse fail-closed skips BQ only; it never sets `skip_vector_retrieval`.
+- **Bind-first warehouse path** — class engines emit `TableBindContract` / `bind_contracts` (SQL-less). [`BQRetriever`](retrievers/bq_retriever.py) on `fact_lookup` / `data_export_only` compiles SQL from a complete bind (`compile_sql_from_bind`); NL2SQL is fallback when the bind is incomplete. Templates/patterns stay off the planned path. Mart YAML + dim spine still pack filter/join context for NL2SQL.
 - **Three-layer reasoner stack** — (1) **pre-retrieval**: enricher → decompose → ontology → `task_mode` → [`retrieval_contract`](chatbot/retrieval_contract.py); (2) **retrieval**: [`select_corpora`](chatbot/corpus_catalog.py) + class engines / plan builder + rerank; (3) **post-retrieval**: [`build_generation_plan`](chatbot/generation_plan.py) decides answer shape and evidence priority before `generate`.
 - **Ontology aids table/measure scope** (not a substitute for bind + NL2SQL); fallback only after retries.
 - **Staging-only SQL** — live queries never target silver/gold; vector chunks may still *describe* other layers.
@@ -53,15 +53,13 @@ flowchart TB
 
   subgraph graph [LangGraph full_rag path]
     D[decompose]
-    PR[parallel_retrieve]
-    BQR[bq_reason]
-    BQ[bq_retrieve]
+    RL[retrieve_legs]
     M[merge]
     R[rerank plus diversify]
     WF[web_fallback]
     NG[node_generate]
     X[export]
-    D --> PR --> BQR --> BQ --> M --> R
+    D --> RL --> M --> R
     R -->|weak and web on| WF --> NG
     R -->|enough| NG --> X
   end
@@ -84,13 +82,14 @@ flowchart TB
     RN & RA & RP & RPR & RF & RO --> VR
   end
 
-  PR --> vectorLeg
+  RL --> vectorLeg
+  RL --> bqLeg
 
   subgraph bqLeg [BQ LEG — mart_dev bind-first]
     SUP[class_supervisor]
     ENG[class engines bind_contracts]
-    BR[BQRetriever planned NL2SQL]
-    BQR --> SUP --> ENG --> BR
+    BR[BQRetriever bind-compile then NL2SQL]
+    SUP --> ENG --> BR
   end
 
   subgraph perCorpus [Per-corpus search cascade]
@@ -315,7 +314,7 @@ Reuse BQ only when context applied **or** current facets are a subset/refinement
 |-------|---------|
 | `plan_source` | Who built the plan: `class_engine`, `slot_reasoner`, `analytical`, `compile_error`, `retrieval_contract`, … |
 | `retrieve_mode` | `planned` (NL2SQL-only) vs `legacy` (template/pattern allowed) |
-| `bind_contracts` | Per-table bind map for planned NL2SQL (`inject_bind` into prompts) |
+| `bind_contracts` | Per-table bind map for fact_lookup compile + planned NL2SQL fallback (`inject_bind`) |
 | `nl2sql_fallback` | Allow NL2SQL when bind/compile_error path needs it |
 
 **Planner priority** (do not reorder without tests):
@@ -332,14 +331,14 @@ Reuse BQ only when context applied **or** current facets are a subset/refinement
 
 ### 5.3 Bind ownership vs legacy stubs (SQL ownership)
 
-**Fact-path SQL is produced by planned NL2SQL in the retriever**, constrained by bind contracts. Class engines never write SELECTs on the default path.
+**Fact-path SQL is compiled from the bind on `fact_lookup` / `data_export_only`**, then executed. NL2SQL is fallback when the bind cannot compile. Class engines never write SELECTs on the default path. Panel/analytical turns stay on NL2SQL.
 
 | Layer | Owns | Must not |
 |-------|------|----------|
 | [`query_decomposer`](chatbot/query_decomposer.py) + [`facet_compiler`](chatbot/facet_compiler.py) | job, geos, time, entities, shape, `entity_roles` | SQL |
 | [`class_supervisor`](chatbot/class_supervisor.py) | 1–2 classes + secondary, out_of_scope, must_search_qdrant | SQL, skip_bq |
 | Class engines + [`compile_table_bind_contract`](chatbot/bq_table_schema_yaml.py) | `bind_contracts`, intents, mart/dim hints | SELECT strings |
-| [`bq_retriever`](retrievers/bq_retriever.py) | Planned NL2SQL + execute; honors `retrieve_mode` | Invent filters outside bind/YAML |
+| [`bq_retriever`](retrievers/bq_retriever.py) | Bind-compile on fact_lookup; NL2SQL fallback; honors `retrieve_mode` | Invent filters outside bind/YAML |
 | [`generator`](chatbot/generator.py) | prose from evidence; typed BQ gaps | Invent warehouse numbers |
 | [`sql_compiler`](chatbot/sql_compiler.py) / [`SqlRequest`](chatbot/sql_request.py) | Legacy / refuse stubs only | Fact-path assembly |
 
@@ -349,7 +348,7 @@ Reuse BQ only when context applied **or** current facets are a subset/refinement
 
 | Mode | `plan_source` / signals | Retriever behavior |
 |------|-------------------------|-------------------|
-| **planned** | `bind_contracts` non-empty, `retrieve_mode=planned`, `nl2sql_fallback`, or `plan_source=class_engine` | NL2SQL only; templates/patterns skipped |
+| **planned** | `bind_contracts` non-empty, `retrieve_mode=planned`, `nl2sql_fallback`, or `plan_source=class_engine` | fact_lookup: bind-compile then execute; NL2SQL if compile yields nothing; templates/patterns skipped |
 | **legacy** | retrieval-contract / reasoner without bind | Template → pattern → NL2SQL cascade |
 | **analytical** | `plan_source=analytical` | Reasoner SQL plan escape (export/analytical) |
 | **compile_error** | empty engines + compiler preference | Block engine SELECT; optional NL2SQL escape via flag |
@@ -367,7 +366,7 @@ The control plane uses one taxonomy aligned with [OpenTrace Mart Complete Guide 
 | Class supervisor | [`class_supervisor.py`](chatbot/class_supervisor.py) | Measure-first class routing (never writes SQL) |
 | Corpus policy | [`helpers/class_corpus_policy.yaml`](helpers/class_corpus_policy.yaml) | Vector corpora per indicator class |
 
-**Flow:** `normalize_query_text` → decompose → facet enrich → `resolve_measures` → `compile_supervisor_plan` → `build_routing_plan` → class engines (**bind**) → planned NL2SQL → execute.
+**Flow:** `normalize_query_text` → decompose → facet enrich → `resolve_measures` → `compile_supervisor_plan` → `build_routing_plan` → class engines (**bind**) → bind-compile (fact_lookup) or NL2SQL → execute.
 
 **Hybrid engines** ([`class_engines/registry.py`](chatbot/class_engines/registry.py)):
 
@@ -385,7 +384,7 @@ The control plane uses one taxonomy aligned with [OpenTrace Mart Complete Guide 
 **BQ policy (default):**
 
 - Class engines emit **`bind_contracts`** — **not** `reason_bq_sql_plan` / retrieval-contract intents on the class path.
-- Planned NL2SQL is the fact SQL producer when bind is present.
+- Bind-compile is the fact SQL producer on `fact_lookup` when `required_filters_sql` and measure columns are present; NL2SQL is fallback.
 - Analytical / export may use the reasoner escape; `compile_error` blocks accidental legacy SELECT assembly when compiler preference is on.
 
 **Anti-patterns removed:** engine SELECT strings on the fact path; parallel contract BQ planner on default path; academic-first corpora for PRC; intent-only plans with `sql_source=none`; gap answers with unrelated citations; hiding successful warehouse rows behind generic numeric ACF gaps.
@@ -396,7 +395,7 @@ The control plane uses one taxonomy aligned with [OpenTrace Mart Complete Guide 
 
 ### 6.1 Vector retrieval — [`retrievers/vector_retriever.py`](retrievers/vector_retriever.py)
 
-**This is a first-class peer of BigQuery**, not a side path. `parallel_retrieve` runs **before** `bq_reason` / `bq_retrieve`; both legs fuse at `merge`.
+**This is a first-class peer of BigQuery**, not a side path. `retrieve_legs` starts Qdrant and BQ after decompose; both legs fuse at `merge`.
 
 **Embeddings:** `sentence_transformers` locally (`RAG_EMBEDDINGS_MODE=local`) or fastembed / HF feature API.
 

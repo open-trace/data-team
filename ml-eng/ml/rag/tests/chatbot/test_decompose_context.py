@@ -38,6 +38,8 @@ def test_format_user_prompt_includes_plan_and_overrides() -> None:
     prov = build_provisional_decompose_hints(ctx.query)
     user = format_decompose_user_prompt(ctx, prov)
     assert "Plan tier: Farmers" in user
+    assert "climate × nutrition" not in user
+    assert "Plan tier: NGOs / development" not in user
     assert "Profile country" in user
     assert "geo=Kenya" in user
     assert "Conversation summary" in user
@@ -48,6 +50,7 @@ def test_format_user_prompt_includes_plan_and_overrides() -> None:
 def test_format_system_prompt_includes_schema_keys() -> None:
     system = format_decompose_system_prompt()
     assert "primary_measure_hints" in system
+    assert "must not invent measures" in system
     assert "geo_scope" in system
     assert "job must be" in system
 

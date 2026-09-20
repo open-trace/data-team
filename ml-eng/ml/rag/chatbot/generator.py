@@ -2250,7 +2250,10 @@ def generate(
             "structured_bq_compile_error",
         )
         typed_flag = next((f for f in typed_flags if kwargs.get(f)), None)
+        if not typed_flag and kwargs.get("warehouse_was_attempted"):
+            typed_flag = "structured_bq_never_executed"
         if typed_flag:
+            # Inline: bq_gap_messages imports generator helpers (cycle).
             from ml.rag.chatbot.bq_gap_messages import typed_bq_gap_answer
 
             return GenerationResult(
@@ -2283,17 +2286,24 @@ def generate(
         and not generate_weak
     ):
         if kwargs.get("warehouse_was_attempted"):
+            # Inline: bq_gap_messages imports generator helpers (cycle).
             from ml.rag.chatbot.bq_gap_messages import typed_bq_gap_answer
 
+            flag = (
+                "structured_bq_compile_error"
+                if kwargs.get("structured_bq_compile_error")
+                else "structured_bq_never_executed"
+            )
             return GenerationResult(
                 answer=typed_bq_gap_answer(
-                    flag="structured_bq_empty",
+                    flag=flag,
                     decomposition=decomposition if isinstance(decomposition, dict) else None,
                 ),
                 citations=[],
                 acf=no_evidence_acf(
                     explanation=(
-                        "Warehouse query did not yield scorable structured evidence (empty)."
+                        "Warehouse query did not yield scorable structured evidence "
+                        f"({flag.replace('structured_bq_', '')})."
                     )
                 ),
             )

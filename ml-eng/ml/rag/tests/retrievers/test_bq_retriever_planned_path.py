@@ -180,8 +180,7 @@ def test_prepare_sql_retry_passes_bind_contracts() -> None:
     assert retry_fn.call_args.kwargs.get("query_intents") == [{"goal": "fact_lookup"}]
 
 
-def test_bind_compiler_skips_nl2sql(monkeypatch) -> None:
-    monkeypatch.setenv("RAG_BIND_SQL_COMPILER", "1")
+def test_bind_compiler_skips_nl2sql() -> None:
     retriever = BQRetriever(project_id="proj", nl2sql_enabled=True)
     bind = {
         "agg_production_country_year": {
@@ -201,6 +200,7 @@ def test_bind_compiler_skips_nl2sql(monkeypatch) -> None:
                     selected_tables=["agg_production_country_year"],
                     bind_contracts=bind,
                     query_intents=[{"goal": "fact_lookup"}],
+                    task_mode="fact_lookup",
                     plan_source="class_engine",
                 )
 
