@@ -260,6 +260,16 @@ def apply_africa_default_scope(decomposition: dict[str, Any], query: str) -> dic
     return out
 
 
+def facet_grounded_in_query(value: str, query: str) -> bool:
+    """True when a geography/entity string is evidenced in the raw user query.
+
+    Public wrapper so downstream callers (e.g. reasoner-plan geography
+    reassignment in graph.py) can re-verify a facet against the *raw* user
+    query before accepting it, instead of trusting an upstream source blindly.
+    """
+    return _facet_grounded_in_query(value, query)
+
+
 def _facet_grounded_in_query(value: str, query: str) -> bool:
     """True when a geography/entity string is evidenced in the raw user query."""
     q = (query or "").lower()
