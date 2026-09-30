@@ -71,6 +71,8 @@ _PIPE_LABEL_REF_RE = re.compile(
     re.IGNORECASE,
 )
 _NON_PLAIN_BRACKET_RE = re.compile(r"\[(?!\d+\])[^\]]*\]")
+
+_EMPTY_PAREN_RE = re.compile(r"\(\s*[,.;:]*\s*\)")
 _SOCIAL_URL_HOSTS = ("linkedin.com", "twitter.com", "x.com", "facebook.com", "fb.com")
 _KNOWN_ANALYTICAL_HEADINGS = (
     "Key Findings",
@@ -1199,8 +1201,21 @@ def _collapse_duplicate_citation_markers(text: str) -> str:
     return out
 
 
+def _strip_empty_citation_parens(text: str) -> str:
+    """Remove parenthetical wrappers left empty after citation stripping, e.g. ()."""
+    if not text:
+        return text
+    prev = None
+    out = text
+    while prev != out:
+        prev = out
+        out = _EMPTY_PAREN_RE.sub("", out)
+    return out
+
+
 def _cleanup_citation_spacing(text: str) -> str:
     """Tidy spacing after marker removal without collapsing newlines."""
+    text = _strip_empty_citation_parens(text)
     text = re.sub(r"[ \t]{2,}", " ", text)
     text = re.sub(r"[ \t]+([,.;])", r"\1", text)
     text = re.sub(r"\s+\.", ".", text)
