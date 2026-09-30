@@ -185,11 +185,9 @@ class TurnContract:
     def should_retrieve_vector(self) -> bool:
         if self.skip_vector_retrieval:
             return False
-        if self.job in NARRATIVE_ALLOWED_JOBS:
-            return True
-        if not self.measure_id:
-            return self.job not in NON_RAG_JOBS
-        return self.vector_policy != "none"
+        if self.job in NON_RAG_JOBS:
+            return False
+        return True
 
 
 def _parse_vector_policy(raw: Any) -> VectorPolicy:

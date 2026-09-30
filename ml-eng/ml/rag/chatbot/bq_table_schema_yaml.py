@@ -2036,13 +2036,16 @@ def format_bind_nomenclature(contract: TableBindContract) -> str:
     elif contract.time_column:
         lines.append(f"TIME_COLUMN: {contract.time_column}")
     if contract.product_column and contract.product_literals:
+        prod_col = contract.product_column
+        if prod_col.lower() in {"product_key", "product_id"}:
+            prod_col = "product_name"
         if len(contract.product_literals) == 1:
             lines.append(
-                f"PRODUCT: {contract.product_column} = {_sql_literal(contract.product_literals[0])}"
+                f"PRODUCT: {prod_col} = {_sql_literal(contract.product_literals[0])}"
             )
         else:
             lits = ", ".join(_sql_literal(v) for v in contract.product_literals[:8])
-            lines.append(f"PRODUCT: {contract.product_column} IN ({lits})")
+            lines.append(f"PRODUCT: {prod_col} IN ({lits})")
     if contract.measure_columns:
         lines.append(f"MEASURE_COLUMNS: {', '.join(contract.measure_columns[:4])}")
     for col, val in contract.measure_filters:

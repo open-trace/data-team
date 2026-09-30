@@ -167,6 +167,9 @@ def select_corpora(
     allow = [str(x).strip() for x in (vector_allow or []) if str(x).strip()]
     block = {str(x).strip() for x in (vector_block or []) if str(x).strip()}
 
+    if job in ("help", "social"):
+        return CorpusSelection(active=[], boosts={}, rationale=f"turn_contract_job_{job}")
+
     if vector_policy is not None:
         if policy in ("companion", "fallback_only") and allow:
             active = [k for k in allow if k in ALL_CORPUS_KEYS and k not in block]
@@ -175,11 +178,6 @@ def select_corpora(
                 boosts=default_boosts(),
                 rationale=f"vector_policy_{policy}",
             )
-        if policy == "none" or job in ("help", "social"):
-            return CorpusSelection(active=[], boosts={}, rationale=f"vector_policy_{policy or job}")
-
-    if job in ("help", "social"):
-        return CorpusSelection(active=[], boosts={}, rationale=f"turn_contract_job_{job}")
     if job == "outlook":
         return CorpusSelection(
             active=["ota", "public_reports"],

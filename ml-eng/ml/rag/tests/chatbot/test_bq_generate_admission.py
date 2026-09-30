@@ -119,3 +119,31 @@ def test_generate_typed_gap_when_warehouse_empty_flag() -> None:
             )
     mock_llm.assert_not_called()
     assert "no rows" in result.answer.lower() or "warehouse" in result.answer.lower()
+
+
+def test_generate_typed_gap_when_warehouse_attempted_without_job() -> None:
+    decomposition = {
+        "geography": ["Kenya"],
+        "entities": ["rice"],
+        "primary_measures": ["production"],
+    }
+    plan = build_generation_plan(
+        "what is the production of rice in kenya in 2016",
+        task_mode="fact_lookup",
+        reranked_context=[],
+        decomposition=decomposition,
+    )
+    with mock.patch("ml.rag.chatbot.generator._call_llama") as mock_llm:
+        with mock.patch.dict(os.environ, {}, clear=False):
+            os.environ.pop("RAG_ALLOW_UNGROUNDED", None)
+            result = generate(
+                "what is the production of rice in kenya in 2016",
+                [],
+                task_mode="fact_lookup",
+                decomposition=decomposition,
+                generation_plan=plan,
+                warehouse_was_attempted=True,
+            )
+    mock_llm.assert_not_called()
+    assert "not submitted" in result.answer.lower() or "could not compile" in result.answer.lower()
+    assert "returned no rows" not in result.answer.lower()
