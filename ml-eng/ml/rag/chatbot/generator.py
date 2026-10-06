@@ -2200,6 +2200,12 @@ def _finalize_generation_result(
             acf = no_evidence_acf()
             acf_status = "no_citations"
 
+        # ML-058 (Sprint 2 Week 2): figures that cannot be traced to a cited
+        # source must not be presented as fact. Flag + cap rather than delete.
+        unsourced = unsourced_figures(prose, cited_refs)
+        if unsourced:
+            prose = append_unsourced_caveat(prose, unsourced)
+            acf = _cap_acf_for_unsourced_figures(acf, unsourced)
 
         acf = _cap_acf_for_evidence_tier(acf, evidence_tier)
         acf = apply_bq_execute_ceiling(
