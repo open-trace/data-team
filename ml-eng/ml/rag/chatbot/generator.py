@@ -397,6 +397,30 @@ _SLIM_BASE_PROMPT = (
     "Never open with Unfortunately, Based on the context, or The context provided."
 )
 
+def _current_date_block(reference_date: date | None = None) -> str:
+    """
+    ML-057 (Sprint 2 Week 2): tell the generator what today's date is.
+
+    The query decomposer already resolves time ranges against ``date.today()``
+    (see ``decompose_context.today_iso``), but the generation prompt never
+    carried a date -- so the LLM fell back on its training cut-off and could
+    not tell an upcoming event from one in progress or already past.
+
+    Built at call time rather than baked into ``_SLIM_BASE_PROMPT`` because a
+    module-level constant would freeze the date at import and go stale on a
+    long-running Railway process.
+    """
+    today = reference_date or date.today()
+    return (
+        f"\n\nCURRENT DATE: Today is {today.isoformat()} (year {today.year}). "
+        f"Ground every time-sensitive statement in this date: an event before "
+        f"it has already happened, an event after it has not happened yet. "
+        f"Do not describe {today.year - 1} or earlier figures as current -- "
+        f"state the year the figure belongs to. "
+        f"Never infer the present year from your training data."
+    )
+
+
 _PARTIAL_EVIDENCE_RULES = (
     "\n\nPARTIAL EVIDENCE: Only state claims clearly supported by Context. "
     "One short closing line on years or coverage limits is enough. "
@@ -1360,6 +1384,7 @@ def _build_prompt(
     evidence_tier: EvidenceTier = "strong",
     yield_only: bool = False,
     composer_addendum: str = "",
+    reference_date: date | None = None,
 ) -> list[dict[str, str]]:
     lang = (answer_lang or "").strip() or detect_answer_language(query)
     mode = (task_mode or ("analytical" if analytical_mode else "chat")).strip().lower()
@@ -1367,6 +1392,9 @@ def _build_prompt(
         mode = "analytical"
 
     system = _SLIM_BASE_PROMPT + language_instruction(lang, inline_citations=inline_citations)
+    # ML-057: date grounding goes directly after the base prompt so every
+    # downstream addendum is read in the context of the correct year.
+    system += _current_date_block(reference_date)
 
     if evidence_tier == "partial":
         system += _PARTIAL_EVIDENCE_RULES
@@ -2171,6 +2199,7 @@ def _finalize_generation_result(
         else:
             acf = no_evidence_acf()
             acf_status = "no_citations"
+
 
         acf = _cap_acf_for_evidence_tier(acf, evidence_tier)
         acf = apply_bq_execute_ceiling(

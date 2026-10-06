@@ -3141,13 +3141,32 @@ def node_generate_social(state: RAGGraphState) -> dict[str, Any]:
         update_current_span_metadata({"answer_lang": answer_lang, "route": route})
         answer = generate_social_answer(kind, query, answer_lang=answer_lang)
 
+    # ML-057 (Sprint 2 Week 2, beta finding #9): a greeting or an out-of-scope
+    # refusal is a non-answer -- there is no cited evidence behind it, so it
+    # must not carry "Strong confidence". curated_product_acf() is reserved for
+    # the curated product/meta knowledge base, which is genuinely reliable.
+    if kind == "greeting":
+        social_acf = no_evidence_acf(
+            explanation=(
+                "Greeting — no agricultural claim was made, so there is no "
+                "evidence to score."
+            )
+        )
+    else:
+        social_acf = no_evidence_acf(
+            explanation=(
+                "Out of scope — no OpenTrace evidence was retrieved for this "
+                "request."
+            )
+        )
+
     return {
         "answer": answer,
         "citations": [],
         "answer_lang": answer_lang,
         "is_greeting_query": kind == "greeting",
         "is_out_of_scope_query": kind == "out_of_scope",
-        **acf_result_to_state(curated_product_acf()),
+        **acf_result_to_state(social_acf),
     }
 
 
