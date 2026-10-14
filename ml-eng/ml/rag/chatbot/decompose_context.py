@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 from ml.rag.chatbot.agri_entities import CROP_COMMODITY_TERMS
 from ml.rag.chatbot.agri_measure_ontology import decompose_measure_vocabulary
 from ml.rag.chatbot.geo_regions import decompose_region_vocabulary
-from ml.rag.chatbot.plan_policy import allows_cross_country
+from ml.rag.chatbot.plan_policy import plan_allows_cross_country
 
 # Stakeholder insight intents (mirrored in query_decomposer for heuristics).
 INTENT_ALLOWED: tuple[str, ...] = (
@@ -218,7 +218,7 @@ def format_decompose_user_prompt(
 
     if ctx.plan_type:
         blocks.append(f"Plan tier: {ctx.plan_type}")
-        if not allows_cross_country(ctx.plan_type):
+        if not plan_allows_cross_country(ctx.plan_type):
             blocks.append(
                 "Plan constraint: prefer a single country in geography unless the user explicitly names a region or multiple countries."
             )

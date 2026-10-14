@@ -23,7 +23,12 @@ from ml.rag.chatbot.ofia import infer_source_tier
 from ml.rag.chatbot.export_intent import EXPORT_UPGRADE_MESSAGE, detect_export_intent
 from ml.rag.chatbot.geo_regions import expand_regions_in_decomposition
 from ml.rag.chatbot.export_runner import run_exports
-from ml.rag.chatbot.geo_policy import effective_geo_override
+from ml.rag.chatbot.geo_policy import (
+    apply_profile_geography_default,
+    clear_profile_ui_retrieval_scope,
+    effective_geo_override,
+    sanitize_profile_country,
+)
 from ml.rag.chatbot.plan_policy import (
     apply_category_domain_hints,
     apply_plan_decomposition_gates,
@@ -106,6 +111,8 @@ from ml.rag.chatbot.ontology_context import sanitize_decomposition_for_bq
 from ml.rag.chatbot.retrieval_contract import build_corpus_routing_contract
 from ml.rag.chatbot.decompose_context import DecomposeContext
 from ml.rag.chatbot.query_decomposer import (
+    _extract_countries,
+    _is_open_ended_time,
     decompose_query,
     facet_grounded_in_query,
     normalize_geography_for_filter,
@@ -584,6 +591,7 @@ class RAGGraphState(TypedDict, total=False):
     web_fallback_status: str | None
     web_fallback_reason: str | None
     insufficient_context: bool | None
+    profile_scope_retry: int | None
     answer: str
     citations: list[dict[str, Any]]
     usage: dict[str, int]
@@ -784,7 +792,8 @@ def node_decompose(state: RAGGraphState) -> dict[str, Any]:
         dec_raw.pop("_legacy_would_skip_llm", None)
         dec = dec_raw
         profile = state.get("user_profile") if isinstance(state.get("user_profile"), dict) else None
-        country = str((profile or {}).get("country") or "").strip() or None
+        raw_country = str((profile or {}).get("country") or "").strip() or None
+        country = sanitize_profile_country(raw_country)
         task_mode = resolve_task_mode(q, dec, profile_country=country)
         analytical = task_mode == "analytical"
         # Always expand known Africa zones for retrieval / geo purity (all plan tiers).
@@ -796,6 +805,7 @@ def node_decompose(state: RAGGraphState) -> dict[str, Any]:
         dec = apply_plan_decomposition_gates(dec, state.get("plan_type"), country)
         category = str(state.get("category") or (profile or {}).get("category") or "").strip() or None
         dec = apply_category_domain_hints(dec, category)
+        dec = apply_profile_geography_default(dec, country)
         # UI / API scopes must land in decomp so clarify, BQ plans, and retrieval agree.
         dec = _apply_ui_scope_overrides(dec, state)
         # Grounded entity/domain enrich → multi-measure retrieval contract tags.
@@ -1023,20 +1033,36 @@ def _apply_ui_scope_overrides(
     decomposition: dict[str, Any],
     state: RAGGraphState,
 ) -> dict[str, Any]:
-    """Merge UI/API geo and time overrides into decomposition for control-plane + BQ."""
+    """Merge UI/API geo and time as defaults when the query did not set them.
+
+    Open-ended wording (current, now) does not invent a date, and a UI date
+    does not replace a query-derived window. UI time stays a soft filter.
+    """
     out = dict(decomposition or {})
+    query = str(state.get("query") or "")
+    open_ended = _is_open_ended_time(query)
     ts = str(state.get("time_start_override") or "").strip()[:10]
     te = str(state.get("time_end_override") or "").strip()[:10]
-    if ts:
-        out["time_start"] = ts
-    if te:
-        out["time_end"] = te
+    applied_time = False
+    if not open_ended:
+        if ts and not str(out.get("time_start") or "").strip():
+            out["time_start"] = ts
+            applied_time = True
+        if te and not str(out.get("time_end") or "").strip():
+            out["time_end"] = te
+            applied_time = True
+    if applied_time:
+        out["time_source"] = "ui"
+    elif str(out.get("time_start") or "").strip() or str(out.get("time_end") or "").strip():
+        out.setdefault("time_source", "query")
+
     geo_ov = str(state.get("geo_override") or "").strip()
-    if geo_ov:
-        geo = list(out.get("geography") or []) if isinstance(out.get("geography"), list) else []
-        if geo_ov not in geo:
-            geo = [geo_ov, *geo]
-        out["geography"] = geo
+    geo = list(out.get("geography") or []) if isinstance(out.get("geography"), list) else []
+    if geo_ov and not normalize_geography_for_filter(geo):
+        out["geography"] = [geo_ov]
+        out["geography_source"] = "ui"
+    elif normalize_geography_for_filter(geo):
+        out.setdefault("geography_source", "query")
     return out
 
 
@@ -3210,33 +3236,107 @@ def node_retrieve_legs(state: RAGGraphState) -> dict[str, Any]:
     return {**vec_out, **bq_out}
 
 
+def _evidence_empty(state: RAGGraphState) -> bool:
+    reranked = state.get("reranked_context") or []
+    if reranked:
+        return False
+    bq = state.get("bq_results") or []
+    return not any(isinstance(row, dict) and is_usable_structured_bq_row(row) for row in bq)
+
+
+def _profile_ui_scope_active(decomposition: dict[str, Any]) -> bool:
+    geo_source = str(decomposition.get("geography_source") or "")
+    time_source = str(decomposition.get("time_source") or "")
+    return geo_source in {"profile", "ui"} or time_source == "ui"
+
+
+def _state_without_profile_ui_scope(state: RAGGraphState) -> RAGGraphState:
+    """Clear profile/UI retrieval filters. Query-derived countries and dates stay."""
+    dec = state.get("decomposition") if isinstance(state.get("decomposition"), dict) else {}
+    geo_source = str(dec.get("geography_source") or "")
+    time_source = str(dec.get("time_source") or "")
+    cleared = clear_profile_ui_retrieval_scope(dec)
+    updates: dict[str, Any] = {
+        "decomposition": cleared,
+        "profile_scope_retry": 1,
+    }
+    if geo_source in {"profile", "ui"}:
+        updates["geo_override"] = ""
+    if time_source == "ui":
+        updates["time_start_override"] = ""
+        updates["time_end_override"] = ""
+        contract = state.get("turn_contract")
+        if isinstance(contract, dict):
+            rewritten = dict(contract)
+            spec = dict(rewritten.get("time_spec") or {})
+            spec["start"] = ""
+            spec["end"] = ""
+            spec["hard_filter"] = False
+            rewritten["time_spec"] = spec
+            updates["turn_contract"] = rewritten
+    return cast(RAGGraphState, {**dict(state), **updates})
+
+
+def _rerun_retrieve_merge_rerank(state: RAGGraphState) -> dict[str, Any]:
+    updates: dict[str, Any] = {}
+    retry_bq = should_retry_bq(cast(dict[str, Any], state))
+    if retry_bq:
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            fut_vec = pool.submit(node_parallel_retrieve, state)
+            fut_bq = pool.submit(node_bq_retrieve, state)
+            vec_out = fut_vec.result()
+            bq_out = fut_bq.result()
+        updates.update(vec_out)
+        updates.update(bq_out)
+        state = cast(RAGGraphState, {**dict(state), **vec_out, **bq_out})
+    else:
+        vec_out = node_parallel_retrieve(state)
+        updates.update(vec_out)
+        state = cast(RAGGraphState, {**dict(state), **vec_out})
+    merge_out = node_merge(state)
+    updates.update(merge_out)
+    state = cast(RAGGraphState, {**dict(state), **merge_out})
+    rerank_out = node_rerank(state)
+    updates.update(rerank_out)
+    return updates
+
+
 def node_coverage_retry(state: RAGGraphState) -> dict[str, Any]:
-    """At most one re-vector (+ optional BQ) when required slots missing from evidence."""
+    """At most one re-vector (+ optional BQ) when required slots missing from evidence.
+
+    When the empty result was filtered by profile or UI scope, that one retry
+    drops only those filters. Query-derived countries and dates stay.
+    """
+    dec = state.get("decomposition") if isinstance(state.get("decomposition"), dict) else {}
+    if (
+        int(state.get("profile_scope_retry") or 0) < 1
+        and _evidence_empty(state)
+        and _profile_ui_scope_active(dec)
+    ):
+        widened = _state_without_profile_ui_scope(state)
+        updates: dict[str, Any] = {
+            "profile_scope_retry": 1,
+            "decomposition": widened.get("decomposition"),
+        }
+        if str(dec.get("geography_source") or "") in {"profile", "ui"}:
+            updates["geo_override"] = ""
+        if str(dec.get("time_source") or "") == "ui":
+            updates["time_start_override"] = ""
+            updates["time_end_override"] = ""
+            if isinstance(widened.get("turn_contract"), dict):
+                updates["turn_contract"] = widened["turn_contract"]
+        with observed_span("profile_scope_retry", input_data={"attempt": 1}):
+            updates.update(_rerun_retrieve_merge_rerank(widened))
+            update_current_span_metadata({"profile_scope_retry": 1})
+        return updates
+
     if not should_coverage_retry(cast(dict[str, Any], state)):
         return {"coverage_retry": int(state.get("coverage_retry") or 0)}
 
-    updates: dict[str, Any] = {"coverage_retry": 1}
+    updates = {"coverage_retry": 1}
     merged_state = cast(RAGGraphState, {**dict(state), **updates})
     with observed_span("coverage_retry", input_data={"attempt": 1}):
-        retry_bq = should_retry_bq(cast(dict[str, Any], merged_state))
-        if retry_bq:
-            with ThreadPoolExecutor(max_workers=2) as pool:
-                fut_vec = pool.submit(node_parallel_retrieve, merged_state)
-                fut_bq = pool.submit(node_bq_retrieve, merged_state)
-                vec_out = fut_vec.result()
-                bq_out = fut_bq.result()
-            updates.update(vec_out)
-            updates.update(bq_out)
-            merged_state = cast(RAGGraphState, {**dict(merged_state), **vec_out, **bq_out})
-        else:
-            vec_out = node_parallel_retrieve(merged_state)
-            updates.update(vec_out)
-            merged_state = cast(RAGGraphState, {**dict(merged_state), **vec_out})
-        merge_out = node_merge(merged_state)
-        updates.update(merge_out)
-        merged_state = cast(RAGGraphState, {**dict(merged_state), **merge_out})
-        rerank_out = node_rerank(merged_state)
-        updates.update(rerank_out)
+        updates.update(_rerun_retrieve_merge_rerank(merged_state))
         update_current_span_metadata({"coverage_retry": 1})
     return updates
 
@@ -3339,10 +3439,17 @@ def run_rag(query: str, **kwargs: Any) -> dict[str, Any]:
     reset_llm_truncation()  # ML-054
     graph = _get_compiled_graph()
     initial: RAGGraphState = {"query": query}
-    user_profile = kwargs.get("user_profile") if isinstance(kwargs.get("user_profile"), dict) else None
+    raw_profile = kwargs.get("user_profile") if isinstance(kwargs.get("user_profile"), dict) else None
+    user_profile = dict(raw_profile) if raw_profile is not None else None
+    if user_profile is not None:
+        raw_country = user_profile.get("country")
+        user_profile["country"] = sanitize_profile_country(
+            str(raw_country) if raw_country is not None else None
+        )
     plan_type = kwargs.get("plan_type")
     profile_geo = effective_geo_override(plan_type, user_profile)
-    if profile_geo:
+    # Flag off: no hard override. Flag on: still do not replace a country the query named.
+    if profile_geo and not _extract_countries(query):
         initial["geo_override"] = profile_geo  # type: ignore[assignment]
     if plan_type:
         initial["plan_type"] = plan_type  # type: ignore[assignment]

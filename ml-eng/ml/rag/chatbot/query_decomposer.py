@@ -318,11 +318,18 @@ def resolve_retrieval_geographies(
     geo_override: str,
     geography: list[str] | None,
 ) -> list[str]:
-    """Country list for vector/BQ filters (compare queries may include 2+ countries)."""
-    if geo_override.strip():
-        g = geo_override.strip()
-        return [] if g.lower() in _NON_COUNTRY_GEO else [g]
-    return normalize_geography_for_filter(geography)
+    """Country list for vector/BQ filters (compare queries may include 2+ countries).
+
+    Decomposition geography wins. ``geo_override`` is used only when the query
+    did not name a country.
+    """
+    countries = normalize_geography_for_filter(geography)
+    if countries:
+        return countries
+    override = (geo_override or "").strip()
+    if not override or override.lower() in _NON_COUNTRY_GEO:
+        return []
+    return [override]
 
 
 def _is_open_ended_time(text: str) -> bool:
@@ -337,6 +344,8 @@ def _is_open_ended_time(text: str) -> bool:
         r"\bas\s+of\s+now\b",
         r"\bpresent\s+day\b",
         r"\bcurrently\b",
+        r"\bcurrent\b",
+        r"\bnow\b",
     )
     return any(re.search(p, tl) for p in patterns)
 

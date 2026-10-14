@@ -1957,6 +1957,43 @@ def _decomposition_time_hint(decomposition: dict[str, Any] | None) -> str:
     return ts or te or str(decomposition.get("time_period") or "").strip()
 
 
+def _gap_scope_lines(decomposition: dict[str, Any] | None) -> tuple[str, str]:
+    """Geo and time lines for a gap. Profile/UI filters are labeled as filters."""
+    if not isinstance(decomposition, dict):
+        return "", ""
+    geo_source = str(decomposition.get("geography_source") or "")
+    geo = _decomposition_geo_hint(decomposition)
+    if not geo:
+        filtered = decomposition.get("filtered_geography")
+        if isinstance(filtered, list) and filtered:
+            geo = ", ".join(str(x) for x in filtered if str(x).strip())
+    if geo and geo_source == "profile":
+        geo_line = f"Filtered by profile country: {geo}"
+    elif geo and geo_source == "ui":
+        geo_line = f"Filtered by UI country: {geo}"
+    elif geo:
+        geo_line = f"Geography: {geo}"
+    else:
+        geo_line = ""
+
+    time_source = str(decomposition.get("time_source") or "")
+    time_hint = _decomposition_time_hint(decomposition)
+    if not time_hint:
+        ts = str(decomposition.get("filtered_time_start") or "").strip()
+        te = str(decomposition.get("filtered_time_end") or "").strip()
+        if ts and te:
+            time_hint = f"{ts} → {te}"
+        else:
+            time_hint = ts or te
+    if time_hint and time_source == "ui":
+        time_line = f"Filtered by UI time: {time_hint}"
+    elif time_hint:
+        time_line = f"Time period: {time_hint}"
+    else:
+        time_line = ""
+    return geo_line, time_line
+
+
 def _no_data_fallback_message(
     query: str,
     decomposition: dict[str, Any] | None = None,
@@ -1973,14 +2010,13 @@ def _no_data_fallback_message(
       - explicit ACF marker so the confidence signal is never invisible on this path
     """
     q = (query or "").strip() or "your question"
-    geo = _decomposition_geo_hint(decomposition)
-    time_hint = _decomposition_time_hint(decomposition)
+    geo_line, time_line = _gap_scope_lines(decomposition)
 
     gap_lines = [f"- Query: {q}"]
-    if geo:
-        gap_lines.append(f"- Geography: {geo}")
-    if time_hint:
-        gap_lines.append(f"- Time period: {time_hint}")
+    if geo_line:
+        gap_lines.append(f"- {geo_line}")
+    if time_line:
+        gap_lines.append(f"- {time_line}")
 
     help_lines = [
         "- Name a specific country or region (e.g. Kenya, West Africa).",
@@ -2008,8 +2044,11 @@ def _compact_gap_message(
     """Short 2–4 sentence gap when evidence tier is EMPTY."""
     lang = (answer_lang or "").strip() or detect_answer_language(query)
     lead = insufficient_context_answer(lang=lang, query=query)
-    geo = _decomposition_geo_hint(decomposition)
-    if geo:
+    geo_line, _time_line = _gap_scope_lines(decomposition)
+    if geo_line.startswith("Filtered by"):
+        detail = f"{geo_line}."
+    elif geo_line.startswith("Geography: "):
+        geo = geo_line.removeprefix("Geography: ")
         detail = f"Name a specific crop or metric and time period for {geo}."
     else:
         detail = "Name a specific country, crop or metric, and time period."
