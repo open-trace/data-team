@@ -40,6 +40,15 @@ _SHORT_FOLLOWUP_RE = re.compile(
     re.IGNORECASE,
 )
 
+_SUBJECT_OR_VERB_RE = re.compile(
+    r"\b("
+    r"i|my|we|our|he|she|it|they|his|her|their|"
+    r"is|are|was|were|am|has|have|had|do|does|did|can|could|will|would|should|"
+    r"treat|cure|fix|help|sick|dying|dead|infected|injured|need|want|buy|sell"
+    r")\b",
+    re.IGNORECASE,
+)
+
 
 def _prior_user_texts(summary: str, recent_turns: list[dict[str, Any]] | None) -> list[str]:
     texts: list[str] = []
@@ -66,8 +75,10 @@ def _looks_elliptical(query: str) -> bool:
         return True
     if len(q.split()) <= 6 and _SHORT_FOLLOWUP_RE.match(q):
         return True
-    if len(q.split()) <= 4 and not re.search(
-        r"\b(what|which|how|why|when|show|give|compare|analy)\b", q, re.IGNORECASE
+    if (
+        len(q.split()) <= 4
+        and not re.search(r"\b(what|which|how|why|when|show|give|compare|analy)\b", q, re.IGNORECASE)
+        and not _SUBJECT_OR_VERB_RE.search(q)
     ):
         return True
     return False
