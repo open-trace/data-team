@@ -1,4 +1,4 @@
-"""Deterministic single-table SQL from TableBindContract (opt-in via RAG_BIND_SQL_COMPILER)."""
+"""Deterministic single-table SQL from TableBindContract for point fact_lookup."""
 from __future__ import annotations
 
 import os
@@ -8,13 +8,26 @@ from ml.rag.chatbot.bq_mart_sql import mart_dataset
 from ml.rag.chatbot.bq_table_schema_yaml import TableBindContract
 
 
-def bind_sql_compiler_enabled() -> bool:
-    return os.environ.get("RAG_BIND_SQL_COMPILER", "").strip().lower() in (
-        "1",
-        "true",
-        "yes",
-        "on",
-    )
+def bind_contract_for_table(
+    bind_contracts: dict[str, Any] | None,
+    table_id: str,
+) -> dict[str, Any] | None:
+    """Resolve a bind map entry; table ids match on the bare, case-insensitive name."""
+    if not isinstance(bind_contracts, dict) or not bind_contracts:
+        return None
+    needle = str(table_id or "").strip().split(".")[-1].lower()
+    if not needle:
+        return None
+    raw = bind_contracts.get(table_id)
+    if isinstance(raw, dict):
+        return raw
+    raw = bind_contracts.get(needle)
+    if isinstance(raw, dict):
+        return raw
+    for key, value in bind_contracts.items():
+        if str(key or "").strip().split(".")[-1].lower() == needle and isinstance(value, dict):
+            return value
+    return None
 
 
 def compile_sql_from_bind(
@@ -56,4 +69,4 @@ def compile_sql_from_bind(
     return f"SELECT {select_cols} FROM {fqn} WHERE {where_sql} LIMIT {cap}"
 
 
-__all__ = ["bind_sql_compiler_enabled", "compile_sql_from_bind"]
+__all__ = ["bind_contract_for_table", "compile_sql_from_bind"]

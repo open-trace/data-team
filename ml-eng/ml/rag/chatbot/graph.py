@@ -1,6 +1,5 @@
 """
-RAG graph: query → decompose → parallel retrieval (six Qdrant corpora)
-→ BQ SQL reasoner (mart_dev YAML) → BigQuery → merge → rerank → generate.
+RAG graph: query → decompose → (Qdrant ‖ BQ reason+retrieve) → merge → rerank → generate.
 """
 from __future__ import annotations
 
@@ -54,11 +53,12 @@ from ml.rag.chatbot.class_engine_runner import engine_results_to_bq_plan, run_cl
 from ml.rag.chatbot.sql_compiler import sql_compiler_enabled
 from ml.rag.chatbot.class_supervisor import SupervisorPlan, compile_supervisor_plan, corpora_for_supervisor_plan, tables_for_supervisor_plan
 from ml.rag.chatbot.context_diversity import diversify_context_pack
+from ml.rag.chatbot.coverage_retry import should_coverage_retry, should_retry_bq
 from ml.rag.chatbot.corpus_catalog import CORPUS_CATALOG, CorpusSelection, select_corpora
 from ml.rag.chatbot.facet_enrich import enrich_decomposition_facets
 from ml.rag.chatbot.facet_compiler import compile_turn_contract, compile_breakdown
 from ml.rag.chatbot.intent_bundles import bundle_primary_measures, bundle_required_measures, match_intent_bundles
-from ml.rag.chatbot.capability_registry import apply_reasoner_to_turn, resolve_capability, unsupported_answer_hint
+from ml.rag.chatbot.capability_registry import apply_reasoner_to_turn, resolve_capability
 from ml.rag.chatbot.empty_answer_templates import empty_answer_for_contract
 from ml.rag.chatbot.empty_policy import (
     build_filter_miss_block,
@@ -811,7 +811,9 @@ def node_decompose(state: RAGGraphState) -> dict[str, Any]:
             dec["primary_measures"] = bundle_pm
         elif contract.primary_measures:
             dec["primary_measures"] = list(contract.primary_measures)
-        dec = sanitize_decomposition_for_bq(dec, primary_measures=dec.get("primary_measures"))
+        dec = sanitize_decomposition_for_bq(
+            dec, primary_measures=dec.get("primary_measures"), query=q
+        )
         if contract.companion_measures:
             dec["companion_measures"] = list(contract.companion_measures)
         measure_hints = resolve_measures(q, dec)
@@ -2185,6 +2187,7 @@ def node_bq_retrieve(state: RAGGraphState) -> dict[str, Any]:
                 os.environ.pop("RAG_BQ_MAX_SQL_QUERIES", None)
             else:
                 os.environ["RAG_BQ_MAX_SQL_QUERIES"] = prev_max_sql
+    bq_sql_queries, bq_sql_debug = aggregate_bq_sql_debug(results)
     results = enrich_bq_results(
         results,
         query=q,
@@ -2194,7 +2197,6 @@ def node_bq_retrieve(state: RAGGraphState) -> dict[str, Any]:
     results, ctx_truncated = trim_bq_result_contents(results)
     if ctx_truncated:
         update_current_span_metadata({"bq_context_truncated": True})
-    bq_sql_queries, bq_sql_debug = aggregate_bq_sql_debug(results)
     if engine_execute_only and pre_queries:
         bq_sql_queries, bq_sql_debug = reconcile_engine_bq_debug(
             execute_debug=bq_sql_debug,
@@ -2984,22 +2986,6 @@ def node_generate(state: RAGGraphState) -> dict[str, Any]:
                     "generation_plan": gen_plan.to_dict(),
                     **acf_result_to_state(no_evidence_acf()),
                 }
-        if (
-            tc.is_fail_closed()
-            and tc.serve_status != "clarify"
-            and tc.vector_policy != "fallback_only"
-            and not (slot_active and has_required_bq_rows)
-        ):
-            from ml.rag.chatbot.answer_language import insufficient_context_answer
-
-            hint = unsupported_answer_hint(tc) or empty_tpl
-            return {
-                "answer": hint or insufficient_context_answer(query=str(query)),
-                "citations": [],
-                "answer_lang": str(state.get("answer_lang") or detect_answer_language(query)),
-                "generation_plan": gen_plan.to_dict(),
-                **acf_result_to_state(no_evidence_acf()),
-            }
     if gen_plan.effective_category:
         gkw["category"] = gen_plan.effective_category
     gen_t0 = time.perf_counter()
@@ -3188,23 +3174,45 @@ def node_generate_product(state: RAGGraphState) -> dict[str, Any]:
     }
 
 
+def node_retrieve_legs(state: RAGGraphState) -> dict[str, Any]:
+    """Run Qdrant and BQ reason+retrieve at the same time, then join."""
+
+    def _bq_leg() -> dict[str, Any]:
+        reason = node_bq_reason(state)
+        merged = cast(RAGGraphState, {**dict(state), **reason})
+        retrieve = node_bq_retrieve(merged)
+        return {**reason, **retrieve}
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        fut_vec = pool.submit(node_parallel_retrieve, state)
+        fut_bq = pool.submit(_bq_leg)
+        vec_out = fut_vec.result()
+        bq_out = fut_bq.result()
+    return {**vec_out, **bq_out}
+
+
 def node_coverage_retry(state: RAGGraphState) -> dict[str, Any]:
     """At most one re-vector (+ optional BQ) when required slots missing from evidence."""
-    from ml.rag.chatbot.coverage_retry import should_coverage_retry, should_retry_bq
-
     if not should_coverage_retry(cast(dict[str, Any], state)):
         return {"coverage_retry": int(state.get("coverage_retry") or 0)}
 
     updates: dict[str, Any] = {"coverage_retry": 1}
     merged_state = cast(RAGGraphState, {**dict(state), **updates})
     with observed_span("coverage_retry", input_data={"attempt": 1}):
-        vec_out = node_parallel_retrieve(merged_state)
-        updates.update(vec_out)
-        merged_state = cast(RAGGraphState, {**dict(merged_state), **vec_out})
-        if should_retry_bq(cast(dict[str, Any], merged_state)):
-            bq_out = node_bq_retrieve(merged_state)
+        retry_bq = should_retry_bq(cast(dict[str, Any], merged_state))
+        if retry_bq:
+            with ThreadPoolExecutor(max_workers=2) as pool:
+                fut_vec = pool.submit(node_parallel_retrieve, merged_state)
+                fut_bq = pool.submit(node_bq_retrieve, merged_state)
+                vec_out = fut_vec.result()
+                bq_out = fut_bq.result()
+            updates.update(vec_out)
             updates.update(bq_out)
-            merged_state = cast(RAGGraphState, {**dict(merged_state), **bq_out})
+            merged_state = cast(RAGGraphState, {**dict(merged_state), **vec_out, **bq_out})
+        else:
+            vec_out = node_parallel_retrieve(merged_state)
+            updates.update(vec_out)
+            merged_state = cast(RAGGraphState, {**dict(merged_state), **vec_out})
         merge_out = node_merge(merged_state)
         updates.update(merge_out)
         merged_state = cast(RAGGraphState, {**dict(merged_state), **merge_out})
@@ -3224,9 +3232,7 @@ def build_graph():
     graph = StateGraph(RAGGraphState)
 
     graph.add_node("decompose", node_decompose)
-    graph.add_node("parallel_retrieve", node_parallel_retrieve)
-    graph.add_node("bq_reason", node_bq_reason)
-    graph.add_node("bq_retrieve", node_bq_retrieve)
+    graph.add_node("retrieve_legs", node_retrieve_legs)
     graph.add_node("merge", node_merge)
     graph.add_node("rerank", node_rerank)
     graph.add_node("coverage_retry", node_coverage_retry)
@@ -3241,6 +3247,17 @@ def build_graph():
     graph.add_node("generate_clarify", node_generate_clarify)
 
     graph.add_edge(START, "decompose")
+    graph.add_edge("retrieve_legs", "merge")
+    graph.add_edge("merge", "rerank")
+    graph.add_edge("rerank", "coverage_retry")
+    graph.add_edge("generate", "export")
+    graph.add_edge("export", END)
+    graph.add_edge("insufficient_context", END)
+    graph.add_edge("generate_meta", END)
+    graph.add_edge("generate_product", END)
+    graph.add_edge("generate_social", END)
+    graph.add_edge("generate_language_help", END)
+    graph.add_edge("generate_clarify", END)
 
     def _route_after_decompose(state: RAGGraphState) -> str:
         if state.get("is_meta_query"):
@@ -3253,28 +3270,36 @@ def build_graph():
             return "generate_language_help"
         if state.get("task_mode") == "clarify":
             return "generate_clarify"
-        tc_raw = state.get("turn_contract")
-        contract = TurnContract.from_dict(tc_raw if isinstance(tc_raw, dict) else None)
-        if not contract.should_retrieve_vector():
-            return "bq_reason"
-        return "parallel_retrieve"
+        return "retrieve_legs"
 
-    graph.add_conditional_edges("decompose", _route_after_decompose)
-    graph.add_edge("parallel_retrieve", "bq_reason")
-    graph.add_edge("bq_reason", "bq_retrieve")
-    graph.add_edge("bq_retrieve", "merge")
-    graph.add_edge("merge", "rerank")
-    graph.add_edge("rerank", "coverage_retry")
-    graph.add_conditional_edges("coverage_retry", route_after_rerank)
-    graph.add_conditional_edges("web_fallback", _route_after_web_fallback)
-    graph.add_edge("generate", "export")
-    graph.add_edge("export", END)
-    graph.add_edge("insufficient_context", END)
-    graph.add_edge("generate_meta", END)
-    graph.add_edge("generate_product", END)
-    graph.add_edge("generate_social", END)
-    graph.add_edge("generate_language_help", END)
-    graph.add_edge("generate_clarify", END)
+    graph.add_conditional_edges(
+        "decompose",
+        _route_after_decompose,
+        {
+            "generate_meta": "generate_meta",
+            "generate_product": "generate_product",
+            "generate_social": "generate_social",
+            "generate_language_help": "generate_language_help",
+            "generate_clarify": "generate_clarify",
+            "retrieve_legs": "retrieve_legs",
+        },
+    )
+    graph.add_conditional_edges(
+        "coverage_retry",
+        route_after_rerank,
+        {
+            "web_fallback": "web_fallback",
+            "generate": "generate",
+        },
+    )
+    graph.add_conditional_edges(
+        "web_fallback",
+        _route_after_web_fallback,
+        {
+            "generate": "generate",
+            "insufficient_context": "insufficient_context",
+        },
+    )
 
     return graph.compile()
 

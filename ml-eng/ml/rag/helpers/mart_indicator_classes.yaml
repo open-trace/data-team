@@ -152,7 +152,6 @@ classes:
       - dim_geography
       - dim_source
       - agg_production_country_year
-      - agg_production_country_season
     do_not_mix:
       - tables: [fct_production, fct_yield]
         reason: FAOSTAT country-year production vs FNID-season yield — never mix
