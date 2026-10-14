@@ -8,6 +8,7 @@ from ml.rag.chatbot.agri_measure_ontology import (
     MEASURES,
     MeasureHit,
     effective_tables,
+    query_locks_production,
     resolve_measures,
 )
 from ml.rag.chatbot.analytical_bq_plan import build_food_security_bq_plan
@@ -198,6 +199,8 @@ def _resolve_measure_ids(
             for h in hits[1:]:
                 if h.measure.id in declared or h.matched_alias.startswith("companion_of_"):
                     companion_ids.append(h.measure.id)
+    if query_locks_production(query, enriched):
+        primary_ids = ["production"] + [m for m in primary_ids if m != "production"]
     return primary_ids, companion_ids
 
 

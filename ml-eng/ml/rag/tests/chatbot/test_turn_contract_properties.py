@@ -6,10 +6,12 @@ from pathlib import Path
 import pytest
 import yaml
 
-from ml.rag.chatbot.agri_measure_ontology import resolve_measure
+from ml.rag.chatbot.agri_measure_ontology import MEASURES, MeasureHit, resolve_measure
 from ml.rag.chatbot.capability_registry import resolve_capability
 from ml.rag.chatbot.corpus_catalog import select_corpora
 from ml.rag.chatbot.facet_compiler import compile_turn_contract
+from ml.rag.chatbot.generation_plan import build_generation_plan
+from ml.rag.chatbot.ontology_context import sanitize_decomposition_for_bq
 from ml.rag.chatbot.query_decomposer import decompose_query
 from ml.rag.chatbot.task_mode import resolve_task_mode
 from ml.rag.chatbot.time_retrieval import time_kwargs_from_contract
@@ -58,14 +60,16 @@ def test_employment_served_academic_only() -> None:
     assert "policies" not in sel.active
 
 
-def test_employment_unsupported_grain_zero_vector() -> None:
+def test_employment_unsupported_grain_keeps_vector() -> None:
     contract = resolve_capability(
         TurnContract(measure_id="employment_share", geo_grain="admin2", job="list")
     )
-    assert contract.vector_policy == "none"
-    assert not contract.should_retrieve_vector()
-    items = [{"content": "Policy essay", "metadata": {"context_kind": "policy"}}]
-    assert typed_context_pack(items, contract) == []
+    assert contract.skip_bq is True
+    assert contract.skip_vector_retrieval is False
+    assert contract.should_retrieve_vector()
+    items = [{"content": "Academic essay", "metadata": {"context_kind": "academic"}}]
+    packed = typed_context_pack(items, contract)
+    assert any("Academic essay" in str(i.get("content") or "") for i in packed)
 
 
 def test_companion_pack_includes_narrative_when_bq_present() -> None:
@@ -207,6 +211,73 @@ def test_employment_sex_breakdown_compiles() -> None:
     assert contract.serve_status == "served"
     assert contract.sql_plan.get("template") == "employment_share_by_sex"
     assert contract.vector_policy == "companion"
+
+
+def test_yam_africa_ngo_declared_ipc_locks_production() -> None:
+    query = "how many countries produce yam in africa"
+    dec = {
+        "entities": ["food_security_ipc", "yam", "Africa", "nutrition"],
+        "domains": ["nutrition", "markets"],
+        "primary_measures": ["food_security_ipc"],
+        "geo_scope": "continent",
+        "africa_panel": True,
+        "job": "list",
+    }
+    ipc_hit = MeasureHit(MEASURES["food_security_ipc"], score=20, matched_alias="food_security_ipc")
+    cleaned = sanitize_decomposition_for_bq(dec, primary_measures=["food_security_ipc"], query=query)
+    assert cleaned["primary_measures"][0] == "production"
+    assert "food_security_ipc" not in {str(e).lower() for e in (cleaned.get("entities") or [])}
+    turn = resolve_capability(
+        compile_turn_contract(query, cleaned, measure_hit=ipc_hit, task_mode_hint="fact_lookup")
+    )
+    assert turn.measure_id == "production"
+    assert turn.serve_status == "served"
+    assert turn.skip_vector_retrieval is False
+
+
+def test_unsupported_measure_keeps_narrative_for_generate() -> None:
+    contract = TurnContract(
+        measure_id="food_security_ipc",
+        geo_grain="africa",
+        job="list",
+        serve_status="unsupported_measure",
+        skip_bq=True,
+        skip_vector_retrieval=False,
+        vector_policy="companion",
+    )
+    items = [
+        {
+            "content": "Yam is grown in West and Central Africa.",
+            "metadata": {"context_kind": "academic"},
+        }
+    ]
+    assert contract.should_retrieve_vector()
+    packed = typed_context_pack(items, contract)
+    assert packed
+    plan = build_generation_plan(
+        "how many countries produce yam in africa",
+        reranked_context=packed,
+        turn_contract=contract.to_dict(),
+        task_mode="fact_lookup",
+    )
+    assert plan.answer_shape != "gap_ack"
+
+
+def test_producer_prices_not_production() -> None:
+    query = "producer prices of maize in Kenya"
+    dec = {"entities": ["maize", "Kenya"], "primary_measures": ["market_price"]}
+    turn = compile_turn_contract(query, dec, task_mode_hint="fact_lookup")
+    assert turn.measure_id == "market_price"
+
+
+def test_should_retrieve_vector_numeric_policy_none() -> None:
+    contract = TurnContract(
+        measure_id="production",
+        job="fact",
+        serve_status="served",
+        vector_policy="none",
+    )
+    assert contract.should_retrieve_vector() is True
 
 
 def test_gold_traces_smoke() -> None:

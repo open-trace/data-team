@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 from ml.rag.chatbot.agri_entities import CROP_COMMODITY_TERMS
 from ml.rag.chatbot.agri_measure_ontology import decompose_measure_vocabulary
 from ml.rag.chatbot.geo_regions import decompose_region_vocabulary
-from ml.rag.chatbot.plan_policy import allows_cross_country, plan_generation_addendum
+from ml.rag.chatbot.plan_policy import allows_cross_country
 
 # Stakeholder insight intents (mirrored in query_decomposer for heuristics).
 INTENT_ALLOWED: tuple[str, ...] = (
@@ -192,9 +192,10 @@ def format_decompose_system_prompt() -> str:
         "- Never put literal words 'country' or 'countries' in the geography array.\n"
         "- Region labels (West Africa, ECOWAS, SADC) belong in geography or entities when the user names them.\n\n"
         "Grounding:\n"
-        "- Only emit geography and entities evidenced in the question (or conversation context when elliptical).\n"
+        "- Only emit geography, entities, and primary_measure_hints evidenced in the user sentence "
+        "(or conversation context when elliptical).\n"
         "- Crop alias normalization is allowed (e.g. user says paddy → entity rice).\n"
-        "- Do not invent countries or crops not supported by the text.\n\n"
+        "- Do not invent countries, crops, or measures. Plan tier and category must not invent measures.\n\n"
         f"intent must be EXACTLY one of: {intent_csv}\n{intent_block}\n\n"
         f"job must be EXACTLY one of: {job_csv}\n{job_block}\n\n"
         f"geo_scope must be EXACTLY one of: {geo_scope_csv}\n\n"
@@ -217,9 +218,6 @@ def format_decompose_user_prompt(
 
     if ctx.plan_type:
         blocks.append(f"Plan tier: {ctx.plan_type}")
-        addendum = plan_generation_addendum(ctx.plan_type)
-        if addendum:
-            blocks.append(addendum)
         if not allows_cross_country(ctx.plan_type):
             blocks.append(
                 "Plan constraint: prefer a single country in geography unless the user explicitly names a region or multiple countries."

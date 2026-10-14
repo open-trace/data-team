@@ -49,6 +49,9 @@ def test_compile_table_bind_contract_has_nomenclature() -> None:
     assert contract.time_column == "year"
     assert "TABLE:" in contract.nomenclature
     assert "country_iso3" in contract.nomenclature
+    assert "product_key = 'Rice'" not in contract.nomenclature
+    if contract.product_literals:
+        assert "PRODUCT: product_name" in contract.nomenclature
 
 
 def test_agg_production_annual_uses_time_key_not_year() -> None:

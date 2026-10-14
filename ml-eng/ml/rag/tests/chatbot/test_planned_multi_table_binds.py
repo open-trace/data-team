@@ -105,7 +105,24 @@ def test_prod_select_table_plans_panel_plus_companions() -> None:
     assert plans[0].table_id == "agg_production_country_year"
     assert plans[0].role == "panel"
     companion_ids = [p.table_id for p in plans if p.role == "companion"]
-    assert "agg_production_country_season" in companion_ids or len(plans) >= 1
+    assert "agg_production_country_season" not in companion_ids
+    assert plans[0].table_id == "agg_production_country_year"
+
+
+def test_prod_season_query_attaches_country_season() -> None:
+    q = "Kenya rice production by harvest season 2016"
+    dec = {
+        "geography": ["Kenya"],
+        "time_start": "2016-01-01",
+        "time_end": "2016-12-31",
+        "entities": ["rice"],
+        "primary_measures": ["production"],
+    }
+    bundles = match_intent_bundles(q, dec)
+    iso = resolve_geography_iso3(q, geography=dec.get("geography"))
+    card = load_schema_card("PROD") or {}
+    plans = select_table_plans("PROD", query=q, facets=dec, bundles=bundles, card=card, iso_list=iso)
+    assert any(p.table_id == "agg_production_country_season" for p in plans)
 
 
 def test_hdi_card_driven_taxonomy_companions() -> None:

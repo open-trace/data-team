@@ -120,10 +120,12 @@ def apply_vector_policy(
             contract.skip_bq = bool((entry or {}).get("skip_bq", True))
             contract.plan_type = "narrative"
             return
-        contract.vector_policy = "none"
-        contract.vector_allow = []
-        contract.vector_block = []
-        contract.skip_vector_retrieval = True
+        contract.vector_policy = "companion"
+        allow, block = measure_vector_lists(measure_id, policy="companion")
+        contract.vector_allow = allow
+        contract.vector_block = block
+        contract.skip_vector_retrieval = False
+        contract.skip_bq = True
         return
 
     if contract.serve_status == "served" and contract.job in NUMERIC_JOBS:
@@ -198,14 +200,11 @@ def _apply_unsupported_entry(contract: TurnContract, entry: dict[str, Any]) -> T
 
 def resolve_capability(contract: TurnContract) -> TurnContract:
     if contract.is_fail_closed():
-        contract.skip_vector_retrieval = True
-        contract.vector_policy = "none"
-        contract.vector_allow = []
-        contract.vector_block = []
         if contract.serve_status == "clarify":
             contract.plan_type = "gap"
         else:
             contract.plan_type = "unsupported"
+        apply_vector_policy(contract)
         return contract
 
     measure_id = contract.measure_id.strip().lower()

@@ -17,7 +17,7 @@ from ml.rag.chatbot.generator import (
     is_usable_structured_bq_row,
 )
 from ml.rag.chatbot.retrieval_contract import RetrievalContract
-from ml.rag.chatbot.turn_contract import NUMERIC_JOBS, TurnContract
+from ml.rag.chatbot.turn_contract import TurnContract
 from ml.rag.chatbot.stakeholder_prompts import (
     CategorySource,
     prose_register_for_persona,
@@ -555,19 +555,15 @@ def build_generation_plan(
 
     has_structured_numeric = any(is_usable_structured_bq_row(i) for i in usable)
     has_usable = bool(usable)
+    if (task_mode or "").strip().lower() == "research" and not has_structured_numeric:
+        use_contract_shape = False
 
-    numeric_fail_closed = (
-        tc.is_fail_closed()
-        and tc.serve_status != "clarify"
-        and tc.job in NUMERIC_JOBS
-        and not slot_reasoner
-    )
-    if not has_usable or numeric_fail_closed:
+    if not has_usable:
         evidence_tier: EvidenceTier = "empty"
         shape: AnswerShape = "gap_ack"
         output_type: OutputType = "insufficient"
         priority: tuple[str, ...] = ()
-        rationale = "gap_no_usable_context" if not has_usable else f"contract_{tc.serve_status}"
+        rationale = "gap_no_usable_context"
     else:
         evidence_tier = classify_evidence_tier(
             query,

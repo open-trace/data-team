@@ -7,6 +7,7 @@ import pytest
 
 from ml.rag.chatbot.class_engines.prod import ProdEngine
 from ml.rag.chatbot.class_supervisor import compile_supervisor_plan
+from ml.rag.chatbot.compile_sql_from_bind import bind_contract_for_table, compile_sql_from_bind
 from ml.rag.chatbot.graph import node_bq_reason
 from ml.rag.retrievers.bq_retriever import BQRetriever
 
@@ -22,6 +23,22 @@ _DECOMPOSE = {
     "time_end": "2016-12-31",
     "domains": ["agriculture"],
 }
+
+
+def test_bind_contract_lookup_is_case_insensitive() -> None:
+    bind = {
+        "agg_production_country_year": {
+            "table_id": "agg_production_country_year",
+            "required_filters_sql": "country_iso3 = 'KEN' AND year = 2016",
+            "measure_columns": ["production_qty"],
+        }
+    }
+    found = bind_contract_for_table(bind, "Agg_Production_Country_Year")
+    assert found is bind["agg_production_country_year"]
+    sql = compile_sql_from_bind(found, project_id="proj", dataset="mart_dev", limit=1)
+    assert sql is not None
+    assert "country_iso3 = 'KEN'" in sql
+    assert "year = 2016" in sql
 
 
 def test_prod_engine_binds_rice_not_production_measure() -> None:
@@ -59,11 +76,21 @@ def test_node_bq_reason_planned_path_no_engine_sql(monkeypatch: pytest.MonkeyPat
     assert not plan.get("bq_sql_queries")
 
 
-def test_kenya_rice_retrieve_nl2sql_only() -> None:
-    good_sql = (
-        "SELECT production_qty FROM `proj.mart_dev.agg_production_country_year` "
-        "WHERE country_iso3 = 'KEN' AND year = 2016 LIMIT 1"
-    )
+def test_prod_engine_kenya_rice_binds_year_table_only() -> None:
+    facets = {
+        **_DECOMPOSE,
+        "entity_roles": {"item": ["Rice Total"], "season": ["Rice season"]},
+    }
+    result = ProdEngine().run_plan(_QUERY, facets=facets, card=None)
+    assert result.status == "planned"
+    assert result.table_id == "agg_production_country_year"
+    assert list(result.bind_contracts) == ["agg_production_country_year"]
+    nom = str((result.bind_contract or {}).get("nomenclature") or "")
+    assert "product_name = 'Rice'" in nom or "product_name =" in nom
+    assert "product_key = 'Rice'" not in nom
+
+
+def test_kenya_rice_retrieve_compiles_from_bind() -> None:
     bind = {
         "agg_production_country_year": {
             "table_id": "agg_production_country_year",
@@ -82,7 +109,7 @@ def test_kenya_rice_retrieve_nl2sql_only() -> None:
     client = mock.MagicMock()
     client.query.return_value.result.return_value = [{"production_qty": 100}]
 
-    with mock.patch.object(retriever, "_nl_to_sql_queries", return_value=[good_sql]) as nl2sql_fn:
+    with mock.patch.object(retriever, "_nl_to_sql_queries") as nl2sql_fn:
         with mock.patch.object(retriever, "_get_client", return_value=client):
             with mock.patch("ml.rag.retrievers.bq_retriever.dry_run_sql", return_value=None):
                 with mock.patch("ml.rag.retrievers.bq_retriever.try_sql_template") as template_fn:
@@ -102,5 +129,5 @@ def test_kenya_rice_retrieve_nl2sql_only() -> None:
 
     template_fn.assert_not_called()
     pattern_fn.assert_not_called()
-    nl2sql_fn.assert_called_once()
-    assert any((it.get("metadata") or {}).get("sql_source") == "nl2sql" for it in items)
+    nl2sql_fn.assert_not_called()
+    assert any((it.get("metadata") or {}).get("sql_source") == "bind_compiler" for it in items)

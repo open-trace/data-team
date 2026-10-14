@@ -4,8 +4,7 @@ from __future__ import annotations
 import re
 from typing import Any
 
-from ml.rag.chatbot.agri_entities import query_has_crop_or_commodity
-from ml.rag.chatbot.agri_measure_ontology import MEASURES, MeasureHit, MeasureSpec
+from ml.rag.chatbot.agri_measure_ontology import MEASURES, MeasureHit, MeasureSpec, query_locks_production
 from ml.rag.chatbot.intent_bundles import (
     MatchedBundle,
     bundle_primary_measure,
@@ -127,8 +126,6 @@ def compile_time_spec(query: str, decomposition: dict[str, Any] | None) -> TimeS
     if _HISTORICAL_RE.search(ql) and (ts or te):
         time_role = "historical"
         hard_filter = True
-    if dec.get("africa_panel"):
-        grain = "panel"
 
     return TimeSpec(
         start=ts,
@@ -276,6 +273,9 @@ def compile_measure(
         if _AGRICULTURE_SECTOR_RE.search(q):
             sector = "agriculture"
         return "employment_share", sector
+    dec = decomposition if isinstance(decomposition, dict) else {}
+    if query_locks_production(q, dec):
+        return "production", sector
     if measure_hit is not None:
         mid = measure_hit.measure.id
         if bundles_block_primary(mid, bundles) and bundle_measures:
@@ -291,9 +291,6 @@ def compile_measure(
         if re.search(r"\bgdp\b", q, re.I):
             return "gdp", sector
         return mid, sector
-    dec = decomposition if isinstance(decomposition, dict) else {}
-    if re.search(r"\b(produc(?:e|es|tion))\b", q, re.I) and query_has_crop_or_commodity(q, dec):
-        return "production", sector
     raw_pm = dec.get("primary_measures")
     if isinstance(raw_pm, list) and raw_pm:
         mid = str(raw_pm[0]).strip()

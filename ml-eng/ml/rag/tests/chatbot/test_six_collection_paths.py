@@ -18,6 +18,14 @@ def _hit(doc_kind: str, content: str = "chunk") -> dict[str, Any]:
     }
 
 
+def test_full_rag_fans_out_vector_and_bq() -> None:
+    compiled = graph_mod.build_graph()
+    edges = {(e.source, e.target) for e in compiled.get_graph().edges}
+    assert ("parallel_retrieve", "bq_reason") not in edges
+    assert ("retrieve_legs", "merge") in edges
+    assert ("decompose", "retrieve_legs") in edges
+
+
 def test_chunking_aliases_cover_six_collections() -> None:
     assert COLLECTION_ALIASES["news_data"] == "news"
     assert COLLECTION_ALIASES["academic_papers"] == "research"
