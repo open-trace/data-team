@@ -126,6 +126,8 @@ def compile_time_spec(query: str, decomposition: dict[str, Any] | None) -> TimeS
     if _HISTORICAL_RE.search(ql) and (ts or te):
         time_role = "historical"
         hard_filter = True
+    if str(dec.get("time_source") or "") == "ui":
+        hard_filter = False
 
     return TimeSpec(
         start=ts,

@@ -55,7 +55,11 @@ def plan_vector_corpora_for_reasoner(
             if preferred not in active:
                 active.append(preferred)
 
-    hard_time = bool(contract.time_spec.hard_filter or dec.get("time_start") or dec.get("time_end"))
+    ui_time = str(dec.get("time_source") or "") == "ui"
+    if ui_time:
+        hard_time = bool(contract.time_spec.hard_filter)
+    else:
+        hard_time = bool(contract.time_spec.hard_filter or dec.get("time_start") or dec.get("time_end"))
 
     return {
         "active_corpora": active,

@@ -31,6 +31,14 @@ def test_cross_country_only_agribusiness_and_integrated() -> None:
     assert allows_cross_country("Integrated")
 
 
+def test_single_country_policy_off_allows_every_plan() -> None:
+    from ml.rag.chatbot.plan_policy import plan_allows_cross_country
+
+    assert plan_allows_cross_country("Farmers")
+    assert plan_allows_cross_country("Free")
+    assert plan_allows_cross_country("Government")
+
+
 def test_export_only_agribusiness_and_integrated() -> None:
     from ml.rag.chatbot.plan_policy import allows_export
 
@@ -39,14 +47,27 @@ def test_export_only_agribusiness_and_integrated() -> None:
     assert not allows_export("NGOs")
 
 
-def test_decomposition_clamps_geography_for_government() -> None:
+def test_decomposition_keeps_query_countries_when_policy_off() -> None:
     dec = {
         "intent": "compare",
         "geography": ["Nigeria", "Ghana"],
         "time_start": "2010",
         "time_end": "2024",
     }
-    out = apply_plan_decomposition_gates(dec, "Government", "Nigeria")
+    out = apply_plan_decomposition_gates(dec, "Government", "Kenya")
+    assert out["geography"] == ["Nigeria", "Ghana"]
+    assert out["intent"] == "compare"
+
+
+def test_decomposition_clamps_to_query_country_when_policy_on(monkeypatch) -> None:
+    monkeypatch.setenv("ADZA_SINGLE_COUNTRY_POLICY", "true")
+    dec = {
+        "intent": "compare",
+        "geography": ["Nigeria", "Ghana"],
+        "time_start": "2010",
+        "time_end": "2024",
+    }
+    out = apply_plan_decomposition_gates(dec, "Government", "Kenya")
     assert out["geography"] == ["Nigeria"]
     assert out["intent"] == "descriptive"
 
@@ -58,10 +79,18 @@ def test_decomposition_allows_multi_country_for_agribusiness() -> None:
     assert out["intent"] == "compare"
 
 
-def test_free_prefers_profile_country() -> None:
+def test_free_keeps_query_countries_when_policy_off() -> None:
     dec = {"intent": "compare", "geography": ["Nigeria", "Ghana"]}
     out = apply_plan_decomposition_gates(dec, "Free", "Ghana")
-    assert out["geography"] == ["Ghana"]
+    assert out["geography"] == ["Nigeria", "Ghana"]
+    assert out["intent"] == "descriptive"
+
+
+def test_free_flag_on_prefers_query_country_over_profile(monkeypatch) -> None:
+    monkeypatch.setenv("ADZA_SINGLE_COUNTRY_POLICY", "true")
+    dec = {"intent": "compare", "geography": ["Nigeria", "Ghana"]}
+    out = apply_plan_decomposition_gates(dec, "Free", "Ghana")
+    assert out["geography"] == ["Nigeria"]
     assert out["intent"] == "descriptive"
 
 
