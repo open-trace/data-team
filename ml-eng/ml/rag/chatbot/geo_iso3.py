@@ -27,6 +27,17 @@ def name_to_iso3(label: str) -> str | None:
     return _NAME_TO_ISO3.get(raw.casefold())
 
 
+def iso3_to_canonical_name(iso3: str) -> str | None:
+    """Canonical Africa gazetteer name for an ISO3 code."""
+    iso = (iso3 or "").strip().upper()
+    if not iso:
+        return None
+    for name, code in _AFRICA_COUNTRY_ISO3.items():
+        if code == iso:
+            return name
+    return None
+
+
 def resolve_geography_iso3(
     query: str,
     *,
@@ -109,6 +120,7 @@ def validate_sql_country_iso3_subset(
 
 
 __all__ = [
+    "iso3_to_canonical_name",
     "name_to_iso3",
     "resolve_geography_iso3",
     "infer_country_iso3_from_query",

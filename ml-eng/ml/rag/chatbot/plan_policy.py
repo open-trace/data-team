@@ -72,7 +72,24 @@ def is_valid_plan_type(plan_type: str) -> bool:
 
 
 def allows_cross_country(plan_type: str | None) -> bool:
+    """Static tier set. Retrieval gates use ``plan_allows_cross_country``."""
     return (plan_type or "").strip() in _CROSS_COUNTRY_PLANS
+
+
+def single_country_policy_enabled() -> bool:
+    """True only when ``ADZA_SINGLE_COUNTRY_POLICY`` is explicitly on. Default off."""
+    return os.getenv("ADZA_SINGLE_COUNTRY_POLICY", "false").strip().lower() == "true"
+
+
+def plan_allows_cross_country(plan_type: str | None) -> bool:
+    """Whether this turn may keep every country the query named.
+
+    The flag defaults off, so every plan keeps query geography. When it is on,
+    only Agribusinesses and Integrated stay multi-country.
+    """
+    if not single_country_policy_enabled():
+        return True
+    return allows_cross_country(plan_type)
 
 
 def allows_export(plan_type: str | None) -> bool:
@@ -124,13 +141,14 @@ def _pick_single_country(
     geography: list[Any],
     profile_country: str | None,
 ) -> list[str]:
-    country = (profile_country or "").strip()
-    if country:
-        return [country]
+    """Query country wins. Profile is only the fallback when the query named none."""
     for g in geography:
         s = str(g).strip()
         if s:
             return [s]
+    country = (profile_country or "").strip()
+    if country:
+        return [country]
     return []
 
 
@@ -155,10 +173,19 @@ def apply_plan_decomposition_gates(
         or out.get("africa_panel")
         or out.get("expanded_regions")
     )
-    if not allows_cross_country(plan_type) and not preserve_multi:
+    if not plan_allows_cross_country(plan_type) and not preserve_multi:
+        # Lazy import: geo_policy imports this module for the feature flag.
+        from ml.rag.chatbot.geo_policy import sanitize_profile_country
+
         geo = out.get("geography")
         geo_list = geo if isinstance(geo, list) else []
-        out["geography"] = _pick_single_country(geo_list, profile_country)
+        had_query_geo = any(str(g).strip() for g in geo_list)
+        safe_profile = sanitize_profile_country(profile_country)
+        out["geography"] = _pick_single_country(geo_list, safe_profile)
+        if out["geography"] and not had_query_geo:
+            out["geography_source"] = "profile"
+        elif had_query_geo:
+            out["geography_source"] = "query"
         if str(out.get("intent") or "").strip().lower() == "compare":
             out["intent"] = "descriptive"
 
@@ -247,6 +274,8 @@ __all__ = [
     "PLAN_TYPES",
     "allows_cross_country",
     "allows_export",
+    "plan_allows_cross_country",
+    "single_country_policy_enabled",
     "apply_category_domain_hints",
     "apply_plan_decomposition_gates",
     "default_category_for_plan",

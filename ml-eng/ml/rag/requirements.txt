@@ -42,5 +42,8 @@ streamlit>=1.28.0
 # Language identification (CommonLingua byte-level model; torch already present)
 commonlid[commonlingua]
 
+# Date phrases our rules do not claim (English, French, Portuguese). Local only.
+dateparser>=1.2,<2
+
 # Already in repo requirements.txt; listed here for standalone install
 google-cloud-bigquery>=3.14.0

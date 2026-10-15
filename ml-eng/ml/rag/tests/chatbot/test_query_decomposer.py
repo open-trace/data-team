@@ -18,17 +18,19 @@ def test_nigeria_not_niger() -> None:
 
 def test_since_year_till_now_open_range() -> None:
     q = "whats the trend of rice production in nigeria since 2015 till now"
-    ts, te = _extract_year_range(q)
+    ref = date(2026, 10, 14)
+    ts, te = _extract_year_range(q, ref)
     assert ts == "2015-01-01"
-    assert te == date.today().isoformat()
+    assert te == ref.isoformat()
 
 
 def test_decompose_since_till_now_not_single_calendar_year() -> None:
     q = "whats the trend of rice production in nigeria since 2015 till now"
-    dec = decompose_query(q)
+    ref = date(2026, 10, 14)
+    dec = decompose_query(q, use_llm=False, reference_date=ref)
     assert dec["geography"] == ["Nigeria"]
     assert dec["time_start"] == "2015-01-01"
-    assert dec["time_end"] == date.today().isoformat()
+    assert dec["time_end"] == ref.isoformat()
     assert dec["time_end"] != "2015-12-31"
 
 
@@ -53,9 +55,10 @@ def test_two_explicit_years() -> None:
 
 
 def test_past_n_years() -> None:
-    ts, te = _extract_year_range("yields over the past 5 years in ghana")
-    assert ts is not None and te is not None
-    assert ts[:4] == str(date.today().year - 5)
+    ref = date(2026, 10, 14)
+    ts, te = _extract_year_range("yields over the past 5 years in ghana", ref)
+    assert ts == "2021-10-14"
+    assert te == "2026-10-14"
 
 
 if __name__ == "__main__":
