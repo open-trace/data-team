@@ -17,8 +17,6 @@ from ml.rag.chatbot.graph import _apply_ui_scope_overrides
 from ml.rag.chatbot.plan_policy import apply_plan_decomposition_gates, plan_allows_cross_country
 from ml.rag.chatbot.query_decomposer import (
     _extract_countries,
-    _extract_year_range,
-    _is_open_ended_time,
     resolve_retrieval_geographies,
 )
 from ml.rag.chatbot.query_normalize import normalize_query_text
@@ -87,12 +85,20 @@ def test_farmers_does_not_force_single_country_by_default() -> None:
     assert out["intent"] == "compare"
 
 
-def test_current_does_not_invent_a_date_or_accept_ui_time() -> None:
-    assert _is_open_ended_time(_QUERY) is True
-    assert _extract_year_range(_QUERY) == (None, None)
+def test_current_resolves_a_window_and_ignores_screen_dates() -> None:
+    from datetime import date
+
+    from ml.rag.chatbot.time_resolver import resolve_relative_time
+
+    ref = date(2026, 10, 14)
+    windows = resolve_relative_time(_QUERY, ref)
+    assert len(windows) == 1
+    assert windows[0].start == date(2026, 1, 1)
+    assert windows[0].end == ref
+    assert windows[0].strict is False
     out = _apply_ui_scope_overrides(
         {"geography": ["Nigeria"], "geography_source": "query"},
-        {"query": _QUERY, "time_start_override": "2024-04-05", "geo_override": "Albania"},
+        {"query": _QUERY, "time_start_override": "2024-04-05", "time_end_override": "2024-04-05", "geo_override": "Albania", "reference_date": ref.isoformat()},
     )
     assert out["geography"] == ["Nigeria"]
     assert "time_start" not in out

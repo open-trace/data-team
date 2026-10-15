@@ -12,6 +12,8 @@ from dataclasses import dataclass
 from datetime import date
 from typing import Any, Literal
 
+from ml.rag.chatbot.time_resolver import parse_iso_date, time_gap_sentence, utc_today
+
 from ml.rag.llm_chat import (
     answer_was_length_capped,
     llm_chat_complete,
@@ -410,7 +412,7 @@ def _current_date_block(reference_date: date | None = None) -> str:
     module-level constant would freeze the date at import and go stale on a
     long-running Railway process.
     """
-    today = reference_date or date.today()
+    today = reference_date or utc_today()
     return (
         f"\n\nCURRENT DATE: Today is {today.isoformat()} (year {today.year}). "
         f"Ground every time-sensitive statement in this date: an event before "
@@ -937,9 +939,77 @@ def _historical_year_window(
         return None
     if start > end:
         start, end = end, start
-    if end >= date.today().year:
+    ref = parse_iso_date(str(decomposition.get("reference_date") or "")) or utc_today()
+    if end >= ref.year:
         return None
     return start, end
+
+
+def note_time_fallback(
+    decomposition: dict[str, Any] | None,
+    items: list[dict[str, Any]] | None,
+) -> None:
+    """When cited evidence is outside the requested window, record both ranges."""
+    if not isinstance(decomposition, dict) or decomposition.get("time_fallback"):
+        return
+    start = parse_iso_date(str(decomposition.get("time_start") or ""))
+    end = parse_iso_date(str(decomposition.get("time_end") or ""))
+    if start is None or end is None:
+        return
+    evidence: list[date] = []
+    for item in items or []:
+        meta = _item_metadata(item)
+        found: date | None = None
+        for key in ("as_of_date", "published_at", "date", "year"):
+            raw = str(meta.get(key) or "").strip()
+            if len(raw) >= 10 and raw[4] == "-":
+                found = parse_iso_date(raw[:10])
+            elif len(raw) >= 4 and raw[:4].isdigit():
+                year = int(raw[:4])
+                if 1900 <= year <= 2100:
+                    found = date(year, 1, 1)
+            if found is not None:
+                break
+        if found is not None:
+            evidence.append(found)
+    if not evidence or any(start <= day <= end for day in evidence):
+        return
+    latest = max(evidence)
+    if latest.month == 1 and latest.day == 1:
+        used_start, used_end = date(latest.year, 1, 1), date(latest.year, 12, 31)
+    else:
+        used_start = used_end = latest
+    phrase = str(decomposition.get("time_phrase") or "that period")
+    decomposition["time_fallback"] = {
+        "requested": {"start": start.isoformat(), "end": end.isoformat(), "phrase": phrase},
+        "used": {"start": used_start.isoformat(), "end": used_end.isoformat()},
+    }
+
+
+def _prepend_time_gap(answer: str, decomposition: dict[str, Any] | None) -> str:
+    if not isinstance(decomposition, dict):
+        return answer
+    fallback = decomposition.get("time_fallback")
+    if not isinstance(fallback, dict):
+        return answer
+    requested = fallback.get("requested") if isinstance(fallback.get("requested"), dict) else {}
+    used = fallback.get("used") if isinstance(fallback.get("used"), dict) else {}
+    req_start = parse_iso_date(str(requested.get("start") or ""))
+    req_end = parse_iso_date(str(requested.get("end") or ""))
+    used_start = parse_iso_date(str(used.get("start") or ""))
+    used_end = parse_iso_date(str(used.get("end") or ""))
+    if not (req_start and req_end and used_start and used_end):
+        return answer
+    sentence = time_gap_sentence(
+        str(requested.get("phrase") or "that period"),
+        (req_start, req_end),
+        (used_start, used_end),
+        forecast=bool(decomposition.get("time_forecast")),
+    )
+    if sentence in answer:
+        return answer
+    body = (answer or "").strip()
+    return f"{sentence}\n\n{body}" if body else sentence
 
 
 def prefer_in_window_narrative(
@@ -2169,6 +2239,7 @@ def _finalize_generation_result(
     # ML-055: single funnel for successful answers -- catch degenerate/looping
     # non-English output here before it reaches the user (Sprint 2 P0).
     answer = _guard_degenerate_language_output(answer, query)
+    answer = _prepend_time_gap(answer, decomposition)
     # ML-054: single funnel for successful answers -- flag a max_tokens cut-off
     # here so no caller can return a silently truncated answer.
     answer = _append_truncation_notice(answer)
@@ -2652,6 +2723,7 @@ def generate(
     if not source_registry and usable_context:
         source_registry = _registry_from_context_items(usable_context)
     source_kinds = [normalize_context_kind(item) for item in usable_context]
+    note_time_fallback(decomposition, usable_context)
 
     messages = _build_prompt(
         query,
@@ -2679,6 +2751,7 @@ def generate(
         evidence_tier=evidence_tier,
         yield_only=yield_only,
         composer_addendum=composer_addendum,
+        reference_date=parse_iso_date(str((decomposition or {}).get("reference_date") or "")) or utc_today(),
     )
     gen_max = _generate_max_tokens(task_mode)
     input_chars = sum(len(str(m.get("content") or "")) for m in messages)

@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass, field
-from datetime import date
+from ml.rag.chatbot.time_resolver import parse_iso_date, utc_today
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
@@ -112,7 +112,8 @@ class DecomposeContext:
     geo_override: str = ""
     time_start_override: str = ""
     time_end_override: str = ""
-    today_iso: str = field(default_factory=lambda: date.today().isoformat())
+    today_iso: str = field(default_factory=lambda: utc_today().isoformat())
+    time_resolution_note: str = ""
 
     @classmethod
     def from_query(cls, query: str) -> DecomposeContext:
@@ -150,6 +151,8 @@ class DecomposeContext:
                 context_applied = True
         profile = state.get("user_profile") if isinstance(state.get("user_profile"), dict) else {}
         category = str(state.get("category") or (profile or {}).get("category") or "").strip()
+        ref_raw = str(state.get("reference_date") or "").strip()[:10]
+        today_iso = ref_raw if parse_iso_date(ref_raw) else utc_today().isoformat()
         return cls(
             query=raw_q,
             original_query=raw_q,
@@ -164,6 +167,7 @@ class DecomposeContext:
             geo_override=str(state.get("geo_override") or "").strip(),
             time_start_override=str(state.get("time_start_override") or "").strip()[:10],
             time_end_override=str(state.get("time_end_override") or "").strip()[:10],
+            today_iso=today_iso,
         )
 
 
@@ -204,8 +208,9 @@ def format_decompose_system_prompt() -> str:
         "  intent, job, entities, geography, domains, geo_scope,\n"
         "  primary_measure_hints, time_start, time_end,\n"
         "  africa_panel (boolean, optional), africa_default (boolean, optional)\n\n"
-        "Use time_end = today's date when the question says till now, to date, until now, "
-        "or since YEAR with no fixed end year. Use empty time_start/time_end when no time is implied.\n"
+        "Use time_start and time_end from the user message when it states that a time phrase "
+        "resolves to a start..end. Use exactly those dates; do not invent other dates. "
+        "Use empty time_start/time_end when no time is implied.\n"
         "No markdown, no extra keys."
     )
 
@@ -215,6 +220,8 @@ def format_decompose_user_prompt(
     provisional: dict[str, Any] | None,
 ) -> str:
     blocks: list[str] = [f"Today's date: {ctx.today_iso}"]
+    if ctx.time_resolution_note:
+        blocks.append(ctx.time_resolution_note)
 
     if ctx.plan_type:
         blocks.append(f"Plan tier: {ctx.plan_type}")
@@ -237,7 +244,9 @@ def format_decompose_user_prompt(
     if ctx.time_end_override:
         ui_parts.append(f"time_end={ctx.time_end_override}")
     if ui_parts:
-        blocks.append("UI scope (authoritative when set): " + "; ".join(ui_parts))
+        blocks.append(
+            "Screen dates (used only when the question names no time): " + "; ".join(ui_parts)
+        )
 
     if ctx.conversation_summary:
         blocks.append(f"Conversation summary:\n{ctx.conversation_summary[:1200]}")

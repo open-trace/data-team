@@ -60,28 +60,42 @@ If verifiers are configured (`.agent/context/loops.md`, fallback `docs/agents/lo
 
 ### 5. Rank, decide, report
 
-Label and rank every finding using [FINDINGS-FORMAT.md](FINDINGS-FORMAT.md). Severity order: `blocker` > `major` > `minor` > `nit`. Every finding needs a location (`file:line`) and evidence (a quote of the rule, the spec line, or the code). No evidence, no finding: downgrade it to a `question`.
+Label and rank every finding using [FINDINGS-FORMAT.md](FINDINGS-FORMAT.md). Severity order: `blocker` > `major` > `minor` > `nit`. Every finding needs a location (`file:line` in the post-change file) and evidence (a quote of the rule, the spec line, or the code). No evidence, no finding: downgrade it to a `question`.
+
+**Verify every location before citing it.** Open the post-change file and confirm the quoted code is on that line (`grep -n '<snippet>' <file>`, or read the file at that line). Use the working tree or `git show HEAD:<file>`. If you only have a `.diff`, apply it to a temp copy first (`git apply` or `patch -p1`) and look up the line there. Never cite a line's position inside the diff text. If you can't verify a line, cite the hunk (`file @@ +start,len`) and write `line unverified`. Don't guess.
 
 **Verdict:**
 - **FAIL** if any `blocker`, or any `major` on Spec or Security.
 - **PASS WITH NOTES** if only `major` (Standards/Design), `minor`, or `nit`.
 - **PASS** if nothing above `nit`.
 
-Report layout (fixed, so loops can parse it):
+**Every finding must use this exact layout. No bullet or prose findings.** Copy it as is:
+
+```
+<label> (<severity>[, <axis-tag>]): <subject> — `path/to/file.ts:42`
+
+<evidence: quoted rule, spec line, or code>
+<why it matters, one or two sentences>
+<suggested fix>
+```
+
+`<label>` is `issue`, `suggestion`, `question`, `nitpick`, or `praise` (see [FINDINGS-FORMAT.md](FINDINGS-FORMAT.md)). `<severity>` is `blocker`, `major`, `minor`, or `nit`. Leave one blank line between findings.
+
+Report skeleton (fixed, so loops can parse it):
 
 ```markdown
 ## Verdict: FAIL | PASS WITH NOTES | PASS
 Base: <ref> (<sha>) · <N> files, +A/-D · Spec: <source or "none">
 
 ## Standards
-<findings, worst first>
+<findings in the template above, worst first, or "None.">
 
 ## Spec
 Requirements: <met>/<total>
-<findings, worst first>
+<findings in the template above, worst first, or "None.">
 
 ## Checks (correctness · security · tests · design)
-<findings, worst first>
+<findings in the template above, worst first, or "None.">
 
 ## Praise
 <at least one sincere, specific thing done well; omit if there honestly is none>
@@ -93,7 +107,15 @@ Next: <the one change that would flip the verdict, if FAIL>
 
 Keep the axes separate in the summary: worst finding per axis, never a single overall winner.
 
-### 6. Gate mode (inside loops)
+### 6. Self-check, then output
+
+Before you output the report, check every finding:
+- **Layout:** it matches the template exactly (label line, then evidence). Rewrite any bullet or prose finding.
+- **Location:** its `file:line` was verified in step 5, or it is marked `line unverified`.
+- **Severity:** the severity is justified by concrete evidence: a quoted spec line or standard, or code that shows actual harm. A finding that rests on an assumption ("only correct if…", "might be…") has no evidence of harm. Downgrade it to `question` (`minor`), or drop it.
+- **Verdict:** the verdict follows the rules in step 5 from the severities that remain.
+
+### 7. Gate mode (inside loops)
 
 When called from `/implement`, `agent-loop`, or `/until-done`:
 
@@ -102,7 +124,7 @@ When called from `/implement`, `agent-loop`, or `/until-done`:
 - Stop rules from `agent-loop`'s STOP-RULES still apply. The same `blocker` surviving 2 fix attempts counts as no progress: stop and brief the human.
 - Never push, merge, approve, or post review comments to a remote without explicit approval. The output is a local report.
 
-### 7. Log to the vault (optional)
+### 8. Log to the vault (optional)
 
 If `.agent/context/knowledge-vault.md` exists (fallback `docs/agents/knowledge-vault.md`) and the review surfaced a **decision** (a tradeoff accepted, a rule clarified, a spec ambiguity resolved), write a short decision trace to vault `Decision Traces/` using the template from `/setup-knowledge-vault`, linking the branch/PR and the finding. Routine nits never go to the vault.
 
@@ -113,3 +135,5 @@ If `.agent/context/knowledge-vault.md` exists (fallback `docs/agents/knowledge-v
 - Not a style preference engine. Unwritten preferences are `nit (non-blocking)` at most.
 
 See [examples/](examples/) for a worked spec, diff, and the expected report. Research behind the design: [REFERENCES.md](REFERENCES.md).
+
+**Vault:** when this finishes, update the vault per the `## Vault write-back` block in `AGENTS.md`/`CLAUDE.md`, or run `/vault-sync`.

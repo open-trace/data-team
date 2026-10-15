@@ -4,6 +4,10 @@ from __future__ import annotations
 import re
 from typing import Any
 
+from datetime import date
+
+from ml.rag.chatbot.time_resolver import parse_iso_date, resolve_relative_time, utc_today
+
 from ml.rag.chatbot.bq_table_schema_yaml import (
     columns_for_mart_tables,
     compile_product_filter_sql,
@@ -126,11 +130,20 @@ _CROP_ALIASES: tuple[tuple[str, str], ...] = (
 )
 
 
+def _ref_from_bounds(time_start: str | None, time_end: str | None) -> date:
+    for raw in (time_end, time_start):
+        parsed = parse_iso_date(str(raw or ""))
+        if parsed is not None:
+            return parsed
+    return utc_today()
+
+
 def _year_from_context(
     *,
     time_start: str | None,
     time_end: str | None,
     query: str,
+    reference_date: date | None = None,
 ) -> int | None:
     for raw in (time_start, time_end):
         if not raw:
@@ -141,6 +154,10 @@ def _year_from_context(
     m = _YEAR_RE.search(query or "")
     if m:
         return int(m.group(0))
+    ref = reference_date or _ref_from_bounds(time_start, time_end)
+    windows = resolve_relative_time(query or "", ref)
+    if windows:
+        return max(w.end.year for w in windows)
     return None
 
 
@@ -150,8 +167,13 @@ def _has_recency_anchor(
     time_start: str | None = None,
     time_end: str | None = None,
     entities: list[str] | None = None,
+    reference_date: date | None = None,
 ) -> bool:
     blob = _blob(query, entities)
+    ref = reference_date or _ref_from_bounds(time_start, time_end)
+    windows = resolve_relative_time(blob, ref)
+    if windows and any(not w.strict for w in windows):
+        return True
     if _RECENCY_RE.search(blob):
         return True
     for raw in (time_start, time_end):

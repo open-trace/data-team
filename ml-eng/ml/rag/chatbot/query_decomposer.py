@@ -14,6 +14,14 @@ import time
 from datetime import date
 from typing import Any
 
+from ml.rag.chatbot.time_resolver import (
+    TimeWindow,
+    parse_iso_date,
+    resolve_relative_time,
+    retrieval_envelope,
+    utc_today,
+)
+
 from ml.rag.llm_chat import llm_chat_complete, llm_model_id
 from ml.rag.chatbot.decompose_context import (
     DECOMPOSE_MEASURE_HINTS,
@@ -33,6 +41,7 @@ from ml.rag.chatbot.continental_scope import (
     wants_africa_default_scope as _continental_wants_default,
     wants_africa_panel_scope as _continental_wants_panel,
 )
+from ml.rag.chatbot.geo_iso3 import infer_country_iso3_from_query
 from ml.rag.chatbot.geo_regions import all_non_country_geo_labels
 from ml.rag.observability import trace_elapsed_ms
 
@@ -332,82 +341,26 @@ def resolve_retrieval_geographies(
     return [override]
 
 
-def _is_open_ended_time(text: str) -> bool:
-    """True when the query asks for a range ending at the present (not a fixed year)."""
-    tl = (text or "").lower()
-    patterns = (
-        r"\btill\s+now\b",
-        r"\buntil\s+now\b",
-        r"\bto\s+date\b",
-        r"\bto\s+present\b",
-        r"\bup\s+to\s+now\b",
-        r"\bas\s+of\s+now\b",
-        r"\bpresent\s+day\b",
-        r"\bcurrently\b",
-        r"\bcurrent\b",
-        r"\bnow\b",
-    )
-    return any(re.search(p, tl) for p in patterns)
+def _resolution_note(windows: list[TimeWindow]) -> str:
+    lines = []
+    for window in windows:
+        lines.append(
+            f"The user's time phrase '{window.phrase}' resolves to "
+            f"{window.start.isoformat()}..{window.end.isoformat()}. "
+            "Use exactly these dates; do not invent other dates."
+        )
+    return " ".join(lines)
 
 
-def _extract_since_year(text: str) -> int | None:
-    """Parse 'since 2015', 'from 2013', 'starting 2020'."""
-    m = re.search(
-        r"\b(?:since|from|starting|after)\s+(?:the\s+)?(?:year\s+)?((?:19|20)\d{2})\b",
-        (text or "").lower(),
-    )
-    if not m:
-        return None
-    return int(m.group(1))
-
-
-def _extract_relative_year_range(text: str) -> tuple[str | None, str | None]:
-    """Parse 'past 7 years', 'last 5 years', etc."""
-    m = re.search(r"\b(?:past|last)\s+(\d{1,2})\s+years?\b", (text or "").lower())
-    if not m:
+def _extract_year_range(
+    text: str,
+    ref_date: date | None = None,
+) -> tuple[str | None, str | None]:
+    """Single window as ISO dates. Two compared windows are not merged."""
+    windows = resolve_relative_time(text or "", ref_date or utc_today())
+    if len(windows) != 1:
         return None, None
-    n = max(1, min(50, int(m.group(1))))
-    end = date.today()
-    start = date(end.year - n, end.month, min(end.day, 28))
-    return start.isoformat(), end.isoformat()
-
-
-def _extract_year_range(text: str) -> tuple[str | None, str | None]:
-    """Return (start_iso, end_iso) as YYYY-MM-DD or (None, None)."""
-    rel_start, rel_end = _extract_relative_year_range(text)
-    if rel_start and rel_end:
-        return rel_start, rel_end
-
-    today = date.today().isoformat()
-    tl = (text or "").lower()
-    open_ended = _is_open_ended_time(text)
-    since_y = _extract_since_year(text)
-
-    if since_y is not None:
-        start = f"{since_y}-01-01"
-        end = today if open_ended else None
-        if end:
-            return start, end
-        # "since 2015" without explicit open end still implies ongoing range for trend queries
-        if re.search(r"\b(?:trend|over\s+time|how\s+has|changed|evolution|growth)\b", tl):
-            return start, today
-
-    years = [int(m.group(0)) for m in re.finditer(r"\b(?:19|20)\d{2}\b", text or "")]
-    if not years:
-        return None, None
-    years = sorted(set(years))
-    if len(years) >= 2:
-        y0, y1 = years[0], years[-1]
-        return f"{y0}-01-01", f"{y1}-12-31"
-    y = years[0]
-    if open_ended or since_y == y:
-        return f"{y}-01-01", today
-    if re.search(rf"\b(?:in|during|for)\s+{y}\b", tl):
-        return f"{y}-01-01", f"{y}-12-31"
-    # Lone year with trend language → from that year to today
-    if re.search(r"\b(?:trend|since|from|over\s+time|how\s+has)\b", tl):
-        return f"{y}-01-01", today
-    return f"{y}-01-01", f"{y}-12-31"
+    return windows[0].start.isoformat(), windows[0].end.isoformat()
 
 
 def _normalize_intent(value: str | None) -> str:
@@ -572,19 +525,22 @@ def should_use_llm_decompose(query: str) -> bool:
     countries = _extract_countries(q)
     if len(countries) >= 2:
         return True
-    ts, te = _extract_year_range(q)
-    has_year = bool(ts or te)
+    windows = resolve_relative_time(q, utc_today())
+    has_year = bool(windows)
+    open_or_since = any(
+        (not w.strict) or bool(re.search(r"\b(?:since|depuis|desde)\b", w.phrase, re.I))
+        for w in windows
+    )
     has_crop = bool(_CROP_ENTITY_RE.search(q))
     if _BRIEFING_CUES_RE.search(q):
         return False
-    if has_crop and countries and has_year and intent == "descriptive":
+    if has_crop and countries and has_year and intent == "descriptive" and not open_or_since:
         return False
     if (
         intent == "descriptive"
         and countries
         and (has_crop or _infer_domains(q))
-        and not _is_open_ended_time(q)
-        and _extract_since_year(q) is None
+        and not open_or_since
     ):
         return False
     return True
@@ -651,10 +607,13 @@ def _ground_entities_with_normalization(
     return out
 
 
-def build_provisional_decompose_hints(query: str) -> dict[str, Any]:
+def build_provisional_decompose_hints(
+    query: str,
+    ref_date: date | None = None,
+) -> dict[str, Any]:
     """Heuristic pre-parse passed to the decompose LLM for confirm/correct."""
     q = (query or "").strip()
-    ts, te = _extract_year_range(q)
+    ts, te = _extract_year_range(q, ref_date)
     crops = [m.group(0).lower() for m in _CROP_ENTITY_RE.finditer(q)]
     return {
         "countries": _extract_countries(q),
@@ -705,6 +664,8 @@ def _merge_llm_decompose(
     out: dict[str, Any],
     llm: dict[str, Any],
     query: str,
+    *,
+    ref_date: date,
 ) -> None:
     if isinstance(llm.get("intent"), str) and llm["intent"].strip():
         out["intent"] = llm["intent"].strip()
@@ -729,15 +690,14 @@ def _merge_llm_decompose(
             ds = str(d).strip().lower()
             if ds and ds not in out["domains"]:
                 out["domains"].append(ds)
-    t0 = llm.get("time_start") or ""
-    t1 = llm.get("time_end") or ""
-    if isinstance(t0, str) and re.match(r"^\d{4}-\d{2}-\d{2}$", t0.strip()):
-        out["time_start"] = t0.strip()
-    if isinstance(t1, str) and re.match(r"^\d{4}-\d{2}-\d{2}$", t1.strip()):
-        out["time_end"] = t1.strip()
-    elif isinstance(t0, str) and re.match(r"^\d{4}-\d{2}-\d{2}$", t0.strip()) and not str(t1).strip():
-        if _is_open_ended_time(query) or _extract_since_year(query) is not None:
-            out["time_end"] = date.today().isoformat()
+    # A window resolved from the question is exact. The model must not replace it.
+    if not resolve_relative_time(query, ref_date):
+        t0 = llm.get("time_start") or ""
+        t1 = llm.get("time_end") or ""
+        if isinstance(t0, str) and re.match(r"^\d{4}-\d{2}-\d{2}$", t0.strip()):
+            out["time_start"] = t0.strip()
+        if isinstance(t1, str) and re.match(r"^\d{4}-\d{2}-\d{2}$", t1.strip()):
+            out["time_end"] = t1.strip()
     if llm.get("africa_panel") is True:
         out["africa_panel"] = True
     if llm.get("africa_default") is True:
@@ -749,6 +709,7 @@ def decompose_query(
     *,
     use_llm: bool = True,
     context: DecomposeContext | None = None,
+    reference_date: date | None = None,
 ) -> dict[str, Any]:
     """
     Return facets: intent, entities, geography, domains, time_start, time_end,
@@ -760,6 +721,7 @@ def decompose_query(
     """
     q = normalize_query_text((query or "").strip())
     ctx = context or DecomposeContext.from_query(q)
+    ref = reference_date or date.fromisoformat(ctx.today_iso)
     if not q:
         return {
             "intent": "descriptive",
@@ -775,7 +737,10 @@ def decompose_query(
         }
 
     llm_attempted = bool(use_llm and _decompose_backend_configured())
-    provisional = build_provisional_decompose_hints(q)
+    windows = resolve_relative_time(q, ref, infer_country_iso3_from_query(q))
+    if windows:
+        ctx.time_resolution_note = _resolution_note(windows)
+    provisional = build_provisional_decompose_hints(q, ref)
     llm: dict[str, Any] | None = None
     llm_t0 = time.perf_counter()
     if llm_attempted:
@@ -785,38 +750,44 @@ def decompose_query(
 
     countries = _extract_countries(q)
     domains = _infer_domains(q)
-    ts, te = _extract_year_range(q)
     intent = _infer_intent(q)
-
+    if len(windows) >= 2 and intent == "descriptive":
+        intent = "compare"
+    single = windows[0] if len(windows) == 1 else None
+    envelope = retrieval_envelope(windows)
     out: dict[str, Any] = {
         "intent": intent,
         "entities": [],
         "geography": countries,
         "domains": domains,
-        "time_start": ts or "",
-        "time_end": te or "",
+        "time_start": envelope[0].isoformat() if envelope else "",
+        "time_end": envelope[1].isoformat() if envelope else "",
+        "time_windows": [window.as_dict() for window in windows],
+        "time_phrase": (
+            single.phrase
+            if single
+            else " and ".join(w.phrase for w in windows)
+            if windows
+            else ""
+        ),
+        "time_forecast": any(w.forecast for w in windows),
+        "time_from_report": any(w.from_report for w in windows),
+        "reference_date": ref.isoformat(),
     }
+    if windows:
+        out["time_source"] = "query"
 
     if llm_used and llm is not None:
-        _merge_llm_decompose(out, llm, q)
+        _merge_llm_decompose(out, llm, q, ref_date=ref)
 
-    # Fill missing fields from heuristics (do not narrow an open-ended LLM start to one calendar year)
-    if not out["time_start"] and ts:
-        out["time_start"] = ts
-    if not out["time_end"] and te:
-        out["time_end"] = te
-    elif (
-        out["time_start"]
-        and out["time_end"]
-        and out["time_end"] == f"{out['time_start'][:4]}-12-31"
-        and (_is_open_ended_time(q) or _extract_since_year(q) is not None)
-    ):
-        out["time_end"] = date.today().isoformat()
-
-    # Open-ended / since-year: heuristics win over LLM stale or single-year end dates.
-    if (_is_open_ended_time(q) or _extract_since_year(q) is not None) and ts and te:
-        out["time_start"] = ts
-        out["time_end"] = te
+    if not windows:
+        screen_start = parse_iso_date(ctx.time_start_override)
+        screen_end = parse_iso_date(ctx.time_end_override)
+        if screen_start or screen_end:
+            out["time_start"] = (screen_start or screen_end).isoformat()  # type: ignore[union-attr]
+            out["time_end"] = (screen_end or screen_start).isoformat()  # type: ignore[union-attr]
+            out["time_source"] = "ui"
+            out["time_phrase"] = ""
 
     # Strict geography grounding; permissive entity normalization.
     out["geography"] = _ground_facets_in_query(out.get("geography"), q)

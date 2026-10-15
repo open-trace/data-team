@@ -112,12 +112,12 @@ from ml.rag.chatbot.retrieval_contract import build_corpus_routing_contract
 from ml.rag.chatbot.decompose_context import DecomposeContext
 from ml.rag.chatbot.query_decomposer import (
     _extract_countries,
-    _is_open_ended_time,
     decompose_query,
     facet_grounded_in_query,
     normalize_geography_for_filter,
     resolve_retrieval_geographies,
 )
+from ml.rag.chatbot.time_resolver import parse_iso_date, resolve_relative_time, utc_today
 from ml.rag.chatbot.query_normalize import normalize_query_text
 from ml.rag.chatbot.routing_plan import RoutingPlan, build_routing_plan
 from ml.rag.chatbot.reranker import last_rerank_mode, rerank
@@ -503,13 +503,11 @@ def _vector_retrieve_for_corpus(
     time_kw = time_kwargs_from_contract(contract if contract.measure_id or contract.time_spec.start else None)
     ts = str(
         time_kw.get("published_at_from")
-        or state.get("time_start_override")
         or dec.get("time_start")
         or ""
     ).strip()[:10]
     te = str(
         time_kw.get("published_at_to")
-        or state.get("time_end_override")
         or dec.get("time_end")
         or ""
     ).strip()[:10]
@@ -600,6 +598,7 @@ class RAGGraphState(TypedDict, total=False):
     geo_override: str | None
     time_start_override: str | None
     time_end_override: str | None
+    reference_date: str | None
     news_top_k: int | None
     academic_top_k: int | None
     ota_top_k: int | None
@@ -1033,23 +1032,24 @@ def _apply_ui_scope_overrides(
     decomposition: dict[str, Any],
     state: RAGGraphState,
 ) -> dict[str, Any]:
-    """Merge UI/API geo and time as defaults when the query did not set them.
+    """Copy screen dates onto the decomposition only when the question names no time.
 
-    Open-ended wording (current, now) does not invent a date, and a UI date
-    does not replace a query-derived window. UI time stays a soft filter.
+    A resolved window is left as it is. Screen dates are copied as exact ISO dates.
     """
     out = dict(decomposition or {})
     query = str(state.get("query") or "")
-    open_ended = _is_open_ended_time(query)
-    ts = str(state.get("time_start_override") or "").strip()[:10]
-    te = str(state.get("time_end_override") or "").strip()[:10]
+    ref_raw = str(state.get("reference_date") or "").strip()[:10]
+    ref = parse_iso_date(ref_raw) or utc_today()
+    named = bool(resolve_relative_time(query, ref))
+    ts = str(state.get("time_start_override") or "").strip()
+    te = str(state.get("time_end_override") or "").strip()
     applied_time = False
-    if not open_ended:
-        if ts and not str(out.get("time_start") or "").strip():
-            out["time_start"] = ts
-            applied_time = True
-        if te and not str(out.get("time_end") or "").strip():
-            out["time_end"] = te
+    if not named and not str(out.get("time_start") or "").strip() and not str(out.get("time_end") or "").strip():
+        start = parse_iso_date(ts)
+        end = parse_iso_date(te)
+        if start or end:
+            out["time_start"] = (start or end).isoformat()  # type: ignore[union-attr]
+            out["time_end"] = (end or start).isoformat()  # type: ignore[union-attr]
             applied_time = True
     if applied_time:
         out["time_source"] = "ui"
@@ -1186,8 +1186,8 @@ def _retrieve_news(state: RAGGraphState) -> list[dict[str, Any]]:
         geo_override=str(state.get("geo_override") or ""),
         geography=dec.get("geography") if isinstance(dec.get("geography"), list) else None,
     )
-    ts = (state.get("time_start_override") or dec.get("time_start") or "").strip()[:10]
-    te = (state.get("time_end_override") or dec.get("time_end") or "").strip()[:10]
+    ts = str(dec.get("time_start") or "").strip()[:10]
+    te = str(dec.get("time_end") or "").strip()[:10]
     top_k = int(state.get("news_top_k") or _DEFAULT_NEWS_TOP_K)
     news_coll = os.environ.get("QDRANT_COLLECTION_NEWS", "news_data").strip() or "news_data"
     vr = VectorRetriever(collection_name=news_coll)
@@ -2099,8 +2099,8 @@ def node_bq_retrieve(state: RAGGraphState) -> dict[str, Any]:
         geo_override=str(state.get("geo_override") or ""),
         geography=dec.get("geography") if isinstance(dec.get("geography"), list) else None,
     )
-    ts = (state.get("time_start_override") or dec.get("time_start") or "").strip()[:10]
-    te = (state.get("time_end_override") or dec.get("time_end") or "").strip()[:10]
+    ts = str(dec.get("time_start") or "").strip()[:10]
+    te = str(dec.get("time_end") or "").strip()[:10]
     entities = dec.get("entities") if isinstance(dec.get("entities"), list) else None
     domains = dec.get("domains") if isinstance(dec.get("domains"), list) else None
     retriever = BQRetriever()
@@ -2550,8 +2550,8 @@ def node_web_fallback(state: RAGGraphState) -> dict[str, Any]:
 
         q = (state.get("query") or "").strip()
         dec = state.get("decomposition") if isinstance(state.get("decomposition"), dict) else None
-        ts = (state.get("time_start_override") or (dec or {}).get("time_start") or "").strip()[:10]
-        te = (state.get("time_end_override") or (dec or {}).get("time_end") or "").strip()[:10]
+        ts = str((dec or {}).get("time_start") or "").strip()[:10]
+        te = str((dec or {}).get("time_end") or "").strip()[:10]
         try:
             result = retrieve_web_fallback_detailed(
                 q,
@@ -3457,6 +3457,10 @@ def run_rag(query: str, **kwargs: Any) -> dict[str, Any]:
         initial["category"] = kwargs["category"]  # type: ignore[assignment]
     if user_profile is not None:
         initial["user_profile"] = user_profile  # type: ignore[assignment]
+    if kwargs.get("reference_date"):
+        initial["reference_date"] = str(kwargs["reference_date"]).strip()[:10]
+    else:
+        initial["reference_date"] = utc_today().isoformat()
     for key in (
         "time_start_override",
         "time_end_override",

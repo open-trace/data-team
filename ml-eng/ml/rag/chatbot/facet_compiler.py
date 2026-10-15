@@ -17,7 +17,14 @@ from ml.rag.chatbot.continental_scope import (
     decomposition_has_africa_scope,
     is_continental_rank_query,
 )
-from ml.rag.chatbot.query_decomposer import _extract_year_range, _CROP_ENTITY_RE
+from ml.rag.chatbot.query_decomposer import _CROP_ENTITY_RE
+from ml.rag.chatbot.geo_iso3 import infer_country_iso3_from_query
+from ml.rag.chatbot.time_resolver import (
+    parse_iso_date,
+    resolve_relative_time,
+    retrieval_envelope,
+    utc_today,
+)
 from ml.rag.chatbot.slot_validator import validate_turn_slots
 from ml.rag.chatbot.turn_contract import (
     BreakdownDim,
@@ -71,9 +78,7 @@ _EMPLOYMENT_SHARE_RE = re.compile(
     re.IGNORECASE,
 )
 _AGRICULTURE_SECTOR_RE = re.compile(r"\bagricultur(?:e|al)\b", re.IGNORECASE)
-_LATEST_RE = re.compile(r"\b(latest|most\s+recent|current|now|today)\b", re.IGNORECASE)
 _LEAN_SEASON_RE = re.compile(r"\b(next\s+lean\s+season|lean\s+season)\b", re.IGNORECASE)
-_SEASON_RE = re.compile(r"\b(season|harvest|planting\s+window)\b", re.IGNORECASE)
 _HISTORICAL_RE = re.compile(r"\b(how\s+did|what\s+happened|famine|drought\s+of|crisis\s+of)\b", re.IGNORECASE)
 _PREVALENCE_RE = re.compile(
     r"\b(prevalence|seroprevalence|incidence|infection\s+rate|disease\s+rate)\b",
@@ -101,20 +106,26 @@ def compile_time_spec(query: str, decomposition: dict[str, Any] | None) -> TimeS
             start=ts, end=te, grain="season", relative="next_lean_season",
             hard_filter=True, time_role="observation",
         )
-    if _LATEST_RE.search(ql) and not ts and not te:
-        return TimeSpec(grain="latest", relative="latest_available", hard_filter=False, time_role="either")
-    if _SEASON_RE.search(ql) and not ts and not te:
-        return TimeSpec(grain="season", hard_filter=False, time_role="observation")
 
-    if not ts and not te:
-        start, end = _extract_year_range(q)
-        ts = (start or "")[:10]
-        te = (end or "")[:10]
+    ref_raw = str(dec.get("reference_date") or "").strip()[:10]
+    ref = parse_iso_date(ref_raw) or utc_today()
+    windows = resolve_relative_time(q, ref, infer_country_iso3_from_query(q))
+    if windows and not ts and not te:
+        envelope = retrieval_envelope(windows)
+        if envelope:
+            ts = envelope[0].isoformat()
+            te = envelope[1].isoformat()
 
     grain: TimeGrain = "year"
     relative = ""
     if ts and te and ts[:4] != te[:4]:
         grain = "year_range"
+    if len(windows) == 1 and windows[0].grain == "season":
+        grain = "season"
+    if len(windows) >= 2:
+        grain = "year_range"
+        hard_filter = True
+        time_role = "observation"
     if re.search(r"\b(?:past|last|over)\s+\d{1,2}\s+years?\b", ql):
         relative = "last_n_years"
         grain = "year_range"
@@ -126,6 +137,9 @@ def compile_time_spec(query: str, decomposition: dict[str, Any] | None) -> TimeS
     if _HISTORICAL_RE.search(ql) and (ts or te):
         time_role = "historical"
         hard_filter = True
+    if windows and all(not w.strict for w in windows):
+        hard_filter = False
+        relative = relative or "latest_available"
     if str(dec.get("time_source") or "") == "ui":
         hard_filter = False
 
