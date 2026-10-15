@@ -12,6 +12,8 @@ from dataclasses import dataclass
 from datetime import date
 from typing import Any, Literal
 
+from ml.rag.chatbot.time_resolver import parse_iso_date, time_gap_sentence, utc_today
+
 from ml.rag.llm_chat import (
     answer_was_length_capped,
     llm_chat_complete,
@@ -41,6 +43,7 @@ from ml.rag.chatbot.context_diversity import dedupe_context_items, normalize_con
 from ml.rag.chatbot.export_intent import want_inline_citations
 from ml.rag.chatbot.geo_regions import is_zone_label
 from ml.rag.chatbot.memory_relevance import memory_relevant_for_query
+from ml.rag.chatbot.numeric_grounding import append_unsourced_caveat, unsourced_figures
 from ml.rag.chatbot.plan_policy import instruction_for_category, plan_generation_addendum
 from ml.rag.chatbot.output_format import export_caption_instruction
 from ml.rag.chatbot.stakeholder_prompts import prose_register_addendum
@@ -410,7 +413,7 @@ def _current_date_block(reference_date: date | None = None) -> str:
     module-level constant would freeze the date at import and go stale on a
     long-running Railway process.
     """
-    today = reference_date or date.today()
+    today = reference_date or utc_today()
     return (
         f"\n\nCURRENT DATE: Today is {today.isoformat()} (year {today.year}). "
         f"Ground every time-sensitive statement in this date: an event before "
@@ -937,9 +940,79 @@ def _historical_year_window(
         return None
     if start > end:
         start, end = end, start
-    if end >= date.today().year:
+    ref = parse_iso_date(str(decomposition.get("reference_date") or "")) or utc_today()
+    if end >= ref.year:
         return None
     return start, end
+
+
+def note_time_fallback(
+    decomposition: dict[str, Any] | None,
+    items: list[dict[str, Any]] | None,
+) -> None:
+    """When cited evidence is outside the requested window, record both ranges."""
+    if not isinstance(decomposition, dict) or decomposition.get("time_fallback"):
+        return
+    start = parse_iso_date(str(decomposition.get("time_start") or ""))
+    end = parse_iso_date(str(decomposition.get("time_end") or ""))
+    if start is None or end is None:
+        return
+    evidence: list[date] = []
+    for item in items or []:
+        meta = _item_metadata(item)
+        found: date | None = None
+        for key in ("as_of_date", "published_at", "date", "year"):
+            raw = str(meta.get(key) or "").strip()
+            if len(raw) >= 10 and raw[4] == "-":
+                found = parse_iso_date(raw[:10])
+            elif len(raw) >= 4 and raw[:4].isdigit():
+                year = int(raw[:4])
+                if 1900 <= year <= 2100:
+                    found = date(year, 1, 1)
+            if found is not None:
+                break
+        if found is not None:
+            evidence.append(found)
+    if not evidence or any(start <= day <= end for day in evidence):
+        return
+    latest = max(evidence)
+    if latest.month == 1 and latest.day == 1:
+        used_start, used_end = date(latest.year, 1, 1), date(latest.year, 12, 31)
+    else:
+        used_start = used_end = latest
+    phrase = str(decomposition.get("time_phrase") or "that period")
+    decomposition["time_fallback"] = {
+        "requested": {"start": start.isoformat(), "end": end.isoformat(), "phrase": phrase},
+        "used": {"start": used_start.isoformat(), "end": used_end.isoformat()},
+    }
+
+
+def _prepend_time_gap(answer: str, decomposition: dict[str, Any] | None) -> str:
+    if not isinstance(decomposition, dict):
+        return answer
+    fallback = decomposition.get("time_fallback")
+    if not isinstance(fallback, dict):
+        return answer
+    requested_raw = fallback.get("requested")
+    requested = requested_raw if isinstance(requested_raw, dict) else {}
+    used_raw = fallback.get("used")
+    used = used_raw if isinstance(used_raw, dict) else {}
+    req_start = parse_iso_date(str(requested.get("start") or ""))
+    req_end = parse_iso_date(str(requested.get("end") or ""))
+    used_start = parse_iso_date(str(used.get("start") or ""))
+    used_end = parse_iso_date(str(used.get("end") or ""))
+    if not (req_start and req_end and used_start and used_end):
+        return answer
+    sentence = time_gap_sentence(
+        str(requested.get("phrase") or "that period"),
+        (req_start, req_end),
+        (used_start, used_end),
+        forecast=bool(decomposition.get("time_forecast")),
+    )
+    if sentence in answer:
+        return answer
+    body = (answer or "").strip()
+    return f"{sentence}\n\n{body}" if body else sentence
 
 
 def prefer_in_window_narrative(
@@ -1768,6 +1841,35 @@ def _cap_acf_for_evidence_tier(acf: ACFResult, evidence_tier: EvidenceTier) -> A
     return acf
 
 
+def _cap_acf_for_unsourced_figures(acf: ACFResult, unsourced: list[str]) -> ACFResult:
+    """Cap ACF when answer figures cannot be traced to cited evidence (ML-058)."""
+    if not unsourced:
+        return acf
+    if acf.band in ("low", "no_evidence"):
+        return acf
+    shown = unsourced[:3]
+    extra = len(unsourced) - len(shown)
+    fig_part = ", ".join(shown)
+    if extra > 0:
+        fig_part = f"{fig_part} (+{extra} more)"
+    expl = (
+        f"{acf.explanation} Figures that could not be traced to a cited source: "
+        f"{fig_part}."
+    )
+    return ACFResult(
+        band="limited",
+        band_label="Limited confidence",
+        score=min(acf.score, 45),
+        explanation=expl,
+        note=expl,
+        components=acf.components,
+        applied_ceiling="unsourced_figures",
+        config_version=acf.config_version,
+        claim_level=acf.claim_level,
+        question_type=acf.question_type,
+    )
+
+
 def _strip_preamble_openers(text: str) -> str:
     """
     Sprint 1, Week 3 (direct-answer-first): deterministic backstop for the "no
@@ -1957,6 +2059,43 @@ def _decomposition_time_hint(decomposition: dict[str, Any] | None) -> str:
     return ts or te or str(decomposition.get("time_period") or "").strip()
 
 
+def _gap_scope_lines(decomposition: dict[str, Any] | None) -> tuple[str, str]:
+    """Geo and time lines for a gap. Profile/UI filters are labeled as filters."""
+    if not isinstance(decomposition, dict):
+        return "", ""
+    geo_source = str(decomposition.get("geography_source") or "")
+    geo = _decomposition_geo_hint(decomposition)
+    if not geo:
+        filtered = decomposition.get("filtered_geography")
+        if isinstance(filtered, list) and filtered:
+            geo = ", ".join(str(x) for x in filtered if str(x).strip())
+    if geo and geo_source == "profile":
+        geo_line = f"Filtered by profile country: {geo}"
+    elif geo and geo_source == "ui":
+        geo_line = f"Filtered by UI country: {geo}"
+    elif geo:
+        geo_line = f"Geography: {geo}"
+    else:
+        geo_line = ""
+
+    time_source = str(decomposition.get("time_source") or "")
+    time_hint = _decomposition_time_hint(decomposition)
+    if not time_hint:
+        ts = str(decomposition.get("filtered_time_start") or "").strip()
+        te = str(decomposition.get("filtered_time_end") or "").strip()
+        if ts and te:
+            time_hint = f"{ts} → {te}"
+        else:
+            time_hint = ts or te
+    if time_hint and time_source == "ui":
+        time_line = f"Filtered by UI time: {time_hint}"
+    elif time_hint:
+        time_line = f"Time period: {time_hint}"
+    else:
+        time_line = ""
+    return geo_line, time_line
+
+
 def _no_data_fallback_message(
     query: str,
     decomposition: dict[str, Any] | None = None,
@@ -1973,14 +2112,13 @@ def _no_data_fallback_message(
       - explicit ACF marker so the confidence signal is never invisible on this path
     """
     q = (query or "").strip() or "your question"
-    geo = _decomposition_geo_hint(decomposition)
-    time_hint = _decomposition_time_hint(decomposition)
+    geo_line, time_line = _gap_scope_lines(decomposition)
 
     gap_lines = [f"- Query: {q}"]
-    if geo:
-        gap_lines.append(f"- Geography: {geo}")
-    if time_hint:
-        gap_lines.append(f"- Time period: {time_hint}")
+    if geo_line:
+        gap_lines.append(f"- {geo_line}")
+    if time_line:
+        gap_lines.append(f"- {time_line}")
 
     help_lines = [
         "- Name a specific country or region (e.g. Kenya, West Africa).",
@@ -2008,8 +2146,11 @@ def _compact_gap_message(
     """Short 2–4 sentence gap when evidence tier is EMPTY."""
     lang = (answer_lang or "").strip() or detect_answer_language(query)
     lead = insufficient_context_answer(lang=lang, query=query)
-    geo = _decomposition_geo_hint(decomposition)
-    if geo:
+    geo_line, _time_line = _gap_scope_lines(decomposition)
+    if geo_line.startswith("Filtered by"):
+        detail = f"{geo_line}."
+    elif geo_line.startswith("Geography: "):
+        geo = geo_line.removeprefix("Geography: ")
         detail = f"Name a specific crop or metric and time period for {geo}."
     else:
         detail = "Name a specific country, crop or metric, and time period."
@@ -2130,6 +2271,7 @@ def _finalize_generation_result(
     # ML-055: single funnel for successful answers -- catch degenerate/looping
     # non-English output here before it reaches the user (Sprint 2 P0).
     answer = _guard_degenerate_language_output(answer, query)
+    answer = _prepend_time_gap(answer, decomposition)
     # ML-054: single funnel for successful answers -- flag a max_tokens cut-off
     # here so no caller can return a silently truncated answer.
     answer = _append_truncation_notice(answer)
@@ -2613,6 +2755,7 @@ def generate(
     if not source_registry and usable_context:
         source_registry = _registry_from_context_items(usable_context)
     source_kinds = [normalize_context_kind(item) for item in usable_context]
+    note_time_fallback(decomposition, usable_context)
 
     messages = _build_prompt(
         query,
@@ -2640,6 +2783,7 @@ def generate(
         evidence_tier=evidence_tier,
         yield_only=yield_only,
         composer_addendum=composer_addendum,
+        reference_date=parse_iso_date(str((decomposition or {}).get("reference_date") or "")) or utc_today(),
     )
     gen_max = _generate_max_tokens(task_mode)
     input_chars = sum(len(str(m.get("content") or "")) for m in messages)

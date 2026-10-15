@@ -42,6 +42,8 @@ jobs:
             ml-eng/ml/rag/tests/chatbot/test_facet_compiler.py \
             ml-eng/ml/rag/tests/chatbot/test_query_decomposer_model_first.py \
             ml-eng/ml/rag/tests/chatbot/test_generator_evidence_law.py \
+            ml-eng/ml/rag/tests/chatbot/test_acf_unsourced_cap.py \
+            ml-eng/ml/rag/tests/chatbot/test_numeric_grounding.py \
             ml-eng/ml/rag/tests/chatbot/test_bq_generate_admission.py \
             ml-eng/ml/rag/tests/chatbot/test_bq_plan_unification.py \
             ml-eng/ml/rag/tests/chatbot/test_inp_land_inputs_routing.py \
