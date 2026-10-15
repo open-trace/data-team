@@ -43,6 +43,7 @@ from ml.rag.chatbot.context_diversity import dedupe_context_items, normalize_con
 from ml.rag.chatbot.export_intent import want_inline_citations
 from ml.rag.chatbot.geo_regions import is_zone_label
 from ml.rag.chatbot.memory_relevance import memory_relevant_for_query
+from ml.rag.chatbot.numeric_grounding import append_unsourced_caveat, unsourced_figures
 from ml.rag.chatbot.plan_policy import instruction_for_category, plan_generation_addendum
 from ml.rag.chatbot.output_format import export_caption_instruction
 from ml.rag.chatbot.stakeholder_prompts import prose_register_addendum
@@ -992,8 +993,10 @@ def _prepend_time_gap(answer: str, decomposition: dict[str, Any] | None) -> str:
     fallback = decomposition.get("time_fallback")
     if not isinstance(fallback, dict):
         return answer
-    requested = fallback.get("requested") if isinstance(fallback.get("requested"), dict) else {}
-    used = fallback.get("used") if isinstance(fallback.get("used"), dict) else {}
+    requested_raw = fallback.get("requested")
+    requested = requested_raw if isinstance(requested_raw, dict) else {}
+    used_raw = fallback.get("used")
+    used = used_raw if isinstance(used_raw, dict) else {}
     req_start = parse_iso_date(str(requested.get("start") or ""))
     req_end = parse_iso_date(str(requested.get("end") or ""))
     used_start = parse_iso_date(str(used.get("start") or ""))
@@ -1836,6 +1839,35 @@ def _cap_acf_for_evidence_tier(acf: ACFResult, evidence_tier: EvidenceTier) -> A
             question_type=acf.question_type,
         )
     return acf
+
+
+def _cap_acf_for_unsourced_figures(acf: ACFResult, unsourced: list[str]) -> ACFResult:
+    """Cap ACF when answer figures cannot be traced to cited evidence (ML-058)."""
+    if not unsourced:
+        return acf
+    if acf.band in ("low", "no_evidence"):
+        return acf
+    shown = unsourced[:3]
+    extra = len(unsourced) - len(shown)
+    fig_part = ", ".join(shown)
+    if extra > 0:
+        fig_part = f"{fig_part} (+{extra} more)"
+    expl = (
+        f"{acf.explanation} Figures that could not be traced to a cited source: "
+        f"{fig_part}."
+    )
+    return ACFResult(
+        band="limited",
+        band_label="Limited confidence",
+        score=min(acf.score, 45),
+        explanation=expl,
+        note=expl,
+        components=acf.components,
+        applied_ceiling="unsourced_figures",
+        config_version=acf.config_version,
+        claim_level=acf.claim_level,
+        question_type=acf.question_type,
+    )
 
 
 def _strip_preamble_openers(text: str) -> str:

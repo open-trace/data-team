@@ -3252,7 +3252,8 @@ def _profile_ui_scope_active(decomposition: dict[str, Any]) -> bool:
 
 def _state_without_profile_ui_scope(state: RAGGraphState) -> RAGGraphState:
     """Clear profile/UI retrieval filters. Query-derived countries and dates stay."""
-    dec = state.get("decomposition") if isinstance(state.get("decomposition"), dict) else {}
+    dec_raw = state.get("decomposition")
+    dec: dict[str, Any] = dec_raw if isinstance(dec_raw, dict) else {}
     geo_source = str(dec.get("geography_source") or "")
     time_source = str(dec.get("time_source") or "")
     cleared = clear_profile_ui_retrieval_scope(dec)
@@ -3307,7 +3308,8 @@ def node_coverage_retry(state: RAGGraphState) -> dict[str, Any]:
     When the empty result was filtered by profile or UI scope, that one retry
     drops only those filters. Query-derived countries and dates stay.
     """
-    dec = state.get("decomposition") if isinstance(state.get("decomposition"), dict) else {}
+    dec_raw = state.get("decomposition")
+    dec: dict[str, Any] = dec_raw if isinstance(dec_raw, dict) else {}
     if (
         int(state.get("profile_scope_retry") or 0) < 1
         and _evidence_empty(state)
@@ -3323,8 +3325,9 @@ def node_coverage_retry(state: RAGGraphState) -> dict[str, Any]:
         if str(dec.get("time_source") or "") == "ui":
             updates["time_start_override"] = ""
             updates["time_end_override"] = ""
-            if isinstance(widened.get("turn_contract"), dict):
-                updates["turn_contract"] = widened["turn_contract"]
+            turn_contract = widened.get("turn_contract")
+            if isinstance(turn_contract, dict):
+                updates["turn_contract"] = turn_contract
         with observed_span("profile_scope_retry", input_data={"attempt": 1}):
             updates.update(_rerun_retrieve_merge_rerank(widened))
             update_current_span_metadata({"profile_scope_retry": 1})
