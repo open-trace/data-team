@@ -326,6 +326,7 @@ def build_qdrant_filter(
     domains_substring: str | None = None,
     exclude_section_roles: frozenset[str] | None = None,
     indexed_fields: frozenset[str] | None = None,
+    ontology_ids: list[str] | None = None,
     reference_date: date | None = None,
 ) -> Any | None:
     """Build a Qdrant Filter for indexed payload fields (requires payload indexes).
@@ -418,6 +419,10 @@ def build_qdrant_filter(
         ds = domains_substring.strip()
         if ds:
             must.append(FieldCondition(key="domains", match=MatchText(text=ds)))
+
+    oids = [str(i).strip() for i in (ontology_ids or []) if str(i).strip()]
+    if oids and _allow("ontology_ids"):
+        must.append(FieldCondition(key="ontology_ids", match=MatchAny(any=oids[:64])))
 
     if exclude_section_roles and _allow("section_role"):
         for role in sorted(exclude_section_roles):
@@ -814,6 +819,11 @@ class VectorRetriever(BaseRetriever):
         else:
             domains_substring = None
 
+        raw_oids = kwargs.get("ontology_ids")
+        ontology_ids: list[str] | None = None
+        if isinstance(raw_oids, (list, tuple)):
+            ontology_ids = [str(x).strip() for x in raw_oids if str(x).strip()] or None
+
         has_filters = any(
             [
                 doc_kind,
@@ -823,6 +833,7 @@ class VectorRetriever(BaseRetriever):
                 published_at_from,
                 published_at_to,
                 domains_substring,
+                ontology_ids,
             ]
         )
 
@@ -870,6 +881,7 @@ class VectorRetriever(BaseRetriever):
                 domains_substring=domains_substring,
                 exclude_section_roles=exclude_section_roles,
                 indexed_fields=indexed_fields,
+                ontology_ids=ontology_ids,
             )
         except Exception:
             q_filter = None

@@ -57,6 +57,15 @@ RUN chmod +x /app/scripts/railway-entrypoint.sh
 # Make 'ml.rag...' importable exactly like the local PYTHONPATH=. usage
 ENV PYTHONPATH=/app
 
+# Offline ontology (SQLite + matcher keys) built at image build time; no runtime network.
+COPY opentrace_ontology ./opentrace_ontology
+RUN python opentrace_ontology/ontology_build/build_sqlite.py \
+ && python opentrace_ontology/ontology_build/check_sqlite_matches_csv.py \
+ && python opentrace_ontology/ontology_build/build_value_map.py --mvi ml/rag/value_index/mart_value_index.json \
+ && python opentrace_ontology/ontology_build/check_value_index_coverage.py --mvi ml/rag/value_index/mart_value_index.json \
+ && python -c "import opentrace_ontology as o; p=o.plan_query('What is the current state of casssava in Nigeria'); assert p['source_basis']=='structured', p; print('ontology ok', o.__version__)" \
+ && rm -rf opentrace_ontology/seeds opentrace_ontology/tests opentrace_ontology/bench
+
 EXPOSE 8080
 
 # Validate GCP SA when configured, then start API (same entrypoint as Railway).

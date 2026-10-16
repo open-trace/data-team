@@ -343,6 +343,11 @@ def _retrieve_vector_cascade(
 ) -> list[dict[str, Any]]:
     """Try full filters, widen time ±1y, then drop time/geo when fallbacks allow."""
     attempts: list[dict[str, Any]] = [dict(base_kwargs)]
+    if base_kwargs.get("ontology_ids"):
+        # Untagged legacy chunks never match the ontology filter: next level keeps geo/time, drops it.
+        no_onto = dict(base_kwargs)
+        no_onto.pop("ontology_ids", None)
+        attempts.append(no_onto)
     has_geo = bool(countries)
     time_fb = allow_time_fallback if allow_time_fallback is not None else _env_on(time_fallback_env)
 
@@ -520,6 +525,27 @@ def _vector_retrieve_for_corpus(
     if te:
         kwargs["published_at_to"] = te
 
+    from ml.rag.chatbot.ontology_routing import (
+        ontology_plan_for_state,
+        qdrant_expansion_view,
+        qdrant_payload_ids,
+    )
+
+    onto_plan = ontology_plan_for_state(state)
+    if onto_plan:
+        if os.environ.get("ADZA_QDRANT_ONTOLOGY_FILTER", "0").strip().lower() in (
+            "1",
+            "true",
+            "on",
+            "yes",
+        ):
+            oids = qdrant_payload_ids(onto_plan)
+            if oids:
+                kwargs["ontology_ids"] = oids
+        view = qdrant_expansion_view(onto_plan)
+        if view and view not in texts:
+            texts = [*texts, view]
+
     allow_geo_fb = not _strict_compare_filters(dec)
     task_mode = str(state.get("task_mode") or "chat").strip().lower()
     cascade_max = 1 if task_mode in ("fact_lookup", "data_export_only") else None
@@ -536,6 +562,7 @@ def _vector_retrieve_for_corpus(
             corpora=corpus_key,
             geo=geo_key,
             year=year_key,
+            ontology_filter=bool(kwargs.get("ontology_ids")),
         )
         cached = get_cached_hits(cache_key)
         if cached is not None:
@@ -677,6 +704,9 @@ class RAGGraphState(TypedDict, total=False):
     bq_nl2sql_ms: float | None
     bq_execute_ms: float | None
     sql_source: str | None
+    bq_skipped_reason: str | None
+    ontology_plan: dict[str, Any] | None
+    source_basis: str | None
     rerank_ms: float | None
     rerank_pool_size: int | None
     rerank_mode: str | None
@@ -2006,6 +2036,11 @@ def node_bq_retrieve(state: RAGGraphState) -> dict[str, Any]:
         set_cached_facts,
         should_reuse_facts,
     )
+    from ml.rag.chatbot.ontology_routing import (
+        bq_should_run,
+        bq_value_filters,
+        ontology_plan_for_state,
+    )
 
     q = _bq_planning_query(state)
     raw_dec = state.get("decomposition")
@@ -2018,6 +2053,23 @@ def node_bq_retrieve(state: RAGGraphState) -> dict[str, Any]:
             "bq_sql_queries": [],
             "bq_sql_debug": [],
             "sql_source": "skipped",
+            "bq_execute_ms": 0.0,
+            "bq_nl2sql_ms": 0.0,
+        }
+
+    onto_plan = ontology_plan_for_state(state)
+    if (
+        os.environ.get("ADZA_ONTOLOGY_SKIP_BQ", "0").strip().lower()
+        in ("1", "true", "on", "yes")
+        and not bq_should_run(onto_plan)
+    ):
+        # Intentional skip for qdrant_only subjects — do not mark warehouse empty.
+        return {
+            "bq_results": [],
+            "bq_sql_queries": [],
+            "bq_sql_debug": [],
+            "sql_source": "skipped",
+            "bq_skipped_reason": "ontology_no_value_map",
             "bq_execute_ms": 0.0,
             "bq_nl2sql_ms": 0.0,
         }
@@ -2168,6 +2220,15 @@ def node_bq_retrieve(state: RAGGraphState) -> dict[str, Any]:
         retrieve_kwargs["bind_contracts"] = bind_raw
     if contract_kwargs.get("template_key") and isinstance(bind_raw, dict) and bind_raw:
         contract_kwargs.pop("template_key", None)
+    if os.environ.get("ADZA_ONTOLOGY_BQ_VALUES", "0").strip().lower() in (
+        "1",
+        "true",
+        "on",
+        "yes",
+    ):
+        ovf = bq_value_filters(onto_plan)
+        if ovf:
+            retrieve_kwargs["ontology_value_filters"] = ovf
     try:
         with ThreadPoolExecutor(max_workers=1) as ex:
             fut = ex.submit(
@@ -2919,6 +2980,11 @@ def node_generate(state: RAGGraphState) -> dict[str, Any]:
         rows_by_subquestion=rows_by if slot_active else None,
     )
     gkw["generation_plan"] = gen_plan.to_dict()
+    onto_for_gen = state.get("ontology_plan")
+    if isinstance(onto_for_gen, dict):
+        gkw["ontology_plan"] = onto_for_gen
+    elif state.get("source_basis"):
+        gkw["ontology_plan"] = {"source_basis": state.get("source_basis")}
     has_required_bq_rows = False
     if slot_active and reasoner:
         passages = filter_context_items(

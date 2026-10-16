@@ -129,6 +129,12 @@ _ACF_PAYLOAD_INDEXES: list[tuple[str, models.PayloadSchemaType]] = [
     ("source_id", models.PayloadSchemaType.KEYWORD),
 ]
 
+# Ontology tags written at ingestion by opentrace_ontology.tag_chunk (list-valued KEYWORD fields).
+_ONTOLOGY_PAYLOAD_INDEXES: list[tuple[str, models.PayloadSchemaType]] = [
+    ("ontology_ids", models.PayloadSchemaType.KEYWORD),
+    ("ontology_countries", models.PayloadSchemaType.KEYWORD),
+]
+
 PAYLOAD_INDEXES: dict[str, list[tuple[str, models.PayloadSchemaType]]] = {
     "news": [
         ("doc_kind", models.PayloadSchemaType.KEYWORD),
@@ -143,6 +149,7 @@ PAYLOAD_INDEXES: dict[str, list[tuple[str, models.PayloadSchemaType]]] = {
         ("geo_scope", models.PayloadSchemaType.KEYWORD),
         ("domains", models.PayloadSchemaType.TEXT),
         *_ACF_PAYLOAD_INDEXES,
+        *_ONTOLOGY_PAYLOAD_INDEXES,
     ],
     "research": [
         ("doc_kind", models.PayloadSchemaType.KEYWORD),
@@ -161,6 +168,7 @@ PAYLOAD_INDEXES: dict[str, list[tuple[str, models.PayloadSchemaType]]] = {
         ("journal", models.PayloadSchemaType.KEYWORD),
         ("doi", models.PayloadSchemaType.KEYWORD),
         *_ACF_PAYLOAD_INDEXES,
+        *_ONTOLOGY_PAYLOAD_INDEXES,
     ],
     "ota": [
         ("doc_kind", models.PayloadSchemaType.KEYWORD),
@@ -168,6 +176,7 @@ PAYLOAD_INDEXES: dict[str, list[tuple[str, models.PayloadSchemaType]]] = {
         ("geo_scope", models.PayloadSchemaType.KEYWORD),
         ("geo_countries", models.PayloadSchemaType.TEXT),
         *_ACF_PAYLOAD_INDEXES,
+        *_ONTOLOGY_PAYLOAD_INDEXES,
     ],
 }
 

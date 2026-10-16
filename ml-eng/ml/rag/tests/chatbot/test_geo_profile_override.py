@@ -54,11 +54,11 @@ def test_albania_profile_does_not_override_nigeria_query(plan: str) -> None:
 
 def test_empty_query_geography_uses_sanitized_kenya_profile() -> None:
     dec = apply_profile_geography_default({"geography": []}, "Kenya")
-    assert dec["geography"] == ["Kenya"]
+    assert dec["geography"] == ["KEN"]
     assert dec["geography_source"] == "profile"
     message = _no_data_fallback_message("cassava prices", dec)
-    assert "Filtered by profile country: Kenya" in message
-    assert "Geography: Kenya" not in message
+    assert "Filtered by profile country: KEN" in message
+    assert "Geography: KEN" not in message
 
 
 @pytest.mark.parametrize("raw", ["Albania", "France", "US", "", "  ", None])

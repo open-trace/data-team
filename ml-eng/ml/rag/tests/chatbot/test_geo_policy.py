@@ -11,14 +11,14 @@ from ml.rag.chatbot.geo_policy import (
 
 def test_farmers_plan_profile_country_is_not_a_hard_override() -> None:
     profile = {"country": "Nigeria", "plan_type": "Farmers", "category": "Farmers"}
-    assert profile_country_for_retrieval(FARMER_PLAN_TYPE, profile) == "Nigeria"
+    assert profile_country_for_retrieval(FARMER_PLAN_TYPE, profile) == "NGA"
     assert effective_geo_override(FARMER_PLAN_TYPE, profile) == ""
 
 
 def test_farmers_hard_override_only_when_policy_on(monkeypatch) -> None:
     monkeypatch.setenv("ADZA_SINGLE_COUNTRY_POLICY", "true")
     profile = {"country": "Nigeria", "plan_type": "Farmers", "category": "Farmers"}
-    assert effective_geo_override(FARMER_PLAN_TYPE, profile) == "Nigeria"
+    assert effective_geo_override(FARMER_PLAN_TYPE, profile) == "NGA"
     assert effective_geo_override(FARMER_PLAN_TYPE, {"country": "Albania"}) == ""
 
 

@@ -19,6 +19,14 @@ ACFBandLiteral = Literal[
 ]
 
 
+SourceBasisLiteral = Literal[
+    "structured",
+    "documents_only",
+    "web_only",
+    "none",
+]
+
+
 class ACFSignal(BaseModel):
     """Confidence signal attached to every RAG response (Path B)."""
 

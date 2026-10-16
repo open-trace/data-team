@@ -4,7 +4,7 @@ from __future__ import annotations
 import logging
 from typing import Any
 
-from ml.rag.chatbot.geo_iso3 import iso3_to_canonical_name, name_to_iso3
+from ml.rag.chatbot.geo_iso3 import iso2_to_iso3, name_to_iso3
 from ml.rag.chatbot.plan_policy import single_country_policy_enabled
 from ml.rag.chatbot.query_decomposer import normalize_geography_for_filter
 
@@ -14,18 +14,29 @@ FARMER_PLAN_TYPE = "Farmers"
 
 
 def sanitize_profile_country(raw: str | None) -> str | None:
-    """Keep an African gazetteer country. Drop SSO locales and empty values.
+    """Normalize profile/SSO country to African ISO3, or None.
 
-    Names and ISO3 are accepted. ISO2 is not in the gazetteer, so it is dropped.
+    Prefer ``opentrace_ontology.clean_profile_country`` (NG / Nigeria / Nigéria → NGA;
+    Albania / US / Unknown → None). Fallback still maps ISO2 via ``geo_iso3``.
     """
     if raw is None or not str(raw).strip():
         return None
     text = str(raw).strip()
-    iso3 = name_to_iso3(text)
+    try:
+        from opentrace_ontology import clean_profile_country
+
+        cleaned = clean_profile_country(text)
+        if cleaned is None:
+            logger.info("profile_country_dropped_non_african", extra={"raw": text})
+        return cleaned
+    except Exception:
+        pass
+
+    iso3 = name_to_iso3(text) or iso2_to_iso3(text)
     if iso3 is None:
         logger.info("profile_country_dropped_non_african", extra={"raw": text})
         return None
-    return iso3_to_canonical_name(iso3)
+    return iso3
 
 
 def profile_country_for_retrieval(

@@ -29,7 +29,15 @@ from ml.rag.chat_memory import (
     default_summary_max_chars,
     default_verbatim_max_chars,
 )
-from ml.rag.chatbot.acf_scoring import ACFResult, apply_bq_execute_ceiling, no_evidence_acf, score_cited_evidence, weak_orientation_acf
+from ml.rag.chatbot.acf_scoring import (
+    ACFResult,
+    apply_bq_execute_ceiling,
+    cap_acf_band,
+    no_evidence_acf,
+    score_cited_evidence,
+    weak_orientation_acf,
+)
+from ml.rag.chatbot.ontology_routing import acf_band_ceiling
 from ml.rag.chatbot.continental_scope import RANKING_QUERY_RE as _RANKING_QUERY_RE
 from ml.rag.chatbot.answer_language import (
     detect_answer_language,
@@ -2266,6 +2274,7 @@ def _finalize_generation_result(
     bq_exec_flags: dict[str, bool] | None = None,
     usable_bq: bool = False,
     bq_sql_debug: list[dict[str, Any]] | None = None,
+    ontology_plan: dict[str, Any] | None = None,
 ) -> GenerationResult:
     """Attach structured citations and score ACF Path B on cited sources only."""
     # ML-055: single funnel for successful answers -- catch degenerate/looping
@@ -2356,6 +2365,31 @@ def _finalize_generation_result(
             usable_bq=usable_bq,
             bq_sql_debug=list(bq_sql_debug or []),
         )
+        if os.environ.get("ADZA_ACF_SOURCE_BASIS_CAP", "0").strip().lower() in (
+            "1",
+            "true",
+            "on",
+            "yes",
+        ):
+            cited_kinds: set[str] = set()
+            for ref in cited_refs:
+                kind = _citation_kind_normalized(_source_kind(ref.item))
+                cited_kinds.add(kind)
+                if kind in (
+                    "news",
+                    "academic",
+                    "policy",
+                    "ota",
+                    "formation",
+                    "vector",
+                    "qdrant",
+                ):
+                    cited_kinds.add("qdrant")
+                if kind in ("web_search", "web_wikipedia", "web"):
+                    cited_kinds.add("web")
+            plan = ontology_plan if isinstance(ontology_plan, dict) else None
+            ceiling = acf_band_ceiling(plan, cited_kinds)
+            acf = cap_acf_band(acf, ceiling)
 
         update_current_span_metadata(
             {
@@ -2471,6 +2505,9 @@ def generate(
     generate_weak = bool(kwargs.get("generate_weak"))
     if generation_plan is not None and not isinstance(generation_plan, dict):
         generation_plan = None
+    ontology_plan = kwargs.get("ontology_plan")
+    if not isinstance(ontology_plan, dict):
+        ontology_plan = None
     inline_citations = want_inline_citations(
         query,
         task_mode=task_mode,
@@ -2627,6 +2664,7 @@ def generate(
                 bq_exec_flags=bq_exec_flags,
                 usable_bq=usable_bq,
                 bq_sql_debug=bq_sql_debug,
+                ontology_plan=ontology_plan,
             )
         return GenerationResult(
             answer=_compact_gap_message(query, decomposition, answer_lang),
@@ -2697,6 +2735,7 @@ def generate(
                     bq_exec_flags=bq_exec_flags,
                     usable_bq=usable_bq,
                     bq_sql_debug=bq_sql_debug,
+                    ontology_plan=ontology_plan,
                 )
         # Default (RAG_ALLOW_UNGROUNDED off or LLM returned nothing): structured
         # gap message so testers can distinguish "no data" from "low confidence".
@@ -2827,6 +2866,7 @@ def generate(
             bq_exec_flags=bq_exec_flags,
             usable_bq=usable_bq,
             bq_sql_debug=bq_sql_debug,
+            ontology_plan=ontology_plan,
         )
 
     if llm_configured():

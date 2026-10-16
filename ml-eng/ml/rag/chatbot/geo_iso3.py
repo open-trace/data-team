@@ -8,6 +8,7 @@ from ml.rag.chatbot.bq_table_schema_yaml import _AFRICA_COUNTRY_ISO3
 from ml.rag.chatbot.geo_regions import countries_for_regions, detect_regions_in_text
 
 _ISO3_RE = re.compile(r"^[A-Z]{3}$")
+_ISO2_RE = re.compile(r"^[A-Z]{2}$")
 _NAME_TO_ISO3: dict[str, str] = {k.casefold(): v for k, v in _AFRICA_COUNTRY_ISO3.items()}
 _ISO3_IN_SQL_RE = re.compile(
     r"country_iso3\s*(?:=\s*'([A-Z]{3})'|IN\s*\(([^)]+)\))",
@@ -15,15 +16,83 @@ _ISO3_IN_SQL_RE = re.compile(
 )
 _VALID_ISO3 = frozenset(_AFRICA_COUNTRY_ISO3.values())
 
+# African ISO2 → ISO3 (fallback when opentrace_ontology is unavailable).
+_AFRICA_ISO2_TO_ISO3: dict[str, str] = {
+    "DZ": "DZA",
+    "AO": "AGO",
+    "BJ": "BEN",
+    "BW": "BWA",
+    "BF": "BFA",
+    "BI": "BDI",
+    "CV": "CPV",
+    "CM": "CMR",
+    "CF": "CAF",
+    "TD": "TCD",
+    "KM": "COM",
+    "CG": "COG",
+    "CD": "COD",
+    "DJ": "DJI",
+    "EG": "EGY",
+    "GQ": "GNQ",
+    "ER": "ERI",
+    "SZ": "SWZ",
+    "ET": "ETH",
+    "GA": "GAB",
+    "GM": "GMB",
+    "GH": "GHA",
+    "GN": "GIN",
+    "GW": "GNB",
+    "CI": "CIV",
+    "KE": "KEN",
+    "LS": "LSO",
+    "LR": "LBR",
+    "LY": "LBY",
+    "MG": "MDG",
+    "MW": "MWI",
+    "ML": "MLI",
+    "MR": "MRT",
+    "MU": "MUS",
+    "MA": "MAR",
+    "MZ": "MOZ",
+    "NA": "NAM",
+    "NE": "NER",
+    "NG": "NGA",
+    "RW": "RWA",
+    "ST": "STP",
+    "SN": "SEN",
+    "SC": "SYC",
+    "SL": "SLE",
+    "SO": "SOM",
+    "ZA": "ZAF",
+    "SS": "SSD",
+    "SD": "SDN",
+    "TZ": "TZA",
+    "TG": "TGO",
+    "TN": "TUN",
+    "UG": "UGA",
+    "ZM": "ZMB",
+    "ZW": "ZWE",
+}
+
+
+def iso2_to_iso3(label: str) -> str | None:
+    """Map an African ISO2 code to ISO3, or None when unknown / non-African."""
+    raw = (label or "").strip().upper()
+    if not _ISO2_RE.match(raw):
+        return None
+    return _AFRICA_ISO2_TO_ISO3.get(raw)
+
 
 def name_to_iso3(label: str) -> str | None:
-    """Map a country name or ISO3 token to ISO3."""
+    """Map a country name, ISO3, or African ISO2 token to ISO3."""
     raw = (label or "").strip()
     if not raw:
         return None
-    if _ISO3_RE.match(raw.upper()):
-        iso = raw.upper()
-        return iso if iso in _VALID_ISO3 else None
+    upper = raw.upper()
+    if _ISO3_RE.match(upper):
+        return upper if upper in _VALID_ISO3 else None
+    if _ISO2_RE.match(upper):
+        return _AFRICA_ISO2_TO_ISO3.get(upper)
     return _NAME_TO_ISO3.get(raw.casefold())
 
 

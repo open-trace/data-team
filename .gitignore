@@ -5,6 +5,13 @@ __pycache__/
 *.so
 .Python
 build/
+
+# opentrace_ontology generated artefacts (built in Docker / locally)
+ml-eng/opentrace_ontology/data/ontology.sqlite
+ml-eng/opentrace_ontology/data/matcher_keys.txt.gz
+ml-eng/opentrace_ontology/data/build_info.json
+ml-eng/opentrace_ontology/data/reports/
+!ml-eng/opentrace_ontology/ontology_build/
 develop-eggs/
 dist/
 downloads/
@@ -69,6 +76,11 @@ service-account*.json
 # ML / Data (large or generated)
 *.parquet
 *.csv
+# Ontology seeds must be trackable (aliases may be .csv.gz under ml-eng)
+!ml-eng/opentrace_ontology/seeds/
+!ml-eng/opentrace_ontology/seeds/**
+!data-eng/dbt/seeds/ontology/
+!data-eng/dbt/seeds/ontology/**
 ml-eng/config/keys/
 ml-eng/data/
 data/raw/

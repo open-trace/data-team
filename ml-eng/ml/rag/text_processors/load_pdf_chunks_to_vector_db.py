@@ -241,16 +241,41 @@ PAYLOAD_OTA: Final[frozenset[str]] = frozenset({
 }) | _PAYLOAD_ACF
 
 
+def _ontology_tags(doc: str, meta: dict[str, Any]) -> dict[str, list[str]]:
+    """Tag a chunk with ontology entity ids. Default off (ADZA_ONTOLOGY_TAGGING=0)."""
+    if os.environ.get("ADZA_ONTOLOGY_TAGGING", "0").strip().lower() in (
+        "0",
+        "false",
+        "off",
+        "no",
+        "",
+    ):
+        return {}
+    try:
+        from opentrace_ontology import tag_chunk
+    except ImportError:
+        return {}
+    title = str(meta.get("title") or "")
+    try:
+        t = tag_chunk(f"{title}\n{doc}"[:6000], lang=None)
+    except Exception:
+        return {}
+    return {k: v for k, v in t.items() if v}
+
+
 def _filter_payload(
     meta: dict[str, Any],
     doc: str,
     allowed: frozenset[str] | None,
-) -> dict[str, str | int | float | bool]:
+) -> dict[str, Any]:
     """Build a point payload keeping only *allowed* keys plus ``content``."""
-    payload: dict[str, str | int | float | bool] = {"content": doc}
+    payload: dict[str, Any] = {"content": doc}
+    tags = _ontology_tags(doc, meta)
     if allowed is None:
         payload.update(meta)
+        payload.update(tags)
         return payload
+    payload.update(tags)  # list-valued KEYWORD fields; always kept when tagging is on
     for k, v in meta.items():
         if k in allowed and v is not None:
             if isinstance(v, (str, int, float, bool)):

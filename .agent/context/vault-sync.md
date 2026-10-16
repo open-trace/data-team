@@ -1,8 +1,8 @@
 # Vault sync
 
-last_synced_commit: 5d15fc6d6f3f03c1113f0bc6dd6501e54bfd5096
+last_synced_commit: ed8793eb3d255ecc883ee805922611667e056860
 synced_at: 2026-10-15
 baseline_note: |
-  Synced 00bd89c → 5d15fc6 (ML-059 temporal awareness).
-  Relative-time vault notes updated from "uncommitted WIP" to @ 5d15fc6.
-  Working tree was clean at sync time.
+  Synced 5d15fc6 → ed8793e (ML-060 RAG compile CI: ML-058 ACF cap wiring +
+  point-fact intent custom contracts + workflow pytest glob).
+  vault-stale: 0 stale / 129 skipped. Working tree clean at sync time.
