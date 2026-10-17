@@ -1,0 +1,162 @@
+-- SQLBook: Code
+WITH vw_african_countries AS (
+
+    SELECT african_country
+    FROM UNNEST([
+        'Algeria', 'Angola', 'Benin', 'Botswana','Burkina Faso', 'Burundi', 'Cameroon','Cape Verde',
+        'Central African Republic','Chad', 'Comoros', 'Congo', 'Democratic Republic of the Congo', 'Djibouti', 'Egypt', 
+        'Equatorial Guinea', 'Eritrea', 'Eswatini', 'Ethiopia', 'Gabon', 'Gambia', 'Ghana','Guinea', 'Guinea-Bissau','Ivory Coast',
+        'Kenya', 'Lesotho','Liberia', 'Libya', 'Madagascar','Malawi', 'Mali', 'Mauritania','Mauritius', 'Morocco', 'Mozambique',
+        'Namibia', 'Niger', 'Nigeria','Rwanda', 'Senegal', 'Seychelles','Sierra Leone', 'Somalia','South Africa', 'South Sudan',
+        'Sudan', 'Tanzania', 'Togo','Tunisia', 'Uganda', 'Zambia','Zimbabwe'
+    ]) AS african_country
+),
+
+vw_Climate_environment_biodiversity AS (
+
+    SELECT
+        'Climate_environment_biodiversity' AS indicator_group,
+        'climatewatch_climate_health_impacts' AS source_table,
+        CASE
+            WHEN LOWER(TRIM(location)) IN (
+                'c™te dÕivoire',
+                'côte d’ivoire',
+                'cote divoire',
+                'cote divoire'
+            )
+            THEN 'Ivory Coast'
+            ELSE TRIM(location)
+        END AS country,
+
+        TRIM(iso_code2) AS country_code,
+        CAST(year AS STRING) AS year
+
+    FROM `opentrace-prod-5ga4.raw_dev.climatewatch_climate_health_impacts`
+
+    WHERE LOWER(
+        CASE
+            WHEN LOWER(TRIM(location)) IN (
+                'c™te dÕivoire',
+                'côte d’ivoire',
+                'cote divoire',
+                'cote divoire'
+            )
+            THEN 'ivory coast'
+            ELSE TRIM(location)
+        END
+    ) IN (
+        SELECT LOWER(african_country)
+        FROM vw_african_countries
+    )
+
+    UNION ALL
+
+    SELECT
+        'Climate_environment_biodiversity' AS indicator_group,
+        'copernicus_climate_raw_era5_stats_2023_06' AS source_table,
+        NULL AS country,
+        NULL AS country_code,
+        CAST(EXTRACT(YEAR FROM DATE(time)) AS STRING) AS year
+
+    FROM `opentrace-prod-5ga4.raw_dev.copernicus_climate_raw_era5_stats_2023_06`
+
+    UNION ALL
+
+    SELECT
+        'Climate_environment_biodiversity' AS indicator_group,
+        'cifor_icraf_raw' AS source_table,
+        NULL AS country,
+        NULL AS country_code,
+        NULL AS year
+
+    FROM `opentrace-prod-5ga4.raw_dev.cifor_icraf_raw`
+
+    UNION ALL
+
+    SELECT
+        'Climate_environment_biodiversity' AS indicator_group,
+        'arcgis_vegetation_ndvi' AS source_table,
+        NULL AS country,
+        NULL AS country_code,
+        NULL AS year
+
+    FROM `opentrace-prod-5ga4.raw_dev.arcgis_vegetation_ndvi`
+
+    UNION ALL
+
+    SELECT
+        'Climate_environment_biodiversity' AS indicator_group,
+        'nakuru_air_quality_archive' AS source_table,
+        NULL AS country,
+        NULL AS country_code,
+        CAST(EXTRACT(YEAR FROM DATE(timestamp)) AS STRING) AS year
+
+    FROM `opentrace-prod-5ga4.raw_dev.nakuru_air_quality_archive`
+
+    UNION ALL
+
+    SELECT
+        'Climate_environment_biodiversity' AS indicator_group,
+        'gbif_biodiversity_occurrence' AS source_table,
+        NULL AS country,
+        TRIM(countryCode) AS country_code,
+        CAST(EXTRACT(YEAR FROM DATE(event_start_date)) AS STRING) AS year
+
+    FROM `opentrace-prod-5ga4.raw_dev.gbif_biodiversity_occurrence`
+
+    UNION ALL
+
+    SELECT
+        'Climate_environment_biodiversity' AS indicator_group,
+        'arcgis_layer_rice_germplasm_in_africa_3d2a9' AS source_table,
+        NULL AS country,
+        NULL AS country_code,
+        NULL AS year
+
+    FROM `opentrace-prod-5ga4.raw_dev.arcgis_layer_rice_germplasm_in_africa_3d2a9`
+
+    UNION ALL
+
+    SELECT
+        'Climate_environment_biodiversity' AS indicator_group,
+        'arcgis_rarity_80_birds_africa' AS source_table,
+        TRIM(name) AS country,
+        NULL AS country_code,
+        NULL AS year
+
+    FROM `opentrace-prod-5ga4.raw_dev.arcgis_rarity_80_birds_africa`
+
+    WHERE LOWER(name) IN (
+        SELECT LOWER(african_country)
+        FROM vw_african_countries
+    )
+
+    UNION ALL
+
+    SELECT
+        'Climate_environment_biodiversity' AS indicator_group,
+        'arcgis_south_africa_wards_demographics_2ce07' AS source_table,
+        NULL AS country,
+        NULL AS country_code,
+        NULL AS year
+
+    FROM `opentrace-prod-5ga4.raw_dev.arcgis_south_africa_wards_demographics_2ce07`
+)
+
+SELECT
+    indicator_group,
+    country,
+    country_code,
+    CAST(year AS STRING) AS year,
+    COUNT(*) AS total_data_points
+
+FROM vw_Climate_environment_biodiversity
+WHERE (SAFE_CAST(year AS INT64) >= 1960 
+AND SAFE_CAST(year AS INT64) <= 2026)
+OR year IS NULL
+
+GROUP BY
+    indicator_group,
+    country,
+    country_code,
+    year

@@ -1,0 +1,21 @@
+name: Data Eng — Airbyte helpers
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'data-eng/airbyte/**'
+      - '.github/workflows/data-eng-airbyte.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'data-eng/airbyte/**'
+      - '.github/workflows/data-eng-airbyte.yml'
+
+jobs:
+  py-compile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: py_compile scripts
+        run: python -m py_compile data-eng/airbyte/scripts/trigger_sync.py

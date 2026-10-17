@@ -19,7 +19,7 @@
 # BigQuery reality:
 # - Datasets are named: raw_dev, staging_dev, mart_dev
 # - Local Postgres schemas are created to match those dataset ids: raw_dev.*, staging_dev.*, mart_dev.*
-# - Table lists come from dbt/models/sources.yml by default (or scripts/{raw_dev,staging_dev,mart_dev}_tables.txt)
+# - Table lists come from dbt/catalog/sources.generated.yml by default (or scripts/{raw_dev,staging_dev,mart_dev}_tables.txt)
 
 services:
   postgres:

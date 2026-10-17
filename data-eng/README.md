@@ -1,40 +1,68 @@
 # Data engineering (`data-eng/`)
 
-This tree owns **ingestion → orchestration → transformations → warehouse** for OpenTrace: Airbyte-style ingestion config, Apache Airflow (Composer) DAGs, dbt on BigQuery, Terraform for GCP, and local/dev tooling (`data/local`, Postgres sync scripts).
+OpenTrace analytics engineering: **Python ingestion** into BigQuery, then **dbt** transforms. ML/RAG lives under `ml-eng/` (or repo `ml/`), not here.
 
-**ML and AI** code lives at repo root in **`ml/`** (Python package `ml.*`). That boundary keeps orchestration and analytics engineering separate from model training, RAG, and serving.
+## Transform-v2 contract (current)
+
+| Owner | Datasets | Role |
+| ----- | -------- | ---- |
+| **Ingestion** (`ingestion/`) | `landing_dev`, `raw_dev` | Writes both |
+| **Transformation** (`dbt/`) | `raw_dev` → `staging_dev` → `intermediate_dev` → `mart_dev` | `raw_dev` is the **primordial source** |
+
+```text
+External sources → ingestion → landing_dev → raw_dev
+                                      ↓
+                    dbt: raw_dev → staging_dev → intermediate_dev → mart_dev
+```
+
+- **Airbyte is not used.** Legacy Airbyte config (if present) lives under `archive/airbyte/` only.
+- **Soft cutover:** existing dbt SQL (including transitional `models/landing` and `models/raw_dev` runners) is unchanged at transform-v2.0.0. New loads should go through `ingestion/` into `landing_dev` / `raw_dev`.
+- Dataset name `landing` (no `_dev`) may still appear in older dbt sources; it is not the primary ingest target.
+
+### Pipeline versions
+
+| Version | Meaning |
+| ------- | ------- |
+| `transform-v1.0.0` | Git tag baseline before this contract |
+| `transform-v2.0.0`+ | Current contract; see `version` in `dbt/dbt_project.yml` |
+
+Tag releases as `transform-vX.Y.Z`. Bump patch for docs/fixes, minor for additive models/tests, major only if mart/source contracts break. Rollback = checkout the tag and re-run dbt.
+
+Glossary: [`CONTEXT.md`](./CONTEXT.md). ADRs: [`docs/adr/`](./docs/adr/).
 
 ## Layout
 
 | Path | Role |
-|------|------|
-| **`infra/`** | Terraform — BigQuery datasets, Composer, Airbyte deployment, IAM (foundation). |
-| **`airflow/`** | DAGs only: trigger ingestion, run dbt, tests. Python helpers under `tasks/`. |
-| **`dbt/`** | Transformations in BigQuery (this project uses **bronze → silver → gold** naming; aligns with raw → staging → marts conceptually). |
-| **`airbyte/`** | Version-controlled connector/connection definitions and helper scripts (not UI-only). |
-| **`data/`** | Ingestion scripts, hand-written SQL (`sql/`), validation, **local dev DB** under `data/local/`. |
-| **`data-pipelines/`** | Notebook-first ETL design (non-prod exploration). |
-| **`libs/python/`** | Shared Python libraries for pipelines (BigQuery helpers, logging, etc.). |
-| **`notebooks/`** | Optional scratch exploration (`exploration/`, `prototyping/`, `archive/`). |
-| **`docker/`** | Notes and overrides for local compose images (root `docker-compose.yml` stays canonical). |
-| **`config/`** | Environment templates — prefer secrets via Secret Manager in prod. |
+| ---- | ---- |
+| **`ingestion/`** | Load → `landing_dev` and (contract) `raw_dev` |
+| **`dbt/`** | Transforms; hand sources in `models/`; generated catalog in `catalog/` |
+| **`data/local/`** | Local Postgres partition sync (path may move to `local/` later) |
+| **`infra/`** | Terraform + ingest SA setup |
+| **`ci/`** | data-eng CI notes |
+| **`docs/`** | Architecture + analyst mart guides |
+| **`docs/archive/`** | Bronze / Airbyte-era guides |
+| **`archive/`** | Removed active paths (e.g. Airbyte tree) |
+| **`scripts/`** | Dictionary / guide generators |
+| **`notebooks/`**, **`data-pipelines/`** | Scratch / design only — not production |
 
-## End-to-end flow
+## Day-to-day
 
-```text
-Sources → Airbyte (ingestion) → BigQuery (raw / landing)
-        → Airflow triggers dbt → bronze → silver → gold
-        → Analytics / BI / downstream ML features
+```bash
+cd data-eng
+make ingest-install && make ingest-auth
+make ingest-dry SOURCE=hdx_wfp_prices
+make ingest SOURCE=hdx_wfp_prices ARGS="--limit 1000"
+
+# dbt (from data-eng/dbt)
+dbt run --target staging_dev
+dbt run --target mart_dev
 ```
 
-## Governance
+Regenerate the BigQuery source catalog (not hand-edited):
 
-1. **Airbyte / ingestion config** — load only (into raw or landing datasets).  
-2. **dbt** — transforms only.  
-3. **Airflow** — orchestration only (no business SQL in DAG files beyond glue).  
-4. **Terraform** — infrastructure only.  
-5. **Notebooks** — never production paths.
+```bash
+python data/local/scripts/generate_dbt_sources.py --refresh
+# writes dbt/catalog/sources.generated.yml (gitignored)
+```
 
-## Repo root symlinks
-
-From the repository root, **`data`**, **`dbt`**, and **`infra`** are symlinks into `data-eng/` so existing docs and scripts that use `data/local/…`, `cd dbt`, etc. keep working without churn.
+See [`ingestion/README.md`](./ingestion/README.md) and [`dbt/README.md`](./dbt/README.md).

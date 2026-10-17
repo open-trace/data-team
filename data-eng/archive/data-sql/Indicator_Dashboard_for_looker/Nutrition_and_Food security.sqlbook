@@ -1,0 +1,103 @@
+-- SQLBook: Code
+WITH vw_african_countries AS (
+    SELECT african_country
+    FROM UNNEST([
+        'Algeria', 'Angola', 'Benin', 'Botswana', 'Burkina Faso', 'Burundi', 'Cameroon',
+        'Cape Verde', 'Central African Republic', 'Chad', 'Comoros', 'Congo',
+        'Democratic Republic of the Congo', 'Djibouti', 'Egypt', 'Equatorial Guinea',
+        'Eritrea', 'Eswatini', 'Ethiopia', 'Gabon', 'Gambia', 'Ghana', 'Guinea',
+        'Guinea-Bissau', 'Ivory Coast', 'Kenya', 'Lesotho', 'Liberia', 'Libya',
+        'Madagascar', 'Malawi', 'Mali', 'Mauritania', 'Mauritius', 'Morocco',
+        'Mozambique', 'Namibia', 'Niger', 'Nigeria', 'Rwanda', 'Senegal', 'Seychelles',
+        'Sierra Leone', 'Somalia', 'South Africa', 'South Sudan', 'Sudan', 'Tanzania',
+        'Togo', 'Tunisia', 'Uganda', 'Zambia', 'Zimbabwe'
+    ]) AS african_country
+),
+
+vw_nutrition_Food_security AS (
+-- FEWS NET FOOD SECURITY CLASSIFICATIONS DATA SERIES
+SELECT
+    'vw_nutrition_Food_security' AS indicator_group,
+    'FEWS_NET_food_security_classifications_data_series' AS source_table,
+    TRIM(country) AS country,
+    CAST(NULL AS STRING) AS country_code,
+    CAST(EXTRACT(YEAR FROM CAST(created AS TIMESTAMP)) AS STRING) AS year
+FROM `opentrace-prod-5ga4.raw_dev.FEWS_NET_food_security_classifications_data_series`
+WHERE LOWER(TRIM(country)) IN (
+    SELECT LOWER(TRIM(african_country))
+    FROM vw_african_countries
+)
+
+UNION ALL
+-- ILRI CRP HOUSEHOLD FOOD SECURITY
+SELECT
+    'vw_nutrition_Food_security' AS indicator_group,
+    'ilri_crp_household_food_security_v1' AS source_table,
+    TRIM(country) AS country,
+    CAST(NULL AS STRING) AS country_code,
+    CAST(NULL AS STRING) AS year
+FROM `opentrace-prod-5ga4.raw_dev.ilri_crp_household_food_security_v1`
+WHERE LOWER(TRIM(country)) IN (
+    SELECT LOWER(TRIM(african_country))
+    FROM vw_african_countries
+)
+
+UNION ALL
+-- FEWS NET FOOD INSECURE POPULATION ESTIMATES DATA SERIES
+SELECT 
+    'vw_nutrition_Food_security' AS indicator_group,
+    'FEWS_NET_Food_insecure_population_estimates_data_series' AS source_table,
+    TRIM(country) AS country,
+    TRIM(fnid) AS country_code,
+    CAST(EXTRACT(YEAR FROM CAST(first_period_date AS DATE)) AS STRING) AS year
+FROM `opentrace-prod-5ga4.raw_dev.FEWS_NET_Food_insecure_population_estimates_data_series`
+WHERE LOWER(TRIM(country)) IN (
+    SELECT LOWER(TRIM(african_country))
+    FROM vw_african_countries
+)
+
+UNION ALL
+-- FEWS NET FOOD INSECURE POPULATION ESTIMATES TIME SERIES
+SELECT
+    'vw_nutrition_Food_security' AS indicator_group,
+    'FEWS_NET_Food_insecure_population_estimates_time_series_data' AS source_table,
+    TRIM(country) AS country,
+    TRIM(country_code) AS country_code,
+    CAST(EXTRACT(YEAR FROM CAST(projection_start AS DATE)) AS STRING) AS year
+FROM `opentrace-prod-5ga4.raw_dev.FEWS_NET_Food_insecure_population_estimates_time_series_data`
+WHERE LOWER(TRIM(country)) IN (
+    SELECT LOWER(TRIM(african_country))
+    FROM vw_african_countries
+)
+
+UNION ALL
+-- FEWS NET FOOD SECURITY CLASSIFICATIONS TIME SERIES
+SELECT
+    'vw_nutrition_Food_security' AS indicator_group,
+    'FEWS_NET_food_security_classifications_time_series_data' AS source_table,
+    TRIM(country) AS country,
+    TRIM(country_code) AS country_code,
+    CAST(EXTRACT(YEAR FROM CAST(projection_start AS DATE)) AS STRING) AS year
+FROM `opentrace-prod-5ga4.raw_dev.FEWS_NET_food_security_classifications_time_series_data`
+
+WHERE LOWER(TRIM(country)) IN (
+    SELECT LOWER(TRIM(african_country))
+    FROM vw_african_countries
+)
+
+)
+
+SELECT
+    indicator_group,
+    country,
+    country_code,
+    year,
+    COUNT(*) AS total_data_points
+
+FROM vw_nutrition_Food_security
+
+GROUP BY
+    indicator_group,
+    country,
+    country_code,
+    year

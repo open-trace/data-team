@@ -46,7 +46,7 @@ if [ -f "$ENV_FILE" ]; then
   set +a
 fi
 
-# --- 3. Populate dbt sources from BigQuery (catalog + generate sources.yml) ---
+# --- 3. Populate dbt sources from BigQuery (catalog/sources.generated.yml) ---
 echo "--- 3. Syncing dbt sources from BigQuery (OAuth) ---"
 if [ -z "${BQ_PROJECT:-}" ]; then
   echo "   BQ_PROJECT is not set in data/local/.env. Set it, then run:"
@@ -58,15 +58,14 @@ else
     pip install -q google-cloud-bigquery
   fi
   python data/local/scripts/generate_dbt_sources.py --refresh
-  echo "   dbt/models/sources.yml is now in sync with BigQuery."
+  echo "   dbt/catalog/sources.generated.yml is now in sync with BigQuery."
 fi
 echo ""
 
 echo "=== Setup complete ==="
 echo ""
 echo "Next steps:"
-echo "  1. Run dbt:  cd dbt && dbt deps && dbt run --target raw_dev"
-echo "     (Use --select bronze.* to run only bronze models; see docs/FIRST_TIME_SETUP.md)"
+echo "  1. Run dbt:  cd dbt && dbt deps && dbt run --target staging_dev"
 echo "  2. Full guide: docs/FIRST_TIME_SETUP.md"
-echo "  3. dbt details: dbt/README.md"
+echo "  3. dbt details: dbt/README.md (transform-v2)"
 echo ""

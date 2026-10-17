@@ -1,0 +1,41 @@
+version: 2
+
+sources:
+  - name: landing_ingest
+    description: >
+      Repo-based ingestion tables (transform-v2). Ingest writes landing_dev for sandbox
+      and raw_dev as the primordial transform source. Soft cutover may still declare
+      durable landing schema here for existing freshness checks.
+    database: "{{ env_var('BQ_PROJECT', 'opentrace-prod-5ga4') }}"
+    schema: "{{ env_var('BQ_DATASET_LANDING', 'landing') }}"
+    loaded_at_field: _ingested_at
+    freshness:
+      warn_after: {count: 8, period: day}
+      error_after: {count: 15, period: day}
+    tables:
+      - name: hdx_wfp_food_prices
+        description: HDX WFP Nigeria food prices (CSV snapshot, partition replace)
+        columns:
+          - name: _ingested_at
+          - name: _ingest_date
+          - name: _record_hash
+          - name: _source
+      - name: wb_pink_sheet
+        description: World Bank Pink Sheet monthly prices (wide to long)
+        columns:
+          - name: _ingested_at
+          - name: _ingest_date
+          - name: _record_hash
+      - name: wb_rtfp
+        description: World Bank Real-Time Food Prices (paged JSON, merge)
+        columns:
+          - name: _ingested_at
+          - name: _record_hash
+      - name: un_peace_security_records
+        description: UN Peace & Security records (JSON payload via json.dumps)
+        columns:
+          - name: _ingested_at
+          - name: record_payload
+          - name: _record_hash
+      - name: _ingest_runs
+        description: Ingestion run metadata log

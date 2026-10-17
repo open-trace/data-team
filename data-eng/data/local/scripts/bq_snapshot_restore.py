@@ -49,7 +49,9 @@ from datetime import datetime, timezone, timedelta
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
-SOURCES_YML = REPO_ROOT / "dbt" / "models" / "sources.yml"
+_generated = REPO_ROOT / "dbt" / "catalog" / "sources.generated.yml"
+_legacy = REPO_ROOT / "dbt" / "models" / "sources.yml"
+SOURCES_YML = _generated if _generated.exists() else _legacy
 
 
 def _load_dotenv() -> None:
