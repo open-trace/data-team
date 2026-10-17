@@ -63,4 +63,4 @@ Reorganize `data-eng/` so day-to-day work follows one ownership story: Python in
 
 ## Next step
 
-Publish PRD + vertical-slice issues on the GitHub tracker (`ready-for-agent`).
+PRD + slices written under `data-eng/docs/prd/` and `data-eng/docs/issues/` (publish to GitHub with `ready-for-agent` when `gh` is available). Tags: `transform-v1.0.0`, `transform-v2.0.0`.
