@@ -7,6 +7,8 @@ from datetime import date, datetime
 from typing import Any
 
 from acf.enums import ClaimLevel, QuestionType
+from ml.rag.chatbot.geo_iso3 import infer_country_iso3_from_query
+from ml.rag.chatbot.time_resolver import resolve_relative_time, retrieval_envelope, utc_today
 
 _LOCAL_RE = re.compile(
     r"\b(ward|village|kebele|parish|settlement|community|locality|commune)\b",
@@ -56,7 +58,7 @@ def classify_acf_question(
     """Classify claim_level and question_type from query + decomposition."""
     q = (query or "").strip()
     dec = decomposition if isinstance(decomposition, dict) else {}
-    ref = reference_date or date.today()
+    ref = reference_date or utc_today()
 
     # --- claim_level ---
     geo_bits: list[str] = []
@@ -85,6 +87,12 @@ def classify_acf_question(
     else:
         t_start = _parse_iso_date(dec.get("time_start"))
         t_end = _parse_iso_date(dec.get("time_end"))
+        if t_start is None or t_end is None:
+            windows = resolve_relative_time(q, ref, infer_country_iso3_from_query(q))
+            envelope = retrieval_envelope(windows)
+            if envelope:
+                t_start = t_start or envelope[0]
+                t_end = t_end or envelope[1]
         # Narrow recent window → time_sensitive; multi-year span → structural
         if t_start and t_end and (t_end - t_start).days >= 365 * 3:
             question_type = QuestionType.STRUCTURAL

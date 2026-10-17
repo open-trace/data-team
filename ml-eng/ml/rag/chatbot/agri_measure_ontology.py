@@ -9,11 +9,13 @@ from __future__ import annotations
 import os
 import re
 from dataclasses import dataclass, field
+from datetime import date
 from typing import Any, Literal
 
 from ml.rag.chatbot.agri_entities import query_has_crop_or_commodity
 from ml.rag.chatbot.mart_indicator_classes import class_for_query, facts_for_classes
 from ml.rag.chatbot.query_normalize import normalize_query_text
+from ml.rag.chatbot.time_resolver import resolve_relative_time, utc_today
 
 RecencyTier = Literal["live", "near_term", "historical_ok", "point_in_time"]
 TaskModeName = Literal[
@@ -1134,9 +1136,17 @@ def effective_crop_required(hit: MeasureHit) -> bool:
     return hit.measure.crop_required
 
 
-def resolve_recency_tier(query: str, hit: MeasureHit | None) -> RecencyTier:
+def resolve_recency_tier(
+    query: str,
+    hit: MeasureHit | None,
+    *,
+    reference_date: date | None = None,
+) -> RecencyTier:
     base: RecencyTier = hit.measure.recency_tier if hit else "historical_ok"
-    if _LIVE_RE.search(query or ""):
+    ref = reference_date or utc_today()
+    windows = resolve_relative_time(query or "", ref)
+    live = bool(windows and not windows[0].strict) or bool(_LIVE_RE.search(query or ""))
+    if live:
         if base in ("historical_ok", "point_in_time"):
             return "near_term"
         return "live" if base == "live" else "near_term"

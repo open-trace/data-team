@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from ml.rag.api_schemas import UserProfile
+from ml.rag.chatbot.geo_policy import sanitize_profile_country
 from ml.rag.chatbot.plan_policy import is_valid_category, is_valid_plan_type
 from ml.rag.session_store import get_session_blob
 
@@ -123,6 +124,8 @@ def resolve_request_context(
                     plan_type = raw_plan
             if country is None:
                 country = _blob_str(blob, "country")
+
+    country = sanitize_profile_country(country)
 
     geo_profile: dict[str, Any] | None = None
     if plan_type is not None or category is not None or country is not None:

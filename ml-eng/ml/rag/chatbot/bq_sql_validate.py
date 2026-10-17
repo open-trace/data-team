@@ -1143,3 +1143,189 @@ def max_bytes_billed_for_source(sql_source: str) -> int:
     if src in ("template", "pattern"):
         return int(os.environ.get("RAG_BQ_TEMPLATE_MAX_BYTES_BILLED", str(512 * 1024 * 1024)) or 0)
     return int(os.environ.get("RAG_BQ_MAX_BYTES_BILLED", str(250 * 1024 * 1024)) or 0)
+
+
+_QUAL_EQ_FILTER_RE = re.compile(
+    r"\b(?:([A-Za-z_][A-Za-z0-9_]*)\.)?([A-Za-z_][A-Za-z0-9_]*)\s*=\s*'((?:''|[^'])*)'",
+    re.IGNORECASE,
+)
+_QUAL_IN_FILTER_RE = re.compile(
+    r"\b(?:([A-Za-z_][A-Za-z0-9_]*)\.)?([A-Za-z_][A-Za-z0-9_]*)\s+IN\s*\(([^)]*)\)",
+    re.IGNORECASE,
+)
+_FROM_ALIAS_MAP_RE = re.compile(
+    r"\b(?:FROM|JOIN)\s+(?:`([^`]+)`|([A-Za-z_][\w.]*))"
+    r"(?:\s+(?:AS\s+)?([A-Za-z_][A-Za-z0-9_]*))?",
+    re.IGNORECASE,
+)
+
+
+def _ontology_bq_strict() -> bool:
+    return os.environ.get("ADZA_ONTOLOGY_BQ_STRICT", "0").strip().lower() in (
+        "1",
+        "true",
+        "on",
+        "yes",
+    )
+
+
+def _bare_from_fqn(raw: str) -> str:
+    text = (raw or "").strip().strip("`")
+    if not text:
+        return ""
+    return text.split(".")[-1].lower()
+
+
+def _alias_to_table(sql: str) -> dict[str, str]:
+    """Map SQL alias (and bare table) → bare mart table id."""
+    out: dict[str, str] = {}
+    for match in _FROM_ALIAS_MAP_RE.finditer(sql or ""):
+        target = match.group(1) or match.group(2) or ""
+        bare = _bare_from_fqn(target)
+        if not bare.startswith(("fct_", "agg_", "dim_", "bridge_")):
+            continue
+        out[bare] = bare
+        alias = (match.group(3) or "").strip().lower()
+        if alias and alias not in _SQL_KEYWORDS:
+            out[alias] = bare
+    return out
+
+
+def _allowed_for_column(
+    filters: dict[str, list[str]],
+    *,
+    column: str,
+    table_hint: str | None,
+    tables_in_sql: set[str],
+) -> tuple[str | None, list[str]]:
+    """Pick the best filter key for a column reference; return (key, values)."""
+    col_l = column.lower()
+    candidates: list[tuple[str, list[str]]] = []
+    for key, vals in (filters or {}).items():
+        if "." not in key:
+            continue
+        table, col = key.split(".", 1)
+        if col.lower() != col_l:
+            continue
+        table_l = table.lower()
+        if table_hint and table_l != table_hint.lower():
+            continue
+        if tables_in_sql and table_l not in tables_in_sql and not table_hint:
+            continue
+        candidates.append((key, list(vals)))
+    if not candidates and not table_hint:
+        for key, vals in (filters or {}).items():
+            if "." not in key:
+                continue
+            _table, col = key.split(".", 1)
+            if col.lower() == col_l:
+                candidates.append((key, list(vals)))
+    if not candidates:
+        return None, []
+    if table_hint:
+        for key, vals in candidates:
+            if key.split(".", 1)[0].lower() == table_hint.lower():
+                return key, vals
+    return candidates[0]
+
+
+def _rewrite_via_bq_targets(col_key: str, literal: str, allowed: list[str]) -> str | None:
+    """Map an alternate country/product form onto an allowed stored literal when possible."""
+    allowed_l = {a.lower(): a for a in allowed}
+    if literal.lower() in allowed_l:
+        return allowed_l[literal.lower()]
+    try:
+        import opentrace_ontology as oo
+    except Exception:
+        return None
+    try:
+        ents = oo.resolve(literal)
+    except Exception:
+        return None
+    for ent in ents or []:
+        eid = getattr(ent, "entity_id", None) or (ent.get("entity_id") if isinstance(ent, dict) else None)
+        if not eid:
+            continue
+        try:
+            targets = oo.bq_targets(str(eid)) or {}
+        except Exception:
+            continue
+        for val in targets.get(col_key) or []:
+            if val in allowed:
+                return val
+            if str(val).lower() in allowed_l:
+                return allowed_l[str(val).lower()]
+    return None
+
+
+def validate_literals_against_value_map(
+    sql: str,
+    filters: dict[str, list[str]] | None,
+) -> tuple[str, list[str]]:
+    """Rewrite / check equality and IN string literals against ontology value-map filters.
+
+    Returns ``(sql, notes)``. When ``ADZA_ONTOLOGY_BQ_STRICT=1``, unrepaired
+    mismatches produce a ``strict_reject:…`` note (caller should fail closed).
+    """
+    notes: list[str] = []
+    text = sql or ""
+    if not text or not filters:
+        return text, notes
+
+    alias_map = _alias_to_table(text)
+    tables_in_sql = set(alias_map.values()) | referenced_tables(text)
+    strict = _ontology_bq_strict()
+    replacements: list[tuple[str, str]] = []
+
+    def _handle(col: str, literal: str, table_hint: str | None) -> None:
+        lit = literal.replace("''", "'").strip()
+        key, allowed = _allowed_for_column(
+            filters,
+            column=col,
+            table_hint=table_hint,
+            tables_in_sql=tables_in_sql,
+        )
+        if not key or not allowed:
+            return
+        if lit in allowed:
+            return
+        rewritten = _rewrite_via_bq_targets(key, lit, allowed)
+        if rewritten and rewritten != lit:
+            replacements.append((lit, rewritten))
+            notes.append(f"rewrote {key} '{lit}' -> '{rewritten}'")
+            return
+        if lit.lower() in {a.lower() for a in allowed}:
+            for a in allowed:
+                if a.lower() == lit.lower() and a != lit:
+                    replacements.append((lit, a))
+                    notes.append(f"rewrote {key} '{lit}' -> '{a}' (case)")
+                    return
+            return
+        msg = f"literal not in value map: {key}='{lit}'"
+        if strict:
+            notes.append(f"strict_reject:{msg}")
+        else:
+            notes.append(msg)
+
+    for match in _QUAL_EQ_FILTER_RE.finditer(text):
+        prefix, col, lit = match.group(1), match.group(2), match.group(3)
+        table_hint = alias_map.get((prefix or "").lower()) if prefix else None
+        _handle(col, lit, table_hint)
+
+    for match in _QUAL_IN_FILTER_RE.finditer(text):
+        prefix, col, body = match.group(1), match.group(2), match.group(3)
+        if "select" in (body or "").lower():
+            continue
+        table_hint = alias_map.get((prefix or "").lower()) if prefix else None
+        for lit_m in re.finditer(r"'((?:''|[^'])*)'", body or ""):
+            _handle(col, lit_m.group(1), table_hint)
+
+    out = text
+    # Longest-first so partial overlaps do not corrupt longer literals.
+    for old, new in sorted(set(replacements), key=lambda p: -len(p[0])):
+        if old == new:
+            continue
+        out = out.replace(f"'{old}'", f"'{new}'")
+        out = out.replace(f"'{old.replace(chr(39), chr(39)+chr(39))}'", f"'{new}'")
+
+    return out, notes

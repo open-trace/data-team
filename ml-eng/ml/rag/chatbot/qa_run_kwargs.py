@@ -4,6 +4,7 @@ from __future__ import annotations
 from typing import Any
 
 from ml.rag.chatbot.plan_policy import allows_export
+from ml.rag.chatbot.time_resolver import utc_today
 
 
 def build_run_kwargs(
@@ -55,6 +56,7 @@ def build_run_kwargs(
         kwargs["time_start_override"] = t_start.strip()[:10]
     if t_end.strip():
         kwargs["time_end_override"] = t_end.strip()[:10]
+    kwargs["reference_date"] = utc_today().isoformat()
     if prior_summary.strip() or prior_recent:
         kwargs["conversation_summary"] = prior_summary
         kwargs["recent_turns"] = prior_recent

@@ -126,6 +126,37 @@ The rerank model is **baked into** `Dockerfile.railway` at build time (~280 MB O
 
 ---
 
+## Ontology v3 (all default OFF — enable in this order)
+
+Offline package `opentrace_ontology` (SQLite built in Docker). Adapter:
+`ml/rag/chatbot/ontology_routing.py`. Do **not** enable filter/BQ/ACF flags until
+payload indexes exist and a backfill has tagged collections.
+
+```bash
+# 1) Plan once per turn (safe; no retrieval change until other flags on)
+ADZA_ONTOLOGY_ROUTING=0
+# 2) After backfill + KEYWORD indexes on ontology_ids / ontology_countries:
+ADZA_QDRANT_ONTOLOGY_FILTER=0
+ADZA_ONTOLOGY_QUERY_VIEW=0
+ADZA_ONTOLOGY_TAGGING=0
+# 3) BQ exact literals from value_map (NL2SQL prompt + optional rewrite):
+ADZA_ONTOLOGY_BQ_VALUES=0
+ADZA_ONTOLOGY_BQ_STRICT=0
+ADZA_ONTOLOGY_SKIP_BQ=0
+# 4) Cap ACF when citations are documents/web only:
+ADZA_ACF_SOURCE_BASIS_CAP=0
+# Already off — hard Farmers geo override:
+ADZA_SINGLE_COUNTRY_POLICY=0
+```
+
+Backfill (rotated Qdrant key only; dry-run first):
+`python -m ml.rag.scripts.backfill_ontology_tags --collection news_data --dry-run`
+
+Profile country cleaning (ISO2 → ISO3) runs at the API boundary regardless of these
+flags. See `ml-eng/opentrace_ontology/README.md`.
+
+---
+
 ## Set — recommended
 
 ### BQ YAML schema packs (baked into image)

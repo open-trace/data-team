@@ -10,11 +10,14 @@ from ml.rag.chatbot.plan_enricher import enrich_subquestions, primary_measure_fr
 from ml.rag.chatbot.reasoner_plan import ReasonerPlan, is_heavy_plan_type, should_compile_reasoner_plan
 from ml.rag.chatbot.task_mode import is_analytical_query
 from ml.rag.chatbot.turn_contract import TurnContract
-
-_LAST_N_YEARS_RE = re.compile(
-    r"\b(?:last|past|previous)\s+(\d{1,2})\s+years?\b",
-    re.I,
+from ml.rag.chatbot.geo_iso3 import infer_country_iso3_from_query
+from ml.rag.chatbot.time_resolver import (
+    parse_iso_date,
+    resolve_relative_time,
+    retrieval_envelope,
+    utc_today,
 )
+
 _TREND_RE = re.compile(r"\b(trend|changed|over time|year.over.year)\b", re.I)
 _COMPARE_RE = re.compile(r"\b(compare|versus|vs\.?|between)\b", re.I)
 _LIST_RE = re.compile(r"\b(which|list|rank|top)\b", re.I)
@@ -53,17 +56,15 @@ def _pin_time_window(
     if isinstance(decomposition, dict):
         ts = ts or str(decomposition.get("time_start") or "")[:10]
         te = te or str(decomposition.get("time_end") or "")[:10]
-    m = _LAST_N_YEARS_RE.search(query or "")
-    if m and not (ts and te):
-        try:
-            n = int(m.group(1))
-            from datetime import date
-
-            end_y = date.today().year
-            start_y = max(end_y - n + 1, 1980)
-            return f"{start_y}-01-01", f"{end_y}-12-31"
-        except ValueError:
-            pass
+    if not (ts and te):
+        ref_raw = ""
+        if isinstance(decomposition, dict):
+            ref_raw = str(decomposition.get("reference_date") or "")
+        ref = parse_iso_date(ref_raw[:10]) or utc_today()
+        windows = resolve_relative_time(query or "", ref, infer_country_iso3_from_query(query or ""))
+        envelope = retrieval_envelope(windows)
+        if envelope:
+            return envelope[0].isoformat(), envelope[1].isoformat()
     return ts[:10], te[:10]
 
 

@@ -38,6 +38,7 @@ from ml.rag.chatbot.query_decomposer import (
 from ml.rag.chatbot.ontology_context import build_ontology_context
 from ml.rag.chatbot.retrieval_contract import build_retrieval_contract, contract_to_bq_plan
 from ml.rag.chatbot.sql_compiler import sql_compiler_enabled
+from ml.rag.chatbot.time_resolver import parse_iso_date, utc_today
 from ml.rag.llm_chat import llm_chat_complete, llm_default_timeout_s, llm_model_id
 from ml.rag.observability import observed_span, update_current_span_metadata
 
@@ -160,7 +161,10 @@ def _normalize_intent(
 def _has_year_signal(query: str, decomposition: dict[str, Any]) -> bool:
     if decomposition.get("time_start") or decomposition.get("time_end"):
         return True
-    ts, te = _extract_year_range(query or "")
+    if decomposition.get("time_windows"):
+        return True
+    ref = parse_iso_date(str(decomposition.get("reference_date") or "")) or utc_today()
+    ts, te = _extract_year_range(query or "", ref)
     return bool(ts or te)
 
 

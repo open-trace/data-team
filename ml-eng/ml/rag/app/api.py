@@ -39,6 +39,7 @@ from ml.rag.chat_history import normalize_messages
 from ml.rag.chat_memory import flat_messages_to_memory
 from ml.rag.chatbot.artifact_storage import refresh_artifact_url
 from ml.rag.chatbot.plan_policy import PLAN_ROUTE_SLUGS, allows_export
+from ml.rag.chatbot.time_resolver import utc_today
 from ml.rag.chat_turn import persist_session_turn
 from ml.rag.observability import flush_langfuse, get_current_trace_id, rag_trace_context, record_trace_score
 from ml.rag.request_context import resolve_request_context
@@ -141,6 +142,13 @@ class QueryResponse(BaseModel):
         description=(
             "ADZA Confidence Framework (Path B): band, score 0–100, and explanation "
             "from cited evidence. Surfaced on every response."
+        ),
+    )
+    source_basis: str | None = Field(
+        default=None,
+        description=(
+            "Ontology routing basis when ADZA_ONTOLOGY_ROUTING=1: structured, "
+            "documents_only, web_only, or none. Omitted / null when routing is off."
         ),
     )
     session_id: str = Field(..., description="Pass on the next request for chat continuity")
@@ -389,6 +397,7 @@ async def _run_query(
         kwargs["export_enabled"] = allows_export(ctx.plan_type)
         kwargs["session_id"] = session_id
         kwargs["trace_tags"] = ["api"]
+        kwargs["reference_date"] = utc_today().isoformat()
         for key in (
             "time_start_override",
             "time_end_override",
@@ -473,10 +482,15 @@ async def _run_query(
 
         acf = acf_signal_from_result(result)
 
+        source_basis = result.get("source_basis")
+        if source_basis is not None:
+            source_basis = str(source_basis).strip() or None
+
         return QueryResponse(
             answer=answer,
             citations=citations,
             acf=acf,
+            source_basis=source_basis,
             session_id=session_id,
             session_found=session_found,
             session_ttl_seconds=session_ttl_seconds(),
