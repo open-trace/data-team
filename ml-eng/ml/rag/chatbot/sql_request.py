@@ -2,12 +2,12 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
 from typing import Any, Literal
 
 from ml.rag.chatbot.bq_table_schema_yaml import measure_columns_mart
 from ml.rag.chatbot.bundle_metrics import is_agri_activities_panel, is_multi_country_panel
 from ml.rag.chatbot.intent_bundles import match_intent_bundles
+from ml.rag.chatbot.time_resolver import parse_iso_date, utc_today
 from ml.rag.chatbot.value_index import complete_enum
 
 Shape = Literal["point", "series", "panel", "share", "rank"]
@@ -50,15 +50,15 @@ def _year_bounds_from_facets(
 ) -> tuple[int, int]:
     ts = str(facets.get("time_start") or "")[:4]
     te = str(facets.get("time_end") or "")[:4]
+    ref = parse_iso_date(str(facets.get("reference_date") or "")) or utc_today()
+    now = ref.year
     if not ts or not te:
-        now = datetime.now(timezone.utc).year
         y1 = now - 1
         y0 = panel_default_start if is_agri_activities_panel(query, facets, bundles=bundles) else y1 - 4
         return y0, y1
     try:
         return int(ts), int(te)
     except ValueError:
-        now = datetime.now(timezone.utc).year
         return (panel_default_start, now - 1) if is_agri_activities_panel(query, facets, bundles=bundles) else (now - 5, now - 1)
 
 

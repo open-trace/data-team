@@ -23,6 +23,7 @@ import re
 import threading
 import time
 import uuid
+from datetime import date, datetime, timezone
 from functools import lru_cache
 from pathlib import Path
 from typing import Any
@@ -226,13 +227,12 @@ def _publication_years_in_range(
     published_at_to: str | None,
     *,
     max_span: int = 60,
+    reference_date: date | None = None,
 ) -> list[str]:
     """Year strings for MatchAny on KEYWORD-indexed ``publication_year`` (avoids integer Range)."""
-    from datetime import date
-
-    today_y = date.today().year
+    open_end = reference_date.year if reference_date is not None else datetime.now(timezone.utc).year
     y0 = int(published_at_from[:4]) if published_at_from and len(published_at_from) >= 4 else 1900
-    y1 = int(published_at_to[:4]) if published_at_to and len(published_at_to) >= 4 else today_y
+    y1 = int(published_at_to[:4]) if published_at_to and len(published_at_to) >= 4 else open_end
     if y1 < y0:
         y0, y1 = y1, y0
     if y1 - y0 > max_span:
@@ -326,6 +326,8 @@ def build_qdrant_filter(
     domains_substring: str | None = None,
     exclude_section_roles: frozenset[str] | None = None,
     indexed_fields: frozenset[str] | None = None,
+    ontology_ids: list[str] | None = None,
+    reference_date: date | None = None,
 ) -> Any | None:
     """Build a Qdrant Filter for indexed payload fields (requires payload indexes).
 
@@ -405,7 +407,11 @@ def build_qdrant_filter(
         )
     elif (published_at_from or published_at_to) and _allow("publication_year"):
         # Research: publication_year is KEYWORD-indexed — use MatchAny, not numeric Range.
-        years = _publication_years_in_range(published_at_from, published_at_to)
+        years = _publication_years_in_range(
+            published_at_from,
+            published_at_to,
+            reference_date=reference_date,
+        )
         if years:
             must.append(FieldCondition(key="publication_year", match=MatchAny(any=years)))
 
@@ -413,6 +419,10 @@ def build_qdrant_filter(
         ds = domains_substring.strip()
         if ds:
             must.append(FieldCondition(key="domains", match=MatchText(text=ds)))
+
+    oids = [str(i).strip() for i in (ontology_ids or []) if str(i).strip()]
+    if oids and _allow("ontology_ids"):
+        must.append(FieldCondition(key="ontology_ids", match=MatchAny(any=oids[:64])))
 
     if exclude_section_roles and _allow("section_role"):
         for role in sorted(exclude_section_roles):
@@ -809,6 +819,11 @@ class VectorRetriever(BaseRetriever):
         else:
             domains_substring = None
 
+        raw_oids = kwargs.get("ontology_ids")
+        ontology_ids: list[str] | None = None
+        if isinstance(raw_oids, (list, tuple)):
+            ontology_ids = [str(x).strip() for x in raw_oids if str(x).strip()] or None
+
         has_filters = any(
             [
                 doc_kind,
@@ -818,6 +833,7 @@ class VectorRetriever(BaseRetriever):
                 published_at_from,
                 published_at_to,
                 domains_substring,
+                ontology_ids,
             ]
         )
 
@@ -865,6 +881,7 @@ class VectorRetriever(BaseRetriever):
                 domains_substring=domains_substring,
                 exclude_section_roles=exclude_section_roles,
                 indexed_fields=indexed_fields,
+                ontology_ids=ontology_ids,
             )
         except Exception:
             q_filter = None

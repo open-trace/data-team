@@ -27,6 +27,7 @@ from ml.rag.chatbot.bq_sql_validate import (
     max_bytes_billed_for_source,
     sql_retry_enabled,
     validate_dry_run_bytes,
+    validate_literals_against_value_map,
     validate_required_metric_filters,
     validate_semantic_coherence,
     validate_sql_column_allowlist,
@@ -285,6 +286,40 @@ def _format_intent_block(
     return "\n".join(lines)
 
 
+def _format_ontology_value_literals(
+    ontology_value_filters: dict[str, list[str]] | None,
+    *,
+    max_lines: int = 40,
+    max_values_per_col: int = 16,
+    budget_bytes: int | None = None,
+) -> str:
+    """ALLOWED FILTER LITERALS block for NL2SQL (capped; counts against hint budget)."""
+    if not ontology_value_filters:
+        return ""
+    lines: list[str] = ["ALLOWED FILTER LITERALS (use exact stored strings for these columns):"]
+    used = len(lines[0].encode("utf-8"))
+    cap = budget_bytes if budget_bytes is not None else hint_max_bytes()
+    for key in sorted(ontology_value_filters.keys()):
+        if len(lines) - 1 >= max_lines:
+            lines.append("[ontology_literals_truncated=true]")
+            break
+        vals = [str(v) for v in (ontology_value_filters.get(key) or []) if str(v).strip()]
+        if not vals:
+            continue
+        shown = vals[:max_values_per_col]
+        suffix = "" if len(vals) <= max_values_per_col else f" …(+{len(vals) - max_values_per_col})"
+        line = f"- {key}: {', '.join(repr(v) for v in shown)}{suffix}"
+        cost = len(line.encode("utf-8")) + 1
+        if used + cost > cap:
+            lines.append("[ontology_literals_truncated=true]")
+            break
+        lines.append(line)
+        used += cost
+    if len(lines) <= 1:
+        return ""
+    return "\n".join(lines)
+
+
 def _format_query_constraints(
     *,
     geo_country: str | None,
@@ -298,6 +333,8 @@ def _format_query_constraints(
     query_intents: list[Any] | None = None,
     primary_measures: list[str] | None = None,
     task_mode: str = "",
+    ontology_value_filters: dict[str, list[str]] | None = None,
+    hint_budget_bytes: int | None = None,
 ) -> str:
     """Structured filters from query decomposition (must appear in generated SQL)."""
     lines: list[str] = []
@@ -372,9 +409,19 @@ def _format_query_constraints(
         continental = _continental_scope_hint(query, entities)
         if continental:
             lines.append(continental)
-    if not lines:
-        return ""
-    return "Query constraints from decomposition (MUST honor in WHERE / GROUP BY):\n" + "\n".join(lines)
+    base = ""
+    if lines:
+        base = "Query constraints from decomposition (MUST honor in WHERE / GROUP BY):\n" + "\n".join(lines)
+    used = len(base.encode("utf-8")) if base else 0
+    budget = hint_budget_bytes if hint_budget_bytes is not None else hint_max_bytes()
+    remain = max(0, budget - used)
+    lit_block = _format_ontology_value_literals(
+        ontology_value_filters,
+        budget_bytes=remain if remain > 64 else 0,
+    )
+    if base and lit_block:
+        return base + "\n\n" + lit_block
+    return base or lit_block
 
 
 def _extract_single_select(raw: str) -> str:
@@ -522,6 +569,8 @@ class BQRetriever(BaseRetriever):
         self.last_sql_source: str | None = None
         self.last_bq_execute_ms: float | None = None
         self.last_bq_nl2sql_ms: float | None = None
+        self.last_ontology_value_filters: dict[str, list[str]] | None = None
+        self.last_ontology_literal_notes: list[str] = []
 
     def _record_nl2sql_raw(self, raw: str | None, *, parsed_ok: bool) -> None:
         """Keep short snippets of failed/empty NL2SQL generations for inspector debug."""
@@ -621,8 +670,10 @@ class BQRetriever(BaseRetriever):
         query_intents: list[Any] | None = None,
         primary_measures: list[str] | None = None,
         task_mode: str = "",
+        ontology_value_filters: dict[str, list[str]] | None = None,
     ) -> list[dict[str, str]]:
         schema_text = self._schema_for_nl2sql(table_hints)
+        total_budget = hint_max_bytes()
         constraints_block = _format_query_constraints(
             geo_country=geo_country,
             geo_countries=geo_countries,
@@ -635,21 +686,27 @@ class BQRetriever(BaseRetriever):
             query_intents=query_intents,
             primary_measures=primary_measures,
             task_mode=task_mode,
+            ontology_value_filters=ontology_value_filters,
+            hint_budget_bytes=total_budget,
         )
+        constraints_bytes = len(constraints_block.encode("utf-8")) if constraints_block else 0
+        hints_budget = max(0, total_budget - constraints_bytes)
         hints_block = ""
         hints_truncated = False
         if table_hints:
             cleaned = [str(h).strip() for h in table_hints if str(h).strip()]
             if cleaned:
-                total_budget = hint_max_bytes()
-                per_hint_cap = max(400, total_budget // max(1, len(cleaned)))
+                per_hint_cap = max(400, hints_budget // max(1, len(cleaned))) if hints_budget else 0
                 packed: list[str] = []
                 used = 0
                 for h in cleaned:
+                    if hints_budget <= 0:
+                        hints_truncated = True
+                        break
                     frag, was_cut = truncate_utf8(h, per_hint_cap)
                     cost = len(frag.encode("utf-8"))
-                    if used + cost > total_budget:
-                        remain = total_budget - used
+                    if used + cost > hints_budget:
+                        remain = hints_budget - used
                         if remain > 64:
                             frag, _ = truncate_utf8(h, remain)
                             packed.append(f"- {frag}")
@@ -772,6 +829,7 @@ class BQRetriever(BaseRetriever):
             query_intents=query_intents,
             primary_measures=primary_measures,
             task_mode=task_mode,
+            ontology_value_filters=self.last_ontology_value_filters,
         )
         raw = _call_llama_for_sql(messages)
         sql = _extract_single_select(raw)
@@ -805,6 +863,7 @@ class BQRetriever(BaseRetriever):
         decomposition: dict[str, Any] | None = None,
         bind_contracts: dict[str, Any] | None = None,
         query_intents: list[Any] | None = None,
+        ontology_value_filters: dict[str, list[str]] | None = None,
     ) -> tuple[str | None, str | None]:
         """
         Validate SQL, enforce table allowlist, dry-run, and optionally retry once.
@@ -816,6 +875,7 @@ class BQRetriever(BaseRetriever):
             return None, "validation_failed"
 
         trusted = (sql_source or "").strip().lower() == "engine"
+        filters = ontology_value_filters if ontology_value_filters is not None else self.last_ontology_value_filters
 
         def _post_checks(sql: str) -> str | None:
             allow_err = validate_sql_table_allowlist(sql, selected_tables)
@@ -905,6 +965,17 @@ class BQRetriever(BaseRetriever):
 
         if not trusted:
             validated = _maybe_inject(validated)
+        if filters:
+            rewritten, lit_notes = validate_literals_against_value_map(validated, filters)
+            if lit_notes:
+                self.last_ontology_literal_notes.extend(lit_notes)
+                logger.info("BQ ontology literal notes: %s", "; ".join(lit_notes[:8]))
+            if any(n.startswith("strict_reject:") for n in lit_notes):
+                return None, "; ".join(n for n in lit_notes if n.startswith("strict_reject:"))
+            if rewritten and rewritten != validated:
+                revalidated = _validate_sql(rewritten, allowed_datasets, limit)
+                if revalidated is not None:
+                    validated = revalidated
         check_err = _post_checks(validated)
         if check_err and sql_retry_enabled() and not trusted:
             allowed_list = ", ".join(sorted(selected_tables)) or "(none)"
@@ -1025,6 +1096,7 @@ class BQRetriever(BaseRetriever):
                     query_intents=query_intents,
                     primary_measures=primary_measures,
                     task_mode=task_mode,
+                    ontology_value_filters=self.last_ontology_value_filters,
                 )
                 raw_batch = _call_llama_for_sql(messages)
                 parsed = _parse_sql_queries(raw_batch, max_queries)
@@ -1160,6 +1232,8 @@ class BQRetriever(BaseRetriever):
         self.last_sql_source = None
         self.last_bq_execute_ms = None
         self.last_bq_nl2sql_ms = None
+        self.last_ontology_value_filters = None
+        self.last_ontology_literal_notes = []
         if not self.project_id:
             update_current_span_metadata({"status": "no_project", "row_count": 0})
             return [
@@ -1214,6 +1288,28 @@ class BQRetriever(BaseRetriever):
                 tid = str(item).strip().split(".")[-1].lower()
                 if _is_mart_table_id(tid):
                     selected_tables.add(tid)
+
+        raw_ovf = kwargs.get("ontology_value_filters")
+        ontology_value_filters: dict[str, list[str]] | None = None
+        if isinstance(raw_ovf, dict) and raw_ovf:
+            kept: dict[str, list[str]] = {}
+            for key, vals in raw_ovf.items():
+                key_s = str(key).strip()
+                if "." not in key_s:
+                    continue
+                table = key_s.split(".", 1)[0].strip().lower()
+                if selected_tables and table not in selected_tables:
+                    continue
+                if isinstance(vals, (list, tuple)):
+                    cleaned_vals = [str(v) for v in vals if str(v).strip()]
+                elif vals is None:
+                    cleaned_vals = []
+                else:
+                    cleaned_vals = [str(vals)]
+                if cleaned_vals:
+                    kept[key_s] = cleaned_vals
+            ontology_value_filters = kept or None
+        self.last_ontology_value_filters = ontology_value_filters
 
         raw_intents = kwargs.get("query_intents")
         query_intents: list[Any] | None = raw_intents if isinstance(raw_intents, list) else None
@@ -1995,4 +2091,10 @@ class BQRetriever(BaseRetriever):
         self.last_bq_execute_ms = trace_elapsed_ms(execute_t0)
         if self.last_bq_nl2sql_ms is None:
             self.last_bq_nl2sql_ms = 0.0
+        if self.last_ontology_literal_notes:
+            notes = list(self.last_ontology_literal_notes)
+            for item in items:
+                meta = item.get("metadata")
+                if isinstance(meta, dict):
+                    meta.setdefault("ontology_literal_notes", notes)
         return items
