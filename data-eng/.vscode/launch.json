@@ -1,0 +1,52 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Ingest: dry-run (pick source)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "ingestion",
+      "cwd": "${workspaceFolder}/data-eng/ingestion",
+      "args": ["run", "${input:source}", "--dry-run", "--limit", "500"],
+      "envFile": "${workspaceFolder}/data-eng/ingestion/.env",
+      "justMyCode": false
+    },
+    {
+      "name": "Ingest: run to landing_dev",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "ingestion",
+      "cwd": "${workspaceFolder}/data-eng/ingestion",
+      "args": ["run", "${input:source}", "--limit", "${input:limit}"],
+      "envFile": "${workspaceFolder}/data-eng/ingestion/.env"
+    },
+    {
+      "name": "Ingest: tests",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "pytest",
+      "cwd": "${workspaceFolder}/data-eng/ingestion",
+      "args": ["tests", "-q"]
+    }
+  ],
+  "inputs": [
+    {
+      "id": "source",
+      "type": "pickString",
+      "description": "Source",
+      "options": [
+        "hdx_wfp_prices",
+        "wb_pink_sheet",
+        "wb_rtfp",
+        "un_psdata",
+        "world_bank_data360_harmonized_country_poverty"
+      ]
+    },
+    {
+      "id": "limit",
+      "type": "promptString",
+      "description": "Row/page limit",
+      "default": "1000"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+name: _template
+table: example_table
+url: https://example.com/data.csv
+load:
+  mode: replace_partition
+  key: [id]
+since_column: date
+expect:
+  required: [id]
+  min_rows: 1
+schedule: weekly
+owner: data-eng

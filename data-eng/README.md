@@ -34,24 +34,26 @@ Glossary: [`CONTEXT.md`](./CONTEXT.md). ADRs: [`docs/adr/`](./docs/adr/).
 
 | Path | Role |
 | ---- | ---- |
-| **`ingestion/`** | Load → `landing_dev` and (contract) `raw_dev` |
+| **`ingestion/`** | Notebooks + scripts + nested `package/` → `landing_dev` / `raw_dev` |
+| **`notebooks/`** | Non-ingest scratch exploration only |
 | **`dbt/`** | Transforms; hand sources in `models/`; generated catalog in `catalog/` |
 | **`data/local/`** | Local Postgres partition sync (path may move to `local/` later) |
 | **`infra/`** | Terraform + ingest SA setup |
 | **`ci/`** | data-eng CI notes |
 | **`docs/`** | Architecture + analyst mart guides |
 | **`docs/archive/`** | Bronze / Airbyte-era guides |
-| **`archive/`** | Removed active paths (e.g. Airbyte tree) |
+| **`archive/`** | Retired paths (Airbyte, data-pipelines, …) |
 | **`scripts/`** | Dictionary / guide generators |
-| **`notebooks/`**, **`data-pipelines/`** | Scratch / design only — not production |
 
 ## Day-to-day
 
 ```bash
 cd data-eng
 make ingest-install && make ingest-auth
+# try: ingestion/notebooks/ingest_dry_run_example.ipynb
 make ingest-dry SOURCE=hdx_wfp_prices
 make ingest SOURCE=hdx_wfp_prices ARGS="--limit 1000"
+# or: python ingestion/scripts/run_source.py hdx_wfp_prices --dry-run --limit 500
 
 # dbt (from data-eng/dbt)
 dbt run --target staging_dev

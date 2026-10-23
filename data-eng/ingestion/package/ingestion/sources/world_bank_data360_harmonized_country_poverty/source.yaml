@@ -1,0 +1,17 @@
+name: world_bank_data360_harmonized_country_poverty
+table: world_bank_data360_harmonized_country_poverty
+url: https://data360api.worldbank.org/data360/data
+database_id: WB_HCP
+# Full dump by default. Optional filters (omit for whole dataset):
+# indicator_id: WB_HCP_EMP_2WAP_A
+# ref_areas: [KEN, NGA, GHA]
+# start_year: 2020
+load:
+  mode: replace_partition
+  key: [database_id, indicator, ref_area, sex, age, time_period]
+since_column: time_period_date
+expect:
+  required: [database_id, indicator, ref_area, time_period, obs_value]
+  min_rows: 1
+schedule: weekly
+owner: data-eng

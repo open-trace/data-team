@@ -27,6 +27,18 @@ _Avoid_: gold (as team language)
 The module and jobs that write LandingDev and RawDev from external sources.
 _Avoid_: Airbyte (retired from the active path)
 
+**IngestNotebook**:
+A notebook under `ingestion/notebooks/` used to try or demonstrate a load.
+_Avoid_: data-pipelines (retired), top-level `notebooks/` for ingest, treating notebooks as production transforms
+
+**IngestScript**:
+A reusable runner under `ingestion/scripts/` (or Make) for repeatable loads.
+_Avoid_: copying package internals into ad-hoc one-offs without a script
+
+**IngestPackage**:
+The installable CLI and source modules under `ingestion/package/` (`python -m ingestion`).
+_Avoid_: presenting the package tree as the primary engineer entry point
+
 **Transformation**:
 The dbt pipeline from RawDev through MartDev (transform-v2 contract).
 _Avoid_: medallion notebooks as production, bronze→silver→gold naming
