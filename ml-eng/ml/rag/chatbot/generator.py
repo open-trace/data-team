@@ -432,6 +432,22 @@ def _current_date_block(reference_date: date | None = None) -> str:
     )
 
 
+_EVIDENCE_INTERPRETATION_RULES = (
+    "\n\nEVIDENCE INTERPRETATION: Distinguish formal policies, laws, and strategies from "
+    "programmes, projects, and interventions; do not describe a programme as a policy or "
+    "assume a policy was implemented unless Context supports that claim. When GEDSI or "
+    "inclusion is requested or materially relevant, consider gender, equity, disability, "
+    "youth, and broader social inclusion. Cover only dimensions supported by Context and "
+    "state evidence gaps rather than assume impacts. Treat Wikipedia as a tertiary, "
+    "community-edited source; attribute it clearly and do not present it as equivalent to "
+    "peer-reviewed research, official statistics, or primary policy documents. For numeric "
+    "claims, use only units explicitly supported by Context; if the unit is missing, say so. "
+    "Respect the requested geographic level: when only a broader level is available, name "
+    "that level and the limitation instead of presenting it as local data. State the year of "
+    "historical figures and do not describe them as current; use the current date supplied in "
+    "Context when interpreting time-sensitive events."
+)
+
 _PARTIAL_EVIDENCE_RULES = (
     "\n\nPARTIAL EVIDENCE: Only state claims clearly supported by Context. "
     "One short closing line on years or coverage limits is enough. "
@@ -1122,7 +1138,8 @@ def _format_source_citation(item: dict[str, Any]) -> str | None:
     if kind == "web_wikipedia":
         title = str(meta.get("title") or "Wikipedia").strip()
         url = str(meta.get("url") or "").strip()
-        return f"[Wikipedia] {title} — {url}" if url else f"[Wikipedia] {title}"
+        label = "[Wikipedia — tertiary, community-edited source]"
+        return f"{label} {title} — {url}" if url else f"{label} {title}"
 
     if kind == "web_search":
         title = str(meta.get("title") or "Web source").strip()
@@ -1144,7 +1161,7 @@ def _source_kind_display(kind: str) -> str:
     if kind in ("ota_insight", "ota_metric"):
         return "OTA Insight"
     if kind == "web_wikipedia":
-        return "Wikipedia"
+        return "Wikipedia (tertiary, community-edited source)"
     if kind == "web_search":
         return "Web search"
     return kind or "Context"
@@ -1476,6 +1493,7 @@ def _build_prompt(
     # ML-057: date grounding goes directly after the base prompt so every
     # downstream addendum is read in the context of the correct year.
     system += _current_date_block(reference_date)
+    system += _EVIDENCE_INTERPRETATION_RULES
 
     if evidence_tier == "partial":
         system += _PARTIAL_EVIDENCE_RULES
@@ -1633,13 +1651,13 @@ def _build_prompt(
         ) + system
     elif structured_bq_validation_failed and is_numeric_data_query(query, decomposition):
         system = (
-            "OpenTrace warehouse SQL failed validation before execution — do not claim warehouse "
-            "figures. State the scoped filter could not be executed.\n\n"
+            "The OpenTrace warehouse request could not be completed — do not claim warehouse "
+            "figures. Clearly say that the requested data could not be retrieved.\n\n"
         ) + system
     elif structured_bq_never_executed and is_numeric_data_query(query, decomposition):
         system = (
-            "OpenTrace warehouse SQL was planned but not submitted — do not claim warehouse "
-            "figures. Use narrative sources only or state the data gap.\n\n"
+            "The OpenTrace warehouse request could not be completed — do not claim warehouse "
+            "figures. Clearly say that the requested data could not be retrieved.\n\n"
         ) + system
     elif structured_bq_empty and is_numeric_data_query(query, decomposition):
         system = (

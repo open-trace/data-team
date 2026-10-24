@@ -346,6 +346,8 @@ def test_pipeline_no_context_returns_structured_gap() -> None:
 
     assert result.get("citations") == []
     assert result.get("task_mode") == "clarify"
+    assert result.get("acf_band") == "no_evidence"
+    assert result.get("acf_score") == 0
     answer = result.get("answer") or ""
     assert "I need a bit more detail" in answer or "Cannot ground" in answer
 

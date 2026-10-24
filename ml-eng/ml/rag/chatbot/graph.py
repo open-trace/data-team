@@ -2302,6 +2302,52 @@ def node_bq_retrieve(state: RAGGraphState) -> dict[str, Any]:
         bq_sql_debug = [bq_failure_row]
     elif bq_failure_row and not engine_execute_only:
         bq_sql_debug = list(bq_sql_debug) + [bq_failure_row]
+    query_planned = plan_indicates_warehouse_attempt(plan)
+    planned_sql = plan.get("bq_sql_queries")
+    planned_sql_count = len(planned_sql) if isinstance(planned_sql, list) else 0
+    execution_status_counts: dict[str, int] = {}
+    for row in bq_sql_debug:
+        status = str(row.get("status") or "unknown")
+        execution_status_counts[status] = execution_status_counts.get(status, 0) + 1
+    job_ids = {str(row.get("job_id")) for row in bq_sql_debug if row.get("job_id")}
+    usable_bq_count = sum(1 for row in results if is_usable_structured_bq_row(row))
+    execution_flags = bq_execute_flags(
+        bq_sql_debug,
+        pre_queries=collect_pre_queries(
+            plan,
+            state_queries=bq_sql_queries,
+            bq_sql_debug=bq_sql_debug,
+        ),
+        usable_bq=usable_bq_count > 0,
+        compile_error=bool(plan.get("compile_error")),
+        warehouse_attempted=query_planned or bool(bq_sql_queries or bq_sql_debug),
+    )
+    bq_diagnostics = {
+        "query_planned": query_planned,
+        "planned_sql_count": planned_sql_count,
+        "retrieved_sql_count": len(bq_sql_queries),
+        "bq_debug_count": len(bq_sql_debug),
+        "job_id_count": len(job_ids),
+        "execution_status_counts": execution_status_counts,
+        "result_count": len(results),
+        "usable_result_count": usable_bq_count,
+        "execution_flags": execution_flags,
+    }
+    if query_planned and not job_ids and usable_bq_count == 0:
+        logger.warning("BigQuery retrieval diagnostics: %s", bq_diagnostics)
+    else:
+        logger.info("BigQuery retrieval diagnostics: %s", bq_diagnostics)
+    update_current_span_metadata(
+        {
+            "bq_query_planned": query_planned,
+            "bq_planned_sql_count": planned_sql_count,
+            "bq_retrieved_sql_count": len(bq_sql_queries),
+            "bq_debug_count": len(bq_sql_debug),
+            "bq_job_id_count": len(job_ids),
+            "bq_execution_status_counts": execution_status_counts,
+            **execution_flags,
+        }
+    )
     cache_entry = cache_entry_from_bq_results(results, query=q, decomposition=dec)
     sql_source = getattr(retriever, "last_sql_source", None)
     if not sql_source:

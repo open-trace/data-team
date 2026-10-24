@@ -617,6 +617,16 @@ def build_generation_plan(
                 )
                 if not use_contract_shape:
                     output_type = output_type_from_answer_shape(shape)
+            if (
+                not slot_reasoner
+                and task_mode == "analytical"
+                and isinstance(decomposition, dict)
+                and str(decomposition.get("intent") or "").strip().lower() == "compare"
+                and evidence_tier != "empty"
+                and output_type not in ("export", "insufficient")
+            ):
+                shape = "comparison"
+                output_type = output_type_from_answer_shape(shape)
             if task_mode == "data_export_only":
                 output_type = "export"
                 shape = "export_table"

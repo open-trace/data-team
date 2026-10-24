@@ -132,7 +132,12 @@ def plan_generation_addendum(plan_type: str | None) -> str:
     if pt == "Integrated":
         return (
             "Plan tier: Integrated. Apply the selected category lens fully; no artificial "
-            "single-country restriction beyond what the category and context require."
+            "single-country restriction beyond what the category and context require. For "
+            "cross-sector questions, synthesize how relevant factors interact instead of "
+            "listing stakeholder perspectives independently. When the evidence supports it, "
+            "explain the pathway from drivers to outcomes and implications, citing each factual "
+            "link. Distinguish directly sourced findings from reasoned interpretation, and do "
+            "not present correlation or a plausible mechanism as established causation."
         )
     return ""
 

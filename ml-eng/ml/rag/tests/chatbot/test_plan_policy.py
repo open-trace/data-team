@@ -111,6 +111,13 @@ def test_plan_addendum_free_is_brief() -> None:
     assert "concise" in text.lower() or "top-line" in text.lower()
 
 
+def test_integrated_plan_addendum_requires_evidence_linked_synthesis() -> None:
+    text = plan_generation_addendum("Integrated").lower()
+    assert "synthesize how relevant factors interact" in text
+    assert "citing each factual link" in text
+    assert "not present correlation" in text
+
+
 def test_all_plan_models_default_to_8b(monkeypatch) -> None:
     for key in (
         "RAG_LLM_MODEL_FREE",
