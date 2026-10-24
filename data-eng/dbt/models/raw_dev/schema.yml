@@ -1,5 +1,5 @@
 # raw_dev models: read from landing and raw_dev sources; write to raw_dev dataset (BQ_DATASET_BRONZE).
-# Sources: source('landing', '...') and source('raw_dev', '...'). Tables/columns: models/sources.yml.
+# Sources: source('landing', '...') and source('raw_dev', '...'). Tables/columns: catalog/sources.generated.yml.
 # Run: dbt run --target raw_dev (or dbt run --select raw_dev.*)
 
 version: 2

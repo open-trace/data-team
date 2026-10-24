@@ -1,0 +1,12 @@
+name: un_psdata
+table: un_peace_security_records
+url: https://psdata.un.org/api/public
+metadata_url: https://psdata.un.org/api/public/metadata/all
+load:
+  mode: merge
+  key: [dataset_id, record_id]
+expect:
+  required: [dataset_id, record_payload]
+  min_rows: 1
+schedule: weekly
+owner: data-eng

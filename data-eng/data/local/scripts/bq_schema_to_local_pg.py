@@ -1,17 +1,15 @@
 #!/usr/bin/env python3
 """
-Fetch BigQuery table schemas for bronze, silver, and gold (raw_dev/staging_dev/mart_dev in BQ) and generate PostgreSQL DDL.
-Writes one .sql file per table to data/local/schema/{bronze,silver,gold}/ and optionally
-creates the tables on the local DB when LOCAL_DB_URL is set.
+Fetch BigQuery table schemas for transform layers and generate PostgreSQL DDL.
+
+Writes one .sql file per table to data/local/schema/{landing,raw_dev,staging_dev,intermediate_dev,mart_dev}/
+and optionally creates tables when LOCAL_DB_URL is set.
+
+Layers use *_dev names (plus landing = transform SoT). Legacy env BQ_DATASET_BRONZE/SILVER/GOLD still work.
 
 Usage:
-  Set BQ_PROJECT; optionally BQ_DATASET_BRONZE, BQ_DATASET_SILVER, BQ_DATASET_GOLD, LOCAL_DB_URL.
-  Table lists from data/local/scripts/{raw_dev,staging_dev,mart_dev}_tables.txt (recommended) or env BQ_{LAYER}_TABLES.
+  Set BQ_PROJECT; optionally BQ_DATASET_LANDING / BQ_DATASET_BRONZE=raw_dev / …, LOCAL_DB_URL.
   python bq_schema_to_local_pg.py [--write-only] [--execute-only]
-  --write-only: only write .sql files (default: write + execute if LOCAL_DB_URL set)
-  --execute-only: only execute DDL on local DB (skip writing files; runs all existing .sql in schema/*/)
-
-Requires: GOOGLE_APPLICATION_CREDENTIALS or gcloud auth for BigQuery.
 """
 from __future__ import annotations
 
@@ -20,7 +18,13 @@ import re
 import sys
 from pathlib import Path
 
-from bq_table_lists import dataset_id_for_layer, load_layer_tables, local_schema_for_layer
+from bq_table_lists import (
+    DATASET_ENV,
+    LAYERS as LAYER_NAMES,
+    dataset_id_for_layer,
+    load_layer_tables,
+    local_schema_for_layer,
+)
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 SCRIPTS_DIR = Path(__file__).resolve().parent
@@ -29,12 +33,8 @@ if str(SCRIPTS_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPTS_DIR))
 from engine_connector import get_engine  # noqa: E402
 
-# Layer -> (env var for dataset id, table list file name)
-LAYERS = {
-    "bronze": ("BQ_DATASET_BRONZE", "raw_dev_tables.txt"),
-    "silver": ("BQ_DATASET_SILVER", "staging_dev_tables.txt"),
-    "gold": ("BQ_DATASET_GOLD", "mart_dev_tables.txt"),
-}
+# Layer -> primary env var (see bq_table_lists for legacy fallbacks)
+LAYERS = {layer: (DATASET_ENV[layer], f"{layer}_tables.txt") for layer in LAYER_NAMES}
 
 # BigQuery type -> PostgreSQL type
 BQ_TO_PG = {
@@ -152,7 +152,9 @@ def build_create_table(*, layer: str, table_id: str, schema_fields: list) -> str
 def main() -> None:
     import argparse
 
-    parser = argparse.ArgumentParser(description="Generate PostgreSQL DDL from BigQuery schemas (bronze, silver, gold)")
+    parser = argparse.ArgumentParser(
+        description="Generate PostgreSQL DDL from BigQuery schemas (landing/raw_dev/staging_dev/…)"
+    )
     parser.add_argument("--write-only", action="store_true", help="Only write .sql files")
     parser.add_argument("--execute-only", action="store_true", help="Only execute DDL on local DB (requires existing .sql)")
     args = parser.parse_args()
@@ -199,12 +201,8 @@ def main() -> None:
     client = bigquery.Client(project=project)
 
     any_tables = False
-    for layer, (dataset_env, _) in LAYERS.items():
-        dataset_id = (os.environ.get(dataset_env) or "").strip()
-        if not dataset_id and layer == "bronze":
-            dataset_id = (os.environ.get("BQ_DATASET") or "").strip()
-        if not dataset_id:
-            dataset_id = dataset_id_for_layer(layer)
+    for layer in LAYERS:
+        dataset_id = dataset_id_for_layer(layer)
 
         table_ids = load_table_list(layer)
         if not table_ids:
@@ -243,7 +241,7 @@ def main() -> None:
     if not any_tables:
         print(
             "No tables found for any layer. Set BQ_{LAYER}_TABLES or add scripts/{layer}_tables.txt "
-            "or ensure dbt/models/sources.yml contains the layer datasets (e.g. raw_dev/staging_dev/mart_dev).",
+            "or ensure dbt/catalog/sources.generated.yml contains the layer datasets (e.g. raw_dev/staging_dev/mart_dev).",
             file=sys.stderr,
         )
     print("Done.")

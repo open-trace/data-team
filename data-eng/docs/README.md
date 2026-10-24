@@ -1,5 +1,7 @@
 # data-eng documentation
 
+**Platform narrative (transform-v2):** [`../README.md`](../README.md) · [`../CONTEXT.md`](../CONTEXT.md) · [`adr/`](./adr/)
+
 | Doc | Audience / role |
 |-----|-----------------|
 | [OpenTrace_Mart_Complete_Guide.md](./OpenTrace_Mart_Complete_Guide.md) | Analysts — ERD + indicator-class writing (EL, GYI, PROD, FS, …) |
@@ -11,7 +13,8 @@
 | [MART_DEV_OTA_ANALYST_GUIDE.md](./MART_DEV_OTA_ANALYST_GUIDE.md) | Same OTA guide in Markdown |
 | [CATALOG_TO_MART_MAP.md](./CATALOG_TO_MART_MAP.md) | Catalog ↔ mart glossary, grain rules, ACF contract |
 | [MART_QA_NOTES.md](./MART_QA_NOTES.md) | Mart QA inventory, caveats, rebuild notes |
-| [GLOBAL_ARCHITECTURE.md](./GLOBAL_ARCHITECTURE.md) | End-to-end data platform architecture |
+| [GLOBAL_ARCHITECTURE.md](./GLOBAL_ARCHITECTURE.md) | Pointer — full Airbyte/bronze doc in [archive/](./archive/) |
+| [ARCHITECTURE.md](./ARCHITECTURE.md) | Active architecture pointer |
 
 **Which mart doc?** OpenTrace Complete Guide + Entity Dictionary = indicator-class framing, ERDs, and full per-table Columns (same descriptions as the engineer dump). `mart_dev_entity_dictionary.xlsx` = Relationships / Recipes / ACF plus the same Columns sheet. OTA guide = how to write OTA reports against the warehouse.
 

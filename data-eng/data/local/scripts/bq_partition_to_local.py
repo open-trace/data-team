@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 Sync a partition (or sample) from a BigQuery database (dataset) into the local database.
-Supports PostgreSQL (recommended) or SQLite. Source is a table inside the bronze (or silver/gold)
-database; config via BQ_PROJECT, BQ_DATASET, BQ_TABLE.
+Supports PostgreSQL (recommended) or SQLite. Source is a table in a BQ dataset
+(landing / raw_dev / staging_dev / …); config via BQ_PROJECT, BQ_DATASET, BQ_TABLE.
 
 Usage:
   PostgreSQL (set LOCAL_DB_URL in .env):

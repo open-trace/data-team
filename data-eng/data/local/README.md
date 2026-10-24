@@ -1,70 +1,55 @@
 # Local development database (PostgreSQL)
 
-A **local PostgreSQL database** holds a **partition** (or sample) of the data that lives in the BigQuery **dev datasets**: **`raw_dev`**, **`staging_dev`**, **`mart_dev`**. It is used to **curate and test** the ETL pipeline locally without running on full production data.
+A **local PostgreSQL database** holds a **partition** of BigQuery data used to curate and test ETL locally.
 
-We use **PostgreSQL** so the team’s local environment is close to BigQuery (full SQL, multiple connections, same mental model). SQLite remains supported if you prefer a file-based DB.
+**Path note:** Renaming this tree to `data-eng/local/` is deferred (compose, Makefile, and scripts still use `data/local/`). Prefer `sync_all_tables.py --dataset raw_dev` over bronze-named aliases.
+
+## Layers (schemas match BQ dataset ids)
+
+| Schema | Role |
+|--------|------|
+| `landing` / `landing_dev` | Ingest-related (sync as needed) |
+| `raw_dev` | Primordial transform source (ingest-owned in BQ) |
+| `staging_dev` | Staging |
+| `intermediate_dev` | Intermediate |
+| `mart_dev` | Mart |
+
+Ingest package: [`../../ingestion/`](../../ingestion/).
 
 ## Team collaboration
 
-- **Recommended: one database per developer**  
-  Each person runs their own PostgreSQL instance (e.g. via Docker or a local install) and sets `LOCAL_DB_URL` in their own `.env` to point at their own DB (e.g. `datateam_local` or `datateam_alice`). No shared state, no conflicts.
-
-- **Optional: shared dev server**  
-  If you use a single shared Postgres server for the team, give each developer a **separate database** (e.g. `datateam_alice`, `datateam_bob`) or a **separate schema** inside one database. Never share one database for concurrent writes.
-
-- **What to commit**  
-  Schema DDL in `schema/`, sync scripts, and this README are in git. Each developer’s `.env` and the actual data in their local DB are **not** committed.
-
-So: collaboration is smooth as long as everyone has their **own** database (or schema); the repo only holds code and schema.
-
-## For team members (shared repo)
-
-When this repo is shared with the team, **everyone gets the same local DB setup**:
-
-- **Same schema:** The table lists (`scripts/raw_dev_tables.txt`, `scripts/staging_dev_tables.txt`, `scripts/mart_dev_tables.txt`) and schema script (`bq_schema_to_local_pg.py`) are in the repo. When any team member runs the scripts, they create the **same tables** in their local Postgres, using the same BigQuery project and dataset names.
-- **Same schema:** By default, table lists are derived from `dbt/models/sources.yml` (which is already the canonical list of BQ tables for dbt). Optional `scripts/{raw_dev,staging_dev,mart_dev}_tables.txt` files or env vars `BQ_{LAYER}_TABLES` can override this for targeted work. When any team member runs the scripts, they create the **same tables** under local Postgres schemas that match BigQuery dataset ids: `raw_dev.*`, `staging_dev.*`, `mart_dev.*`.
-- **Same workflow:** Everyone uses the same Docker Compose, same scripts, and the same `.env.example` as a template. Run `docker compose up -d`, create your DB, copy `.env.example` to `.env` and add your own BigQuery credentials and `LOCAL_DB_URL`, then run `bash data/local/scripts/populate_local_db.sh`.
-- **Your own data:** Each person’s local DB is **their own copy**. The rows in it are whatever they synced from BigQuery when they ran the sync. To get similar data across the team, use the same `BQ_PARTITION_LIMIT` and filters in `.env` (or document the recommended values in the repo).
-
-So: same structure and process for everyone; each team member syncs their own data into their own database.
+Each developer runs their own Postgres and sets `LOCAL_DB_URL` in `.env`. Schema DDL and sync scripts are shared; data is not committed.
 
 ## Layout
 
 | Path | Purpose |
 |------|---------|
-| **`schema/`** | DDL for the local DB (PostgreSQL and optional SQLite). Mirror bronze/silver/gold **database** structures. |
-| **`scripts/`** | Scripts to sync a partition from a BigQuery **database** into the local DB (e.g. `bq_partition_to_local.py`). **`engine_connector.py`** is the single entry point for all DB connections: use it when reading, writing, or creating tables/datasets. |
-| **`.env.example`** | Example env vars for BQ and **PostgreSQL** `LOCAL_DB_URL` (do not commit `.env`). |
+| `schema/{landing,raw_dev,staging_dev,intermediate_dev,mart_dev}/` | Per-table DDL |
+| `scripts/` | Sync / schema tools (`bq_schema_to_local_pg.py`, `sync_all_tables.py`) |
+| `.env.example` | Template (do not commit `.env`) |
 
-## Creating bronze, silver, and gold tables from BigQuery
+## Populate from BigQuery
 
-To recreate the logical layers (bronze/silver/gold) from BigQuery dev datasets on your local PostgreSQL database:
+1. Set `BQ_PROJECT`, `BQ_DATASET_LANDING=landing`, `BQ_DATASET_BRONZE=raw_dev`, `BQ_DATASET_SILVER=staging_dev`, `BQ_DATASET_INTERMEDIATE=intermediate_dev`, `BQ_DATASET_GOLD=mart_dev`, and `LOCAL_DB_URL`.
+2. Generate DDL and create tables:
 
-1. **Set env:** `BQ_PROJECT`, `BQ_DATASET_BRONZE`, `BQ_DATASET_SILVER`, `BQ_DATASET_GOLD` (or rely on defaults `bronze`/`silver`/`gold`), and optionally `LOCAL_DB_URL` (to create tables directly on your local DB).
-2. **Table lists (usually automatic):** The scripts will read `dbt/models/sources.yml` to determine which tables exist in each layer (using your `BQ_DATASET_BRONZE` / `BQ_DATASET_SILVER` / `BQ_DATASET_GOLD`). If you want to sync only a subset, set `BQ_{LAYER}_TABLES` (comma-separated) or edit `scripts/raw_dev_tables.txt`, `scripts/staging_dev_tables.txt`, `scripts/mart_dev_tables.txt`.
-3. **Generate DDL and create tables:**  
-   From repo root:
-   ```bash
-   python data/local/scripts/bq_schema_to_local_pg.py
-   ```
-   This fetches each table’s schema from BigQuery for all three layers, writes one `.sql` file per table under `schema/bronze/`, `schema/silver/`, and `schema/gold/`, and (if `LOCAL_DB_URL` is set) runs the DDL so the tables exist locally. Use `--write-only` to only write `.sql` files, or `--execute-only` to run existing `.sql` files against the local DB without calling BigQuery.
-4. **Load data:** Sync a partition into each table (writes into local schemas `raw_dev`, `staging_dev`, `mart_dev`):
-   ```bash
-   python data/local/scripts/sync_all_tables.py --dataset bronze
-   python data/local/scripts/sync_all_tables.py --dataset silver
-   python data/local/scripts/sync_all_tables.py --dataset gold
-   ```
-   Use `BQ_PARTITION_LIMIT` or `--limit` to control how many rows are pulled per table.
+```bash
+python data/local/scripts/bq_schema_to_local_pg.py
+```
 
-**One-shot (from repo root):** If `data/local/.env` is configured, you can run:
-   ```bash
-   bash data/local/scripts/populate_local_db.sh
-   ```
-   This loads `.env`, creates bronze/silver/gold tables from BigQuery schemas, syncs data into all three layers, then loads the GIS CSV.
+3. Sync data:
 
-## Running the local DB with Docker (recommended)
+```bash
+python data/local/scripts/sync_all_tables.py --dataset landing
+python data/local/scripts/sync_all_tables.py --dataset raw_dev
+python data/local/scripts/sync_all_tables.py --dataset staging_dev
+python data/local/scripts/sync_all_tables.py --dataset intermediate_dev
+python data/local/scripts/sync_all_tables.py --dataset mart_dev
+```
 
-From repo root:
+Or one-shot: `bash data/local/scripts/populate_local_db.sh`
+
+## Docker
 
 ```bash
 cd data-eng
@@ -72,45 +57,6 @@ docker compose up -d postgres
 docker compose --profile setup up --build setup
 ```
 
-- The second command runs a one-shot container that executes `data/local/scripts/populate_local_db.sh`.
-- Data is written into Postgres schemas matching BQ dataset ids: `raw_dev.*`, `staging_dev.*`, `mart_dev.*`.
+## Env
 
-### Connect with Power BI (optional)
-
-Power BI can connect to the running local Postgres:
-
-- **host**: `localhost`
-- **port**: `5432`
-- **database**: `datateam_local`
-- **username/password**: `postgres` / `postgres`
-
-## Usage
-
-1. **Start PostgreSQL**  
-   Use the project’s Docker Compose (see repo root `docker-compose.yml`) or your own local Postgres. Create a database for yourself (e.g. `datateam_local`).
-
-2. **Configure**  
-   Copy `.env.example` to `.env`. Set `BQ_PROJECT`, `BQ_DATASET_BRONZE` (and optionally `BQ_DATASET_SILVER`, `BQ_DATASET_GOLD`), and the table/partition you want. Set **`LOCAL_DB_URL`** to your Postgres URL, e.g.  
-   `postgresql://postgres:postgres@localhost:5432/datateam_local`  
-   Do not commit `.env` or credentials.
-
-3. **Sync a partition**  
-   From repo root:
-   ```bash
-   python data/local/scripts/bq_partition_to_local.py
-   ```
-   This queries BigQuery (with your partition filter) and loads the result into your local Postgres. Run again to refresh.
-
-4. **Curate ETL**  
-   Use the local DB in notebooks under `data-pipelines/` (bronze, silver, gold) or in Python: connect with the same `LOCAL_DB_URL` and develop transforms. When logic is ready, translate it to `data/sql/bronze_to_silver/` and `data/sql/silver_to_gold/` for BigQuery.
-
-## Database options
-
-- **PostgreSQL (recommended):** Set `LOCAL_DB_URL` in `.env`. Requires `psycopg2-binary` and `sqlalchemy` (in `requirements.txt`). Use one DB per developer (or one schema per developer on a shared server).
-- **SQLite:** Leave `LOCAL_DB_URL` unset and set `LOCAL_DB_PATH` (e.g. `data/local/local.db`) if you prefer a file-based DB.
-
-## Conventions
-
-- Do **not** commit `.env` or the local DB data (credentials and DB contents are in `.gitignore` or live only on your machine).
-- Keep **schema** in `schema/` so everyone can create the same structure.
-- Document which partition (e.g. date range) the team is using in a small README or in the script’s default query.
+Copy `.env.example` → `.env`. For dbt/transforms use OAuth or a BQ-read key. For **ingest** into `landing_dev`, use the shared key in `data-eng/ingestion/.env` (outside the repo).
