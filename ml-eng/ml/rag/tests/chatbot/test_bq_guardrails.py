@@ -1,7 +1,11 @@
 """Guardrails: typed warehouse gaps and forbid generic insufficient."""
 from __future__ import annotations
 
-from ml.rag.chatbot.bq_gap_messages import forbid_generic_insufficient, warehouse_was_attempted
+from ml.rag.chatbot.bq_gap_messages import (
+    forbid_generic_insufficient,
+    typed_bq_gap_answer,
+    warehouse_was_attempted,
+)
 from ml.rag.chatbot.bq_execute_state import bq_execute_flags
 from ml.rag.chatbot.graph import _typed_bq_hard_return
 
@@ -41,3 +45,19 @@ def test_forbid_generic_when_warehouse_attempted() -> None:
         {"bq_sql_plan": {"bq_sql_queries": ["SELECT 1"], "supervisor_plan": {"forbid_insufficient_without_attempt": True}}}
     )
     assert warehouse_was_attempted({"bq_sql_plan": {"selected_tables": ["fct_production"]}})
+
+
+def test_warehouse_failures_hide_internal_sql_compilation_details() -> None:
+    for flag in (
+        "structured_bq_validation_failed",
+        "structured_bq_compile_error",
+        "structured_bq_never_executed",
+    ):
+        answer = typed_bq_gap_answer(
+            flag=flag,
+            prep_error="internal SQL compiler exception",
+        )
+        assert "warehouse request could not be completed" in answer.lower()
+        assert "compiler" not in answer.lower()
+        assert "validation" not in answer.lower()
+        assert "internal" not in answer.lower()

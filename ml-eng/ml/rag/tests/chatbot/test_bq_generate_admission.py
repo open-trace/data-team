@@ -145,5 +145,7 @@ def test_generate_typed_gap_when_warehouse_attempted_without_job() -> None:
                 warehouse_was_attempted=True,
             )
     mock_llm.assert_not_called()
-    assert "not submitted" in result.answer.lower() or "could not compile" in result.answer.lower()
+    assert "warehouse request could not be completed" in result.answer.lower()
+    assert "not submitted" not in result.answer.lower()
+    assert "could not compile" not in result.answer.lower()
     assert "returned no rows" not in result.answer.lower()

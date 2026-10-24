@@ -46,26 +46,40 @@ def test_node_bq_retrieve_keeps_no_valid_sql_debug() -> None:
         def retrieve(self, *_args, **_kwargs):
             return [diagnostic]
 
+    span_metadata: list[dict[str, object]] = []
     with patch("ml.rag.chatbot.graph.BQRetriever", FakeRetriever):
-        with patch("ml.rag.chatbot.bq_fact_cache.get_cached_facts", return_value=None):
-            out = node_bq_retrieve(
-                {
-                    "query": "what is the production of rice in kenya in 2016",
-                    "decomposition": {
-                        "geography": ["Kenya"],
-                        "primary_measures": ["production"],
-                        "time_start": "2016-01-01",
-                        "time_end": "2016-12-31",
-                    },
-                    "bq_sql_plan": {
-                        "selected_tables": ["agg_production_country_year"],
-                        "bind_contracts": {"agg_production_country_year": {}},
-                        "plan_source": "class_engine",
-                        "retrieve_mode": "planned",
-                    },
-                    "task_mode": "fact_lookup",
-                }
-            )
+        with patch(
+            "ml.rag.chatbot.graph.update_current_span_metadata",
+            side_effect=span_metadata.append,
+        ):
+            with patch("ml.rag.chatbot.bq_fact_cache.get_cached_facts", return_value=None):
+                out = node_bq_retrieve(
+                    {
+                        "query": "what is the production of rice in kenya in 2016",
+                        "decomposition": {
+                            "geography": ["Kenya"],
+                            "primary_measures": ["production"],
+                            "time_start": "2016-01-01",
+                            "time_end": "2016-12-31",
+                        },
+                        "bq_sql_plan": {
+                            "selected_tables": ["agg_production_country_year"],
+                            "bind_contracts": {"agg_production_country_year": {}},
+                            "plan_source": "class_engine",
+                            "retrieve_mode": "planned",
+                            "bq_sql_queries": [
+                                "SELECT country_iso3 FROM mart_dev.fct_production "
+                                "WHERE country_iso3 = 'KEN'"
+                            ],
+                        },
+                        "task_mode": "fact_lookup",
+                    }
+                )
 
     assert any(d.get("status") == "no_valid_sql" for d in out["bq_sql_debug"])
     assert out["sql_source"] == "nl2sql"
+    trace_metadata = next(item for item in span_metadata if "bq_query_planned" in item)
+    assert trace_metadata["bq_planned_sql"] == [
+        "SELECT country_iso3 FROM mart_dev.fct_production "
+        "WHERE country_iso3 = '<REDACTED>'"
+    ]

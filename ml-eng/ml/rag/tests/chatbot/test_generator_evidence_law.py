@@ -30,6 +30,23 @@ def test_fact_lookup_prompt_excludes_analytical_skeleton() -> None:
     assert "FACT LOOKUP" in system
 
 
+def test_prompt_distinguishes_policy_programme_gedsi_and_source_quality() -> None:
+    system = _system_prompt(task_mode="research", evidence_tier="strong").lower()
+    for phrase in (
+        "distinguish formal policies",
+        "programmes, projects, and interventions",
+        "gender, equity, disability",
+        "broader social inclusion",
+        "wikipedia as a tertiary",
+        "do not present it as equivalent",
+        "units explicitly supported by context",
+        "respect the requested geographic level",
+        "state the year of historical figures",
+        "current date supplied in context",
+    ):
+        assert phrase in system
+
+
 def test_empty_tier_prompt_has_no_key_findings() -> None:
     system = _system_prompt(task_mode="analytical", evidence_tier="empty", analytical_mode=True)
     assert "Key Findings" not in system

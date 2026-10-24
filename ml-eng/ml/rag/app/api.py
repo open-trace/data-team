@@ -38,6 +38,11 @@ from ml.rag.api_schemas import ACFSignal, ArtifactItem, CitationItem, UsageStats
 from ml.rag.chat_history import normalize_messages
 from ml.rag.chat_memory import flat_messages_to_memory
 from ml.rag.chatbot.artifact_storage import refresh_artifact_url
+from ml.rag.chatbot.bq_sql_diagnostics import (
+    MAX_DIAGNOSTIC_SQL_STATEMENTS,
+    sql_debug_rows_for_diagnostics,
+    sql_statements_for_diagnostics,
+)
 from ml.rag.chatbot.plan_policy import PLAN_ROUTE_SLUGS, allows_export
 from ml.rag.chatbot.time_resolver import utc_today
 from ml.rag.chat_turn import persist_session_turn
@@ -47,7 +52,7 @@ from ml.rag.session_store import delete_session, get_session_blob, redis_status,
 
 logger = logging.getLogger("ml.rag.api")
 
-_TRACE_BQ_SQL_DEBUG_MAX = 20
+_TRACE_BQ_SQL_DEBUG_MAX = MAX_DIAGNOSTIC_SQL_STATEMENTS
 
 
 def _slim_bq_sql_plan_for_trace(plan: Any) -> dict[str, Any] | None:
@@ -64,11 +69,20 @@ def _slim_bq_sql_plan_for_trace(plan: Any) -> dict[str, Any] | None:
 
 
 def _trace_bq_sql_debug_rows(result: dict[str, Any]) -> list[dict[str, Any]]:
-    raw = result.get("bq_sql_debug")
-    if not isinstance(raw, list):
+    return sql_debug_rows_for_diagnostics(result.get("bq_sql_debug"))
+
+
+def _trace_submitted_bq_sql(result: dict[str, Any]) -> list[str]:
+    rows = result.get("bq_sql_debug")
+    if not isinstance(rows, list):
         return []
-    rows = [row for row in raw if isinstance(row, dict)]
-    return rows[:_TRACE_BQ_SQL_DEBUG_MAX]
+    return sql_statements_for_diagnostics(
+        [
+            row.get("sql")
+            for row in rows
+            if isinstance(row, dict) and row.get("job_id") and row.get("sql")
+        ]
+    )
 
 
 @asynccontextmanager
@@ -104,7 +118,10 @@ class QueryRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     query: str = Field(..., min_length=1, description="Natural language question for the RAG")
-    include_trace: bool = Field(False, description="Include decomposition and retrieval counts in response")
+    include_trace: bool = Field(
+        False,
+        description="Include sanitized SQL, decomposition, and retrieval diagnostics in response",
+    )
     session_id: str | None = Field(
         None,
         description="Omit to start a new session; reuse for multi-turn chat (server-side memory)",
@@ -442,7 +459,13 @@ async def _run_query(
                 "merged_context_count": len(result.get("merged_context") or []),
                 "reranked_context_count": len(result.get("reranked_context") or []),
                 "langfuse_trace_id": langfuse_trace_id,
-                "bq_sql_queries": list(result.get("bq_sql_queries") or []),
+                "bq_sql_queries": sql_statements_for_diagnostics(result.get("bq_sql_queries")),
+                "bq_planned_sql": sql_statements_for_diagnostics(
+                    (result.get("bq_sql_plan") or {}).get("bq_sql_queries")
+                    if isinstance(result.get("bq_sql_plan"), dict)
+                    else None
+                ),
+                "bq_submitted_sql": _trace_submitted_bq_sql(result),
                 "bq_sql_debug": _trace_bq_sql_debug_rows(result),
                 "bq_sql_plan": _slim_bq_sql_plan_for_trace(result.get("bq_sql_plan")),
                 "sql_source": result.get("sql_source"),

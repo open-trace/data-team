@@ -113,10 +113,7 @@ def _is_mart_table_id(table_id: str) -> bool:
 
 def _load_dotenv() -> None:
     """Delegate to the single RAG env loader. Safe to call multiple times."""
-    try:
-        load_rag_dotenv(_REPO_ROOT)
-    except Exception:
-        pass
+    load_rag_dotenv(_REPO_ROOT)
 
 
 def _get_datasets_config() -> dict[str, str]:
@@ -587,6 +584,15 @@ class BQRetriever(BaseRetriever):
     def _get_client(self):
         if self._client is None:
             from google.cloud import bigquery
+
+            credential_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", "").strip()
+            logger.info(
+                "Initializing BigQuery client: project_configured=%s "
+                "credentials_path_configured=%s credentials_base64_configured=%s",
+                bool(self.project_id),
+                bool(credential_path),
+                bool(os.environ.get("GOOGLE_APPLICATION_CREDENTIALS_BASE64", "").strip()),
+            )
             self._client = bigquery.Client(project=self.project_id)
         return self._client
 
@@ -1724,9 +1730,11 @@ class BQRetriever(BaseRetriever):
                     telem = _job_telemetry(row_count=0, status="timeout" if is_timeout else "execution_error")
                     if is_timeout:
                         logger.warning(
-                            "BQ job timeout sql#%d source=%s after %.1fs",
+                            "BQ execution status=timeout sql_index=%d source=%s "
+                            "job_id_recorded=%s after=%.1fs",
                             idx + 1,
                             source,
+                            bool(telem.get("job_id")),
                             _bq_job_timeout_s(validated),
                         )
                         exec_items.append(
@@ -1747,10 +1755,13 @@ class BQRetriever(BaseRetriever):
                         )
                         return exec_items, True
                     logger.warning(
-                        "BQ execution failed for validated SQL #%d: %s (sql: %s)",
+                        "BQ execution status=execution_error sql_index=%d source=%s "
+                        "job_id_recorded=%s error_type=%s error=%s",
                         idx + 1,
+                        source,
+                        bool(telem.get("job_id")),
+                        type(exc).__name__,
                         str(exc)[:200],
-                        validated[:200],
                     )
                     exec_meta: dict[str, Any] = {
                         "sql": validated,

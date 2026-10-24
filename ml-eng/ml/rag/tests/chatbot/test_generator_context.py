@@ -340,7 +340,7 @@ def test_web_wikipedia_citation_format() -> None:
     }
     line = _format_source_citation(item)
     assert line is not None
-    assert "[Wikipedia]" in line
+    assert "[Wikipedia — tertiary, community-edited source]" in line
     assert "Agriculture in Senegal" in line
     assert "wikipedia.org" in line
 
@@ -1405,4 +1405,3 @@ def test_citation_url_keeps_social_when_only_option() -> None:
         {"url": "https://www.linkedin.com/posts/example-maize"},
     )
     assert "linkedin.com" in (url or "")
-

@@ -50,20 +50,19 @@ def typed_bq_gap_answer(
             "This is a scoped empty result — not evidence that the data does not exist elsewhere."
         )
     if flag == "structured_bq_validation_failed":
-        detail = f" Detail: {prep_error[:200]}." if prep_error else ""
         return (
-            f"OpenTrace warehouse SQL for {scope} failed validation before execution.{detail} "
+            f"The OpenTrace warehouse request could not be completed for {scope}. "
             "Try narrowing geography, time, or entity filters."
         )
     if flag == "structured_bq_compile_error":
         return (
-            f"OpenTrace could not compile warehouse SQL for {scope} with the routed indicator class. "
-            "Try narrowing geography, time, or entity filters, or rephrase the measure (price vs production)."
+            f"The OpenTrace warehouse request could not be completed for {scope}. "
+            "Try narrowing geography, time, or entity filters, or rephrase the requested measure."
         )
     if flag == "structured_bq_never_executed":
         return (
-            f"OpenTrace warehouse SQL was compiled for {scope} but was not submitted to "
-            "the warehouse. This is a retrieval failure — not proof that sources are unavailable."
+            f"The OpenTrace warehouse request could not be completed for {scope}. "
+            "Please try again, or narrow the requested geography, time, or entity filters."
         )
     if isinstance(turn_contract, dict):
         tc = TurnContract.from_dict(turn_contract)
