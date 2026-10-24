@@ -83,6 +83,10 @@ from ml.rag.chatbot.bq_execute_state import (
     collect_pre_queries,
     plan_indicates_warehouse_attempt,
 )
+from ml.rag.chatbot.bq_sql_diagnostics import (
+    sql_attempts_for_diagnostics,
+    sql_statements_for_diagnostics,
+)
 from ml.rag.chatbot.time_retrieval import sync_decomposition_time, time_fallback_enabled, time_kwargs_from_contract
 from ml.rag.chatbot.turn_contract import NUMERIC_JOBS, TurnContract
 from ml.rag.chatbot.typed_pack import typed_context_pack, should_zero_pack
@@ -2345,6 +2349,8 @@ def node_bq_retrieve(state: RAGGraphState) -> dict[str, Any]:
             "bq_debug_count": len(bq_sql_debug),
             "bq_job_id_count": len(job_ids),
             "bq_execution_status_counts": execution_status_counts,
+            "bq_planned_sql": sql_statements_for_diagnostics(planned_sql),
+            "bq_sql_attempts": sql_attempts_for_diagnostics(bq_sql_debug),
             **execution_flags,
         }
     )

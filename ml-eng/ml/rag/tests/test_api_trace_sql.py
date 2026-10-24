@@ -27,15 +27,21 @@ def _mock_rag_result() -> dict[str, Any]:
         "answer": "Maize yields in Kenya were stable.",
         "citations": [],
         "decomposition": {"geography": ["Kenya"], "intent": "descriptive"},
-        "bq_sql_queries": ["SELECT country_name FROM mart_dev.fct_production LIMIT 10"],
+        "bq_sql_queries": [
+            "SELECT country_name FROM mart_dev.fct_production WHERE country_name = 'Kenya' LIMIT 10"
+        ],
         "bq_sql_debug": [
             {
-                "sql": "SELECT country_name FROM mart_dev.fct_production LIMIT 10",
+                "sql": "SELECT country_name FROM mart_dev.fct_production WHERE country_name = 'Kenya' LIMIT 10",
                 "status": "ok",
                 "sql_source": "pattern",
+                "job_id": "bq-job-1",
             }
         ],
         "bq_sql_plan": {
+            "bq_sql_queries": [
+                "SELECT country_name FROM mart_dev.fct_production WHERE country_name = 'Kenya' LIMIT 10"
+            ],
             "selected_tables": ["fct_production"],
             "query_intents": [
                 {
@@ -94,8 +100,15 @@ def test_query_include_trace_exposes_bq_sql(
     body = resp.json()
     trace = body.get("trace")
     assert isinstance(trace, dict)
-    assert trace["bq_sql_queries"] == mock["bq_sql_queries"]
+    expected_sql = (
+        "SELECT country_name FROM mart_dev.fct_production "
+        "WHERE country_name = '<REDACTED>' LIMIT <REDACTED>"
+    )
+    assert trace["bq_sql_queries"] == [expected_sql]
+    assert trace["bq_planned_sql"] == [expected_sql]
+    assert trace["bq_submitted_sql"] == [expected_sql]
     assert trace["bq_sql_debug"][0]["status"] == "ok"
+    assert trace["bq_sql_debug"][0]["sql"] == expected_sql
     assert trace["sql_source"] == "pattern"
     assert trace["bq_nl2sql_ms"] == 120.5
     plan = trace.get("bq_sql_plan")
