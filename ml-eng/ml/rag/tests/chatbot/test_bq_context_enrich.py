@@ -130,6 +130,49 @@ def test_fews_market_prices_retail() -> None:
     assert any("production" in x.lower() for x in sem["not_this"])
 
 
+def test_market_price_context_preserves_recorded_date_basis() -> None:
+    row = {
+        "country_name": "Nigeria",
+        "product_name": "Coffee",
+        "price_type": "retail",
+        "currency": "NGN",
+        "unit": "kg",
+        "as_of_date": "2026-01-15",
+        "as_of_date_basis": "loaded_at",
+        "value": 950,
+    }
+    semantics = resolve_row_semantics(row, table_id="fct_prices")
+    prose = format_row_prose(semantics)
+
+    assert semantics["as_of_date"] == "2026-01-15"
+    assert "Date recorded: 2026-01-15 (basis: loaded_at)" in prose
+    assert "NGN/kg" in prose
+
+
+def test_market_price_metadata_preserves_exact_as_of_date() -> None:
+    sql = "SELECT * FROM `proj.mart_dev.fct_prices`"
+    item = _bq_item(
+        {
+            "country_name": "Nigeria",
+            "product_name": "Coffee",
+            "price_type": "retail",
+            "as_of_date": "2026-01-15",
+            "as_of_date_basis": "observation",
+            "value": 950,
+            "currency": "NGN",
+            "unit": "kg",
+        },
+        sql=sql,
+    )
+    out = enrich_bq_results(
+        [item],
+        query="What is the latest coffee price in Nigeria?",
+        plan={"selected_tables": ["fct_prices"]},
+    )
+
+    assert out[0]["metadata"]["as_of_date"] == "2026-01-15"
+
+
 def test_gdp_ppp_semantics() -> None:
     row = {
         "country_name": "Nigeria",

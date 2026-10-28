@@ -61,6 +61,10 @@ def _mock_rag_result() -> dict[str, Any]:
         "bq_cache_hit": False,
         "bq_nl2sql_ms": 120.5,
         "bq_execute_ms": 45.0,
+        "decompose_llm_ms": 230.0,
+        "vector_ms": 180.0,
+        "rerank_ms": 35.0,
+        "generate_ms": 900.0,
         "usage": {"input_tokens": 10, "output_tokens": 20, "total_tokens": 30},
     }
 
@@ -68,7 +72,12 @@ def _mock_rag_result() -> dict[str, Any]:
 @contextmanager
 def _fake_rag_trace(**_kwargs: Any):
     class _Handle:
-        def update_output(self, _result: dict[str, Any]) -> None:
+        def update_output(
+            self,
+            _result: dict[str, Any],
+            *,
+            latency_ms: float | None = None,
+        ) -> None:
             return None
 
     yield _Handle()
@@ -111,6 +120,11 @@ def test_query_include_trace_exposes_bq_sql(
     assert trace["bq_sql_debug"][0]["sql"] == expected_sql
     assert trace["sql_source"] == "pattern"
     assert trace["bq_nl2sql_ms"] == 120.5
+    assert trace["rag_pipeline_ms"] >= 0
+    assert trace["decompose_llm_ms"] == 230.0
+    assert trace["vector_ms"] == 180.0
+    assert trace["rerank_ms"] == 35.0
+    assert trace["generate_ms"] == 900.0
     plan = trace.get("bq_sql_plan")
     assert isinstance(plan, dict)
     assert plan.get("selected_tables") == ["fct_production"]

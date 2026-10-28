@@ -47,6 +47,27 @@ def test_prompt_distinguishes_policy_programme_gedsi_and_source_quality() -> Non
         assert phrase in system
 
 
+def test_market_price_prompt_uses_figures_without_inventing_forecasts() -> None:
+    system = _build_prompt(
+        "How are coffee prices in East Africa likely to change?",
+        "Context line",
+    )[0]["content"].lower()
+
+    for phrase in (
+        "latest available observation",
+        "not a live or current price",
+        "basis is loaded_at",
+        "do not invent one",
+        "do not give a numeric price forecast",
+    ):
+        assert phrase in system
+
+
+def test_market_price_prompt_is_not_added_to_unrelated_queries() -> None:
+    system = _system_prompt().lower()
+    assert "market-price questions" not in system
+
+
 def test_empty_tier_prompt_has_no_key_findings() -> None:
     system = _system_prompt(task_mode="analytical", evidence_tier="empty", analytical_mode=True)
     assert "Key Findings" not in system

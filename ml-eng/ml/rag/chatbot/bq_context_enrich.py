@@ -505,6 +505,8 @@ def resolve_row_semantics(
         "source_natural_key": _s(row.get("source_natural_key")),
         "organisation_name": _s(row.get("organisation_name")),
         "price_source": _s(row.get("price_source")),
+        "as_of_date": _s(row.get("as_of_date")),
+        "as_of_date_basis": _s(row.get("as_of_date_basis")),
         "not_this": _not_this_list(bare, row, measure_col),
     }
 
@@ -581,6 +583,8 @@ def format_row_prose(
     unit = _s(semantics.get("unit"))
     time_s = _s(semantics.get("time"))
     geo = _s(semantics.get("geo"))
+    as_of_date = _s(semantics.get("as_of_date"))
+    as_of_date_basis = _s(semantics.get("as_of_date_basis"))
     meta_bits = []
     if unit:
         meta_bits.append(f"Unit: {unit}")
@@ -590,6 +594,11 @@ def format_row_prose(
         meta_bits.append(f"Place: {geo}")
     if meta_bits:
         lines.append(" | ".join(meta_bits))
+    if as_of_date:
+        date_line = f"Date recorded: {as_of_date}"
+        if as_of_date_basis:
+            date_line += f" (basis: {as_of_date_basis})"
+        lines.append(date_line)
 
     val = semantics.get("measure_value")
     if val is not None:
@@ -657,6 +666,12 @@ def _resolve_observation_date(
     decomposition: dict[str, Any] | None,
 ) -> tuple[int | None, str | None]:
     """Return (year, as_of_date ISO) from row keys, SQL year filter, or decomposition."""
+    raw_as_of_date = _s(row.get("as_of_date"))
+    if raw_as_of_date:
+        match = re.match(r"(\d{4}-\d{2}-\d{2})", raw_as_of_date)
+        if match:
+            return int(match.group(1)[:4]), match.group(1)
+
     for key in _TIME_KEYS:
         raw = row.get(key)
         if raw is None:
