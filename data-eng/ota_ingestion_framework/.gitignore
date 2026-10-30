@@ -1,0 +1,41 @@
+data/
+farmlover_venv/
+ota_venv/
+__pycache__/
+*.pyc
+
+ingestion_points/generated/
+
+archive/
+config/tls/api_key.json
+transformation/dbt/target/
+transformation/dbt/logs/
+transformation/dbt/dbt_packages/
+transformation/dbt/profiles.yml
+transformation/dbt/.user.yml
+
+# Local working notes.
+/SESSION_STATE.md
+
+# Publish only the finished user guide; keep documentation tools and drafts local.
+/docs/*
+!/docs/OTA_Ingestion_Framework_User_Guide.pdf
+
+# Required reference inputs and the maintained staging inventory.
+# The repository-wide rules otherwise ignore every CSV file.
+!/ingestion_points/raw/*.csv
+!/transformation/dbt/staging_inventory.csv
+
+# Public intermediate certificates used for verified TLS connections.
+# API keys and service-account credentials remain excluded.
+!/config/tls/GeoTrustTLSRSACAG1.pem
+!/config/tls/SectigoPublicServerAuthenticationCADVR36.pem
+
+# Preserved locally for the later transformation/reporting PR.
+/transformation/
+/src/prepare_dbt_staging.py
+/src/audit_warehouse.py
+/tests/test_prepare_dbt_staging.py
+/tests/test_warehouse_audit.py
+/requirements-dbt.txt
+/requirements-docs.txt

@@ -1,0 +1,509 @@
+{
+  "za_fresh_produce_markets_historical": {
+    "probe": "file",
+    "format": "xlsx"
+  },
+  "za_joburg_market_fresh": {
+    "probe": "joburg",
+    "freshness_days": 3,
+    "commodities": [
+      "AMADUMBE"
+    ]
+  },
+  "za_durban_market_fresh": {
+    "probe": "durban",
+    "freshness_days": 3,
+    "date_input_format": "%m/%d/%Y",
+    "intermediates": [
+      {
+        "file": "tls/SectigoPublicServerAuthenticationCADVR36.pem",
+        "sha256": "8C54C334B66BA4E426772AF4A3F9136C19A1AEC729FDB28C535C07A5A4EF22E0"
+      }
+    ]
+  },
+  "za_tshwane_market_fresh": {
+    "probe": "tshwane",
+    "freshness_days": 3,
+    "commodities": [
+      "TOMATO",
+      "APPLE"
+    ],
+    "intermediates": [
+      {
+        "file": "tls/GeoTrustTLSRSACAG1.pem",
+        "sha256": "C06E307F7CFC1D32FA72A4C033C87B90019AF216F0775D64978A2ECA6C8A230E"
+      }
+    ]
+  },
+  "za_cape_town_market_fresh": {
+    "probe": "cape_town",
+    "freshness_days": 3
+  },
+  "za_national_fresh_produce_markets_historical": {
+    "probe": "file",
+    "format": "pdf"
+  },
+  "za_stats_sa_agricultural_survey_historical": {
+    "probe": "file",
+    "format": "zip"
+  },
+  "ng_wfp_hdx_food_prices_fresh": {
+    "probe": "csv",
+    "freshness_days": 45,
+    "required_fields": [
+      "date",
+      "admin1",
+      "market",
+      "commodity",
+      "unit",
+      "price",
+      "currency",
+      "pricetype"
+    ],
+    "date_field": "date",
+    "price_fields": [
+      "price"
+    ],
+    "commodity_field": "commodity",
+    "location_field": "admin1",
+    "unit_field": "unit",
+    "required_locations": {
+      "Abuja/FCT": [
+        "Abuja",
+        "FCT",
+        "Abuja/FCT",
+        "Federal Capital Territory",
+        "Abuja Federal Capital Territory"
+      ],
+      "Edo": [
+        "Edo"
+      ],
+      "Benue": [
+        "Benue"
+      ],
+      "Delta": [
+        "Delta"
+      ]
+    },
+    "sample_bytes": 131072
+  },
+  "ng_nbs_food_price_watch_historical": {
+    "probe": "nbs"
+  },
+  "ke_knbs_economic_survey_historical": {
+    "probe": "file",
+    "format": "pdf"
+  },
+  "ke_afa_yearbook_historical": {
+    "probe": "file",
+    "format": "pdf"
+  },
+  "ke_kamis_market_prices_fresh": {
+    "probe": "kamis",
+    "freshness_days": 7,
+    "commodities": [
+      "Avocado",
+      "Banana"
+    ],
+    "endpoints": {
+      "portal": "/",
+      "market_search": "/site/market_search"
+    }
+  },
+  "global_world_bank_pink_sheet_historical": {
+    "probe": "file",
+    "format": "xlsx",
+    "workbook": "pink_sheet"
+  },
+  "multi_faostat_producer_prices_historical": {
+    "probe": "catalogue",
+    "expected_text": [
+      "FAOSTAT"
+    ]
+  },
+  "multi_faostat_production_trade_historical": {
+    "probe": "catalogue",
+    "expected_text": [
+      "FAOSTAT"
+    ]
+  },
+  "za_doa_mis_historical": {
+    "probe": "catalogue",
+    "expected_text": [
+      "Marketing Information System"
+    ]
+  },
+  "za_buffalo_city_market_fresh": {
+    "probe": "catalogue"
+  },
+  "ke_strathmore_market_prices_fresh": {
+    "probe": "strathmore",
+    "freshness_days": 7,
+    "commodities": [
+      "Avocado",
+      "Banana (Cooking)",
+      "Banana (Ripening)"
+    ],
+    "counties": [
+      "Nairobi",
+      "Kirinyaga"
+    ],
+    "endpoints": {
+      "options": "/api/markets/options",
+      "national": "/api/markets/national-analysis",
+      "county": "/api/markets/county-analysis?county=Nairobi",
+      "comparison": "/api/markets/commodity-comparison"
+    },
+    "national_price_fields": [
+      "wholesalePrice"
+    ],
+    "county_price_fields": [
+      "wholesalePrice",
+      "retailPrice"
+    ]
+  },
+  "ng_world_bank_hfcp_historical": {
+    "probe": "catalogue",
+    "expected_text": [
+      "High Frequency Crowdsourced Prices",
+      "NGA_2025_HFCP_v01_M",
+      "Nigeria"
+    ],
+    "follow_microdata": true
+  },
+  "ng_naerls_market_prices_fresh": {
+    "probe": "naerls",
+    "expected_text": [
+      "Get Product Prices by Markets"
+    ]
+  },
+  "ng_world_bank_rtfp_fresh": {
+    "probe": "catalogue",
+    "expected_text": [
+      "Nigeria",
+      "Monthly food price estimates by product and market",
+      "NGA_2021_RTFP_v02_M"
+    ],
+    "follow_microdata": true
+  },
+  "ke_pesira_market_prices_fresh": {
+    "probe": "catalogue",
+    "expected_text": [
+      "Kenya market intelligence",
+      "Avocado",
+      "Banana"
+    ]
+  },
+  "ke_strathmore_national_api": {
+    "probe": "json_records",
+    "records_path": "latestPrices",
+    "validation_scope": "structure",
+    "scope": "Raw record access in one latest-summary JSON response. Preserve source fields; price mapping, validation and freshness interpretation belong to the later transformation stage. Full coverage is unverified.",
+    "collection": {
+      "adapter": "strathmore",
+      "options_url": "https://saficagriatlas.strathmore.edu/api/markets/options",
+      "prices_url": "https://saficagriatlas.strathmore.edu/api/markets/commodity-comparison",
+      "min_interval_seconds": 0.2,
+      "scope": "Latest county quote summaries for every commodity and county advertised by the options endpoint. Includes livestock/fish labels as supplied. County summaries are not all underlying markets or historical observations. Pending requests resume across runs; source observation dates may differ.",
+      "priority_commodities": [
+        "Avocado",
+        "Banana (Cooking)",
+        "Banana (Ripening)",
+        "Banana (Plantain)",
+        "Tomatoes"
+      ],
+      "priority_counties": [
+        "Nairobi",
+        "Kirinyaga"
+      ]
+    }
+  },
+  "thedocs_worldbank_org_en_doc_74e8be41ceb20fa0da750cda2f6b9e4e_0050012026_related_cmo_historical_data_monthly_xlsx": {
+    "probe": "file",
+    "format": "xlsx",
+    "workbook": "pink_sheet"
+  },
+  "microdata_nigerianstat_gov_ng_index_php_catalog_162_download_1427_selected_food_report_may_26_zip": {
+    "probe": "file",
+    "format": "zip",
+    "workbook": "nbs_food_watch"
+  },
+  "microdata_nigerianstat_gov_ng_index_php_catalog_162_download_1415_selected_food_report_april_2026_zip": {
+    "probe": "file",
+    "format": "zip",
+    "workbook": "nbs_food_watch"
+  },
+  "microdata_nigerianstat_gov_ng_index_php_catalog_162_download_1401_selected_food_report_mar_2026_zip": {
+    "probe": "file",
+    "format": "zip",
+    "workbook": "nbs_food_watch"
+  },
+  "moa_gov_lr_sites_default_files_documents_comprehensive_food_security_and_nutrition_survey_2025_pdf": {
+    "probe": "file",
+    "format": "pdf"
+  },
+  "moa_gov_lr_sites_default_files_documents_ministry_of_agriculture_corporate_strategic_plan_2025_pdf": {
+    "probe": "file",
+    "format": "pdf"
+  },
+  "naerls_gov_ng_wp_content_uploads_2022_11_agricultural_performance_survey_of_2009_wet_season_in_nigeria_pdf": {
+    "probe": "file",
+    "format": "pdf"
+  },
+  "naerls_gov_ng_wp_content_uploads_2022_11_agricultural_performance_survey_of_2011_wet_season_in_nigeria_pdf": {
+    "probe": "file",
+    "format": "pdf"
+  },
+  "naerls_gov_ng_wp_content_uploads_2022_11_agricultural_performance_survey_of_2012_wet_season_in_nigeria_pdf": {
+    "probe": "file",
+    "format": "pdf"
+  },
+  "nbs_gov_so_wp_content_uploads_2026_07_somalia_comprehensive_food_security_and_vulnerability_assessment_cfsva_2026_1_pdf": {
+    "probe": "file",
+    "format": "pdf"
+  },
+  "webapps_daff_gov_za_amisadmin_upload_price_watch_report_30_november_2018_pdf": {
+    "probe": "file",
+    "format": "pdf"
+  },
+  "nsa_org_na_wp_content_uploads_2024_07_namibia_census_of_agriculture_2013_14_revised_05_june2019_latest_17jun19_pdf": {
+    "probe": "file",
+    "format": "pdf"
+  },
+  "www_amis_outlook_org_fileadmin_user_upload_amis_docs_market_monitor_amis_market_monitor_issue_110_pdf": {
+    "probe": "file",
+    "format": "pdf"
+  },
+  "nasaharvest_org_https_www_amis_outlook_org_fileadmin_user_upload_amis_docs_market_monitor_amis_market_monitor_issue_108_pdf": {
+    "probe": "file",
+    "format": "pdf"
+  },
+  "joburgmarket_co_za_jhbmarket_wp_content_uploads_2023_09_joburg_market_producers_guide_on_trade_2022_newlayout2_pdf": {
+    "probe": "file",
+    "format": "pdf"
+  },
+  "www_namc_co_za_wp_content_uploads_2026_10_market_intelligence_report_quarter_2_september_2026_r_pdf": {
+    "probe": "file",
+    "format": "pdf"
+  },
+  "www_namc_co_za_wp_content_uploads_2026_07_namc_food_and_input_cost_report_q2_sept_2026_pdf": {
+    "probe": "file",
+    "format": "pdf"
+  },
+  "www_namc_co_za_wp_content_uploads_2026_10_agricultural_industry_trusts_status_report_2025_survey_final_pdf": {
+    "probe": "file",
+    "format": "pdf"
+  },
+  "www_statistics_sl_images_statisticssl_documents_rice_prices_in_sierra_leone_pdf": {
+    "probe": "file",
+    "format": "pdf"
+  },
+  "www_statistics_sl_images_statisticssl_documents_fuel_prices_in_sierra_leone_pdf": {
+    "probe": "file",
+    "format": "pdf"
+  },
+  "api_api_ninjas_com_v1_commodityprice_name_corn": {
+    "probe": "json_records",
+    "records_path": "",
+    "record_shape": "object",
+    "validation_scope": "structure",
+    "collection": {
+      "pagination": {
+        "mode": "none"
+      },
+      "scope": "One current settlement/live quote for the named commodity; not historical prices or local market coverage."
+    }
+  },
+  "api_api_ninjas_com_v1_commodityprice_name_wheat": {
+    "probe": "json_records",
+    "records_path": "",
+    "record_shape": "object",
+    "validation_scope": "structure",
+    "collection": {
+      "pagination": {
+        "mode": "none"
+      },
+      "scope": "One current settlement/live quote for the named commodity; not historical prices or local market coverage."
+    }
+  },
+  "api_api_ninjas_com_v1_commodityprice_name_soybean": {
+    "probe": "json_records",
+    "records_path": "",
+    "record_shape": "object",
+    "validation_scope": "structure",
+    "collection": {
+      "pagination": {
+        "mode": "none"
+      },
+      "scope": "One current settlement/live quote for the named commodity; not historical prices or local market coverage."
+    }
+  },
+  "api_api_ninjas_com_v1_commodityprice_name_soybean_oil": {
+    "probe": "json_records",
+    "records_path": "",
+    "record_shape": "object",
+    "validation_scope": "structure",
+    "collection": {
+      "pagination": {
+        "mode": "none"
+      },
+      "scope": "One current settlement/live quote for the named commodity; not historical prices or local market coverage."
+    }
+  },
+  "api_api_ninjas_com_v1_commodityprice_name_soybean_meal": {
+    "probe": "json_records",
+    "records_path": "",
+    "record_shape": "object",
+    "validation_scope": "structure",
+    "collection": {
+      "pagination": {
+        "mode": "none"
+      },
+      "scope": "One current settlement/live quote for the named commodity; not historical prices or local market coverage."
+    }
+  },
+  "api_api_ninjas_com_v1_commodityprice_name_oat": {
+    "probe": "json_records",
+    "records_path": "",
+    "record_shape": "object",
+    "validation_scope": "structure",
+    "collection": {
+      "pagination": {
+        "mode": "none"
+      },
+      "scope": "One current settlement/live quote for the named commodity; not historical prices or local market coverage."
+    }
+  },
+  "api_api_ninjas_com_v1_commodityprice_name_rough_rice": {
+    "probe": "json_records",
+    "records_path": "",
+    "record_shape": "object",
+    "validation_scope": "structure",
+    "collection": {
+      "pagination": {
+        "mode": "none"
+      },
+      "scope": "One current settlement/live quote for the named commodity; not historical prices or local market coverage."
+    }
+  },
+  "api_api_ninjas_com_v1_commodityprice_name_coffee": {
+    "probe": "json_records",
+    "records_path": "",
+    "record_shape": "object",
+    "validation_scope": "structure",
+    "collection": {
+      "pagination": {
+        "mode": "none"
+      },
+      "scope": "One current settlement/live quote for the named commodity; not historical prices or local market coverage."
+    }
+  },
+  "api_api_ninjas_com_v1_commodityprice_name_sugar": {
+    "probe": "json_records",
+    "records_path": "",
+    "record_shape": "object",
+    "validation_scope": "structure",
+    "collection": {
+      "pagination": {
+        "mode": "none"
+      },
+      "scope": "One current settlement/live quote for the named commodity; not historical prices or local market coverage."
+    }
+  },
+  "api_api_ninjas_com_v1_commodityprice_name_cocoa": {
+    "probe": "json_records",
+    "records_path": "",
+    "record_shape": "object",
+    "validation_scope": "structure",
+    "collection": {
+      "pagination": {
+        "mode": "none"
+      },
+      "scope": "One current settlement/live quote for the named commodity; not historical prices or local market coverage."
+    }
+  },
+  "api_api_ninjas_com_v1_commodityprice_name_cotton": {
+    "probe": "json_records",
+    "records_path": "",
+    "record_shape": "object",
+    "validation_scope": "structure",
+    "collection": {
+      "pagination": {
+        "mode": "none"
+      },
+      "scope": "One current settlement/live quote for the named commodity; not historical prices or local market coverage."
+    }
+  },
+  "api_api_ninjas_com_v1_commodityprice_name_orange_juice": {
+    "probe": "json_records",
+    "records_path": "",
+    "record_shape": "object",
+    "validation_scope": "structure",
+    "collection": {
+      "pagination": {
+        "mode": "none"
+      },
+      "scope": "One current settlement/live quote for the named commodity; not historical prices or local market coverage."
+    }
+  },
+  "api_api_ninjas_com_v1_commodityprice_name_lumber": {
+    "probe": "json_records",
+    "records_path": "",
+    "record_shape": "object",
+    "validation_scope": "structure",
+    "collection": {
+      "pagination": {
+        "mode": "none"
+      },
+      "scope": "One current settlement/live quote for the named commodity; not historical prices or local market coverage."
+    }
+  },
+  "api_api_ninjas_com_v1_commodityprice_name_lean_hogs": {
+    "probe": "json_records",
+    "records_path": "",
+    "record_shape": "object",
+    "validation_scope": "structure",
+    "collection": {
+      "pagination": {
+        "mode": "none"
+      },
+      "scope": "One current settlement/live quote for the named commodity; not historical prices or local market coverage."
+    }
+  },
+  "api_api_ninjas_com_v1_commodityprice_name_live_cattle": {
+    "probe": "json_records",
+    "records_path": "",
+    "record_shape": "object",
+    "validation_scope": "structure",
+    "collection": {
+      "pagination": {
+        "mode": "none"
+      },
+      "scope": "One current settlement/live quote for the named commodity; not historical prices or local market coverage."
+    }
+  },
+  "api_api_ninjas_com_v1_commodityprice_name_feeder_cattle": {
+    "probe": "json_records",
+    "records_path": "",
+    "record_shape": "object",
+    "validation_scope": "structure",
+    "collection": {
+      "pagination": {
+        "mode": "none"
+      },
+      "scope": "One current settlement/live quote for the named commodity; not historical prices or local market coverage."
+    }
+  },
+  "api_api_ninjas_com_v1_commodityprice_name_class_3_milk": {
+    "probe": "json_records",
+    "records_path": "",
+    "record_shape": "object",
+    "validation_scope": "structure",
+    "collection": {
+      "pagination": {
+        "mode": "none"
+      },
+      "scope": "One current settlement/live quote for the named commodity; not historical prices or local market coverage."
+    }
+  }
+}
