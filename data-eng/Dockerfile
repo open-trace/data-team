@@ -6,7 +6,7 @@ WORKDIR /app
 
 # Install dependencies (repo is mounted when container runs)
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt "pandas>=2.0.0,<3" "pyarrow>=14.0.0,<19"
 
 # Default: run the full populate script (overridden in compose)
 CMD ["bash", "data/local/scripts/populate_local_db.sh"]

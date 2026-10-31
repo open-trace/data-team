@@ -24,6 +24,7 @@ from bq_table_lists import (
     dataset_id_for_layer,
     load_layer_tables,
     local_schema_for_layer,
+    local_table_name,
 )
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -79,50 +80,11 @@ def bq_type_to_pg(field_type: str, mode: str | None) -> str:
 
 
 def quote_ident(name: str) -> str:
-    """
-    Quote an identifier safely for PostgreSQL.
-
-    BigQuery allows column names like `end` which are reserved words in Postgres.
-    We quote anything that isn't a simple lowercase identifier, or is a known reserved word.
-    """
-    if name is None:
+    """Quote a PostgreSQL identifier. BigQuery names include reserved words such as desc."""
+    if name is None or str(name) == "":
         return '""'
-    raw = str(name)
-    if raw == "":
-        return '""'
-
-    n = raw.lower()
-    pg_reserved = {
-        # Minimal high-impact set + words we have seen in BQ schemas
-        "end",
-        "start",
-        "user",
-        "group",
-        "order",
-        "table",
-        "select",
-        "where",
-        "from",
-        "to",
-        "by",
-        "limit",
-        "offset",
-        "join",
-        "inner",
-        "outer",
-        "left",
-        "right",
-        "full",
-        "on",
-        "having",
-        "union",
-    }
-
-    is_simple = re.fullmatch(r"[a-z_][a-z0-9_]*", n) is not None
-    if (not is_simple) or (n in pg_reserved) or re.search(r'[\s\-]', raw):
-        escaped = raw.replace('"', '""')
-        return f'"{escaped}"'
-    return raw
+    escaped = str(name).replace('"', '""')
+    return f'"{escaped}"'
 
 
 def safe_filename(table_id: str) -> str:
@@ -142,7 +104,7 @@ def build_create_table(*, layer: str, table_id: str, schema_fields: list) -> str
         lines.append(col_def)
     cols = ",\n".join(lines)
     schema_name = quote_ident(local_schema_for_layer(layer))
-    table_name = quote_ident(table_id)
+    table_name = quote_ident(local_table_name(table_id))
     return (
         f"CREATE SCHEMA IF NOT EXISTS {schema_name};\n"
         f"CREATE TABLE IF NOT EXISTS {schema_name}.{table_name} (\n{cols}\n);"
@@ -236,7 +198,8 @@ def main() -> None:
                     conn.execute(text(ddl))
                 # Local schema matches real BQ dataset id (raw_dev/staging_dev/mart_dev)
                 local_schema = local_schema_for_layer(layer)
-                print(f"Created table {quote_ident(local_schema)}.{quote_ident(table_id)} on local DB")
+                local_name = local_table_name(table_id)
+                print(f"Created table {quote_ident(local_schema)}.{quote_ident(local_name)} on local DB")
 
     if not any_tables:
         print(

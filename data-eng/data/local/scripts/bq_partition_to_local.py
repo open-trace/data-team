@@ -14,10 +14,14 @@ Requires: GOOGLE_APPLICATION_CREDENTIALS or gcloud auth for BigQuery.
 """
 from __future__ import annotations
 
+import argparse
+import json
 import os
-import re
 import sys
 from pathlib import Path
+
+from google.cloud import bigquery
+from sqlalchemy import text
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 _SCRIPTS_DIR = Path(__file__).resolve().parent
@@ -63,24 +67,78 @@ def _resolve_local_db_path(path: str) -> str:
     return _resolve_path(path)
 
 
+def quote_bq(name: str) -> str:
+    return "`" + str(name).replace("`", "") + "`"
+
+
 def build_query(config: dict) -> str:
     project = config["bq_project"]
     dataset = config["bq_dataset"]
     table = config["bq_table"]
     if not project or not dataset:
         raise ValueError("Set BQ_PROJECT and BQ_DATASET (e.g. in .env)")
-    table_bq = f"`{table}`" if re.search(r"[\s\-]", table) else table
-    full_table = f"`{project}`.{dataset}.{table_bq}"
+    full_table = f"{quote_bq(project)}.{quote_bq(dataset)}.{quote_bq(table)}"
     query = f"SELECT * FROM {full_table}"
     if config["partition_filter"]:
         query += f" WHERE {config['partition_filter']}"
-    query += f" LIMIT {config['limit']}"
+    query += f" LIMIT {int(config['limit'])}"
     return query
 
 
-def main() -> None:
-    import argparse
+def _jsonable(value):
+    if isinstance(value, (dict, list)):
+        return json.dumps(value, default=str)
+    if isinstance(value, (bytes, bytearray)):
+        return value.decode("utf-8", errors="replace")
+    if hasattr(value, "tolist") and not isinstance(value, str):
+        return json.dumps(value.tolist(), default=str)
+    return value
 
+
+def sanitize_frame(df):
+    """Make nested BQ values storable in Postgres."""
+    for col in list(df.columns):
+        series = df[col]
+        if series.dtype == object:
+            df[col] = series.map(_jsonable)
+    return df
+
+
+def sync_table(config: dict, client=None) -> int:
+    """Copy one capped BigQuery table into the local database. Returns rows written."""
+    query = build_query(config)
+    print("Query:", query[:200], "...")
+    if client is None:
+        client = bigquery.Client(project=config["bq_project"])
+    df = sanitize_frame(client.query(query).to_dataframe())
+
+    engine = get_engine(config=config)
+    schema = (config.get("target_schema") or "").strip() or None
+    if not config.get("local_db_url"):
+        schema = None
+    width = max(len(df.columns), 1)
+    chunksize = max(1, min(500, 30000 // width))
+    with engine.begin() as conn:
+        if schema:
+            escaped = schema.replace('"', '""')
+            conn.execute(text(f'CREATE SCHEMA IF NOT EXISTS "{escaped}"'))
+        df.to_sql(
+            config["target_table"],
+            conn,
+            if_exists="replace",
+            index=False,
+            method="multi",
+            chunksize=chunksize,
+            schema=schema,
+        )
+
+    target = config["local_db_url"] or config["local_db_path"]
+    full_target = f"{schema}.{config['target_table']}" if schema else config["target_table"]
+    print(f"Wrote {len(df)} rows to {target} table {full_target}")
+    return len(df)
+
+
+def main() -> None:
     _load_dotenv()
 
     parser = argparse.ArgumentParser(description="Sync a BQ partition to local DB (PostgreSQL or SQLite)")
@@ -109,40 +167,7 @@ def main() -> None:
     if args.target_schema:
         config["target_schema"] = args.target_schema
 
-    try:
-        from google.cloud import bigquery
-    except ImportError as e:
-        print("Install: pip install google-cloud-bigquery pandas sqlalchemy psycopg2-binary", file=sys.stderr)
-        raise SystemExit(1) from e
-
-    query = build_query(config)
-    print("Query:", query[:200], "...")
-
-    client = bigquery.Client(project=config["bq_project"])
-    df = client.query(query).to_dataframe()
-
-    engine = get_engine(config=config)
-    with engine.begin() as conn:
-        schema = (config.get("target_schema") or "").strip() or None
-        # Only Postgres supports schemas; for SQLite we must not pass `schema=...`
-        if not config.get("local_db_url"):
-            schema = None
-        if schema:
-            from sqlalchemy import text
-            escaped = schema.replace('"', '""')
-            conn.execute(text(f'CREATE SCHEMA IF NOT EXISTS "{escaped}"'))
-        df.to_sql(
-            config["target_table"],
-            conn,
-            if_exists="replace",
-            index=False,
-            method="multi",
-            schema=schema,
-        )
-
-    target = config["local_db_url"] or config["local_db_path"]
-    full_target = f"{schema}.{config['target_table']}" if schema else config["target_table"]
-    print(f"Wrote {len(df)} rows to {target} table {full_target}")
+    sync_table(config)
 
 
 if __name__ == "__main__":

@@ -1,0 +1,25 @@
+CREATE SCHEMA IF NOT EXISTS mart_dev;
+CREATE TABLE IF NOT EXISTS mart_dev.fct_soil_health (
+  soil_key TEXT,
+  geography_key TEXT,
+  geo_level TEXT,
+  country_iso3 TEXT,
+  soil_property_key TEXT,
+  source_key TEXT,
+  tier BIGINT,
+  data_level TEXT,
+  geo_scope TEXT,
+  place_scope JSONB,
+  metric TEXT,
+  source_id TEXT,
+  latitude DOUBLE PRECISION,
+  longitude DOUBLE PRECISION,
+  soil_property TEXT,
+  depth TEXT,
+  value DOUBLE PRECISION,
+  as_of_date DATE,
+  as_of_date_basis TEXT,
+  unit TEXT,
+  source_natural_key TEXT,
+  loaded_at TIMESTAMPTZ
+);

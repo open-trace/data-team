@@ -1,0 +1,27 @@
+CREATE SCHEMA IF NOT EXISTS "landing";
+CREATE TABLE IF NOT EXISTS "landing"."FAOstat_africa_Food_and_Diet_Availabilit_be9ff13aa44a" (
+  "Area_Code" TEXT,
+  "Area_Code_M49" TEXT,
+  "Area" TEXT,
+  "Food_Group_Code" TEXT,
+  "Food_Group" TEXT,
+  "Indicator_Code" TEXT,
+  "Indicator" TEXT,
+  "Element_Code" TEXT,
+  "Element" TEXT,
+  "Unit" TEXT,
+  "Y2010" TEXT,
+  "Y2011" TEXT,
+  "Y2012" TEXT,
+  "Y2013" TEXT,
+  "Y2014" TEXT,
+  "Y2015" TEXT,
+  "Y2016" TEXT,
+  "Y2017" TEXT,
+  "Y2018" TEXT,
+  "Y2019" TEXT,
+  "Y2020" TEXT,
+  "Y2021" TEXT,
+  "Y2022" TEXT,
+  "Y2023" TEXT
+);

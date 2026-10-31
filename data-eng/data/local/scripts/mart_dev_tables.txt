@@ -1,7 +1,6 @@
-# Auto-generated from dbt/models/mart_dev by sync_mart_dev_tables_list.py
-# All rag-relevant tables in the mart_dev (Gold) layer.
+# Live base tables in mart_dev. Written by sync_layer_table_lists.py.
+# TABLE and EXTERNAL only. Views are omitted.
 
-# ── AGGREGATES ──
 agg_economics_country_year
 agg_emissions_country_year
 agg_employment_country_year
@@ -15,7 +14,8 @@ agg_production_annual
 agg_production_country_season
 agg_production_country_year
 agg_soil_admin
-# ── BRIDGE TABLES ──
+audit_mart_column_labels
+audit_mart_ontology_vocab
 bridge_geography_aez
 bridge_household_crop
 bridge_household_disease
@@ -24,7 +24,6 @@ bridge_project_organisation
 bridge_research_org
 bridge_research_person
 bridge_season_calendar
-# ── DIMENSIONS ──
 dim_aez
 dim_audit
 dim_breed_variety
@@ -61,7 +60,6 @@ dim_time
 dim_trade_flow
 dim_unit
 dim_water
-# ── FACT TABLES ──
 fct_air_quality
 fct_animal_health
 fct_biodiversity
@@ -69,6 +67,7 @@ fct_climate
 fct_economics
 fct_emissions
 fct_employment
+fct_employment_copy
 fct_fertilizer
 fct_food_balance
 fct_food_hazards
@@ -99,3 +98,30 @@ fct_trade
 fct_value_chain
 fct_vegetation
 fct_yield
+fvc_analysis_summary
+fvc_analytical_base
+fvc_economics_final
+fvc_economics_indicator
+fvc_food_balance_final
+fvc_food_balance_indicator
+fvc_forestry_final
+fvc_forestry_indicator
+fvc_key_findings
+fvc_price_indicator
+fvc_prices_final
+fvc_quality_summary
+fvc_trade_final
+fvc_trade_indicator
+fvc_trend_analysis
+gold_dim_farm_practice
+gold_dim_geography
+gold_dim_indicator
+gold_dim_season
+gold_dim_source
+gold_dim_technology
+gold_dim_unit
+gyi_bi_dataset
+price_feature_store
+ref_faostat_aggregate_areas
+ref_m49_country
+zz_data_dictionary

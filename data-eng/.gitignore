@@ -19,3 +19,24 @@ sa-*.json
 # VS Code under data-eng (launch configs are committed)
 .vscode/*
 !.vscode/launch.json
+
+# Local machine only. Schema DDL, scripts, and .env.example stay in the repo.
+# Each developer keeps their own env, keys, Postgres extracts, and generated reports.
+data/local/.env
+data/local/.env.*
+!data/local/.env.example
+data/local/keys/
+data/local/out/
+data/local/vector_db/
+data/local/cache/
+data/local/partitions/
+data/local/processed_chunks/
+data/local/web_news_rss/
+data/local/*.db
+data/local/*.sqlite
+data/local/*.duckdb
+data/local/**/*.pdf
+data/local/**/*.docx
+data/local/**/*.xlsx
+data/local/**/*.parquet
+data/local/**/*.log

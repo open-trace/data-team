@@ -1,0 +1,26 @@
+CREATE SCHEMA IF NOT EXISTS mart_dev;
+CREATE TABLE IF NOT EXISTS mart_dev.fct_insurance (
+  insurance_key TEXT,
+  geography_key TEXT,
+  geo_level TEXT,
+  country_iso3 TEXT,
+  household_key TEXT,
+  source_key TEXT,
+  tier BIGINT,
+  data_level TEXT,
+  geo_scope TEXT,
+  place_scope JSONB,
+  metric TEXT,
+  source_id TEXT,
+  household_id TEXT,
+  country TEXT,
+  herd_size_category TEXT,
+  insurance_start_year BIGINT,
+  as_of_date DATE,
+  as_of_date_basis TEXT,
+  value DOUBLE PRECISION,
+  unit TEXT,
+  record_type TEXT,
+  source_natural_key TEXT,
+  loaded_at TIMESTAMPTZ
+);
