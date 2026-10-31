@@ -448,6 +448,16 @@ _EVIDENCE_INTERPRETATION_RULES = (
     "Context when interpreting time-sensitive events."
 )
 
+_MARKET_PRICE_EVIDENCE_RULES = (
+    "\n\nMARKET-PRICE QUESTIONS: When Context contains a structured price figure, state the "
+    "value with its provided currency/unit, product, geography or market, and recorded date. "
+    "Describe it as the latest available observation, not a live or current price, unless the "
+    "source explicitly establishes that it is current. If the date basis is loaded_at, do not "
+    "present it as the market observation date. If Context has no price figure, say that no "
+    "price figure is available; do not invent one. Do not give a numeric price forecast or "
+    "quantified price movement unless Context contains that forecast or movement."
+)
+
 _PARTIAL_EVIDENCE_RULES = (
     "\n\nPARTIAL EVIDENCE: Only state claims clearly supported by Context. "
     "One short closing line on years or coverage limits is enough. "
@@ -1494,6 +1504,8 @@ def _build_prompt(
     # downstream addendum is read in the context of the correct year.
     system += _current_date_block(reference_date)
     system += _EVIDENCE_INTERPRETATION_RULES
+    if re.search(r"\b(?:prices?|costs?)\b", query or "", re.IGNORECASE):
+        system += _MARKET_PRICE_EVIDENCE_RULES
 
     if evidence_tier == "partial":
         system += _PARTIAL_EVIDENCE_RULES

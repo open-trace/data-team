@@ -26,9 +26,8 @@ def sanitize_profile_country(raw: str | None) -> str | None:
         from opentrace_ontology import clean_profile_country
 
         cleaned = clean_profile_country(text)
-        if cleaned is None:
-            logger.info("profile_country_dropped_non_african", extra={"raw": text})
-        return cleaned
+        if cleaned:
+            return cleaned
     except Exception:
         pass
 

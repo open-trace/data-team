@@ -15,6 +15,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import time
 import uuid
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -120,7 +121,10 @@ class QueryRequest(BaseModel):
     query: str = Field(..., min_length=1, description="Natural language question for the RAG")
     include_trace: bool = Field(
         False,
-        description="Include sanitized SQL, decomposition, and retrieval diagnostics in response",
+        description=(
+            "Include sanitized SQL, decomposition, retrieval diagnostics, and stage timings "
+            "in response"
+        ),
     )
     session_id: str | None = Field(
         None,
@@ -440,8 +444,10 @@ async def _run_query(
             trace_input={"query": request.query[:500]},
             tags=["api"],
         ) as trace_handle:
+            rag_started_at = time.perf_counter()
             result = run_rag(request.query, **kwargs)
-            trace_handle.update_output(result)
+            rag_pipeline_ms = (time.perf_counter() - rag_started_at) * 1000
+            trace_handle.update_output(result, latency_ms=rag_pipeline_ms)
             langfuse_trace_id = get_current_trace_id()
         flush_langfuse()
         trace: dict | None = None
@@ -459,6 +465,7 @@ async def _run_query(
                 "merged_context_count": len(result.get("merged_context") or []),
                 "reranked_context_count": len(result.get("reranked_context") or []),
                 "langfuse_trace_id": langfuse_trace_id,
+                "rag_pipeline_ms": rag_pipeline_ms,
                 "bq_sql_queries": sql_statements_for_diagnostics(result.get("bq_sql_queries")),
                 "bq_planned_sql": sql_statements_for_diagnostics(
                     (result.get("bq_sql_plan") or {}).get("bq_sql_queries")
@@ -472,6 +479,10 @@ async def _run_query(
                 "bq_cache_hit": result.get("bq_cache_hit"),
                 "bq_nl2sql_ms": result.get("bq_nl2sql_ms"),
                 "bq_execute_ms": result.get("bq_execute_ms"),
+                "decompose_llm_ms": result.get("decompose_llm_ms"),
+                "vector_ms": result.get("vector_ms"),
+                "rerank_ms": result.get("rerank_ms"),
+                "generate_ms": result.get("generate_ms"),
                 "supervisor_plan": result.get("supervisor_plan"),
                 "value_hits": result.get("value_hits")
                 or (result.get("bq_sql_plan") or {}).get("value_hits"),

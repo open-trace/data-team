@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import re
+import unicodedata
 from typing import Any
 
 from ml.rag.chatbot.bq_table_schema_yaml import _AFRICA_COUNTRY_ISO3
@@ -9,7 +10,16 @@ from ml.rag.chatbot.geo_regions import countries_for_regions, detect_regions_in_
 
 _ISO3_RE = re.compile(r"^[A-Z]{3}$")
 _ISO2_RE = re.compile(r"^[A-Z]{2}$")
-_NAME_TO_ISO3: dict[str, str] = {k.casefold(): v for k, v in _AFRICA_COUNTRY_ISO3.items()}
+
+
+def _fold_country_name(value: str) -> str:
+    normalized = unicodedata.normalize("NFKD", value.replace("\u2019", "'"))
+    return "".join(char for char in normalized if not unicodedata.combining(char)).casefold()
+
+
+_NAME_TO_ISO3: dict[str, str] = {
+    _fold_country_name(name): code for name, code in _AFRICA_COUNTRY_ISO3.items()
+}
 _ISO3_IN_SQL_RE = re.compile(
     r"country_iso3\s*(?:=\s*'([A-Z]{3})'|IN\s*\(([^)]+)\))",
     re.I,
@@ -93,7 +103,7 @@ def name_to_iso3(label: str) -> str | None:
         return upper if upper in _VALID_ISO3 else None
     if _ISO2_RE.match(upper):
         return _AFRICA_ISO2_TO_ISO3.get(upper)
-    return _NAME_TO_ISO3.get(raw.casefold())
+    return _NAME_TO_ISO3.get(_fold_country_name(raw))
 
 
 def iso3_to_canonical_name(iso3: str) -> str | None:

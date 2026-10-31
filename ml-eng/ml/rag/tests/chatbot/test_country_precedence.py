@@ -1,6 +1,7 @@
 """Profile country cleaning + query geography precedence (§6)."""
 from __future__ import annotations
 
+import opentrace_ontology
 import pytest
 
 from ml.rag.chatbot.geo_policy import (
@@ -26,6 +27,15 @@ def test_african_profile_forms_to_iso3(raw: str, expected: str) -> None:
 @pytest.mark.parametrize("raw", ["Albania", "US", "Unknown", "", None])
 def test_non_african_or_unknown_profile_dropped(raw: str | None) -> None:
     assert sanitize_profile_country(raw) is None
+
+
+def test_accented_country_names_use_fallback_when_ontology_has_no_alias(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setattr(opentrace_ontology, "clean_profile_country", lambda _value: None)
+
+    assert sanitize_profile_country("Nigéria") == "NGA"
+    assert sanitize_profile_country("Côte d’Ivoire") == "CIV"
 
 
 def test_query_geography_wins_over_profile_default() -> None:
