@@ -16,7 +16,13 @@ import subprocess
 import sys
 from pathlib import Path
 
-from bq_table_lists import LAYERS, dataset_id_for_layer, load_layer_tables, local_schema_for_layer
+from bq_table_lists import (
+    LAYERS,
+    dataset_id_for_layer,
+    load_layer_tables,
+    local_schema_for_layer,
+    local_table_name,
+)
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 SCRIPTS_DIR = Path(__file__).resolve().parent
@@ -59,17 +65,19 @@ def main() -> None:
     for table_id in table_ids:
         if not table_id:
             continue
+        local_name = local_table_name(table_id)
         cmd = [
             sys.executable,
             str(SYNC_SCRIPT),
             "--table",
             table_id,
             "--target-table",
-            table_id,
+            local_name,
             "--target-schema",
             local_schema_for_layer(args.dataset),
         ]
-        print(f"Syncing {args.dataset}/{table_id} ...")
+        label = table_id if local_name == table_id else f"{table_id} -> {local_name}"
+        print(f"Syncing {args.dataset}/{label} ...")
         r = subprocess.run(cmd, env=env, cwd=str(REPO_ROOT))
         if r.returncode != 0:
             print(f"Warning: {table_id} failed (exit {r.returncode})", file=sys.stderr)

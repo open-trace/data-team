@@ -13,7 +13,9 @@ Precedence for table lists (per layer):
 
 from __future__ import annotations
 
+import hashlib
 import os
+import re
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -60,6 +62,10 @@ DEFAULT_DATASET = {
 }
 TABLE_FILES = {layer: f"{layer}_tables.txt" for layer in LAYERS}
 
+# Postgres identifiers are capped at 63 bytes. Longer BigQuery names are stored
+# under a stable shortened name.
+PG_IDENT_MAX = 63
+
 
 def dataset_id_for_layer(layer: str) -> str:
     if layer not in LAYERS:
@@ -78,6 +84,15 @@ def dataset_id_for_layer(layer: str) -> str:
 def local_schema_for_layer(layer: str) -> str:
     """Local Postgres schema matches BigQuery dataset id."""
     return dataset_id_for_layer(layer)
+
+
+def local_table_name(table_id: str) -> str:
+    """Postgres table name. Names over 63 bytes keep a 40-character prefix plus a hash."""
+    if len(table_id.encode("utf-8")) <= PG_IDENT_MAX:
+        return table_id
+    digest = hashlib.sha1(table_id.encode("utf-8")).hexdigest()[:12]
+    prefix = re.sub(r"[^0-9A-Za-z_]", "_", table_id)[:40].strip("_") or "t"
+    return f"{prefix}_{digest}"[:PG_IDENT_MAX]
 
 
 def _load_from_env(layer: str) -> list[str]:

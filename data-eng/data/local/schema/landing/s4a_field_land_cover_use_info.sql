@@ -1,0 +1,25 @@
+CREATE SCHEMA IF NOT EXISTS "landing";
+CREATE TABLE IF NOT EXISTS "landing"."s4a_field_land_cover_use_info" (
+  "boundedby" TEXT,
+  "plot_code" TEXT,
+  "country_code" TEXT,
+  "survey_date" TEXT,
+  "altitude" TEXT,
+  "longitude" TEXT,
+  "latitude" TEXT,
+  "tsu_id" TEXT,
+  "plot_id" TEXT,
+  "obstruct_lyr" TEXT,
+  "depth_restriction_cause" TEXT,
+  "country_name" TEXT,
+  "tree_rating_15m_above" TEXT,
+  "tree_rating_3m_15m" TEXT,
+  "shrub_rating" TEXT,
+  "herbaceous_rating" TEXT,
+  "bare_soil" TEXT,
+  "main_land_use" TEXT,
+  "life_forms" TEXT,
+  "crop_type" TEXT,
+  "field_size" TEXT,
+  "field_distribution_pattern" TEXT
+);

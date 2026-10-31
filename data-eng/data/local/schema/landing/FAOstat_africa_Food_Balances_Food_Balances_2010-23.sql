@@ -1,0 +1,26 @@
+CREATE SCHEMA IF NOT EXISTS "landing";
+CREATE TABLE IF NOT EXISTS "landing"."FAOstat_africa_Food Balances_Food_Balances_2010-23" (
+  "Area_Code" TEXT,
+  "Area_Code_M49" TEXT,
+  "Area" TEXT,
+  "Item_Code" TEXT,
+  "Item_Code_FBS" TEXT,
+  "Item" TEXT,
+  "Element_Code" TEXT,
+  "Element" TEXT,
+  "Unit" TEXT,
+  "Y2010" TEXT,
+  "Y2011" TEXT,
+  "Y2012" TEXT,
+  "Y2013" TEXT,
+  "Y2014" TEXT,
+  "Y2015" TEXT,
+  "Y2016" TEXT,
+  "Y2017" TEXT,
+  "Y2018" TEXT,
+  "Y2019" TEXT,
+  "Y2020" TEXT,
+  "Y2021" TEXT,
+  "Y2022" TEXT,
+  "Y2023" TEXT
+);

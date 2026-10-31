@@ -31,13 +31,19 @@ Each developer runs their own Postgres and sets `LOCAL_DB_URL` in `.env`. Schema
 ## Populate from BigQuery
 
 1. Set `BQ_PROJECT`, `BQ_DATASET_LANDING=landing`, `BQ_DATASET_BRONZE=raw_dev`, `BQ_DATASET_SILVER=staging_dev`, `BQ_DATASET_INTERMEDIATE=intermediate_dev`, `BQ_DATASET_GOLD=mart_dev`, and `LOCAL_DB_URL`.
-2. Generate DDL and create tables:
+2. Refresh the five table lists from the current BigQuery base tables:
+
+```bash
+python data/local/scripts/sync_layer_table_lists.py
+```
+
+3. Generate DDL and create tables:
 
 ```bash
 python data/local/scripts/bq_schema_to_local_pg.py
 ```
 
-3. Sync data:
+4. Sync data:
 
 ```bash
 python data/local/scripts/sync_all_tables.py --dataset landing
@@ -47,7 +53,7 @@ python data/local/scripts/sync_all_tables.py --dataset intermediate_dev
 python data/local/scripts/sync_all_tables.py --dataset mart_dev
 ```
 
-Or one-shot: `bash data/local/scripts/populate_local_db.sh`
+Or one-shot: `bash data/local/scripts/populate_local_db.sh` (refreshes the five lists, then loads them). Docker does the same thing: `docker compose --profile setup up`.
 
 ## Docker
 
