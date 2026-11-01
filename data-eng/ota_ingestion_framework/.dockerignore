@@ -1,0 +1,13 @@
+farmlover_venv
+ota_venv
+.venv
+data
+archive
+docs
+tests
+__pycache__
+**/__pycache__
+.git
+ingestion_points/generated
+config/tls/api_key.json
+SESSION_STATE.md

@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ota_ingestion_framework"
+version = "0.1.0"
+description = "Agricultural source preparation, collection and BigQuery loading"
+readme = "README.md"
+requires-python = ">=3.12"
+dynamic = ["dependencies"]
+
+[project.scripts]
+ota-prepare = "src.prepare_sources:main"
+ota-test = "src.source_tester:main"
+ota-review = "src.batch_review:main"
+ota-collect = "src.collector:main"
+ota-batch = "src.run_pipeline:main"
+ota-export = "src.export_batch:main"
+ota-prepare-load = "src.prepare_bigquery:main"
+ota-load = "src.load_bigquery:main"
+
+[tool.setuptools.dynamic]
+dependencies = {file = ["requirements.txt"]}
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["src", "src.*"]
+namespaces = false
