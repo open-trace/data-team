@@ -1,0 +1,274 @@
+# OpenTrace indicator classes and concept families for landing datapoint reports.
+# Patterns are tried in order against "dataset table" and then against raw indicator text.
+# The first match wins. One family per table.
+
+classes:
+  EL:
+    name: Economic & Livelihood
+    opentrace_definition: Economic activities and livelihood-related conditions associated with agriculture and the wider agricultural ecosystem.
+    operational_definition: Employment, income, wages, labour productivity, economic security, dependence on agricultural and agrifood activities; forms and conditions of work.
+  GYI:
+    name: Gender, Youth & Inclusion
+    opentrace_definition: Roles, opportunities, access, participation and outcomes of people of different genders, ages and social groups within agriculture and agrifood systems.
+    operational_definition: Ownership and control of resources, access to services and economic opportunities, decision-making, representation; youth participation; inclusion metrics.
+  FVC:
+    name: Food System & Value Chain
+    opentrace_definition: Actors, activities, capacities and outcomes that produce, transform, distribute and consume agricultural and food products, including value creation and loss.
+    operational_definition: Value added, processing, storage, post-harvest loss, food waste, market access, trade in raw/processed products, agro-processing employment.
+  FS:
+    name: Food Security & Nutrition
+    opentrace_definition: Availability, access, utilization and stability of food; acute and chronic food insecurity; dietary energy and nutritional outcomes.
+    operational_definition: IPC/CH phases, food-insecure population, FIES, dietary energy, self-sufficiency, food availability and access indicators.
+  PROD:
+    name: Agricultural Production
+    opentrace_definition: Physical production of crops and livestock, area harvested, yields, production systems and seasonal outcomes.
+    operational_definition: Production quantity, area, yield, crop production system, planting/harvest timing, livestock output.
+  PRC:
+    name: Prices & Markets
+    opentrace_definition: Prices of agricultural commodities and food products, market structure, and cross-border trade flows.
+    operational_definition: Producer/consumer/retail prices, staple status, trade flows, border points, currencies and units.
+  CLIM:
+    name: Climate & Weather
+    opentrace_definition: Climate and weather conditions affecting agricultural systems and health outcomes.
+    operational_definition: Temperature, radiation, precipitation-related proxies, climate-health impact indicators.
+  SOIL:
+    name: Soil Health & Land
+    opentrace_definition: Physical and chemical soil properties, land use/cover, degradation and land-related sustainability.
+    operational_definition: Texture, pH, SOC, nutrients, bulk density, CEC, land cover/use, degradation indicators, AEZ.
+  AH:
+    name: Animal Health & Livestock
+    opentrace_definition: Livestock health, disease, treatments, practices and related productivity outcomes.
+    operational_definition: Clinical disease scores, incidence, mortality, acaricide/AMU use, herd size, treatment costs.
+  VEG:
+    name: Vegetation & Feed
+    opentrace_definition: Vegetation status, biomass, feed resources and related carrying capacity.
+    operational_definition: NDVI, tree/shrub/grass quantity and palatability, carrying capacity, grazing presence.
+  ENV:
+    name: Environment & Emissions
+    opentrace_definition: Greenhouse gas emissions and environmental pressures from agrifood systems.
+    operational_definition: Farm-gate crop/livestock/energy emissions, land-use change, fires, forests, emission intensities.
+  HDI:
+    name: Human Development & Socio-economic
+    opentrace_definition: Broader human development and socio-economic context relevant to agricultural livelihoods.
+    operational_definition: HDI, GDP/PPP, air quality and related socio-economic series.
+  BIO:
+    name: Biodiversity & Germplasm
+    opentrace_definition: Biological diversity, species occurrence and genetic resources relevant to agriculture.
+    operational_definition: GBIF occurrences, protected areas, crop germplasm accessions, rarity layers.
+  RES:
+    name: Research & Innovation
+    opentrace_definition: Research projects, organisations and persons in agriculture and environment.
+    operational_definition: OpenAIRE projects, organisations, persons, funding and linkages.
+  INP:
+    name: Agricultural Inputs
+    opentrace_definition: Use and trade of fertilizers, pesticides, manure and related input intensities.
+    operational_definition: Fertilizer by nutrient/product, pesticide use/trade, livestock manure, nutrient balances.
+
+families:
+  EL-01:
+    class_id: EL
+    concept_family: Agricultural employment share — total
+    measurement_forms: ILO modelled %; survey/census counts
+  EL-02:
+    class_id: EL
+    concept_family: Agrifood systems employment structure
+    measurement_forms: Shares by AFS sub-industry; sex breakdown
+  EL-03:
+    class_id: EL
+    concept_family: Agricultural labour productivity & earnings
+    measurement_forms: Value added per worker; hourly earnings; hours worked
+  EL-04:
+    class_id: EL
+    concept_family: Household income & livelihood composition
+    measurement_forms: Total/farm/off-farm income; FIES; food self-sufficiency
+  GYI-01:
+    class_id: GYI
+    concept_family: Land ownership and secure rights by sex
+    measurement_forms: Agricultural land ownership; alone/joint forms; legal guarantees
+  GYI-02:
+    class_id: GYI
+    concept_family: Gender gaps in agrifood employment
+    measurement_forms: Shares and gaps by sex in AFS and agriculture
+  GYI-03:
+    class_id: GYI
+    concept_family: Access to finance, digital and services by sex
+    measurement_forms: Bank account; internet use; extension/credit proxies
+  GYI-04:
+    class_id: GYI
+    concept_family: Household gender control & decision-making
+    measurement_forms: Male/female/youth control scores from surveys
+  FVC-01:
+    class_id: FVC
+    concept_family: Agricultural sector value added
+    measurement_forms: "% GDP; current US$; constant US$; real growth; per worker"
+  FVC-02:
+    class_id: FVC
+    concept_family: Trade in crops and livestock products
+    measurement_forms: Import/export quantities and values; trade indices
+  FVC-03:
+    class_id: FVC
+    concept_family: Market access and food prices
+    measurement_forms: Retail/producer prices; staple status; market locations
+  FS-01:
+    class_id: FS
+    concept_family: Acute food insecurity (IPC/CH)
+    measurement_forms: Phase classification; population in phase; % in phase 3+
+  FS-02:
+    class_id: FS
+    concept_family: Household food security experience
+    measurement_forms: FIES score; food availability; energy available
+  PROD-01:
+    class_id: PROD
+    concept_family: Crop and livestock production
+    measurement_forms: Production qty; area harvested; yield
+  PROD-02:
+    class_id: PROD
+    concept_family: Dairy genetics and milk output
+    measurement_forms: Milk yield; calving; parity
+  PRC-01:
+    class_id: PRC
+    concept_family: Commodity market prices
+    measurement_forms: Price level; common unit/currency price; price type
+  PRC-02:
+    class_id: PRC
+    concept_family: Cross-border trade flows
+    measurement_forms: Flow type; quantity; border point
+  CLIM-01:
+    class_id: CLIM
+    concept_family: Agrometeorological conditions
+    measurement_forms: Radiation; temperature proxies; elevation
+  CLIM-02:
+    class_id: CLIM
+    concept_family: Climate-health impacts
+    measurement_forms: Modelled health impact indicators
+  SOIL-01:
+    class_id: SOIL
+    concept_family: Soil physical and chemical properties
+    measurement_forms: Clay/sand/silt; pH; SOC; N; CEC; bulk density; nutrients
+  SOIL-02:
+    class_id: SOIL
+    concept_family: Land use, cover and degradation
+    measurement_forms: Land use/cover; UNCCD degradation series
+  SOIL-03:
+    class_id: SOIL
+    concept_family: Agro-ecological zones
+    measurement_forms: AEZ code/name/share
+  AH-01:
+    class_id: AH
+    concept_family: Livestock disease and clinical outcomes
+    measurement_forms: Clinical scores; incidence; mortality; positive cases
+  AH-02:
+    class_id: AH
+    concept_family: Veterinary practices and AMU
+    measurement_forms: Acaricide use; treatment cost; application mode
+  AH-03:
+    class_id: AH
+    concept_family: Foodborne hazards
+    measurement_forms: Hazard type; prevalence; samples
+  VEG-01:
+    class_id: VEG
+    concept_family: Vegetation indices and biomass
+    measurement_forms: NDVI; tree/shrub/grass quantity; carrying capacity
+  ENV-01:
+    class_id: ENV
+    concept_family: Agrifood systems emissions
+    measurement_forms: Farm-gate; land-use change; totals; intensities
+  INP-01:
+    class_id: INP
+    concept_family: Fertilizer use and trade
+    measurement_forms: By nutrient/product; trade matrix
+  INP-02:
+    class_id: INP
+    concept_family: Pesticide use and trade
+    measurement_forms: Use; trade
+  HDI-01:
+    class_id: HDI
+    concept_family: Human Development Index
+    measurement_forms: HDI value by country-year
+  HDI-02:
+    class_id: HDI
+    concept_family: GDP and macro context
+    measurement_forms: GDP PPP and related
+  BIO-01:
+    class_id: BIO
+    concept_family: Species occurrence and rarity
+    measurement_forms: GBIF occurrence; rarity birds
+  BIO-02:
+    class_id: BIO
+    concept_family: Protected areas and germplasm
+    measurement_forms: Protected area extent; crop germplasm
+  RES-01:
+    class_id: RES
+    concept_family: Agricultural research projects
+    measurement_forms: Projects, funding, organisations, persons
+
+# First match wins. Price tables stay PRC, not also FVC-03.
+patterns:
+  - family: RES-01
+    pattern: "openaire|asti|researcher"
+  - family: BIO-01
+    pattern: "gbif|rarity"
+  - family: BIO-02
+    pattern: "protected_area|germplasm"
+  - family: HDI-01
+    pattern: "human_development|\\bhdi\\b"
+  - family: HDI-02
+    pattern: "\\bgdp\\b|purchasing_power"
+  - family: INP-02
+    pattern: "pesticide"
+  - family: INP-01
+    pattern: "fertilizer|manure|nutrient_balance|nutrient balance"
+  - family: ENV-01
+    pattern: "emission"
+  - family: VEG-01
+    pattern: "\\bndvi\\b|vegetation|biomass|grazing|feedfodder|feed_price|carrying_capacity"
+  - family: AH-03
+    pattern: "foodborne|food_hazard|\\bhazard"
+  - family: AH-02
+    pattern: "acaricide|\\bamu\\b|veterinary"
+  - family: AH-01
+    pattern: "\\bdisease\\b|clinical|mortality|animal_health"
+  - family: SOIL-03
+    pattern: "\\baez\\b|agro-ecological|agro_ecological|agroecological"
+  - family: SOIL-02
+    pattern: "land_use|land_cover|land cover|unccd|degradation"
+  - family: SOIL-01
+    pattern: "\\bsoil\\b|\\bisda\\b|\\bisric\\b"
+  - family: CLIM-02
+    pattern: "climatewatch|climate-health|climate_health|health_impact"
+  - family: CLIM-01
+    pattern: "nasa_power|nasa power|\\bweather\\b|\\bera5\\b|copernicus|temperature_change|agromet|\\bclimate\\b"
+  - family: PRC-02
+    pattern: "cross_border|cross border|border_trade|border trade"
+  - family: PRC-01
+    pattern: "\\bprice|vampire|market_price"
+  - family: FS-02
+    pattern: "\\bfies\\b|food_balance|food balance|dietary"
+  - family: FS-01
+    pattern: "food_insecur|food security|food_security|\\bipc\\b"
+  - family: GYI-02
+    pattern: "gender_gap|gender gap"
+  - family: GYI-03
+    pattern: "bank_account|internet_use|\\bextension\\b"
+  - family: GYI-04
+    pattern: "decision-making|decision_making|gender_control|\\byouth\\b"
+  - family: GYI-01
+    pattern: "\\bgender\\b|\\bwomen\\b|sdg_5|sdg 5|land_ownership"
+  - family: EL-03
+    pattern: "labour_productivity|labor_productivity|hourly_earn|\\bwage"
+  - family: EL-02
+    pattern: "agrifood_system"
+  - family: EL-04
+    pattern: "household_income|off-farm|off_farm|livelihood"
+  - family: EL-01
+    pattern: "employment|\\blabour\\b|\\blabor\\b"
+  - family: FVC-01
+    pattern: "value_added|value added"
+  - family: FVC-02
+    pattern: "\\btrade\\b|trade_indic"
+  - family: PROD-02
+    pattern: "\\bmilk\\b|calving|\\bdairy\\b"
+  - family: PROD-01
+    pattern: "\\bproduction\\b|\\byield\\b|breeding_season|phenotype|\\bcrop"
+  - family: PROD-01
+    pattern: "^landing iita\\b"

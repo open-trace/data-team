@@ -21,8 +21,8 @@ from ml.rag.chatbot.analytical_bq_plan import (
     build_analytical_bq_plan,
 )
 from ml.rag.chatbot.bq_sql_patterns import normalize_pattern_name
+from ml.rag.chatbot.bind_planning import compile_bind_for_request
 from ml.rag.chatbot.bq_table_schema_yaml import (
-    compile_table_bind_contract,
     format_mart_reasoner_index,
     list_mart_table_index,
     pack_mart_table_hints,
@@ -38,6 +38,7 @@ from ml.rag.chatbot.query_decomposer import (
 from ml.rag.chatbot.ontology_context import build_ontology_context
 from ml.rag.chatbot.retrieval_contract import build_retrieval_contract, contract_to_bq_plan
 from ml.rag.chatbot.sql_compiler import sql_compiler_enabled
+from ml.rag.chatbot.time_resolver import parse_iso_date, utc_today
 from ml.rag.llm_chat import llm_chat_complete, llm_default_timeout_s, llm_model_id
 from ml.rag.observability import observed_span, update_current_span_metadata
 
@@ -160,7 +161,10 @@ def _normalize_intent(
 def _has_year_signal(query: str, decomposition: dict[str, Any]) -> bool:
     if decomposition.get("time_start") or decomposition.get("time_end"):
         return True
-    ts, te = _extract_year_range(query or "")
+    if decomposition.get("time_windows"):
+        return True
+    ref = parse_iso_date(str(decomposition.get("reference_date") or "")) or utc_today()
+    ts, te = _extract_year_range(query or "", ref)
     return bool(ts or te)
 
 
@@ -250,7 +254,7 @@ def _reasoner_bind_nomenclature(
     blocks: list[str] = []
     for tid in candidates[:3]:
         try:
-            contract = compile_table_bind_contract(tid, facets=dec, query=query)
+            contract = compile_bind_for_request(tid, facets=dec, query=query)
         except Exception:
             continue
         nom = str(contract.nomenclature or "").strip()

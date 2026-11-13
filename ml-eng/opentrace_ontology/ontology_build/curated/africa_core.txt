@@ -1,0 +1,281 @@
+# OpenTrace curated Africa core. Format:
+# ID | entity_type | canonical_en | scientific | parent_id | derived_from | attrs(k=v,...) | aliases (lang[-ISO3]:alias ; ...)
+# lang = ISO 639-3. Authored by OpenTrace from common usage; verify local names with field teams.
+OT:CROP:cassava|crop|cassava|Manihot esculenta|OT:GROUP:root_tuber_crops||life_cycle=perennial,edible_part=root;leaf,unit=t,grain=annual|eng:manioc;eng:yuca;eng:tapioca plant;fra:manioc;por:mandioca;por-BRA:aipim;por-AGO:mandioca;spa:yuca;swh:muhogo;swh:mihogo;hau:rogo;yor:ege;yor:gbaguda;ibo:akpu;ibo:jigbo;twi:bankye;aka:bankye;lin:mbala;lin:pondu;kin:imyumbati;lug:muwogo;sna:mufarinya;mlg:mangahazo;wol:nambi;amh:kassava;som:kasaafa;zul:umdumbula;ful:bantara;ewe:agbeli;arb:الكسافا;arb:المنيهوت
+OT:CROP:maize|crop|maize|Zea mays|OT:GROUP:cereals||life_cycle=annual,edible_part=grain,unit=t|eng:corn;eng:mealies;eng:mielie;fra:maïs;por:milho;swh:mahindi;hau:masara;yor:agbado;yor:oka;ibo:oka;twi:aburo;aka:aburo;lin:masangu;kin:ibigori;lug:kasooli;sna:chibage;zul:umbila;xho:umbona;amh:በቆሎ;amh:bekolo;orm:boqqolloo;som:galley;mlg:katsaka;wol:mboq;ful:makka;tir:ዕፉን;arb:الذرة;arb:ذرة شامية
+OT:CROP:sorghum|crop|sorghum|Sorghum bicolor|OT:GROUP:cereals||life_cycle=annual,edible_part=grain,unit=t|eng:guinea corn;eng:great millet;fra:sorgho;por:sorgo;por:mapira;swh:mtama;hau:dawa;yor:oka baba;ibo:okili;amh:ማሽላ;amh:mashila;orm:mishingaa;som:masago;sna:mapfunde;zul:amabele;wol:basi;ful:gawri;tir:መሸላ;arb:الذرة الرفيعة;mlg:ampemba
+OT:CROP:pearl_millet|crop|pearl millet|Pennisetum glaucum|OT:GROUP:cereals||life_cycle=annual,edible_part=grain|eng:millet;eng:bulrush millet;fra:mil;fra:mil chandelle;por:milheto;swh:uwele;hau:gero;yor:emeye;wol:suna;wol:sanio;ful:yadiri;sna:mhunga;arb:الدخن;ibo:gero
+OT:CROP:finger_millet|crop|finger millet|Eleusine coracana|OT:GROUP:cereals||life_cycle=annual,edible_part=grain|fra:éleusine;swh:wimbi;lug:bulo;kin:uburo;sna:rapoko;sna:zviyo;amh:ዳጉሳ;amh:dagusa;orm:daagujjaa;hau:tamba;yor:tamba;ibo:okpo
+OT:CROP:teff|crop|teff|Eragrostis tef|OT:GROUP:cereals||life_cycle=annual,edible_part=grain|amh:ጤፍ;amh:tef;orm:xaafii;tir:ጣፍ;fra:teff
+OT:CROP:fonio|crop|fonio|Digitaria exilis|OT:GROUP:cereals||life_cycle=annual,edible_part=grain|eng:acha;eng:hungry rice;hau:acha;wol:fonio;ful:foonde;fra:fonio
+OT:CROP:rice|crop|rice|Oryza sativa|OT:GROUP:cereals||life_cycle=annual,edible_part=grain,unit=t|eng:paddy;fra:riz;fra:paddy;por:arroz;swh:mchele;swh:mpunga;swh:wali;hau:shinkafa;yor:iresi;ibo:osikapa;twi:emo;lin:loso;kin:umuceri;lug:muceere;amh:ሩዝ;som:bariis;mlg:vary;wol:ceeb;ful:maaro;zul:irayisi;arb:الأرز;arb:أرز
+OT:CROP:african_rice|crop|African rice|Oryza glaberrima|OT:CROP:rice||life_cycle=annual|fra:riz africain;wol:ceeb;ful:maaro
+OT:CROP:wheat|crop|wheat|Triticum aestivum|OT:GROUP:cereals||life_cycle=annual,edible_part=grain|fra:blé;fra:froment;por:trigo;swh:ngano;hau:alkama;yor:alikama;amh:ስንዴ;amh:sinde;orm:qamadii;som:sarreen;tir:ስርናይ;arb:القمح;arb:قمح;zul:ukolo
+OT:CROP:barley|crop|barley|Hordeum vulgare|OT:GROUP:cereals||life_cycle=annual|fra:orge;por:cevada;swh:shayiri;amh:ገብስ;amh:gebs;orm:garbuu;arb:الشعير
+OT:CROP:yam|crop|yam|Dioscorea spp.|OT:GROUP:root_tuber_crops||edible_part=tuber,unit=t|fra:igname;por:inhame;swh:viazi vikuu;hau:doya;yor:isu;ibo:ji;twi:bayere;aka:bayere;ewe:te;lin:mbala;mlg:ovy;ful:kuuɗoowe
+OT:CROP:water_yam|crop|water yam|Dioscorea alata|OT:CROP:yam|||yor:ewura;ibo:ji abana;fra:grande igname
+OT:CROP:cocoyam|crop|cocoyam|Colocasia esculenta; Xanthosoma sagittifolium|OT:GROUP:root_tuber_crops||edible_part=corm;leaf|eng:taro;eng:dasheen;eng:tannia;fra:taro;fra:macabo;por:inhame-coco;swh:magimbi;hau:gwaza;yor:koko;ibo:ede;twi:mankani;aka:mankani;lug:mayuni;kin:amateke;mlg:saonjo
+OT:CROP:sweet_potato|crop|sweet potato|Ipomoea batatas|OT:GROUP:root_tuber_crops||edible_part=tuber;leaf|fra:patate douce;por:batata-doce;swh:viazi vitamu;hau:dankali;yor:anamo;yor:odunkun;ibo:ji nwa bekee;kin:ibijumba;lug:lumonde;mlg:vomanga;sna:mbambaira;zul:ubhatata;amh:ስኳር ድንች;arb:البطاطا الحلوة
+OT:CROP:potato|crop|potato|Solanum tuberosum|OT:GROUP:root_tuber_crops||edible_part=tuber|eng:irish potato;fra:pomme de terre;por:batata;swh:viazi;swh:viazi mviringo;hau:dankalin turawa;yor:odunkun oyinbo;kin:ibirayi;lug:muwogo omuzungu;amh:ድንች;amh:dinich;orm:dinnicha;arb:البطاطس;zul:amazambane;mlg:ovy mena
+OT:CROP:plantain|crop|plantain|Musa × paradisiaca (AAB)|OT:GROUP:fruits||edible_part=fruit|fra:banane plantain;fra:plantain;por:banana-pão;swh:ndizi;yor:ogede agbagba;ibo:ogede;ibo:ojoko;twi:borɔdeɛ;aka:brode;hau:ayaba;lin:makemba;kin:igitoki;lug:matooke
+OT:CROP:banana|crop|banana|Musa acuminata|OT:GROUP:fruits||edible_part=fruit|fra:banane;por:banana;swh:ndizi;lug:matooke;kin:umuneke;hau:ayaba;yor:ogede wewe;ibo:unere;amh:ሙዝ;som:moos;arb:الموز;mlg:akondro;lin:etabe;zul:ubhanana
+OT:CROP:cowpea|crop|cowpea|Vigna unguiculata|OT:GROUP:pulses||edible_part=seed;leaf|eng:black-eyed pea;eng-NGA:beans;fra:niébé;fra:haricot niébé;por:feijão-frade;por:feijão-macunde;swh:kunde;hau:wake;yor:ewa;ibo:agwa;ibo:akidi;wol:ñebbe;ful:niebbe;twi:adua;sna:nyemba
+OT:CROP:common_bean|crop|common bean|Phaseolus vulgaris|OT:GROUP:pulses||edible_part=seed|eng:beans;eng:dry beans;eng:kidney bean;fra:haricot;por:feijão;swh:maharage;kin:ibishyimbo;lug:bijanjaalo;amh:ቦሎቄ;amh:boloke;mlg:tsaramaso;sna:bhinzi
+OT:CROP:groundnut|crop|groundnut|Arachis hypogaea|OT:GROUP:oilcrops||edible_part=seed|eng:peanut;eng:monkey nut;fra:arachide;fra:cacahuète;por:amendoim;por-AGO:jinguba;swh:karanga;hau:gyada;yor:epa;ibo:ahu ekere;twi:nkatie;wol:gerte;ful:biriiji;lin:nguba;kin:ubunyobwa;lug:binyeebwa;sna:nzungu;mlg:voanjo;amh:ኦቾሎኒ;arb:الفول السوداني;zul:amantongomane
+OT:CROP:bambara_groundnut|crop|Bambara groundnut|Vigna subterranea|OT:GROUP:pulses|||fra:pois bambara;fra:voandzou;hau:gurjiya;yor:epa roro;ibo:okpa;sna:nyimo;zul:izindlubu;swh:njugu mawe
+OT:CROP:soybean|crop|soybean|Glycine max|OT:GROUP:oilcrops||edible_part=seed|eng:soya;eng:soy;eng:soya bean;fra:soja;por:soja;swh:soya;hau:waken soya;yor:ewa soya
+OT:CROP:sesame|crop|sesame|Sesamum indicum|OT:GROUP:oilcrops|||eng:beniseed;eng:benniseed;fra:sésame;por:gergelim;swh:ufuta;hau:ridi;yor:ekuku;amh:ሰሊጥ;amh:selit;orm:saliixa;tir:ሰሊጥ;arb:السمسم;som:sisin
+OT:CROP:oil_palm|crop|oil palm|Elaeis guineensis|OT:GROUP:oilcrops||life_cycle=perennial,edible_part=fruit|fra:palmier à huile;por:dendezeiro;por:palmeira-de-óleo;swh:mchikichi;hau:kwakwa;yor:ope;ibo:nkwu;twi:abɛ;lin:mbila;wol:tiir
+OT:CROP:cocoa|crop|cocoa|Theobroma cacao|OT:GROUP:beverage_crops||life_cycle=perennial,edible_part=bean|eng:cacao;fra:cacao;fra:cacaoyer;por:cacau;swh:kakao;yor:koko;twi:kookoo;aka:kookoo;hau:kokko;ibo:koko
+OT:CROP:coffee|crop|coffee|Coffea arabica; Coffea canephora|OT:GROUP:beverage_crops||life_cycle=perennial|fra:café;fra:caféier;por:café;swh:kahawa;amh:ቡና;amh:buna;orm:buna;kin:ikawa;lug:mwanyi;arb:البن;som:bun;mlg:kafe;hau:kofi;yor:kofi;ibo:kofi
+OT:CROP:tea|crop|tea|Camellia sinensis|OT:GROUP:beverage_crops||life_cycle=perennial|fra:thé;por:chá;swh:chai;kin:icyayi;arb:الشاي
+OT:CROP:cotton|crop|cotton|Gossypium hirsutum|OT:GROUP:fibre_crops|||fra:coton;por:algodão;swh:pamba;hau:auduga;yor:owu;ibo:owu;wol:witen;ful:hottollo;amh:ጥጥ;arb:القطن
+OT:CROP:sugarcane|crop|sugarcane|Saccharum officinarum|OT:GROUP:sugar_crops|||eng:sugar cane;fra:canne à sucre;por:cana-de-açúcar;swh:miwa;hau:rake;yor:ireke;ibo:okpete;twi:ahwedeɛ;amh:ሸንኮራ አገዳ;arb:قصب السكر;mlg:fary;zul:umoba
+OT:CROP:cashew|crop|cashew|Anacardium occidentale|OT:GROUP:nuts||life_cycle=perennial|fra:anacarde;fra:cajou;por:caju;por:cajueiro;swh:korosho;hau:kanju;yor:kaju;mlg:mahabibo
+OT:CROP:shea|crop|shea tree|Vitellaria paradoxa|OT:GROUP:oilcrops||life_cycle=perennial|eng:shea;eng:shea nut;fra:karité;por:karité;hau:kadanya;yor:emi;twi:nkuto;wol:karite;ful:kareeje
+OT:CROP:kola|crop|kola nut|Cola nitida; Cola acuminata|OT:GROUP:nuts|||eng:cola nut;fra:noix de cola;fra:kola;hau:goro;yor:obi;ibo:oji;twi:bese
+OT:CROP:tomato|crop|tomato|Solanum lycopersicum|OT:GROUP:vegetables||edible_part=fruit|fra:tomate;por:tomate;swh:nyanya;hau:tumatur;yor:tomati;ibo:tomato;amh:ቲማቲም;arb:الطماطم;arb:بندورة;lin:tomati;kin:inyanya;wol:tamaate
+OT:CROP:onion|crop|onion|Allium cepa|OT:GROUP:vegetables||edible_part=bulb|fra:oignon;por:cebola;swh:kitunguu;hau:albasa;yor:alubosa;ibo:yabasi;amh:ሽንኩርት;arb:البصل;wol:sooble;zul:u-anyanisi
+OT:CROP:pepper|crop|chilli pepper|Capsicum spp.|OT:GROUP:vegetables||edible_part=fruit|eng:chili;eng:hot pepper;eng:pepper;fra:piment;por:pimenta;por:jindungo;swh:pilipili;hau:barkono;hau:tattasai;yor:ata;yor:ata rodo;ibo:ose;twi:mako;amh:በርበሬ;amh:berbere
+OT:CROP:okra|crop|okra|Abelmoschus esculentus|OT:GROUP:vegetables|||eng:okro;eng:lady's finger;fra:gombo;por:quiabo;swh:bamia;hau:kubewa;yor:ila;ibo:okwuru;twi:nkruma;wol:kaanja;arb:البامية
+OT:CROP:amaranth|crop|amaranth|Amaranthus spp.|OT:GROUP:vegetables||edible_part=leaf|eng:african spinach;fra:amarante;swh:mchicha;yor:efo tete;hau:alayyafo;ibo:inine;sna:mowa;zul:imbuya
+OT:CROP:fluted_pumpkin|crop|fluted pumpkin|Telfairia occidentalis|OT:GROUP:vegetables||edible_part=leaf;seed|ibo:ugu;yor:ugwu;eng:ugu
+OT:CROP:bitter_leaf|crop|bitter leaf|Vernonia amygdalina|OT:GROUP:vegetables||edible_part=leaf|yor:ewuro;ibo:onugbu;hau:shiwaka;fra:vernonia
+OT:CROP:egusi|crop|egusi melon|Citrullus lanatus (egusi)|OT:GROUP:vegetables||edible_part=seed|eng:melon seed;yor:egusi;ibo:egwusi;hau:agushi;twi:akatoa
+OT:CROP:cabbage|crop|cabbage|Brassica oleracea var. capitata|OT:GROUP:vegetables|||fra:chou;por:repolho;swh:kabichi;amh:ጎመን;kin:ishu
+OT:CROP:kale|crop|kale|Brassica oleracea var. acephala|OT:GROUP:vegetables|||swh:sukuma wiki;eng:collard greens;fra:chou frisé;por:couve
+OT:CROP:mango|crop|mango|Mangifera indica|OT:GROUP:fruits|||fra:mangue;por:manga;swh:embe;hau:mangwaro;yor:mangoro;ibo:mangolo;amh:ማንጎ;arb:المانجو;mlg:manga
+OT:CROP:pineapple|crop|pineapple|Ananas comosus|OT:GROUP:fruits|||fra:ananas;por:ananás;por:abacaxi;swh:nanasi;hau:abarba;yor:ope oyinbo;ibo:akwu oyibo;twi:aborɔbɛ
+OT:CROP:citrus|crop|citrus|Citrus spp.|OT:GROUP:fruits|||eng:orange;fra:agrumes;fra:orange;por:citrinos;por:laranja;swh:machungwa;hau:lemu;yor:osan;ibo:oroma
+OT:CROP:avocado|crop|avocado|Persea americana|OT:GROUP:fruits|||fra:avocat;por:abacate;swh:parachichi;kin:avoka
+OT:CROP:date_palm|crop|date palm|Phoenix dactylifera|OT:GROUP:fruits|||eng:dates;fra:datte;fra:palmier dattier;arb:التمر;arb:نخيل التمر;hau:dabino
+OT:CROP:coconut|crop|coconut|Cocos nucifera|OT:GROUP:oilcrops|||fra:noix de coco;por:coco;swh:nazi;hau:kwakwa;yor:agbon;ibo:aki oyibo
+OT:CROP:enset|crop|enset|Ensete ventricosum|OT:GROUP:root_tuber_crops|||eng:false banana;amh:እንሰት;amh:enset;orm:warqee
+OT:CROP:khat|crop|khat|Catha edulis|OT:GROUP:stimulant_crops|||eng:qat;eng:miraa;amh:ጫት;amh:chat;som:qaad;swh:miraa;orm:jimaa
+OT:CROP:tobacco|crop|tobacco|Nicotiana tabacum|OT:GROUP:stimulant_crops|||fra:tabac;por:tabaco;swh:tumbaku;hau:taba
+OT:CROP:moringa|crop|moringa|Moringa oleifera|OT:GROUP:vegetables|||eng:drumstick tree;hau:zogale;yor:ewe igbale;swh:mlonge;fra:moringa
+OT:CROP:ginger|crop|ginger|Zingiber officinale|OT:GROUP:spices|||fra:gingembre;por:gengibre;swh:tangawizi;hau:citta;yor:ata ile
+OT:CROP:pigeon_pea|crop|pigeon pea|Cajanus cajan|OT:GROUP:pulses|||fra:pois d'angole;por:feijão-guandu;swh:mbaazi;yor:otili
+OT:CROP:chickpea|crop|chickpea|Cicer arietinum|OT:GROUP:pulses|||fra:pois chiche;por:grão-de-bico;amh:ሽምብራ;amh:shimbra;arb:الحمص
+OT:CROP:faba_bean|crop|faba bean|Vicia faba|OT:GROUP:pulses|||eng:broad bean;fra:fève;amh:ባቄላ;amh:bakela;arb:الفول
+OT:CROP:hibiscus|crop|roselle|Hibiscus sabdariffa|OT:GROUP:beverage_crops|||eng:hibiscus;eng:zobo;fra:bissap;hau:yakuwa;hau:zoborodo;wol:bisaap;arb:الكركديه
+OT:CROP:african_locust_bean|crop|African locust bean|Parkia biglobosa|OT:GROUP:nuts|||fra:néré;hau:dorawa;yor:igba;wol:ul;ful:narehi
+OT:CROP:baobab|crop|baobab|Adansonia digitata|OT:GROUP:fruits|||fra:baobab;fra:pain de singe;wol:bui;wol:lalo;hau:kuka;swh:mbuyu;mlg:renala
+OT:CROP:vanilla|crop|vanilla|Vanilla planifolia|OT:GROUP:spices|||fra:vanille;mlg:lavanila;por:baunilha
+OT:CROP:cloves|crop|cloves|Syzygium aromaticum|OT:GROUP:spices|||fra:clou de girofle;mlg:jirofo;swh:karafuu
+OT:GROUP:cereals|crop_group|cereals||||grain=annual|fra:céréales;por:cereais;swh:nafaka;hau:hatsi;arb:الحبوب;amh:እህል
+OT:GROUP:root_tuber_crops|crop_group|roots and tubers||||grain=annual|fra:racines et tubercules;por:raízes e tubérculos;swh:mazao ya mizizi
+OT:GROUP:pulses|crop_group|pulses||||grain=annual|eng:legumes;fra:légumineuses;por:leguminosas;swh:mikunde;arb:البقوليات
+OT:GROUP:oilcrops|crop_group|oil crops||||grain=annual|eng:oilseeds;fra:oléagineux;por:oleaginosas
+OT:GROUP:vegetables|crop_group|vegetables|||||fra:légumes;por:hortícolas;por:legumes;swh:mboga;hau:ganye;yor:efo;arb:الخضروات
+OT:GROUP:fruits|crop_group|fruits|||||fra:fruits;por:frutas;swh:matunda;arb:الفواكه
+OT:GROUP:beverage_crops|crop_group|beverage crops|||||fra:cultures de rente;eng:cash crops
+OT:GROUP:fibre_crops|crop_group|fibre crops|||||fra:plantes à fibres
+OT:GROUP:sugar_crops|crop_group|sugar crops|||||fra:plantes sucrières
+OT:GROUP:stimulant_crops|crop_group|stimulant crops||||||
+OT:GROUP:nuts|crop_group|nuts|||||fra:fruits à coque;por:frutos secos
+OT:GROUP:spices|crop_group|spices|||||fra:épices;por:especiarias;swh:viungo
+OT:GROUP:livestock|animal_group|livestock|||||fra:bétail;fra:élevage;por:gado;por:pecuária;swh:mifugo;hau:dabbobi;yor:eran osin;amh:ከብት;arb:الماشية;som:xoolo
+OT:ANIMAL:cattle|animal|cattle|Bos taurus; Bos indicus|OT:GROUP:livestock||unit=head|eng:cow;eng:cows;eng:bovine;eng:beef cattle;fra:bovins;fra:vache;por:bovinos;por:gado bovino;swh:ng'ombe;hau:shanu;yor:maalu;ibo:ehi;twi:nantwie;wol:nag;ful:na'i;amh:ከብት;amh:ላም;orm:loon;som:lo';kin:inka;lug:ente;sna:mombe;zul:inkomo;xho:iinkomo;mlg:omby;lin:ngombe;arb:الأبقار;tir:ከፍቲ
+OT:ANIMAL:goat|animal|goat|Capra hircus|OT:GROUP:livestock||unit=head|fra:chèvre;fra:caprins;por:cabra;por:caprinos;swh:mbuzi;hau:akuya;yor:ewure;ibo:ewu;twi:aponkye;wol:bey;ful:be'i;amh:ፍየል;orm:re'ee;som:ri;kin:ihene;lug:mbuzi;sna:mbudzi;zul:imbuzi;mlg:osy;lin:ntaba;arb:الماعز
+OT:ANIMAL:sheep|animal|sheep|Ovis aries|OT:GROUP:livestock||unit=head|fra:mouton;fra:ovins;por:ovelha;por:ovinos;swh:kondoo;hau:tunkiya;yor:aguntan;ibo:aturu;twi:odwan;wol:xar;ful:mbaala;amh:በግ;orm:hoolaa;som:ido;kin:intama;zul:imvu;mlg:ondry;lin:meme;arb:الأغنام;arb:الضأن
+OT:ANIMAL:pig|animal|pig|Sus scrofa domesticus|OT:GROUP:livestock||unit=head|eng:swine;eng:hog;eng:pork pig;fra:porc;fra:porcins;por:porco;por:suínos;swh:nguruwe;hau:alade;yor:elede;ibo:ezi;twi:prako;kin:ingurube;lin:ngulu;mlg:kisoa;zul:ingulube
+OT:ANIMAL:camel|animal|camel|Camelus dromedarius|OT:GROUP:livestock||unit=head|eng:dromedary;fra:dromadaire;fra:chameau;swh:ngamia;hau:rakumi;som:geel;amh:ግመል;orm:gaala;arb:الإبل;arb:جمل;tir:ገመል
+OT:ANIMAL:donkey|animal|donkey|Equus asinus|OT:GROUP:livestock||unit=head|fra:âne;por:burro;swh:punda;hau:jaki;amh:አህያ;arb:الحمير
+OT:ANIMAL:rabbit|animal|rabbit|Oryctolagus cuniculus|OT:GROUP:livestock|||fra:lapin;por:coelho;swh:sungura;yor:ehoro;hau:zomo
+OT:ANIMAL:grasscutter|animal|grasscutter|Thryonomys swinderianus|OT:GROUP:livestock||farming=micro-livestock|eng:cane rat;eng:greater cane rat;fra:aulacode;fra:agouti;twi:akrantie;yor:oya;ibo:nchi;hau:gyara
+OT:GROUP:poultry|animal_group|poultry|||||fra:volaille;por:aves;por:avicultura;swh:kuku;hau:kaji;arb:الدواجن
+OT:ANIMAL:chicken|animal|chicken|Gallus gallus domesticus|OT:GROUP:poultry||unit=head|eng:fowl;eng:broiler;eng:layer;eng:hen;fra:poulet;fra:poule;por:galinha;por:frango;swh:kuku;hau:kaza;yor:adiye;ibo:okuko;twi:akokɔ;wol:ganaar;ful:gertogal;amh:ዶሮ;orm:lukkuu;som:digaag;kin:inkoko;lug:nkoko;sna:huku;zul:inkukhu;mlg:akoho;lin:nsoso;arb:الدجاج
+OT:ANIMAL:guinea_fowl|animal|guinea fowl|Numida meleagris|OT:GROUP:poultry|||fra:pintade;por:galinha-d'angola;hau:zabo;yor:awo;swh:kanga
+OT:ANIMAL:duck|animal|duck|Anas platyrhynchos domesticus|OT:GROUP:poultry|||fra:canard;por:pato;swh:bata;hau:agwagwa
+OT:ANIMAL:turkey|animal|turkey|Meleagris gallopavo|OT:GROUP:poultry|||fra:dinde;por:peru;hau:talotalo;yor:tolotolo
+OT:ANIMAL:quail|animal|quail|Coturnix japonica|OT:GROUP:poultry|||fra:caille;swh:kware
+OT:GROUP:fish_aquaculture|animal_group|fish and aquaculture|||||eng:fish;eng:fisheries;fra:poisson;fra:pêche;fra:aquaculture;por:peixe;por:aquacultura;swh:samaki;hau:kifi;yor:eja;ibo:azu;arb:الأسماك
+OT:ANIMAL:tilapia|animal|tilapia|Oreochromis niloticus|OT:GROUP:fish_aquaculture|||eng:nile tilapia;fra:tilapia;swh:sato;lug:ngege;hau:karfasa
+OT:ANIMAL:catfish|animal|African catfish|Clarias gariepinus|OT:GROUP:fish_aquaculture|||eng:catfish;eng:clarias;fra:silure;fra:poisson-chat;yor:eja aro;hau:tarwada;swh:kambale;lug:male
+OT:ANIMAL:nile_perch|animal|Nile perch|Lates niloticus|OT:GROUP:fish_aquaculture|||swh:sangara;lug:mputa;fra:capitaine
+OT:ANIMAL:sardine|animal|sardinella|Sardinella spp.|OT:GROUP:fish_aquaculture|||eng:sardine;fra:sardinelle;wol:yaboy;swh:dagaa
+OT:ANIMAL:shrimp|animal|shrimp|Penaeus spp.|OT:GROUP:fish_aquaculture|||eng:prawn;fra:crevette;por:camarão
+OT:GROUP:insects_minilivestock|animal_group|insects and mini-livestock|||||eng:edible insects;eng:insect farming
+OT:ANIMAL:black_soldier_fly|animal|black soldier fly|Hermetia illucens|OT:GROUP:insects_minilivestock||use=feed;frass|eng:bsf;eng:bsfl;eng:black soldier fly larvae;fra:mouche soldat noire;por:mosca-soldado-negra;swh:inzi askari mweusi
+OT:ANIMAL:cricket|animal|house cricket|Acheta domesticus|OT:GROUP:insects_minilivestock|||eng:crickets;fra:grillon;swh:nyenje
+OT:ANIMAL:mealworm|animal|mealworm|Tenebrio molitor|OT:GROUP:insects_minilivestock|||fra:ver de farine
+OT:ANIMAL:palm_weevil|animal|palm weevil larva|Rhynchophorus phoenicis|OT:GROUP:insects_minilivestock|||yor:itun;ibo:akpa nkwu;eng:palm grub
+OT:ANIMAL:giant_snail|animal|African giant land snail|Achatina achatina|OT:GROUP:insects_minilivestock||farming=heliciculture|eng:snail;eng:snails;fra:escargot;fra:achatine;yor:igbin;ibo:ejula;twi:nwa
+OT:ANIMAL:honey_bee|animal|honey bee|Apis mellifera|OT:GROUP:insects_minilivestock||farming=apiculture|eng:bee;eng:bees;fra:abeille;por:abelha;swh:nyuki;hau:kudan zuma;yor:oyin;amh:ንብ;arb:النحل
+OT:ANIMAL:silkworm|animal|silkworm|Bombyx mori|OT:GROUP:insects_minilivestock|||fra:ver à soie
+OT:PRODUCT:garri|product|garri|||OT:PRODUCT:cassava_roots|processing=grated;fermented;roasted|eng:gari;eng:eba (cooked);fra:gari;yor:gari;ibo:garri;twi:gari;hau:gari;swh:gari
+OT:PRODUCT:fufu|product|fufu|||OT:PRODUCT:cassava_roots|processing=fermented;pounded|eng:foofoo;eng:akpu;eng:pounded yam (variant);twi:fufuo;ibo:akpu;yor:fufu;fra:foufou
+OT:PRODUCT:cassava_roots|product|cassava roots (fresh)|||OT:CROP:cassava|unit=t|fra:racines de manioc;por:raízes de mandioca
+OT:PRODUCT:cassava_flour|product|cassava flour|||OT:PRODUCT:cassava_roots||eng:high quality cassava flour;eng:hqcf;yor:elubo lafun;yor:lafun;fra:farine de manioc;por:farinha de mandioca;por-AGO:fuba de bombó
+OT:PRODUCT:tapioca|product|tapioca|||OT:PRODUCT:cassava_roots||fra:tapioca;por:tapioca
+OT:PRODUCT:attieke|product|attiéké|||OT:PRODUCT:cassava_roots||eng:attieke;fra:attiéké
+OT:PRODUCT:chikwangue|product|chikwangue|||OT:PRODUCT:cassava_roots||eng:kwanga;lin:kwanga;fra:bâton de manioc
+OT:PRODUCT:cassava_starch|product|cassava starch|||OT:PRODUCT:cassava_roots||fra:amidon de manioc
+OT:PRODUCT:cassava_leaves|product|cassava leaves|||OT:CROP:cassava||lin:pondu;lin:saka-saka;swh:kisamvu;fra:feuilles de manioc;fra:saka-saka
+OT:PRODUCT:pounded_yam|product|pounded yam|||OT:CROP:yam||yor:iyan;ibo:nri ji
+OT:PRODUCT:yam_flour|product|yam flour|||OT:CROP:yam||yor:elubo;eng:amala (cooked)
+OT:PRODUCT:palm_oil|product|palm oil|||OT:CROP:oil_palm|unit=t|eng:red oil;eng:crude palm oil;eng:cpo;fra:huile de palme;por:óleo de palma;por:azeite de dendê;yor:epo pupa;ibo:mmanu nkwu;hau:manja;twi:ngo;swh:mafuta ya mawese;swh:mafuta ya palm
+OT:PRODUCT:palm_kernel|product|palm kernels|||OT:CROP:oil_palm||fra:palmiste;fra:amandes de palmiste
+OT:PRODUCT:palm_kernel_oil|product|palm kernel oil|||OT:PRODUCT:palm_kernel||fra:huile de palmiste;yor:adin;eng:pko
+OT:PRODUCT:palm_kernel_cake|by_product|palm kernel cake|||OT:PRODUCT:palm_kernel|use=feed|eng:pkc;eng:palm kernel meal;fra:tourteau de palmiste
+OT:PRODUCT:palm_wine|product|palm wine|||OT:CROP:oil_palm||yor:emu;ibo:mmanya nkwu;fra:vin de palme;twi:nsafufuo
+OT:PRODUCT:shea_butter|product|shea butter|||OT:CROP:shea||fra:beurre de karité;hau:man kadanya;yor:ori;twi:nkuto
+OT:PRODUCT:groundnut_oil|product|groundnut oil|||OT:CROP:groundnut||eng:peanut oil;fra:huile d'arachide
+OT:PRODUCT:groundnut_cake|by_product|groundnut cake|||OT:CROP:groundnut|use=feed;snack|hau:kuli kuli;yor:kulikuli;eng:kulikuli;fra:tourteau d'arachide
+OT:PRODUCT:soybean_meal|by_product|soybean meal|||OT:CROP:soybean|use=feed|eng:soya meal;eng:soybean cake;fra:tourteau de soja
+OT:PRODUCT:cottonseed_cake|by_product|cottonseed cake|||OT:CROP:cotton|use=feed|fra:tourteau de coton
+OT:PRODUCT:maize_bran|by_product|maize bran|||OT:CROP:maize|use=feed|swh:machicha;fra:son de maïs
+OT:PRODUCT:maize_flour|product|maize flour|||OT:CROP:maize||eng:maize meal;eng:mealie meal;eng:posho;eng:ugali flour;swh:unga wa mahindi;fra:farine de maïs;por:fuba;zul:impuphu;sna:upfu
+OT:PRODUCT:ugali|product|ugali|||OT:PRODUCT:maize_flour||eng:nshima;eng:sadza;eng:pap;eng:posho;sna:sadza;zul:uphuthu;swh:ugali;fra:pâte de maïs
+OT:PRODUCT:ogi|product|ogi|||OT:CROP:maize||eng:pap;eng:akamu;yor:ogi;ibo:akamu;hau:koko;twi:koko
+OT:PRODUCT:injera|product|injera|||OT:CROP:teff||amh:እንጀራ;tir:ጣይታ;orm:buddeena
+OT:PRODUCT:dawadawa|product|dawadawa|||OT:CROP:african_locust_bean||eng:iru;yor:iru;hau:daddawa;fra:soumbala;wol:netetu
+OT:PRODUCT:cocoa_beans|product|cocoa beans|||OT:CROP:cocoa|unit=t|fra:fèves de cacao;por:amêndoas de cacau
+OT:PRODUCT:cocoa_butter|product|cocoa butter|||OT:PRODUCT:cocoa_beans||fra:beurre de cacao
+OT:PRODUCT:green_coffee|product|green coffee|||OT:CROP:coffee||fra:café vert;por:café verde
+OT:PRODUCT:cashew_nut|product|raw cashew nut|||OT:CROP:cashew||eng:rcn;fra:noix de cajou brute
+OT:PRODUCT:cotton_lint|product|cotton lint|||OT:CROP:cotton||fra:fibre de coton;fra:coton fibre
+OT:PRODUCT:cottonseed|product|cottonseed|||OT:CROP:cotton||fra:graines de coton
+OT:PRODUCT:sugar|product|sugar|||OT:CROP:sugarcane||fra:sucre;por:açúcar;swh:sukari;hau:sukari
+OT:PRODUCT:molasses|by_product|molasses|||OT:CROP:sugarcane|use=feed;ethanol|fra:mélasse;por:melaço
+OT:PRODUCT:bagasse|by_product|bagasse|||OT:CROP:sugarcane||fra:bagasse
+OT:PRODUCT:rice_bran|by_product|rice bran|||OT:CROP:rice|use=feed|fra:son de riz
+OT:PRODUCT:rice_husk|by_product|rice husk|||OT:CROP:rice||fra:balle de riz
+OT:PRODUCT:milled_rice|product|milled rice|||OT:CROP:rice||eng:white rice;fra:riz blanchi;fra:riz décortiqué
+OT:PRODUCT:parboiled_rice|product|parboiled rice|||OT:CROP:rice||fra:riz étuvé
+OT:PRODUCT:wheat_bran|by_product|wheat bran|||OT:CROP:wheat|use=feed|fra:son de blé
+OT:PRODUCT:beer_sorghum|product|sorghum beer|||OT:CROP:sorghum||eng:pito;eng:burukutu;eng:dolo;eng:umqombothi;zul:umqombothi;fra:dolo;fra:tchoukoutou
+OT:PRODUCT:beef|product|beef|||OT:ANIMAL:cattle|unit=t|fra:viande bovine;por:carne bovina;swh:nyama ya ng'ombe;yor:eran maalu
+OT:PRODUCT:goat_meat|product|goat meat|||OT:ANIMAL:goat||eng:chevon;fra:viande de chèvre;swh:nyama ya mbuzi
+OT:PRODUCT:mutton|product|mutton|||OT:ANIMAL:sheep||eng:lamb;fra:viande ovine;fra:mouton
+OT:PRODUCT:pork|product|pork|||OT:ANIMAL:pig||fra:viande porcine;por:carne suína
+OT:PRODUCT:chicken_meat|product|chicken meat|||OT:ANIMAL:chicken||eng:poultry meat;fra:viande de volaille;fra:poulet de chair
+OT:PRODUCT:eggs|product|hen eggs|||OT:ANIMAL:chicken|unit=number;t|eng:egg;eng:eggs;eng:table eggs;fra:oeufs;por:ovos;swh:mayai;hau:kwai;yor:eyin;ibo:akwa
+OT:PRODUCT:cow_milk|product|cow milk|||OT:ANIMAL:cattle|unit=t;l|eng:milk;eng:fresh milk;fra:lait;por:leite;swh:maziwa;hau:madara;hau:nono;yor:wara;amh:ወተት;som:caano;arb:الحليب
+OT:PRODUCT:camel_milk|product|camel milk|||OT:ANIMAL:camel||som:caano geel;arb:حليب الإبل
+OT:PRODUCT:wara|product|wara cheese|||OT:PRODUCT:cow_milk||eng:wagashi;fra:fromage peul;yor:wara;ful:wagashi
+OT:PRODUCT:nunu|product|fermented milk|||OT:PRODUCT:cow_milk||hau:nono;eng:nunu;swh:mala;wol:sow;eng:amasi;zul:amasi
+OT:PRODUCT:hides|by_product|hides and skins|||OT:GROUP:livestock||eng:hides;eng:skins;eng:leather;eng:ponmo (edible);yor:ponmo;fra:cuirs et peaux;por:couros e peles
+OT:PRODUCT:manure|by_product|manure|||OT:GROUP:livestock|use=fertilizer|eng:dung;eng:farmyard manure;eng:fym;eng:poultry litter;eng:cow dung;fra:fumier;por:estrume;swh:samadi;hau:taki;yor:igbe eran
+OT:PRODUCT:bsf_frass|by_product|insect frass|||OT:ANIMAL:black_soldier_fly|use=fertilizer|eng:frass;eng:bsf frass
+OT:PRODUCT:insect_meal|by_product|insect meal|||OT:ANIMAL:black_soldier_fly|use=feed|eng:larvae meal;eng:bsf meal
+OT:PRODUCT:honey|product|honey|||OT:ANIMAL:honey_bee||fra:miel;por:mel;swh:asali;hau:zuma;yor:oyin;amh:ማር;arb:العسل;som:malab
+OT:PRODUCT:beeswax|by_product|beeswax|||OT:ANIMAL:honey_bee||fra:cire d'abeille
+OT:PRODUCT:smoked_fish|product|smoked fish|||OT:GROUP:fish_aquaculture||fra:poisson fumé;yor:eja kika
+OT:PRODUCT:fish_meal|by_product|fish meal|||OT:GROUP:fish_aquaculture|use=feed|fra:farine de poisson
+OT:PRODUCT:dried_fish|product|dried fish|||OT:GROUP:fish_aquaculture||eng:stockfish;yor:panla;ibo:okporoko;fra:poisson séché;wol:guedj
+OT:INPUT:fertilizer|input|fertilizer|||||eng:fertiliser;eng:fertilizers;fra:engrais;por:fertilizante;por:adubo;swh:mbolea;hau:taki;yor:ajile;amh:ማዳበሪያ;arb:الأسمدة
+OT:INPUT:npk|input|NPK fertilizer|||OT:INPUT:fertilizer||eng:npk 15-15-15;eng:npk 20-10-10;fra:engrais npk
+OT:INPUT:urea|input|urea|||OT:INPUT:fertilizer|n_content=46%|fra:urée;por:ureia
+OT:INPUT:dap|input|diammonium phosphate|||OT:INPUT:fertilizer||eng:dap;fra:phosphate diammonique
+OT:INPUT:can|input|calcium ammonium nitrate|||OT:INPUT:fertilizer||eng:can
+OT:INPUT:compost|input|compost|||OT:INPUT:organic_fertilizer||fra:compost;swh:mboji
+OT:INPUT:organic_fertilizer|input|organic fertilizer|||OT:INPUT:fertilizer||eng:biofertilizer;fra:engrais organique
+OT:INPUT:lime|input|agricultural lime|||OT:INPUT:fertilizer||eng:liming;fra:chaux agricole
+OT:INPUT:pesticide|input|pesticide|||||eng:agrochemical;eng:crop protection product;fra:pesticide;fra:produits phytosanitaires;por:agrotóxico;por:pesticida;swh:dawa ya kuua wadudu;arb:المبيدات
+OT:INPUT:herbicide|input|herbicide|||OT:INPUT:pesticide||eng:weedkiller;fra:herbicide;swh:dawa ya magugu
+OT:INPUT:insecticide|input|insecticide|||OT:INPUT:pesticide||fra:insecticide
+OT:INPUT:fungicide|input|fungicide|||OT:INPUT:pesticide||fra:fongicide
+OT:INPUT:glyphosate|input|glyphosate|||OT:INPUT:herbicide|class=phosphonoglycine|
+OT:INPUT:atrazine|input|atrazine|||OT:INPUT:herbicide|class=triazine|
+OT:INPUT:paraquat|input|paraquat|||OT:INPUT:herbicide|class=bipyridylium|
+OT:INPUT:pyrethroids|input|pyrethroids|||OT:INPUT:insecticide|class=pyrethroid|eng:cypermethrin;eng:lambda-cyhalothrin;eng:deltamethrin
+OT:INPUT:organophosphates|input|organophosphates|||OT:INPUT:insecticide|class=organophosphate|eng:chlorpyrifos;eng:dichlorvos;eng:ddvp
+OT:INPUT:neonicotinoids|input|neonicotinoids|||OT:INPUT:insecticide|class=neonicotinoid|eng:imidacloprid;eng:thiamethoxam
+OT:INPUT:mancozeb|input|mancozeb|||OT:INPUT:fungicide|class=dithiocarbamate|
+OT:INPUT:improved_seed|input|improved seed|||||eng:certified seed;eng:hybrid seed;eng:seeds;fra:semences améliorées;fra:semences certifiées;por:sementes melhoradas;swh:mbegu bora;hau:iri
+OT:INPUT:cassava_stems|input|cassava stem cuttings|||OT:CROP:cassava||eng:cassava stems;eng:planting material
+OT:INPUT:animal_feed|input|animal feed|||||eng:feed;eng:livestock feed;eng:poultry feed;eng:fish feed;fra:aliment de bétail;fra:provende;por:ração;swh:chakula cha mifugo
+OT:INPUT:vet_drugs|input|veterinary drugs|||||eng:vet drugs;eng:veterinary medicine;eng:dewormer;eng:antibiotics (animal);fra:médicaments vétérinaires;swh:dawa za mifugo
+OT:INPUT:vaccine_animal|input|animal vaccine|||OT:INPUT:vet_drugs||eng:livestock vaccine;eng:newcastle vaccine;fra:vaccin vétérinaire
+OT:INPUT:acaricide|input|acaricide|||OT:INPUT:vet_drugs||eng:tick control;eng:dip;swh:josho
+OT:INPUT:tractor|input|tractor|||OT:SERVICE:mechanization||fra:tracteur;por:trator;swh:trekta;hau:tarakta
+OT:INPUT:irrigation_equipment|input|irrigation equipment|||||eng:drip kit;eng:water pump;eng:sprinkler;fra:matériel d'irrigation
+OT:SERVICE:extension|service|agricultural extension|||||eng:extension services;eng:advisory services;eng:extension officer;fra:vulgarisation agricole;fra:conseil agricole;por:extensão rural;swh:ugani;swh:huduma za ugani;hau:masu fadakarwa
+OT:SERVICE:mechanization|service|mechanization services|||||eng:mechanisation;eng:tractor hire;eng:hello tractor;fra:mécanisation;por:mecanização
+OT:SERVICE:credit|service|agricultural credit|||||eng:farm loans;eng:agri finance;eng:microfinance;eng:input credit;fra:crédit agricole;por:crédito agrícola;swh:mikopo ya kilimo
+OT:SERVICE:insurance|service|agricultural insurance|||||eng:crop insurance;eng:index insurance;eng:livestock insurance;fra:assurance agricole;por:seguro agrícola;swh:bima ya kilimo
+OT:SERVICE:storage|service|storage services|||||eng:warehouse;eng:warehouse receipt system;eng:silo;eng:cold storage;eng:cold chain;fra:stockage;fra:entrepôt;por:armazenamento;swh:ghala
+OT:SERVICE:logistics|service|logistics and transport|||||eng:transport;eng:haulage;fra:logistique;fra:transport
+OT:SERVICE:markets|service|markets|||||eng:market;eng:marketplace;eng:commodity exchange;fra:marché;por:mercado;swh:soko;hau:kasuwa;yor:oja;ibo:ahia;amh:ገበያ
+OT:SERVICE:veterinary|service|veterinary services|||||eng:animal health services;eng:vet;fra:services vétérinaires;swh:huduma za mifugo
+OT:SERVICE:cooperative|service|farmer cooperative|||||eng:cooperative;eng:farmer group;eng:fbo;fra:coopérative;por:cooperativa;swh:chama cha ushirika
+OT:SERVICE:digital_advisory|service|digital advisory|||||eng:sms advisory;eng:mobile agriculture;eng:e-extension
+OT:PROCESS:planting|process|planting|||OT:STAGE:production||eng:sowing;fra:semis;por:plantio;swh:kupanda
+OT:PROCESS:harvesting|process|harvesting|||OT:STAGE:production||eng:harvest;fra:récolte;por:colheita;swh:mavuno;hau:girbi
+OT:PROCESS:drying|process|drying|||OT:STAGE:post_harvest||fra:séchage;por:secagem
+OT:PROCESS:milling|process|milling|||OT:STAGE:processing||fra:mouture;por:moagem
+OT:PROCESS:fermentation|process|fermentation|||OT:STAGE:processing||fra:fermentation
+OT:PROCESS:irrigation|process|irrigation|||OT:STAGE:production||fra:irrigation;por:irrigação;swh:umwagiliaji
+OT:PROCESS:weeding|process|weeding|||OT:STAGE:production||fra:désherbage;swh:palizi
+OT:STAGE:inputs|value_chain_stage|input supply|||||eng:inputs stage
+OT:STAGE:production|value_chain_stage|production|||||eng:on-farm production;fra:production
+OT:STAGE:post_harvest|value_chain_stage|post-harvest handling|||||eng:post harvest;eng:post-harvest losses;fra:post-récolte
+OT:STAGE:processing|value_chain_stage|processing|||||eng:agro-processing;fra:transformation;por:processamento
+OT:STAGE:distribution|value_chain_stage|distribution and trade|||||eng:aggregation;eng:wholesale;eng:retail
+OT:STAGE:consumption|value_chain_stage|consumption|||||fra:consommation
+OT:DISEASE:cassava_mosaic|disease_pest|cassava mosaic disease|Begomovirus spp.|||host=OT:CROP:cassava|eng:cmd;fra:mosaïque du manioc
+OT:DISEASE:cassava_brown_streak|disease_pest|cassava brown streak disease|Ipomovirus|||host=OT:CROP:cassava|eng:cbsd
+OT:DISEASE:fall_armyworm|disease_pest|fall armyworm|Spodoptera frugiperda|||host=OT:CROP:maize|eng:faw;fra:chenille légionnaire d'automne;por:lagarta-do-cartucho;swh:viwavijeshi vamizi;hau:tsutsar sojoji
+OT:DISEASE:maize_lethal_necrosis|disease_pest|maize lethal necrosis|||host=OT:CROP:maize|eng:mln
+OT:DISEASE:striga|disease_pest|striga|Striga hermonthica|||type=parasitic weed|eng:witchweed;hau:kudiji;fra:striga
+OT:DISEASE:locust|disease_pest|desert locust|Schistocerca gregaria|||type=migratory pest|eng:locusts;fra:criquet pèlerin;arb:الجراد;som:ayax;amh:አንበጣ
+OT:DISEASE:quelea|disease_pest|red-billed quelea|Quelea quelea|||type=bird pest|eng:quelea birds
+OT:DISEASE:banana_xanthomonas_wilt|disease_pest|banana xanthomonas wilt|Xanthomonas campestris pv. musacearum|||host=OT:CROP:banana|eng:bxw
+OT:DISEASE:coffee_wilt|disease_pest|coffee wilt disease|Gibberella xylarioides|||host=OT:CROP:coffee|
+OT:DISEASE:black_pod|disease_pest|cocoa black pod|Phytophthora palmivora; P. megakarya|||host=OT:CROP:cocoa|fra:pourriture brune
+OT:DISEASE:cocoa_swollen_shoot|disease_pest|cocoa swollen shoot virus|Badnavirus|||host=OT:CROP:cocoa|eng:cssvd
+OT:DISEASE:tuta_absoluta|disease_pest|tomato leafminer|Tuta absoluta|||host=OT:CROP:tomato|eng:tuta;eng:tomato ebola
+OT:DISEASE:aflatoxin|disease_pest|aflatoxin contamination|Aspergillus flavus|||host=OT:CROP:maize;OT:CROP:groundnut|eng:aflatoxins
+OT:DISEASE:newcastle|disease_pest|Newcastle disease|Avian orthoavulavirus 1|||host=OT:ANIMAL:chicken|eng:nd;fra:maladie de newcastle;swh:mdondo;hau:cutar kaji
+OT:DISEASE:avian_influenza|disease_pest|avian influenza|Influenza A|||host=OT:GROUP:poultry|eng:bird flu;eng:hpai;fra:grippe aviaire
+OT:DISEASE:fmd|disease_pest|foot-and-mouth disease|Aphthovirus|||host=OT:ANIMAL:cattle|eng:fmd;fra:fièvre aphteuse;swh:ugonjwa wa miguu na midomo
+OT:DISEASE:ppr|disease_pest|peste des petits ruminants|Morbillivirus caprinae|||host=OT:ANIMAL:goat;OT:ANIMAL:sheep|eng:ppr;eng:goat plague
+OT:DISEASE:ecf|disease_pest|East Coast fever|Theileria parva|||host=OT:ANIMAL:cattle|eng:ecf;eng:theileriosis
+OT:DISEASE:asf|disease_pest|African swine fever|Asfivirus|||host=OT:ANIMAL:pig|eng:asf;fra:peste porcine africaine
+OT:DISEASE:trypanosomiasis|disease_pest|animal trypanosomiasis|Trypanosoma spp.|||host=OT:ANIMAL:cattle|eng:nagana;eng:sleeping sickness (animal)
+OT:DISEASE:cbpp|disease_pest|contagious bovine pleuropneumonia|Mycoplasma mycoides|||host=OT:ANIMAL:cattle|eng:cbpp
+OT:DISEASE:rvf|disease_pest|Rift Valley fever|Phlebovirus|||host=OT:GROUP:livestock|eng:rvf
+OT:DISEASE:anthrax|disease_pest|anthrax|Bacillus anthracis|||host=OT:GROUP:livestock|fra:charbon bactéridien
+OT:SEASON:rainy_season|season|rainy season|||||eng:wet season;eng:main season;fra:saison des pluies;fra:hivernage;por:época chuvosa;swh:masika;hau:damina;yor:igba ojo
+OT:SEASON:dry_season|season|dry season|||||fra:saison sèche;por:época seca;swh:kiangazi;hau:rani;yor:igba erun;eng:harmattan
+OT:SEASON:long_rains|season|long rains|||OT:SEASON:rainy_season|region=East Africa;months=Mar-May|swh:masika
+OT:SEASON:short_rains|season|short rains|||OT:SEASON:rainy_season|region=East Africa;months=Oct-Dec|swh:vuli
+OT:SEASON:meher|season|meher season|||OT:SEASON:rainy_season|region=Ethiopia;months=Jun-Sep|amh:መኸር;eng:kiremt
+OT:SEASON:belg|season|belg season|||OT:SEASON:rainy_season|region=Ethiopia;months=Feb-May|amh:በልግ
+OT:SEASON:gu|season|gu season|||OT:SEASON:rainy_season|region=Somalia;months=Apr-Jun|som:gu'
+OT:SEASON:deyr|season|deyr season|||OT:SEASON:rainy_season|region=Somalia;months=Oct-Dec|som:deyr
+OT:SEASON:lean_season|season|lean season|||||eng:hunger gap;fra:période de soudure;fra:soudure
+OT:SEASON:season_a|season|season A|||OT:SEASON:rainy_season|region=Rwanda;Burundi;months=Sep-Jan|kin:agihembwe a
+OT:SEASON:season_b|season|season B|||OT:SEASON:rainy_season|region=Rwanda;Burundi;months=Feb-Jun|kin:agihembwe b
+OT:UNIT:tonne|unit|tonne|||||eng:t;eng:tonnes;eng:metric ton;eng:mt;fra:tonne;por:tonelada
+OT:UNIT:kilogram|unit|kilogram|||||eng:kg;eng:kilo;fra:kilogramme;por:quilograma
+OT:UNIT:hectare|unit|hectare|||||eng:ha;fra:hectare;por:hectare
+OT:UNIT:hg_per_ha|unit|hectogram per hectare|||||eng:hg/ha
+OT:UNIT:tonne_per_ha|unit|tonne per hectare|||||eng:t/ha;eng:tonnes per hectare
+OT:UNIT:head|unit|head (animals)|||||eng:heads;eng:an;fra:têtes
+OT:UNIT:usd|unit|US dollar|||||eng:usd;eng:$;eng:us$
+OT:UNIT:lcu|unit|local currency unit|||||eng:lcu;eng:naira;eng:cedi;eng:shilling;eng:rand;eng:cfa franc;eng:birr
+OT:UNIT:bag_50kg|unit|50 kg bag|||||eng:bag;eng:bags;eng:50kg bag
+OT:UNIT:percent|unit|percent|||||eng:%;eng:percentage
+OT:UNIT:kcal_capita_day|unit|kcal per capita per day|||||eng:kcal/capita/day
+OT:MEASURE:production_quantity|measure|production quantity||OT:INDCLASS:PROD|||eng:production;eng:output;eng:volume produced;fra:production;por:produção;swh:uzalishaji
+OT:MEASURE:yield|measure|yield||OT:INDCLASS:PROD||unit=t/ha;hg/ha|eng:productivity per hectare;fra:rendement;por:rendimento;por:produtividade;swh:mavuno kwa hekta
+OT:MEASURE:area_harvested|measure|area harvested||OT:INDCLASS:PROD||unit=ha|eng:harvested area;eng:acreage;fra:superficie récoltée;por:área colhida
+OT:MEASURE:stocks|measure|livestock stocks||OT:INDCLASS:PROD||unit=head|eng:herd size;eng:number of animals;fra:effectif du cheptel
+OT:MEASURE:producer_price|measure|producer price||OT:INDCLASS:PRC||unit=LCU/t;USD/t|eng:farmgate price;eng:farm-gate price;fra:prix au producteur;por:preço ao produtor
+OT:MEASURE:retail_price|measure|retail price||OT:INDCLASS:PRC|||eng:market price;eng:consumer price;fra:prix de détail
+OT:MEASURE:export_quantity|measure|export quantity||OT:INDCLASS:FVC|||eng:exports;fra:exportations;por:exportações
+OT:MEASURE:import_quantity|measure|import quantity||OT:INDCLASS:FVC|||eng:imports;fra:importations;por:importações
+OT:MEASURE:food_supply|measure|food supply||OT:INDCLASS:FS||unit=kcal/capita/day|eng:dietary energy supply;eng:calorie supply
+OT:MEASURE:undernourishment|measure|prevalence of undernourishment||OT:INDCLASS:FS||unit=%|eng:pou;eng:hunger;fra:sous-alimentation
+OT:MEASURE:fertilizer_use|measure|fertilizer use||OT:INDCLASS:INP||unit=kg/ha|eng:fertilizer consumption;eng:nutrient use
+OT:MEASURE:pesticide_use|measure|pesticide use||OT:INDCLASS:INP||unit=kg/ha|
+OT:MEASURE:emissions|measure|agricultural emissions||OT:INDCLASS:ENV||unit=kt CO2eq|eng:ghg emissions;eng:methane;eng:co2e
+OT:MEASURE:rainfall|measure|rainfall||OT:INDCLASS:CLIM||unit=mm|eng:precipitation;eng:rain;fra:pluviométrie;swh:mvua
+OT:MEASURE:temperature|measure|temperature||OT:INDCLASS:CLIM||unit=°C|fra:température
+OT:MEASURE:ndvi|measure|NDVI||OT:INDCLASS:VEG|||eng:vegetation index;eng:greenness
+OT:MEASURE:soil_organic_carbon|measure|soil organic carbon||OT:INDCLASS:SOIL|||eng:soc;eng:soil carbon
+OT:MEASURE:ag_employment|measure|agricultural employment||OT:INDCLASS:EL|||eng:farm jobs;eng:employment in agriculture
+OT:MEASURE:post_harvest_loss|measure|post-harvest loss||OT:INDCLASS:FVC||unit=%|eng:phl;eng:food loss

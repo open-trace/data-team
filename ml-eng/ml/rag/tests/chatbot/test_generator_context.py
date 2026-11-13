@@ -17,9 +17,10 @@ from ml.rag.chatbot.generator import (
     _context_max_chars,
     _finalize_generation_result,
     _format_source_citation,
-    _drop_geo_conflicting,
+    classify_evidence_tier,
+    drop_geo_conflicting,
+    drop_price_off_topic,
     _generate_max_tokens,
-    _no_data_fallback_message,
     _normalize_inline_citations,
     _registry_from_context_items,
     _strip_invalid_citation_markers,
@@ -64,13 +65,20 @@ def _news_item() -> dict:
 
 
 def test_generate_max_tokens_default_and_env() -> None:
+    # ML-054: multi-part modes (analytical/research/briefing) now treat
+    # RAG_GENERATE_MAX_TOKENS as the real ceiling instead of clamping down to
+    # the per-mode default, because multi-country comparisons were being cut
+    # off mid-sentence at 1536. Short modes are unchanged.
     with mock.patch.dict(os.environ, {}, clear=False):
         os.environ.pop("RAG_GENERATE_MAX_TOKENS", None)
         assert _generate_max_tokens("fact_lookup") == 512
-        assert _generate_max_tokens("analytical") == 1536
+        # env default (2048) now wins over the 1536 per-mode default
+        assert _generate_max_tokens("analytical") == 2048
         assert _generate_max_tokens("fact_lookup") < _generate_max_tokens("analytical")
     with mock.patch.dict(os.environ, {"RAG_GENERATE_MAX_TOKENS": "512"}):
-        assert _generate_max_tokens("analytical") == 512
+        # A low env ceiling must not shrink a multi-part mode below its floor.
+        assert _generate_max_tokens("analytical") == 1536
+        assert _generate_max_tokens("fact_lookup") == 512
 
 
 def test_context_max_chars_memory_reduces_budget() -> None:
@@ -211,9 +219,9 @@ def test_filter_bq_timeout_and_mart_yaml() -> None:
     assert len(filtered) == 1
 
 
-def test_fact_lookup_numeric_blocks_without_structured_row() -> None:
+def test_fact_lookup_numeric_answers_from_documents_when_warehouse_misses() -> None:
     with mock.patch("ml.rag.chatbot.generator._call_llama") as mock_llm:
-        mock_llm.return_value = "should not be called"
+        mock_llm.return_value = "Reports describe rising maize prices in Bamako [1]."
         result = generate(
             "What is the current retail price of maize in Bamako?",
             [_news_item()],
@@ -221,8 +229,10 @@ def test_fact_lookup_numeric_blocks_without_structured_row() -> None:
             generation_plan={"answer_shape": "numeric_fact"},
             structured_bq_unavailable=True,
         )
-    assert "I don't have OpenTrace data" in result.answer
-    mock_llm.assert_not_called()
+    mock_llm.assert_called_once()
+    prompt = str(mock_llm.call_args)
+    assert "warehouse figures were not retrieved" in prompt
+    assert "I don't have OpenTrace data" not in result.answer
 
 
 def test_strip_model_sources_appendix() -> None:
@@ -333,7 +343,7 @@ def test_web_wikipedia_citation_format() -> None:
     }
     line = _format_source_citation(item)
     assert line is not None
-    assert "[Wikipedia]" in line
+    assert "[Wikipedia — tertiary, community-edited source]" in line
     assert "Agriculture in Senegal" in line
     assert "wikipedia.org" in line
 
@@ -396,38 +406,6 @@ def test_generate_returns_generation_result_without_sources_block() -> None:
 # ---------------------------------------------------------------------------
 # Sprint 1 (Jul 2026) — no-data fallback + temperature + ungrounded guard
 # ---------------------------------------------------------------------------
-
-
-def test_no_data_fallback_contains_acf_marker_and_gap_block() -> None:
-    """Test-1 finding: gap responses were invisible. Every fallback must carry ACF signal."""
-    msg = _no_data_fallback_message(
-        "What are cocoa yields in Ghana in 2024?",
-        decomposition={"countries": ["Ghana"], "time_start": "2024-01-01", "time_end": "2024-12-31"},
-    )
-    assert "I don't have OpenTrace data" in msg
-    assert "**Gap**" in msg
-    assert "Query: What are cocoa yields in Ghana in 2024?" in msg
-    assert "Ghana" in msg
-    assert "2024-01-01" in msg and "2024-12-31" in msg
-    assert "**What would help**" in msg
-    assert "ACF: no evidence" in msg
-
-
-def test_no_data_fallback_handles_missing_decomposition() -> None:
-    """Fallback must still be well-formed without geo/time hints."""
-    msg = _no_data_fallback_message("random unrelated question", decomposition=None)
-    assert "I don't have OpenTrace data" in msg
-    assert "Query: random unrelated question" in msg
-    assert "Geography:" not in msg  # no geo hint → no line
-    assert "Time period:" not in msg  # no time hint → no line
-    assert "ACF: no evidence" in msg
-    assert "What would help" in msg
-
-
-def test_no_data_fallback_handles_empty_query() -> None:
-    msg = _no_data_fallback_message("", decomposition=None)
-    assert "Query: your question" in msg
-    assert "ACF: no evidence" in msg
 
 
 def test_generate_empty_context_returns_structured_fallback() -> None:
@@ -514,84 +492,171 @@ def _geo_item(country: str, content: str = "some agricultural content") -> dict:
     }
 
 
-def test_drop_geo_conflicting_removes_other_country() -> None:
+def testdrop_geo_conflicting_removes_other_country() -> None:
     """A Kenya-tagged chunk should be dropped when the query targets Senegal."""
     items = [_geo_item("Senegal"), _geo_item("Kenya")]
     with mock.patch.dict(os.environ, {}, clear=False):
         os.environ.pop("RAG_DROP_GEO_CONFLICTING_CONTEXT", None)
-        kept = _drop_geo_conflicting(items, {"countries": ["Senegal"]})
+        kept = drop_geo_conflicting(items, {"countries": ["Senegal"]})
     kept_countries = [it["metadata"]["country"] for it in kept]
     assert "Senegal" in kept_countries
     assert "Kenya" not in kept_countries
 
 
-def test_drop_geo_conflicting_keeps_chunks_without_geo_metadata() -> None:
+def testdrop_geo_conflicting_drops_other_country_named_only_in_text() -> None:
+    senegal = {
+        "content": "Rice production forecasts in Senegal point to a larger harvest.",
+        "_context_kind": "policy",
+        "metadata": {},
+    }
+    ghana = {
+        "content": "Retail rice prices in Ghana rose from 2020 to 2023.",
+        "_context_kind": "policy",
+        "metadata": {},
+    }
+    silent = {"content": "global maize overview", "_context_kind": "academic", "metadata": {}}
+    kept = drop_geo_conflicting([senegal, ghana, silent], {"geography": ["Ghana"]})
+    assert senegal not in kept
+    assert ghana in kept
+    assert silent in kept
+
+
+def test_drop_price_off_topic_keeps_price_text_and_warehouse_rows() -> None:
+    query = "How did maize prices in Ghana and Kenya move from 2018 to 2022?"
+    dec = {
+        "geography": ["Ghana", "Kenya"],
+        "entities": ["maize"],
+        "primary_measures": ["market_price"],
+    }
+    report = {
+        "content": "CGIAR maize programmes in Ghana expanded digital agriculture tools.",
+        "_context_kind": "policy",
+        "metadata": {},
+    }
+    prices = {
+        "content": "Maize prices in Ghana and Kenya rose sharply after 2019.",
+        "_context_kind": "public_report",
+        "metadata": {},
+    }
+    row = {
+        "content": "[Structured data] Ghana maize",
+        "source": "bigquery",
+        "_context_kind": "bigquery",
+        "metadata": {"country_name": "Ghana"},
+    }
+    kept = drop_price_off_topic([report, prices, row], query, dec)
+    assert report not in kept
+    assert prices in kept
+    assert row in kept
+    production = drop_price_off_topic(
+        [report],
+        "maize production in Ghana",
+        {"geography": ["Ghana"], "entities": ["maize"], "primary_measures": ["production"]},
+    )
+    assert production == [report]
+
+
+def test_market_price_crop_mention_is_not_strong_evidence() -> None:
+    chunks = [
+        {
+            "content": "CGIAR maize programmes in Ghana expanded digital tools.",
+            "_context_kind": "policy",
+            "metadata": {},
+        },
+        {
+            "content": "Kenya rainfall monitoring covers maize growing areas.",
+            "_context_kind": "public_report",
+            "metadata": {},
+        },
+    ]
+    tier = classify_evidence_tier(
+        "How did maize prices in Ghana and Kenya move from 2018 to 2022?",
+        chunks,
+        {
+            "geography": ["Ghana", "Kenya"],
+            "entities": ["maize"],
+            "primary_measures": ["market_price"],
+        },
+    )
+    assert tier != "strong"
+
+
+def test_price_question_without_price_evidence_is_a_gap() -> None:
+    chunks = [
+        {
+            "content": "The CGIAR Platform for Big Data in Agriculture annual report mentions maize in Ghana.",
+            "_context_kind": "policy",
+            "metadata": {"title": "CGIAR annual report"},
+        },
+        {
+            "content": "Manufacturing in Ghana grew while Kenya monitored rainfall with CMLs.",
+            "_context_kind": "web",
+            "metadata": {"title": "Ghana"},
+        },
+    ]
+    dec = {
+        "geography": ["Ghana", "Kenya"],
+        "entities": ["maize"],
+        "primary_measures": ["market_price"],
+        "time_start": "2018-01-01",
+        "time_end": "2022-12-31",
+    }
+    with mock.patch("ml.rag.chatbot.generator._call_llama") as mock_llm:
+        result = generate(
+            "How did maize prices in Ghana and Kenya move from 2018 to 2022?",
+            chunks,
+            task_mode="fact_lookup",
+            decomposition=dec,
+        )
+    mock_llm.assert_not_called()
+    low = result.answer.lower()
+    assert "price" in low
+    assert "ghana" in low
+    assert "kenya" in low
+    assert "2018" in low
+
+
+def testdrop_geo_conflicting_keeps_chunks_without_geo_metadata() -> None:
     """Chunks with no geo signal are kept (structured/global references)."""
     no_geo = {"content": "global maize overview", "_context_kind": "academic", "metadata": {}}
     items = [no_geo, _geo_item("Kenya")]
     with mock.patch.dict(os.environ, {}, clear=False):
         os.environ.pop("RAG_DROP_GEO_CONFLICTING_CONTEXT", None)
-        kept = _drop_geo_conflicting(items, {"countries": ["Senegal"]})
+        kept = drop_geo_conflicting(items, {"countries": ["Senegal"]})
     assert no_geo in kept
     assert _geo_item("Kenya")["metadata"]["country"] not in [
         it["metadata"].get("country") for it in kept
     ]
 
 
-def test_drop_geo_conflicting_noop_without_target_countries() -> None:
+def testdrop_geo_conflicting_noop_without_target_countries() -> None:
     """No query geography → nothing dropped."""
     items = [_geo_item("Kenya"), _geo_item("Senegal")]
     with mock.patch.dict(os.environ, {}, clear=False):
         os.environ.pop("RAG_DROP_GEO_CONFLICTING_CONTEXT", None)
-        kept = _drop_geo_conflicting(items, {})
+        kept = drop_geo_conflicting(items, {})
     assert len(kept) == 2
 
 
-def test_drop_geo_conflicting_can_be_disabled() -> None:
+def testdrop_geo_conflicting_can_be_disabled() -> None:
     items = [_geo_item("Kenya")]
     with mock.patch.dict(os.environ, {"RAG_DROP_GEO_CONFLICTING_CONTEXT": "off"}):
-        kept = _drop_geo_conflicting(items, {"countries": ["Senegal"]})
+        kept = drop_geo_conflicting(items, {"countries": ["Senegal"]})
     assert len(kept) == 1
 
 
-def test_generate_geo_filter_leaves_nothing_returns_gap_message() -> None:
-    """
-    Real-world case: Senegal maize query pulls only Kenya/other-tagged chunks.
-    With min-usable threshold set, generate() should return the structured gap
-    message instead of calling the LLM with irrelevant context.
-    """
-    items = [_geo_item("Kenya"), _geo_item("Nigeria")]
+def test_generate_answers_from_a_single_document() -> None:
+    """One on-topic document is enough to generate at lower confidence."""
+    items = [_geo_item("Senegal", "Senegal rice harvest notes from the ministry.")]
     with mock.patch("ml.rag.chatbot.generator._call_llama") as mock_llm:
-        mock_llm.return_value = "should not be called"
-        with mock.patch.dict(
-            os.environ, {"RAG_MIN_USABLE_CONTEXT": "0"}, clear=False
-        ):
-            os.environ.pop("RAG_DROP_GEO_CONFLICTING_CONTEXT", None)
-            result = generate(
-                "maize yields in Senegal 2024",
-                items,
-                decomposition={"countries": ["Senegal"]},
-            )
-    assert "reliable information" in result.answer.lower()
-    assert result.acf is not None
-    assert result.acf.band == "no_evidence"
-    mock_llm.assert_not_called()
-
-
-def test_generate_min_usable_threshold_blocks_thin_context() -> None:
-    """One weak chunk + RAG_MIN_USABLE_CONTEXT=1 → structured gap, no LLM call."""
-    items = [_geo_item("Senegal")]
-    with mock.patch("ml.rag.chatbot.generator._call_llama") as mock_llm:
-        mock_llm.return_value = "should not be called"
-        with mock.patch.dict(os.environ, {"RAG_MIN_USABLE_CONTEXT": "1"}, clear=False):
-            os.environ.pop("RAG_DROP_GEO_CONFLICTING_CONTEXT", None)
-            result = generate(
-                "rice production in Senegal",
-                items,
-                decomposition={"countries": ["Senegal"]},
-            )
-    assert "reliable information" in result.answer.lower()
-    mock_llm.assert_not_called()
+        mock_llm.return_value = "A ministry note discusses rice in Senegal, without a warehouse figure."
+        result = generate(
+            "rice production in Senegal",
+            items,
+            decomposition={"countries": ["Senegal"]},
+        )
+    mock_llm.assert_called_once()
+    assert "senegal" in result.answer.lower()
 
 
 def test_generate_min_usable_threshold_default_allows_generation() -> None:
@@ -710,18 +775,15 @@ def test_generate_keeps_inline_footnotes_when_requested() -> None:
     assert len(result.citations) == 1
 
 
-def test_build_prompt_structured_bq_unavailable_guard() -> None:
+def test_build_prompt_documents_only_guard() -> None:
     messages = _build_prompt(
         "Which country in Africa had the highest production in 2020?",
         context_block="[News] policy chunk",
-        structured_bq_unavailable=True,
+        outcome="documents_only",
     )
     sys_msg = messages[0]["content"]
     assert "do not invent totals" in sys_msg.lower()
-    assert "bigquery structured data was attempted" not in sys_msg.lower()
-    assert "opentrace structured data is unavailable" not in sys_msg.lower()
-    assert "no usable rows" not in sys_msg.lower()
-    assert "bigquery" not in sys_msg.lower() or "never mention" in sys_msg.lower()
+    assert "reports, not the opentrace warehouse" in sys_msg.lower()
 
 
 def test_build_prompt_analytical_uses_dynamic_outline_not_fixed_headings() -> None:
@@ -867,7 +929,7 @@ def test_is_numeric_data_query() -> None:
     assert not is_numeric_data_query("What does the policy brief say about millet?")
 
 
-def test_generate_numeric_hard_blocks_when_bq_and_context_empty() -> None:
+def test_generate_numeric_names_the_gap_when_bq_and_context_empty() -> None:
     with mock.patch("ml.rag.chatbot.generator._call_llama") as mock_llm:
         mock_llm.return_value = "should not be called"
         with mock.patch.dict(os.environ, {}, clear=False):
@@ -876,10 +938,12 @@ def test_generate_numeric_hard_blocks_when_bq_and_context_empty() -> None:
             result = generate(
                 "how much maize did Nigeria produce in 2020?",
                 [],
-                structured_bq_unavailable=True,
+                decomposition={"geography": ["Nigeria"], "primary_measures": ["production"]},
             )
-    assert "I don't have OpenTrace data" in result.answer
     mock_llm.assert_not_called()
+    low = result.answer.lower()
+    assert "nigeria" in low
+    assert "production" in low or "no " in low
 
 
 def test_generate_numeric_uses_narrative_when_bq_unavailable() -> None:
@@ -913,76 +977,6 @@ def test_pin_bq_context_first() -> None:
     ]
     out = pin_bq_context_first(items)
     assert [x["_context_kind"] for x in out] == ["bigquery", "news", "policy"]
-
-
-def test_prefer_in_window_narrative_historical_analytical() -> None:
-    from ml.rag.chatbot.generator import prefer_in_window_narrative
-
-    items = [
-        {"_context_kind": "bigquery", "content": "bq", "metadata": {}},
-        {
-            "_context_kind": "news",
-            "content": "2026 news",
-            "metadata": {"published_at": "2026-01-15", "title": "now"},
-        },
-        {
-            "_context_kind": "news",
-            "content": "2022 news",
-            "metadata": {"published_at": "2022-06-01", "title": "then"},
-        },
-    ]
-    out = prefer_in_window_narrative(
-        items,
-        {"time_start": "2022-01-01", "time_end": "2022-12-31"},
-        analytical=True,
-    )
-    assert [x["content"] for x in out] == ["bq", "2022 news", "2026 news"]
-
-
-def test_prefer_in_window_narrative_skips_open_ended_window() -> None:
-    from ml.rag.chatbot.generator import prefer_in_window_narrative
-
-    items = [
-        {
-            "_context_kind": "news",
-            "content": "2026 news",
-            "metadata": {"published_at": "2026-01-15"},
-        },
-        {
-            "_context_kind": "news",
-            "content": "2022 news",
-            "metadata": {"published_at": "2022-06-01"},
-        },
-    ]
-    out = prefer_in_window_narrative(
-        items,
-        {"time_start": "2015-01-01", "time_end": "2026-12-31"},
-        analytical=True,
-    )
-    assert [x["content"] for x in out] == ["2026 news", "2022 news"]
-
-
-def test_prefer_in_window_narrative_skips_non_analytical() -> None:
-    from ml.rag.chatbot.generator import prefer_in_window_narrative
-
-    items = [
-        {
-            "_context_kind": "news",
-            "content": "2026 news",
-            "metadata": {"published_at": "2026-01-15"},
-        },
-        {
-            "_context_kind": "news",
-            "content": "2022 news",
-            "metadata": {"published_at": "2022-06-01"},
-        },
-    ]
-    out = prefer_in_window_narrative(
-        items,
-        {"time_start": "2022-01-01", "time_end": "2022-12-31"},
-        analytical=False,
-    )
-    assert [x["content"] for x in out] == ["2026 news", "2022 news"]
 
 
 def test_is_comparative_bq_query() -> None:
@@ -1031,15 +1025,14 @@ def test_generate_diagnostic_no_hard_block_when_bq_unavailable() -> None:
     assert "CRITICAL" not in captured["messages"][0]["content"]
 
 
-def test_build_prompt_structured_bq_unavailable_skips_guard_for_qualitative() -> None:
+def test_build_prompt_rows_outcome_skips_documents_only_guard() -> None:
     messages = _build_prompt(
         "What does the policy brief say about millet?",
         context_block="[News] policy chunk",
-        structured_bq_unavailable=True,
+        outcome="rows",
     )
     sys_msg = messages[0]["content"]
-    assert "CRITICAL" not in sys_msg
-    assert "no usable rows" not in sys_msg.lower()
+    assert "Do not invent totals, yields, prices, or a time series." not in sys_msg
 
 
 def test_finalize_generation_result_emits_citations_span_metadata() -> None:
@@ -1398,4 +1391,3 @@ def test_citation_url_keeps_social_when_only_option() -> None:
         {"url": "https://www.linkedin.com/posts/example-maize"},
     )
     assert "linkedin.com" in (url or "")
-

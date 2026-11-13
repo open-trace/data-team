@@ -16,6 +16,8 @@ from ml.rag.chatbot.mart_indicator_classes import (
 from ml.rag.chatbot.retrieval_contract import choose_agg_vs_fact
 
 _YIELD_RE = re.compile(r"\b(yield|season|fnid|harvest\s+season)\b", re.I)
+_PRODUCT_DERIVED_SEASON_RE = re.compile(r"^(.+?)\s+season$", re.I)
+_SEASON_PRODUCTION_TABLE = "agg_production_country_season"
 _SHARE_RE = re.compile(
     r"\b(import\s+(share|dependency|ratio)|domestic\s+supply|self[-\s]?sufficien|food\s+balance)\b",
     re.I,
@@ -100,6 +102,37 @@ def _bundle_required_measures(bundles: tuple[MatchedBundle, ...]) -> set[str]:
         for m in b.spec.required_measures:
             out.add(str(m).lower())
     return out
+
+
+def _season_grain_required(query: str, facets: dict[str, Any]) -> bool:
+    """True when the question needs country-season production, not a crop-named dim sample."""
+    if _YIELD_RE.search(query or ""):
+        return True
+    roles = facets.get("entity_roles")
+    if not isinstance(roles, dict):
+        return False
+    raw_seasons = roles.get("season")
+    if not isinstance(raw_seasons, list) or not raw_seasons:
+        return False
+    crop_stems: set[str] = set()
+    for key in ("item", "product"):
+        vals = roles.get(key)
+        if isinstance(vals, list):
+            crop_stems.update(str(v).strip().lower() for v in vals if str(v).strip())
+    ents = facets.get("entities")
+    if isinstance(ents, list):
+        crop_stems.update(str(e).strip().lower() for e in ents if str(e).strip())
+    for raw in raw_seasons:
+        label = str(raw).strip()
+        if not label:
+            continue
+        derived = _PRODUCT_DERIVED_SEASON_RE.match(label)
+        if derived:
+            stem = derived.group(1).strip().lower()
+            if stem and any(stem in crop or crop.startswith(stem) for crop in crop_stems):
+                continue
+        return True
+    return False
 
 
 def _with_taxonomy_companions(
@@ -188,6 +221,14 @@ def select_table_plans(
             p = _plan(default)
             if p:
                 plans.append(p)
+        if _season_grain_required(query, facets):
+            season = _plan(
+                _SEASON_PRODUCTION_TABLE,
+                family_id="agg_production_country_season_panel",
+                role="companion",
+            )
+            if season and season.table_id not in {p.table_id for p in plans}:
+                plans.append(season)
         return _with_taxonomy_companions(plans, class_code=code, card=card, known=known)
 
     if code == "PRC":

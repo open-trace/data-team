@@ -8,15 +8,15 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 ENV_FILE="$REPO_ROOT/data/local/.env"
 FAILED_STEPS=()
 PYTHON_BIN="${PYTHON_BIN:-python3}"
-LAYERS=(bronze silver gold)
+LAYERS=(landing raw_dev staging_dev intermediate_dev mart_dev)
 SCHEMA_ARGS=()
 if [ "$#" -gt 0 ]; then
   if [ "$#" -ne 2 ] || [ "$1" != "--dataset" ]; then
-    echo "Usage: $0 [--dataset bronze|silver|gold]" >&2
+    echo "Usage: $0 [--dataset landing|raw_dev|staging_dev|intermediate_dev|mart_dev]" >&2
     exit 2
   fi
   case "$2" in
-    bronze|silver|gold) LAYERS=("$2"); SCHEMA_ARGS=(--dataset "$2") ;;
+    landing|raw_dev|staging_dev|intermediate_dev|mart_dev) LAYERS=("$2"); SCHEMA_ARGS=(--dataset "$2") ;;
     *) echo "Unknown dataset layer: $2" >&2; exit 2 ;;
   esac
 fi
@@ -58,7 +58,7 @@ for layer in "${LAYERS[@]}"; do
 done
 
 GIS_SCRIPT="data/ingestion/satellite/gis_data_ingestion.py"
-if [ "${#LAYERS[@]}" -eq 3 ] && [ -f "$GIS_SCRIPT" ]; then
+if [ "${#LAYERS[@]}" -eq 5 ] && [ -f "$GIS_SCRIPT" ]; then
   run_step "3. Load GIS CSV into local DB" "$PYTHON_BIN" "$GIS_SCRIPT"
 else
   echo "SKIP: optional GIS load (not selected or script is absent)."

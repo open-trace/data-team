@@ -4,6 +4,10 @@ from __future__ import annotations
 import re
 from typing import Any
 
+from datetime import date
+
+from ml.rag.chatbot.time_resolver import parse_iso_date, resolve_relative_time, utc_today
+
 from ml.rag.chatbot.bq_table_schema_yaml import (
     columns_for_mart_tables,
     compile_product_filter_sql,
@@ -27,6 +31,7 @@ from ml.rag.chatbot.bq_table_schema_yaml import (
 from ml.rag.chatbot.retrieval_contract import choose_agg_vs_fact
 from ml.rag.chatbot.geo_regions import is_zone_label
 from ml.rag.chatbot.query_decomposer import _extract_countries
+from ml.rag.chatbot.price_sql import plan_price_template
 
 _YEAR_RE = re.compile(r"\b(19|20)\d{2}\b")
 _RANK_RE = re.compile(
@@ -126,11 +131,20 @@ _CROP_ALIASES: tuple[tuple[str, str], ...] = (
 )
 
 
+def _ref_from_bounds(time_start: str | None, time_end: str | None) -> date:
+    for raw in (time_end, time_start):
+        parsed = parse_iso_date(str(raw or ""))
+        if parsed is not None:
+            return parsed
+    return utc_today()
+
+
 def _year_from_context(
     *,
     time_start: str | None,
     time_end: str | None,
     query: str,
+    reference_date: date | None = None,
 ) -> int | None:
     for raw in (time_start, time_end):
         if not raw:
@@ -141,6 +155,10 @@ def _year_from_context(
     m = _YEAR_RE.search(query or "")
     if m:
         return int(m.group(0))
+    ref = reference_date or _ref_from_bounds(time_start, time_end)
+    windows = resolve_relative_time(query or "", ref)
+    if windows:
+        return max(w.end.year for w in windows)
     return None
 
 
@@ -150,8 +168,13 @@ def _has_recency_anchor(
     time_start: str | None = None,
     time_end: str | None = None,
     entities: list[str] | None = None,
+    reference_date: date | None = None,
 ) -> bool:
     blob = _blob(query, entities)
+    ref = reference_date or _ref_from_bounds(time_start, time_end)
+    windows = resolve_relative_time(blob, ref)
+    if windows and any(not w.strict for w in windows):
+        return True
     if _RECENCY_RE.search(blob):
         return True
     for raw in (time_start, time_end):
@@ -404,99 +427,6 @@ def match_mart_food_security_snapshot(
         return False
     blob = _blob(query, entities)
     return bool(_FOOD_SEC_RE.search(blob))
-
-
-def match_mart_latest_price(
-    *,
-    query: str,
-    selected_tables: set[str] | list[str] | None,
-    entities: list[str] | None = None,
-    time_start: str | None = None,
-    time_end: str | None = None,
-    geo_country: str | None = None,
-    geo_countries: list[str] | None = None,
-) -> bool:
-    tables = _tables_set(selected_tables)
-    if not _pick_table(tables, _MART_PRICE_TABLES):
-        return False
-    multi = [str(c).strip() for c in (geo_countries or []) if str(c).strip()]
-    if len(multi) > 1:
-        return False
-    if not _resolve_country(
-        query=query,
-        entities=entities,
-        geo_country=geo_country,
-        geo_countries=geo_countries,
-    ):
-        return False
-    blob = _blob(query, entities)
-    if not _PRICE_RE.search(blob):
-        return False
-    if _year_from_context(time_start=time_start, time_end=time_end, query=query or "") is not None:
-        return False
-    return _has_recency_anchor(
-        query=query or "",
-        time_start=time_start,
-        time_end=time_end,
-        entities=entities,
-    )
-
-
-def build_mart_latest_price_sql(
-    *,
-    project_id: str,
-    dataset: str,
-    table_id: str,
-    country_labels: list[str],
-    blob: str,
-    limit: int = 1,
-    primary_measures: list[str] | None = None,
-    query: str = "",
-) -> str:
-    lim = max(1, min(int(limit or 1), 5))
-    mb = measure_blob(query or blob, primary_measures=primary_measures)
-    geo_col = _mart_geo_col(table_id)
-    metric = resolve_measure_column(table_id, "value") or "value"
-    geo_vals = resolve_geo_filter_values(table_id, country_labels)
-    clauses: list[str] = []
-    if len(geo_vals) == 1:
-        clauses.append(f"{geo_col} = {_sql_literal(geo_vals[0])}")
-    elif geo_vals:
-        lits = ", ".join(_sql_literal(v) for v in geo_vals)
-        clauses.append(f"{geo_col} IN ({lits})")
-    if re.search(r"\bretail\b", mb, re.IGNORECASE):
-        clauses.append("price_type = 'retail'")
-    for col, val in compile_measure_filters(
-        table_id,
-        measure_blob_text=mb,
-        primary_measures=primary_measures,
-    ):
-        clauses.append(f"{col} = {_sql_literal(val)}")
-    prod_clause, _ = _product_filter(
-        table_id,
-        blob,
-        project_id=project_id,
-        dataset=dataset,
-    )
-    where = " AND ".join(clauses) if clauses else "1=1"
-    prod_col = _mart_product_col(table_id)
-    ycol = _mart_year_col(table_id)
-    select_cols = _point_fact_select_cols(
-        table_id,
-        geo_col=geo_col,
-        ycol=ycol,
-        prod_col=prod_col,
-        metric=metric,
-    )
-    fqn = f"`{project_id}.{dataset}.{table_id}`"
-    return (
-        f"SELECT {', '.join(select_cols)} "
-        f"FROM {fqn} "
-        f"WHERE {where} "
-        f"{prod_clause}"
-        f"ORDER BY as_of_date DESC, tier ASC "
-        f"LIMIT {lim}"
-    )
 
 
 def match_mart_regional_panel(
@@ -912,6 +842,19 @@ def try_sql_template(
             "table_id": table_id,
         }
 
+    if _pick_table(tables, _MART_PRICE_TABLES):
+        price_hit = plan_price_template(
+            query=query,
+            blob=blob,
+            country_labels=countries or ([country] if country else []),
+            time_start=time_start,
+            time_end=time_end,
+            project_id=project_id,
+            dataset=dataset,
+        )
+        if price_hit is not None:
+            return price_hit
+
     if match_mart_regional_panel(
         query=query,
         selected_tables=selected_tables,
@@ -947,33 +890,6 @@ def try_sql_template(
             "template": "mart_regional_panel",
             "year": year,
             "product_name": product_label,
-            "table_id": table_id,
-        }
-
-    if match_mart_latest_price(
-        query=query,
-        selected_tables=selected_tables,
-        entities=entities,
-        time_start=time_start,
-        time_end=time_end,
-        geo_country=geo_country,
-        geo_countries=geo_countries,
-    ):
-        assert country is not None
-        table_id = _pick_table(tables, _MART_PRICE_TABLES) or "fct_prices"
-        return {
-            "sql": build_mart_latest_price_sql(
-                project_id=project_id,
-                dataset=dataset,
-                table_id=table_id,
-                country_labels=[country],
-                blob=blob,
-                limit=1,
-                primary_measures=primary_measures,
-                query=query,
-            ),
-            "template": "mart_latest_price",
-            "country": country,
             "table_id": table_id,
         }
 
@@ -1014,8 +930,6 @@ def try_sql_template(
         assert year is not None and country is not None
         if _YIELD_RE.search(blob) and "fct_yield" in tables:
             table_id = "fct_yield"
-        elif _PRICE_RE.search(blob):
-            table_id = _pick_table(tables, _MART_PRICE_TABLES) or "fct_prices"
         else:
             table_id = _pick_point_fact_production_table(tables)
         routed = choose_agg_vs_fact(
@@ -1057,9 +971,7 @@ def try_sql_template(
         geo_countries=geo_countries,
     ):
         assert country is not None
-        if _PRICE_RE.search(blob):
-            table_id = _pick_table(tables, _MART_PRICE_TABLES) or "fct_prices"
-        elif _YIELD_RE.search(blob) and "fct_yield" in tables:
+        if _YIELD_RE.search(blob) and "fct_yield" in tables:
             table_id = "fct_yield"
         else:
             table_id = _pick_table(tables, _MART_PRODUCTION_TABLES) or "fct_production"

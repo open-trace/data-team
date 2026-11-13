@@ -525,6 +525,58 @@ def language_instruction(lang: str, *, inline_citations: bool = False) -> str:
     )
 
 
+# ML-055: Sprint 2 P0 -- local language handling (Swahili/French especially)
+# produced incoherent, looping, repetitive text -- the same phrase repeated up
+# to five times with no coherent answer. The underlying generation model
+# sometimes degenerates this way when writing in a non-English language; this
+# is a cheap, deterministic post-generation gate so that failure mode is caught
+# and replaced with a clean message instead of shipped to the user.
+_REPEAT_MIN_PHRASE_WORDS = 4
+_REPEAT_MIN_OCCURRENCES = 3
+
+
+def looks_like_degenerate_repetition(text: str) -> bool:
+    """
+    True when the same phrase (4+ words) repeats 3+ times in the answer.
+
+    Catches the exact Sprint 2 failure mode -- a short phrase looping instead
+    of a coherent answer -- without needing a language-specific model or an
+    extra LLM call. Deliberately conservative: normal prose that happens to
+    reuse a short connector word will not trip this.
+    """
+    t = (text or "").strip()
+    if not t:
+        return False
+    words = t.split()
+    if len(words) < _REPEAT_MIN_PHRASE_WORDS * _REPEAT_MIN_OCCURRENCES:
+        return False
+    n = _REPEAT_MIN_PHRASE_WORDS
+    seen: dict[str, int] = {}
+    for i in range(len(words) - n + 1):
+        phrase = " ".join(w.lower() for w in words[i : i + n])
+        seen[phrase] = seen.get(phrase, 0) + 1
+        if seen[phrase] >= _REPEAT_MIN_OCCURRENCES:
+            return True
+    return False
+
+
+def language_not_yet_supported_answer(lang: str) -> str:
+    """
+    Clean fallback when generation degenerates for a named non-English language.
+
+    Sprint 2 P0: 'Either fix the underlying model or return a clean
+    not-yet-supported message' -- this is that message. Always answers in
+    English so the user gets something readable regardless of which language
+    generation degenerated in.
+    """
+    display = _LANG_DISPLAY.get((lang or "").strip().lower(), lang or "that language")
+    return (
+        f"Ask ADZA is not yet able to give a fully reliable answer in {display}. "
+        "Please rephrase your question in English, or try again -- support for "
+        "this language is still being improved."
+    )
+
+
 def language_unclear_answer() -> str:
     """Client message when query language cannot be named definitively."""
     lines = [
@@ -562,6 +614,8 @@ def insufficient_context_answer(lang: str = "", *, query: str | None = None) -> 
 __all__ = [
     "SUPPORTED_ANSWER_LANGUAGES",
     "detect_answer_language",
+    "looks_like_degenerate_repetition",
+    "language_not_yet_supported_answer",
     "detect_canned_insufficient_lang",
     "is_english_answer_lang",
     "language_instruction",

@@ -1,0 +1,26 @@
+CREATE SCHEMA IF NOT EXISTS "landing";
+CREATE TABLE IF NOT EXISTS "landing"."unccd_land_degradation_bulk" (
+  "goal" JSONB,
+  "target" JSONB,
+  "indicator" JSONB,
+  "series" TEXT,
+  "seriesDescription" TEXT,
+  "seriesCount" TEXT,
+  "geoAreaCode" TEXT,
+  "geoAreaName" TEXT,
+  "timePeriodStart" DOUBLE PRECISION,
+  "value" TEXT,
+  "valueType" TEXT,
+  "time_detail" TEXT,
+  "timeCoverage" TEXT,
+  "upperBound" TEXT,
+  "lowerBound" TEXT,
+  "basePeriod" TEXT,
+  "source" TEXT,
+  "geoInfoUrl" TEXT,
+  "footnotes" JSONB,
+  "attributes_Nature" TEXT,
+  "attributes_Units" TEXT,
+  "dimensions_Reporting Type" TEXT,
+  "source_iso3" TEXT
+);

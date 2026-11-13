@@ -1,6 +1,5 @@
 """
-RAG graph: query → decompose → parallel retrieval (six Qdrant corpora)
-→ BQ SQL reasoner (mart_dev YAML) → BigQuery → merge → rerank → generate.
+RAG graph: query → decompose → (Qdrant ‖ BQ reason+retrieve) → merge → rerank → generate.
 """
 from __future__ import annotations
 
@@ -14,8 +13,6 @@ from typing import Any, TypedDict, cast
 from ml.rag.chatbot.acf_scoring import acf_result_to_state, curated_product_acf, no_evidence_acf
 from ml.rag.chatbot.answer_language import (
     detect_answer_language,
-    detect_canned_insufficient_lang,
-    insufficient_context_answer,
     language_unclear_answer,
 )
 from ml.rag.chatbot.memory_relevance import memory_relevant_for_query
@@ -24,14 +21,24 @@ from ml.rag.chatbot.ofia import infer_source_tier
 from ml.rag.chatbot.export_intent import EXPORT_UPGRADE_MESSAGE, detect_export_intent
 from ml.rag.chatbot.geo_regions import expand_regions_in_decomposition
 from ml.rag.chatbot.export_runner import run_exports
-from ml.rag.chatbot.geo_policy import effective_geo_override
+from ml.rag.chatbot.geo_policy import (
+    apply_profile_geography_default,
+    clear_profile_ui_retrieval_scope,
+    effective_geo_override,
+    sanitize_profile_country,
+)
 from ml.rag.chatbot.plan_policy import (
-    apply_category_domain_hints,
     apply_plan_decomposition_gates,
 )
 from ml.rag.chatbot.task_mode import clarify_answer, resolve_task_mode
+from ml.rag.chatbot.active_request import (
+    add_decomposed_slots,
+    fill_decomposition,
+    resolve_turn,
+    resolved_request_text,
+)
 from ml.rag.chatbot.query_views import build_detail_rewrite, build_query_views
-from ml.rag.chatbot.agri_measure_ontology import MEASURES, MeasureHit, resolve_measure, resolve_measures, resolve_recency_tier
+from ml.rag.chatbot.agri_measure_ontology import MEASURES, MeasureHit, resolve_measures, resolve_recency_tier
 from ml.rag.chatbot.product_knowledge import is_help_query, is_product_query
 from ml.rag.chatbot.query_gate import (
     classify_social_query,
@@ -54,33 +61,30 @@ from ml.rag.chatbot.class_engine_runner import engine_results_to_bq_plan, run_cl
 from ml.rag.chatbot.sql_compiler import sql_compiler_enabled
 from ml.rag.chatbot.class_supervisor import SupervisorPlan, compile_supervisor_plan, corpora_for_supervisor_plan, tables_for_supervisor_plan
 from ml.rag.chatbot.context_diversity import diversify_context_pack
-from ml.rag.chatbot.corpus_catalog import CORPUS_CATALOG, CorpusSelection, select_corpora
+from ml.rag.chatbot.evidence_kinds import is_warehouse_item
+from ml.rag.chatbot.coverage_retry import should_coverage_retry, should_retry_bq
+from ml.rag.chatbot.corpus_catalog import CORPUS_CATALOG, CorpusSelection, formation_doc_kinds, select_corpora
 from ml.rag.chatbot.facet_enrich import enrich_decomposition_facets
 from ml.rag.chatbot.facet_compiler import compile_turn_contract, compile_breakdown
 from ml.rag.chatbot.intent_bundles import bundle_primary_measures, bundle_required_measures, match_intent_bundles
-from ml.rag.chatbot.capability_registry import apply_reasoner_to_turn, resolve_capability, unsupported_answer_hint
-from ml.rag.chatbot.empty_answer_templates import empty_answer_for_contract
-from ml.rag.chatbot.empty_policy import (
-    build_filter_miss_block,
-    primary_class_from_state,
-    resolve_empty_policy,
-    should_generate_weak,
-)
-from ml.rag.chatbot.bq_gap_messages import (
-    first_prep_error,
-    forbid_generic_insufficient,
-    should_hard_return_bq_gap,
-    typed_bq_gap_answer,
-    warehouse_was_attempted,
-)
+from ml.rag.chatbot.capability_registry import apply_reasoner_to_turn, resolve_capability
 from ml.rag.chatbot.bq_execute_state import (
     bq_execute_flags,
     collect_pre_queries,
+    ensure_planned_attempt_debug,
+    execution_results_from_items,
     plan_indicates_warehouse_attempt,
+    warehouse_was_attempted,
+)
+from ml.rag.chatbot.bq_sql_diagnostics import (
+    sql_attempts_for_diagnostics,
+    sql_statements_for_diagnostics,
 )
 from ml.rag.chatbot.time_retrieval import sync_decomposition_time, time_fallback_enabled, time_kwargs_from_contract
-from ml.rag.chatbot.turn_contract import NUMERIC_JOBS, TurnContract
-from ml.rag.chatbot.typed_pack import typed_context_pack, should_zero_pack
+from ml.rag.chatbot.turn_contract import TurnContract
+from ml.rag.chatbot.typed_pack import PackResult, typed_context_pack
+from ml.rag.chatbot.answer_outcome import decide_outcome, gap_answer
+from ml.rag.chatbot.stage_budget import stage_over_budget
 from ml.rag.chatbot.generation_plan import build_generation_plan
 from ml.rag.chatbot.global_reasoner import compile_reasoner_plan, reasoner_plan_to_bq_plan
 from ml.rag.chatbot.composer import (
@@ -88,10 +92,12 @@ from ml.rag.chatbot.composer import (
     composer_context_block,
     partition_bq_by_subquestion,
 )
-from ml.rag.chatbot.reasoner_plan import ReasonerPlan, is_heavy_plan_type
+from ml.rag.chatbot.reasoner_plan import ReasonerPlan
 from ml.rag.chatbot.qdrant_planner import plan_vector_corpora_for_reasoner
 from ml.rag.chatbot.generator import (
     _generate_max_tokens,
+    drop_geo_conflicting,
+    drop_price_off_topic,
     filter_context_items,
     generate,
     is_comparative_bq_query,
@@ -106,18 +112,26 @@ from ml.rag.chatbot.ontology_context import sanitize_decomposition_for_bq
 from ml.rag.chatbot.retrieval_contract import build_corpus_routing_contract
 from ml.rag.chatbot.decompose_context import DecomposeContext
 from ml.rag.chatbot.query_decomposer import (
+    _extract_countries,
     decompose_query,
+    facet_grounded_in_query,
     normalize_geography_for_filter,
     resolve_retrieval_geographies,
 )
+from ml.rag.chatbot.time_resolver import parse_iso_date, resolve_relative_time, utc_today
 from ml.rag.chatbot.query_normalize import normalize_query_text
-from ml.rag.chatbot.routing_plan import RoutingPlan, build_routing_plan
+from ml.rag.chatbot.routing_plan import build_routing_plan
 from ml.rag.chatbot.reranker import last_rerank_mode, rerank
 from ml.rag.retrievers.bq_retriever import BQRetriever
 from ml.rag.retrievers.vector_retriever import VectorRetriever
-from ml.rag.llm_chat import get_llm_usage, reset_llm_usage
+from ml.rag.llm_chat import (
+    get_llm_usage,
+    length_capped_call_count,
+    reset_llm_truncation,
+    reset_llm_usage,
+)
 from ml.rag.retrievers.web_retriever import (
-    _warehouse_attempt_blocks_web,
+    warehouse_blocks_web,
     format_web_chunk_for_context,
     needs_web_fallback,
     retrieve_web_fallback_detailed,
@@ -330,6 +344,11 @@ def _retrieve_vector_cascade(
 ) -> list[dict[str, Any]]:
     """Try full filters, widen time ±1y, then drop time/geo when fallbacks allow."""
     attempts: list[dict[str, Any]] = [dict(base_kwargs)]
+    if base_kwargs.get("ontology_ids"):
+        # Untagged legacy chunks never match the ontology filter: next level keeps geo/time, drops it.
+        no_onto = dict(base_kwargs)
+        no_onto.pop("ontology_ids", None)
+        attempts.append(no_onto)
     has_geo = bool(countries)
     time_fb = allow_time_fallback if allow_time_fallback is not None else _env_on(time_fallback_env)
 
@@ -490,13 +509,11 @@ def _vector_retrieve_for_corpus(
     time_kw = time_kwargs_from_contract(contract if contract.measure_id or contract.time_spec.start else None)
     ts = str(
         time_kw.get("published_at_from")
-        or state.get("time_start_override")
         or dec.get("time_start")
         or ""
     ).strip()[:10]
     te = str(
         time_kw.get("published_at_to")
-        or state.get("time_end_override")
         or dec.get("time_end")
         or ""
     ).strip()[:10]
@@ -508,6 +525,27 @@ def _vector_retrieve_for_corpus(
         kwargs["published_at_from"] = ts
     if te:
         kwargs["published_at_to"] = te
+
+    from ml.rag.chatbot.ontology_routing import (
+        ontology_plan_for_state,
+        qdrant_expansion_view,
+        qdrant_payload_ids,
+    )
+
+    onto_plan = ontology_plan_for_state(state)
+    if onto_plan:
+        if os.environ.get("ADZA_QDRANT_ONTOLOGY_FILTER", "1").strip().lower() in (
+            "1",
+            "true",
+            "on",
+            "yes",
+        ):
+            oids = qdrant_payload_ids(onto_plan)
+            if oids:
+                kwargs["ontology_ids"] = oids
+        view = qdrant_expansion_view(onto_plan)
+        if view and view not in texts:
+            texts = [*texts, view]
 
     allow_geo_fb = not _strict_compare_filters(dec)
     task_mode = str(state.get("task_mode") or "chat").strip().lower()
@@ -525,6 +563,7 @@ def _vector_retrieve_for_corpus(
             corpora=corpus_key,
             geo=geo_key,
             year=year_key,
+            ontology_filter=bool(kwargs.get("ontology_ids")),
         )
         cached = get_cached_hits(cache_key)
         if cached is not None:
@@ -574,10 +613,14 @@ class RAGGraphState(TypedDict, total=False):
     bq_cache_hit: bool | None
     merged_context: list[dict[str, Any]]
     reranked_context: list[dict[str, Any]]
+    evidence_drops: dict[str, int]
+    retrieval_partial: bool
     web_results: list[dict[str, Any]]
     web_fallback_status: str | None
     web_fallback_reason: str | None
     insufficient_context: bool | None
+    answer_outcome: str
+    profile_scope_retry: int | None
     answer: str
     citations: list[dict[str, Any]]
     usage: dict[str, int]
@@ -586,6 +629,7 @@ class RAGGraphState(TypedDict, total=False):
     geo_override: str | None
     time_start_override: str | None
     time_end_override: str | None
+    reference_date: str | None
     news_top_k: int | None
     academic_top_k: int | None
     ota_top_k: int | None
@@ -635,11 +679,14 @@ class RAGGraphState(TypedDict, total=False):
     detail_rewrite: str | None
     context_applied: bool | None
     query_views: dict[str, Any] | None
+    active_request: dict[str, Any] | None
+    resolved_request: str | None
     vector_texts_used: list[str] | None
     user_query_dropped: bool | None
     vector_cache_hit: bool | None
     coverage_retry: int | None
     last_bq_facts: list[dict[str, Any]] | None
+    execution_results: list[dict[str, Any]]
     measure_id: str | None
     recency_tier: str | None
     turn_contract: dict[str, Any]
@@ -664,12 +711,16 @@ class RAGGraphState(TypedDict, total=False):
     bq_nl2sql_ms: float | None
     bq_execute_ms: float | None
     sql_source: str | None
+    bq_skipped_reason: str | None
+    ontology_plan: dict[str, Any] | None
+    source_basis: str | None
     rerank_ms: float | None
     rerank_pool_size: int | None
     rerank_mode: str | None
     generate_ms: float | None
     generate_max_tokens: int | None
     generate_input_chars: int | None
+    generate_length_capped_calls: int | None
 
 
 def _reasoner_from_state(state: RAGGraphState) -> ReasonerPlan | None:
@@ -710,7 +761,7 @@ def _early_route_decompose_state(raw_q: str, route: str) -> dict[str, Any]:
     return base
 
 
-def node_decompose(state: RAGGraphState) -> dict[str, Any]:
+def node_decompose(state: RAGGraphState) -> RAGGraphState:
     raw_q = normalize_query_text((state.get("query") or "").strip())
     route = early_non_rag_route(raw_q)
     if route:
@@ -742,14 +793,14 @@ def node_decompose(state: RAGGraphState) -> dict[str, Any]:
             "context_applied": False,
         }
         return early
+    active_turn, active_state = resolve_turn(
+        raw_q,
+        persisted=state.get("active_request") if isinstance(state.get("active_request"), dict) else None,
+        recent_turns=state.get("recent_turns") if isinstance(state.get("recent_turns"), list) else None,
+    )
     views0 = build_query_views(
         raw_q,
-        conversation_summary=state.get("conversation_summary")
-        if isinstance(state.get("conversation_summary"), str)
-        else None,
-        recent_turns=state.get("recent_turns")
-        if isinstance(state.get("recent_turns"), list)
-        else None,
+        active=active_turn,
         user_profile=state.get("user_profile")
         if isinstance(state.get("user_profile"), dict)
         else None,
@@ -760,16 +811,14 @@ def node_decompose(state: RAGGraphState) -> dict[str, Any]:
     enrich = {
         "user_query": user_q,
         "original_query": user_q,
-        "enriched_query": views0.context_rewrite or user_q,
-        "enriched": views0.context_applied,
         "context_rewrite": views0.context_rewrite,
         "context_applied": views0.context_applied,
-        "prior_topic": views0.prior_topic,
     }
-    # Decompose grounding uses the real user question (+ context companion in prompt)
-    q = user_q
+    # Planning and grounding read the resolved request: the question plus its carried slots.
+    resolved_request = resolved_request_text(user_q, active_turn)
+    q = resolved_request or user_q
     ctx = DecomposeContext.from_graph_state(state, enrich)
-    with observed_span("decompose", input_data={"query": q[:200], "enriched": bool(enrich.get("enriched"))}):
+    with observed_span("decompose", input_data={"query": q[:200], "carried": bool(resolved_request)}):
         dec_raw = decompose_query(q, context=ctx)
         decompose_llm_ms = float(dec_raw.pop("_decompose_llm_ms", 0.0) or 0.0)
         skipped_decompose_llm = bool(dec_raw.pop("_skipped_decompose_llm", False))
@@ -777,7 +826,8 @@ def node_decompose(state: RAGGraphState) -> dict[str, Any]:
         dec_raw.pop("_legacy_would_skip_llm", None)
         dec = dec_raw
         profile = state.get("user_profile") if isinstance(state.get("user_profile"), dict) else None
-        country = str((profile or {}).get("country") or "").strip() or None
+        raw_country = str((profile or {}).get("country") or "").strip() or None
+        country = sanitize_profile_country(raw_country)
         task_mode = resolve_task_mode(q, dec, profile_country=country)
         analytical = task_mode == "analytical"
         # Always expand known Africa zones for retrieval / geo purity (all plan tiers).
@@ -788,9 +838,11 @@ def node_decompose(state: RAGGraphState) -> dict[str, Any]:
             dec = expand_regions_in_decomposition(dec, q)
         dec = apply_plan_decomposition_gates(dec, state.get("plan_type"), country)
         category = str(state.get("category") or (profile or {}).get("category") or "").strip() or None
-        dec = apply_category_domain_hints(dec, category)
+        dec = apply_profile_geography_default(dec, country)
         # UI / API scopes must land in decomp so clarify, BQ plans, and retrieval agree.
         dec = _apply_ui_scope_overrides(dec, state)
+        add_decomposed_slots(active_turn, dec)
+        dec = fill_decomposition(dec, active_turn)
         # Grounded entity/domain enrich → multi-measure retrieval contract tags.
         dec = enrich_decomposition_facets(q, dec)
         matched_bundles = match_intent_bundles(q, dec, breakdown=compile_breakdown(q))
@@ -804,7 +856,9 @@ def node_decompose(state: RAGGraphState) -> dict[str, Any]:
             dec["primary_measures"] = bundle_pm
         elif contract.primary_measures:
             dec["primary_measures"] = list(contract.primary_measures)
-        dec = sanitize_decomposition_for_bq(dec, primary_measures=dec.get("primary_measures"))
+        dec = sanitize_decomposition_for_bq(
+            dec, primary_measures=dec.get("primary_measures"), query=q
+        )
         if contract.companion_measures:
             dec["companion_measures"] = list(contract.companion_measures)
         measure_hints = resolve_measures(q, dec)
@@ -868,7 +922,7 @@ def node_decompose(state: RAGGraphState) -> dict[str, Any]:
                 "turn_job": turn.job,
                 "serve_status": turn.serve_status,
                 "recency_tier": recency,
-                "query_enriched": bool(enrich.get("enriched")),
+                "carried_slots": sorted(active_turn.carried()),
                 "context_applied": bool(views0.context_applied),
                 "decompose_llm_ms": decompose_llm_ms,
                 "skipped_decompose_llm": skipped_decompose_llm,
@@ -877,12 +931,7 @@ def node_decompose(state: RAGGraphState) -> dict[str, Any]:
         detail = build_detail_rewrite(user_q, dec)
         views = build_query_views(
             user_q,
-            conversation_summary=state.get("conversation_summary")
-            if isinstance(state.get("conversation_summary"), str)
-            else None,
-            recent_turns=state.get("recent_turns")
-            if isinstance(state.get("recent_turns"), list)
-            else None,
+            active=active_turn,
             user_profile=profile if isinstance(profile, dict) else None,
             plan_type=str(state.get("plan_type") or "") or None,
             category=category,
@@ -913,6 +962,8 @@ def node_decompose(state: RAGGraphState) -> dict[str, Any]:
                 "detail_rewrite_len": len(detail_final or ""),
             },
             "enriched_query": views0.context_rewrite if views0.context_applied else None,
+            "resolved_request": resolved_request,
+            "active_request": active_state.to_dict(),
             "measure_id": turn.measure_id or (measure_hit.measure.id if measure_hit else None),
             "recency_tier": recency,
             "turn_contract": turn.to_dict(),
@@ -949,7 +1000,15 @@ def node_decompose(state: RAGGraphState) -> dict[str, Any]:
             dec["reasoner_job"] = rp.job
             dec["reasoner_shape"] = rp.shape
             if rp.geos:
-                dec["geography"] = list(rp.geos)
+                # Defensive re-grounding: rp.geos can originate from a prior
+                # turn's contract (context carried forward) as well as the
+                # current decomposition. Reject any country not evidenced in
+                # the raw current-turn query text so a stale/unrelated
+                # geography can never silently overwrite a correctly grounded
+                # one (see Sprint 2 "Geography: France" routing bug).
+                grounded_geos = [g for g in rp.geos if facet_grounded_in_query(g, q)]
+                if grounded_geos:
+                    dec["geography"] = grounded_geos
             if rp.time_start:
                 dec["time_start"] = rp.time_start
             if rp.time_end:
@@ -1006,20 +1065,37 @@ def _apply_ui_scope_overrides(
     decomposition: dict[str, Any],
     state: RAGGraphState,
 ) -> dict[str, Any]:
-    """Merge UI/API geo and time overrides into decomposition for control-plane + BQ."""
+    """Copy screen dates onto the decomposition only when the question names no time.
+
+    A resolved window is left as it is. Screen dates are copied as exact ISO dates.
+    """
     out = dict(decomposition or {})
-    ts = str(state.get("time_start_override") or "").strip()[:10]
-    te = str(state.get("time_end_override") or "").strip()[:10]
-    if ts:
-        out["time_start"] = ts
-    if te:
-        out["time_end"] = te
+    query = str(state.get("query") or "")
+    ref_raw = str(state.get("reference_date") or "").strip()[:10]
+    ref = parse_iso_date(ref_raw) or utc_today()
+    named = bool(resolve_relative_time(query, ref))
+    ts = str(state.get("time_start_override") or "").strip()
+    te = str(state.get("time_end_override") or "").strip()
+    applied_time = False
+    if not named and not str(out.get("time_start") or "").strip() and not str(out.get("time_end") or "").strip():
+        start = parse_iso_date(ts)
+        end = parse_iso_date(te)
+        if start or end:
+            out["time_start"] = (start or end).isoformat()  # type: ignore[union-attr]
+            out["time_end"] = (end or start).isoformat()  # type: ignore[union-attr]
+            applied_time = True
+    if applied_time:
+        out["time_source"] = "ui"
+    elif str(out.get("time_start") or "").strip() or str(out.get("time_end") or "").strip():
+        out.setdefault("time_source", "query")
+
     geo_ov = str(state.get("geo_override") or "").strip()
-    if geo_ov:
-        geo = list(out.get("geography") or []) if isinstance(out.get("geography"), list) else []
-        if geo_ov not in geo:
-            geo = [geo_ov, *geo]
-        out["geography"] = geo
+    geo = list(out.get("geography") or []) if isinstance(out.get("geography"), list) else []
+    if geo_ov and not normalize_geography_for_filter(geo):
+        out["geography"] = [geo_ov]
+        out["geography_source"] = "ui"
+    elif normalize_geography_for_filter(geo):
+        out.setdefault("geography_source", "query")
     return out
 
 
@@ -1143,8 +1219,8 @@ def _retrieve_news(state: RAGGraphState) -> list[dict[str, Any]]:
         geo_override=str(state.get("geo_override") or ""),
         geography=dec.get("geography") if isinstance(dec.get("geography"), list) else None,
     )
-    ts = (state.get("time_start_override") or dec.get("time_start") or "").strip()[:10]
-    te = (state.get("time_end_override") or dec.get("time_end") or "").strip()[:10]
+    ts = str(dec.get("time_start") or "").strip()[:10]
+    te = str(dec.get("time_end") or "").strip()[:10]
     top_k = int(state.get("news_top_k") or _DEFAULT_NEWS_TOP_K)
     news_coll = os.environ.get("QDRANT_COLLECTION_NEWS", "news_data").strip() or "news_data"
     vr = VectorRetriever(collection_name=news_coll)
@@ -1260,13 +1336,27 @@ def _retrieve_public_reports(state: RAGGraphState) -> list[dict[str, Any]]:
 
 
 def _retrieve_formation(state: RAGGraphState) -> list[dict[str, Any]]:
-    return _retrieve_dense_corpus(
-        state,
-        collection_env="QDRANT_COLLECTION_FORMATION",
-        default_collection="formation",
-        doc_kind="agricultural_practise",
-        context_kind="formation",
-    )
+    def _build(st: RAGGraphState, dec: dict[str, Any]) -> dict[str, Any]:
+        kinds = formation_doc_kinds(str(st.get("query") or ""))
+        kwargs = _dense_corpus_kwargs(st, dec, doc_kind="agricultural_practise")
+        if len(kinds) > 1:
+            kwargs["doc_kinds"] = kinds
+            kwargs.pop("doc_kind", None)
+        return kwargs
+
+    try:
+        raw = _vector_retrieve_for_corpus(
+            state,
+            collection_env="QDRANT_COLLECTION_FORMATION",
+            default_collection="formation",
+            build_kwargs=_build,
+            geo_fallback_env="RAG_RESEARCH_GEO_FALLBACK",
+            time_fallback_env="RAG_RESEARCH_TIME_FALLBACK",
+        )
+    except Exception:
+        logger.exception("Retrieval failed for collection formation (QDRANT_COLLECTION_FORMATION)")
+        raw = []
+    return [_tag_vector(x, "formation") for x in raw]
 
 
 def _retrieve_ota(state: RAGGraphState) -> list[dict[str, Any]]:
@@ -1337,7 +1427,7 @@ def _title_merge_label(prefix: str, meta: dict[str, Any]) -> str:
     return f"[{prefix} | {title}]" if title else f"[{prefix}]"
 
 
-def node_parallel_retrieve(state: RAGGraphState) -> dict[str, Any]:
+def node_parallel_retrieve(state: RAGGraphState) -> RAGGraphState:
     """Run selected corpus retrieves (+ optional legacy research) in parallel."""
     decomposition_raw = state.get("decomposition")
     decomposition: dict[str, Any] = (
@@ -1560,6 +1650,12 @@ def node_parallel_retrieve(state: RAGGraphState) -> dict[str, Any]:
         "vector_texts_used": texts_used,
         "user_query_dropped": _uq_dropped(state_for_retrieve.get("query_views"), texts_used),
         "vector_cache_hit": bool(state_for_retrieve.get("vector_cache_hit")),
+        "retrieval_partial": stage_over_budget(
+            time.perf_counter() - vector_t0,
+            env_var="RAG_STAGE_RETRIEVE_BUDGET_S",
+            default_s=12.0,
+        )
+        or any(str(err).endswith(":timeout") for err in corpus_errors),
     }
 
 
@@ -1680,19 +1776,16 @@ def _build_bq_sql_plan(
 
 
 def _bq_planning_query(state: RAGGraphState) -> str:
-    """User question plus related context_rewrite for warehouse planning/execute."""
-    user_q = str(state.get("user_query") or state.get("query") or "").strip()
-    ctx = str(state.get("context_rewrite") or "").strip()
-    if bool(state.get("context_applied")) and ctx and ctx.casefold() != user_q.casefold():
-        return f"{user_q}\n\nContext: {ctx}" if user_q else ctx
-    return user_q
+    """The resolved request (question plus carried slots) for warehouse planning and execution."""
+    resolved = str(state.get("resolved_request") or "").strip()
+    return resolved or str(state.get("user_query") or state.get("query") or "").strip()
 
 
 def _fp_equal(a: Any, b: Any) -> bool:
     return str(a or "").strip() == str(b or "").strip()
 
 
-def node_bq_reason(state: RAGGraphState) -> dict[str, Any]:
+def node_bq_reason(state: RAGGraphState) -> RAGGraphState:
     """YAML-index SQL reasoner or class engines: select mart_dev tables and query intents."""
     q = _bq_planning_query(state)
     analytical = bool(state.get("analytical_mode"))
@@ -1890,47 +1983,6 @@ def reconcile_engine_bq_debug(
     return out_queries, out_debug
 
 
-def _typed_bq_hard_return(
-    state: RAGGraphState,
-    exec_flags: dict[str, bool],
-    *,
-    bq_debug: list[dict[str, Any]],
-) -> dict[str, Any] | None:
-    """Hard-return typed warehouse gap before LLM when SQL was planned."""
-    priority = (
-        "structured_bq_timed_out",
-        "structured_bq_validation_failed",
-        "structured_bq_compile_error",
-        "structured_bq_empty",
-        "structured_bq_never_executed",
-    )
-    flag = next((k for k in priority if exec_flags.get(k)), None)
-    if not flag:
-        return None
-    dec = state.get("decomposition")
-    dec_dict = dec if isinstance(dec, dict) else None
-    tc_raw = state.get("turn_contract")
-    tc_dict = tc_raw if isinstance(tc_raw, dict) else None
-    answer = typed_bq_gap_answer(
-        flag=flag,
-        decomposition=dec_dict,
-        turn_contract=tc_dict,
-        prep_error=first_prep_error(bq_debug),
-    )
-    return {
-        "answer": answer,
-        "citations": [],
-        "answer_lang": str(state.get("answer_lang") or detect_answer_language(str(state.get("query") or ""))),
-        **acf_result_to_state(
-            no_evidence_acf(
-                explanation=(
-                    "Warehouse query did not yield scorable structured evidence "
-                    f"({flag.replace('structured_bq_', '')})."
-                )
-            )
-        ),
-    }
-
 
 def bq_failure_debug_row(
     retriever: BQRetriever,
@@ -1953,7 +2005,7 @@ def bq_failure_debug_row(
     return row
 
 
-def node_bq_retrieve(state: RAGGraphState) -> dict[str, Any]:
+def node_bq_retrieve(state: RAGGraphState) -> RAGGraphState:
     from ml.rag.chatbot.bq_fact_cache import (
         bq_results_from_fact_entry,
         fact_cache_key,
@@ -1962,6 +2014,11 @@ def node_bq_retrieve(state: RAGGraphState) -> dict[str, Any]:
         get_cached_facts,
         set_cached_facts,
         should_reuse_facts,
+    )
+    from ml.rag.chatbot.ontology_routing import (
+        bq_should_run,
+        bq_value_filters,
+        ontology_plan_for_state,
     )
 
     q = _bq_planning_query(state)
@@ -1975,6 +2032,23 @@ def node_bq_retrieve(state: RAGGraphState) -> dict[str, Any]:
             "bq_sql_queries": [],
             "bq_sql_debug": [],
             "sql_source": "skipped",
+            "bq_execute_ms": 0.0,
+            "bq_nl2sql_ms": 0.0,
+        }
+
+    onto_plan = ontology_plan_for_state(state)
+    if (
+        os.environ.get("ADZA_ONTOLOGY_SKIP_BQ", "0").strip().lower()
+        in ("1", "true", "on", "yes")
+        and not bq_should_run(onto_plan)
+    ):
+        # Intentional skip for qdrant_only subjects — do not mark warehouse empty.
+        return {
+            "bq_results": [],
+            "bq_sql_queries": [],
+            "bq_sql_debug": [],
+            "sql_source": "skipped",
+            "bq_skipped_reason": "ontology_no_value_map",
             "bq_execute_ms": 0.0,
             "bq_nl2sql_ms": 0.0,
         }
@@ -2056,8 +2130,8 @@ def node_bq_retrieve(state: RAGGraphState) -> dict[str, Any]:
         geo_override=str(state.get("geo_override") or ""),
         geography=dec.get("geography") if isinstance(dec.get("geography"), list) else None,
     )
-    ts = (state.get("time_start_override") or dec.get("time_start") or "").strip()[:10]
-    te = (state.get("time_end_override") or dec.get("time_end") or "").strip()[:10]
+    ts = str(dec.get("time_start") or "").strip()[:10]
+    te = str(dec.get("time_end") or "").strip()[:10]
     entities = dec.get("entities") if isinstance(dec.get("entities"), list) else None
     domains = dec.get("domains") if isinstance(dec.get("domains"), list) else None
     retriever = BQRetriever()
@@ -2104,6 +2178,8 @@ def node_bq_retrieve(state: RAGGraphState) -> dict[str, Any]:
         "crop_required": bool(plan.get("crop_required", True)),
         "geography_required": bool(plan.get("geography_required", True)),
         "decomposition": dec,
+        "contract_job": contract.job,
+        "breakdown": list(contract.breakdown),
         "primary_measures": (
             dec.get("primary_measures")
             if isinstance(dec.get("primary_measures"), list)
@@ -2125,6 +2201,15 @@ def node_bq_retrieve(state: RAGGraphState) -> dict[str, Any]:
         retrieve_kwargs["bind_contracts"] = bind_raw
     if contract_kwargs.get("template_key") and isinstance(bind_raw, dict) and bind_raw:
         contract_kwargs.pop("template_key", None)
+    if os.environ.get("ADZA_ONTOLOGY_BQ_VALUES", "0").strip().lower() in (
+        "1",
+        "true",
+        "on",
+        "yes",
+    ):
+        ovf = bq_value_filters(onto_plan)
+        if ovf:
+            retrieve_kwargs["ontology_value_filters"] = ovf
     try:
         with ThreadPoolExecutor(max_workers=1) as ex:
             fut = ex.submit(
@@ -2170,6 +2255,7 @@ def node_bq_retrieve(state: RAGGraphState) -> dict[str, Any]:
                 os.environ.pop("RAG_BQ_MAX_SQL_QUERIES", None)
             else:
                 os.environ["RAG_BQ_MAX_SQL_QUERIES"] = prev_max_sql
+    bq_sql_queries, bq_sql_debug = aggregate_bq_sql_debug(results)
     results = enrich_bq_results(
         results,
         query=q,
@@ -2179,7 +2265,6 @@ def node_bq_retrieve(state: RAGGraphState) -> dict[str, Any]:
     results, ctx_truncated = trim_bq_result_contents(results)
     if ctx_truncated:
         update_current_span_metadata({"bq_context_truncated": True})
-    bq_sql_queries, bq_sql_debug = aggregate_bq_sql_debug(results)
     if engine_execute_only and pre_queries:
         bq_sql_queries, bq_sql_debug = reconcile_engine_bq_debug(
             execute_debug=bq_sql_debug,
@@ -2198,6 +2283,59 @@ def node_bq_retrieve(state: RAGGraphState) -> dict[str, Any]:
         bq_sql_debug = [bq_failure_row]
     elif bq_failure_row and not engine_execute_only:
         bq_sql_debug = list(bq_sql_debug) + [bq_failure_row]
+    usable_bq_count = sum(1 for row in results if is_usable_structured_bq_row(row))
+    bq_sql_debug = ensure_planned_attempt_debug(
+        plan,
+        bq_sql_debug,
+        usable_bq=usable_bq_count > 0,
+    )
+    query_planned = plan_indicates_warehouse_attempt(plan)
+    planned_sql = plan.get("bq_sql_queries")
+    planned_sql_count = len(planned_sql) if isinstance(planned_sql, list) else 0
+    execution_status_counts: dict[str, int] = {}
+    for row in bq_sql_debug:
+        status = str(row.get("status") or "unknown")
+        execution_status_counts[status] = execution_status_counts.get(status, 0) + 1
+    job_ids = {str(row.get("job_id")) for row in bq_sql_debug if row.get("job_id")}
+    execution_flags = bq_execute_flags(
+        bq_sql_debug,
+        pre_queries=collect_pre_queries(
+            plan,
+            state_queries=bq_sql_queries,
+            bq_sql_debug=bq_sql_debug,
+        ),
+        usable_bq=usable_bq_count > 0,
+        compile_error=bool(plan.get("compile_error")),
+        warehouse_attempted=query_planned or bool(bq_sql_queries or bq_sql_debug),
+    )
+    bq_diagnostics = {
+        "query_planned": query_planned,
+        "planned_sql_count": planned_sql_count,
+        "retrieved_sql_count": len(bq_sql_queries),
+        "bq_debug_count": len(bq_sql_debug),
+        "job_id_count": len(job_ids),
+        "execution_status_counts": execution_status_counts,
+        "result_count": len(results),
+        "usable_result_count": usable_bq_count,
+        "execution_flags": execution_flags,
+    }
+    if query_planned and not job_ids and usable_bq_count == 0:
+        logger.warning("BigQuery retrieval diagnostics: %s", bq_diagnostics)
+    else:
+        logger.info("BigQuery retrieval diagnostics: %s", bq_diagnostics)
+    update_current_span_metadata(
+        {
+            "bq_query_planned": query_planned,
+            "bq_planned_sql_count": planned_sql_count,
+            "bq_retrieved_sql_count": len(bq_sql_queries),
+            "bq_debug_count": len(bq_sql_debug),
+            "bq_job_id_count": len(job_ids),
+            "bq_execution_status_counts": execution_status_counts,
+            "bq_planned_sql": sql_statements_for_diagnostics(planned_sql),
+            "bq_sql_attempts": sql_attempts_for_diagnostics(bq_sql_debug),
+            **execution_flags,
+        }
+    )
     cache_entry = cache_entry_from_bq_results(results, query=q, decomposition=dec)
     sql_source = getattr(retriever, "last_sql_source", None)
     if not sql_source:
@@ -2213,6 +2351,7 @@ def node_bq_retrieve(state: RAGGraphState) -> dict[str, Any]:
         set_cached_facts(fact_key, fact_entry)
     out: dict[str, Any] = {
         "bq_results": results,
+        "execution_results": [r.to_dict() for r in execution_results_from_items(results)],
         "bq_sql_queries": bq_sql_queries,
         "bq_sql_debug": bq_sql_debug,
         "bq_cache_hit": False,
@@ -2230,7 +2369,7 @@ def node_bq_retrieve(state: RAGGraphState) -> dict[str, Any]:
     return out
 
 
-def node_merge(state: RAGGraphState) -> dict[str, Any]:
+def node_merge(state: RAGGraphState) -> RAGGraphState:
     with observed_span("merge"):
         bq_merged: list[dict[str, Any]] = []
         other_merged: list[dict[str, Any]] = []
@@ -2347,7 +2486,20 @@ def node_merge(state: RAGGraphState) -> dict[str, Any]:
         return {"merged_context": merged}
 
 
-def node_rerank(state: RAGGraphState) -> dict[str, Any]:
+def _pack_fields(pack: PackResult | list[dict[str, Any]]) -> tuple[list[dict[str, Any]], dict[str, int]]:
+    if isinstance(pack, PackResult):
+        return pack.items, dict(pack.dropped)
+    return list(pack or []), {}
+
+
+def _with_place_drops(dropped: dict[str, int], place_dropped: int) -> dict[str, int]:
+    out = dict(dropped)
+    if place_dropped:
+        out["place_conflict"] = place_dropped
+    return out
+
+
+def node_rerank(state: RAGGraphState) -> RAGGraphState:
     query = state.get("query") or ""
     merged = state.get("merged_context") or []
     rerank_t0 = time.perf_counter()
@@ -2362,25 +2514,40 @@ def node_rerank(state: RAGGraphState) -> dict[str, Any]:
         top_k = int(state.get("rerank_top_k") or _DEFAULT_RERANK_TOP_K)
         default_pool = _DEFAULT_RERANK_POOL_SIZE
 
+    dec = state.get("decomposition") if isinstance(state.get("decomposition"), dict) else None
+    before_place = len(merged)
+    merged = drop_geo_conflicting(list(merged), dec)
+    merged = drop_price_off_topic(merged, str(query), dec)
+    place_dropped = before_place - len(merged)
+    tc_raw = state.get("turn_contract")
+    contract = TurnContract.from_dict(tc_raw if isinstance(tc_raw, dict) else None)
+
     corpus_sel = state.get("corpus_selection")
     active_corpora = 6
     if isinstance(corpus_sel, dict):
         active_raw = corpus_sel.get("active")
         if isinstance(active_raw, list):
             active_corpora = len(active_raw)
-    if len(merged) <= 8 and active_corpora <= 1:
-        packed = diversify_context_pack(
-            list(merged),
-            top_k=top_k if top_k > 0 else None,
-            task_mode=task_mode,
+    structured = [item for item in merged if is_warehouse_item(item)]
+    documents = [item for item in merged if not is_warehouse_item(item)]
+    if len(documents) <= 8 and active_corpora <= 1:
+        packed = diversify_context_pack(list(documents), top_k=None, task_mode=task_mode)
+        pack = typed_context_pack(
+            [*structured, *packed], contract, top_k=top_k if top_k > 0 else None
         )
-        if top_k > 0 and len(packed) > top_k:
-            packed = packed[:top_k]
+        items, dropped = _pack_fields(pack)
         return {
-            "reranked_context": packed,
+            "reranked_context": items,
+            "evidence_drops": _with_place_drops(dropped, place_dropped),
             "rerank_mode": "skipped_trivial",
             "rerank_ms": trace_elapsed_ms(rerank_t0),
             "rerank_pool_size": 0,
+            "retrieval_stage_counts": {
+                "candidate": len(merged),
+                "structured": len(structured),
+                "reranked": 0,
+                "packed": len(items),
+            },
         }
 
     try:
@@ -2391,71 +2558,34 @@ def node_rerank(state: RAGGraphState) -> dict[str, Any]:
     except ValueError:
         pool = default_pool
     score_k = max(top_k, min(pool, max(len(merged), top_k)))
-    dec = state.get("decomposition") if isinstance(state.get("decomposition"), dict) else None
     numeric_query = is_numeric_data_query(str(query), dec)
     comparative_query = is_comparative_bq_query(str(query), dec)
     scored = rerank(
         query,
-        merged,
+        documents,
         top_k=score_k,
         numeric_query=numeric_query,
         comparative_query=comparative_query,
+    ) if documents else []
+    packed = diversify_context_pack(scored, top_k=None, task_mode=task_mode)
+    pack = typed_context_pack(
+        [*structured, *packed], contract, top_k=top_k if top_k > 0 else None
     )
-    packed = diversify_context_pack(
-        scored,
-        top_k=None,
-        task_mode=task_mode,
-    )
-    tc_raw = state.get("turn_contract")
-    contract = TurnContract.from_dict(tc_raw if isinstance(tc_raw, dict) else None)
-    slot_active = _slot_path_active(state)
-    reasoner = _reasoner_from_state(state)
-    rows_raw = state.get("rows_by_subquestion")
-    rows_by_slot: dict[str, list[dict[str, Any]]] = {}
-    if isinstance(rows_raw, dict):
-        for k, v in rows_raw.items():
-            if isinstance(v, list):
-                rows_by_slot[str(k)] = [r for r in v if isinstance(r, dict)]
-    bq_results = state.get("bq_results") or []
-    if slot_active and reasoner and not rows_by_slot and bq_results:
-        rows_by_slot = partition_bq_by_subquestion(list(bq_results), reasoner)
-    bq_failed = not any(is_usable_structured_bq_row(r) for r in bq_results)
-    if slot_active and reasoner and rows_by_slot:
-        bq_failed = not any(
-            is_usable_structured_bq_row(r)
-            for bag in rows_by_slot.values()
-            for r in bag
-        )
-    if contract.measure_id or contract.job != "fact":
-        packed = typed_context_pack(
-            packed,
-            contract,
-            top_k=top_k if top_k > 0 else None,
-            bq_failed=bq_failed,
-        )
-    elif should_zero_pack(contract, bq_failed=bq_failed, context_items=packed):
-        packed = []
-    # Honor explicit rerank_top_k as an upper bound after diversity packing.
-    if top_k > 0 and len(packed) > top_k:
-        packed = packed[:top_k]
+    items, dropped = _pack_fields(pack)
     return {
-        "reranked_context": packed,
+        "reranked_context": items,
+        "evidence_drops": _with_place_drops(dropped, place_dropped),
         "rerank_mode": last_rerank_mode(),
         "rerank_ms": trace_elapsed_ms(rerank_t0),
         "rerank_pool_size": pool,
+        "retrieval_stage_counts": {
+            "candidate": len(merged),
+            "structured": len(structured),
+            "reranked": len(scored),
+            "packed": len(items),
+        },
     }
 
-
-def _has_usable_internal_context(reranked: list[dict[str, Any]]) -> bool:
-    """Did internal retrieval produce anything trustworthy on its own?
-
-    Mirrors the existing "min usable chunks" gate used by ``needs_web_fallback``.
-    """
-    usable = filter_context_items(reranked or [])
-    min_chunks = max(1, int(os.environ.get("RAG_WEB_FALLBACK_MIN_CHUNKS", "3") or 3))
-    # Internal context is "usable on its own" only when we cleared the same bar
-    # that would have skipped the web fallback in the first place.
-    return len(usable) >= min_chunks
 
 
 def _warehouse_attempt_made(state: RAGGraphState) -> bool:
@@ -2474,15 +2604,11 @@ def _warehouse_attempt_made(state: RAGGraphState) -> bool:
     return False
 
 
-def node_web_fallback(state: RAGGraphState) -> dict[str, Any]:
+def node_web_fallback(state: RAGGraphState) -> RAGGraphState:
     """Append Wikipedia / Tavily chunks when internal retrieval is weak.
 
-    Guardrails:
-    - If supplemental web search is rate-limited or errors out AND we don't
-      already have enough usable internal context, set
-      ``insufficient_context=True`` so the graph routes to the "I don't have
-      enough information" branch instead of letting the generator fabricate
-      around stale / tangential internal chunks.
+    The turn routes to the gap answer only when no warehouse row or document
+    survived, internal or web.
     """
     with observed_span("web_fallback"):
         reranked = list(state.get("reranked_context") or [])
@@ -2494,7 +2620,7 @@ def node_web_fallback(state: RAGGraphState) -> dict[str, Any]:
             reranked,
             task_mode=str(state.get("task_mode") or ""),
             has_usable_bq=has_bq,
-            bq_warehouse_attempted=_warehouse_attempt_blocks_web(cast(dict[str, Any], state)),
+            bq_warehouse_attempted=warehouse_blocks_web(cast(dict[str, Any], state)),
             heavy_path=bool(state.get("heavy_path")),
         ):
             update_current_span_metadata({"web_fallback_status": "skipped"})
@@ -2507,8 +2633,8 @@ def node_web_fallback(state: RAGGraphState) -> dict[str, Any]:
 
         q = (state.get("query") or "").strip()
         dec = state.get("decomposition") if isinstance(state.get("decomposition"), dict) else None
-        ts = (state.get("time_start_override") or (dec or {}).get("time_start") or "").strip()[:10]
-        te = (state.get("time_end_override") or (dec or {}).get("time_end") or "").strip()[:10]
+        ts = str((dec or {}).get("time_start") or "").strip()[:10]
+        te = str((dec or {}).get("time_end") or "").strip()[:10]
         try:
             result = retrieve_web_fallback_detailed(
                 q,
@@ -2529,9 +2655,8 @@ def node_web_fallback(state: RAGGraphState) -> dict[str, Any]:
         if result is None:
             out["web_fallback_status"] = "error"
             out["web_fallback_reason"] = "exception in retrieve_web_fallback_detailed"
-            if not _has_usable_internal_context(reranked):
-                if _warehouse_attempt_made(state):
-                    out["insufficient_context"] = True
+            if decide_outcome(filter_context_items(reranked)).is_gap:
+                out["insufficient_context"] = True
             update_current_span_metadata(
                 {
                     "web_fallback_status": out["web_fallback_status"],
@@ -2555,12 +2680,9 @@ def node_web_fallback(state: RAGGraphState) -> dict[str, Any]:
             )
             return out
 
-        # No web items recovered the query. Only proceed to the standard generator
-        # if internal context was already strong enough on its own — otherwise mark
-        # the turn as insufficient so we don't hallucinate around tangential chunks.
-        if result.status in ("rate_limited", "error", "disabled", "empty") and not _has_usable_internal_context(reranked):
+        if decide_outcome(filter_context_items(reranked)).is_gap:
             logger.info(
-                "Web fallback status=%s with weak internal context — routing to insufficient_context. reason=%s",
+                "Web fallback status=%s and no rows or documents — routing to insufficient_context. reason=%s",
                 result.status,
                 result.reason,
             )
@@ -2575,123 +2697,36 @@ def node_web_fallback(state: RAGGraphState) -> dict[str, Any]:
         return out
 
 
-_INSUFFICIENT_CONTEXT_ANSWER = insufficient_context_answer("en")
-
-
-def node_insufficient_context(state: RAGGraphState) -> dict[str, Any]:
-    """Deterministic, non-hallucinating response when grounding is unavailable."""
-    status = state.get("web_fallback_status") or "unknown"
-    reason = state.get("web_fallback_reason") or ""
+def node_insufficient_context(state: RAGGraphState) -> RAGGraphState:
+    """Name the gap: no warehouse row and no document survived retrieval."""
     query = str(state.get("query") or "")
     answer_lang = str(state.get("answer_lang") or detect_answer_language(query))
-    canned_lang = detect_canned_insufficient_lang(query)
-    bq_debug = list(state.get("bq_sql_debug") or []) if isinstance(state.get("bq_sql_debug"), list) else []
-    raw_plan = state.get("bq_sql_plan")
-    plan_dict = raw_plan if isinstance(raw_plan, dict) else {}
-    pre_queries = collect_pre_queries(
-        plan_dict,
-        state_queries=list(state.get("bq_sql_queries") or []),
-        bq_sql_debug=bq_debug,
-    )
-    exec_flags = bq_execute_flags(
-        bq_debug,
-        pre_queries=pre_queries,
-        usable_bq=False,
-        compile_error=bool(plan_dict.get("compile_error")),
-        warehouse_attempted=plan_indicates_warehouse_attempt(plan_dict) or bool(pre_queries or bq_debug),
-    )
     dec = state.get("decomposition")
-    dec_dict = dec if isinstance(dec, dict) else None
     tc_raw = state.get("turn_contract")
-    tc_dict = tc_raw if isinstance(tc_raw, dict) else None
-    tc = TurnContract.from_dict(tc_dict) if isinstance(tc_dict, dict) else None
-    context = list(state.get("reranked_context") or state.get("merged_context") or [])
-    if should_generate_weak(
-        cast(dict[str, Any], state),
-        context_items=context,
-        exec_flags=exec_flags,
-        turn_contract=tc,
-    ):
-        miss_block = build_filter_miss_block(
-            query=query,
-            decomposition=dec_dict,
-            turn_contract=tc,
-            exec_flags=exec_flags,
-            class_code=primary_class_from_state(cast(dict[str, Any], state)),
-        )
-        gen_result = generate(
-            query,
-            [{"content": miss_block, "_context_kind": "filter_miss"}],
-            generate_weak=True,
-            evidence_tier="weak",
-            task_mode=str(state.get("task_mode") or ""),
-            turn_contract=tc_dict,
-        )
-        acf = gen_result.acf or no_evidence_acf()
-        with observed_span(
-            "insufficient_context",
-            input_data={"web_fallback_status": str(status)[:80], "generate_weak": True},
-        ):
-            update_current_span_metadata(
-                {
-                    "web_fallback_status": str(status),
-                    "reason": str(reason)[:200],
-                    "answer_lang": answer_lang,
-                    "generate_weak": True,
-                    "evidence_tier": "weak",
-                }
-            )
-        return {
-            "answer": gen_result.answer,
-            "citations": [],
-            "insufficient_context": True,
-            "answer_lang": answer_lang,
-            "evidence_tier": "weak",
-            **acf_result_to_state(acf),
-        }
-    hard = _typed_bq_hard_return(state, exec_flags, bq_debug=bq_debug)
-    if hard:
-        answer = hard["answer"]
-    elif forbid_generic_insufficient(cast(dict[str, Any], state)):
-        if tc is not None and isinstance(tc_dict, dict):
-            answer = empty_answer_for_contract(tc, query=query) or typed_bq_gap_answer(
-                flag="structured_bq_never_executed",
-                decomposition=dec_dict,
-                turn_contract=tc_dict,
-            )
-        else:
-            answer = typed_bq_gap_answer(
-                flag="structured_bq_never_executed",
-                decomposition=dec_dict,
-                turn_contract=tc_dict,
-            )
-    else:
-        answer = insufficient_context_answer(query=query)
+    answer = gap_answer(
+        query,
+        dec if isinstance(dec, dict) else None,
+        TurnContract.from_dict(tc_raw if isinstance(tc_raw, dict) else None),
+    )
     with observed_span(
         "insufficient_context",
-        input_data={"web_fallback_status": str(status)[:80]},
+        input_data={"web_fallback_status": str(state.get("web_fallback_status") or "")[:80]},
     ):
         update_current_span_metadata(
             {
-                "web_fallback_status": str(status),
-                "reason": str(reason)[:200],
+                "web_fallback_status": str(state.get("web_fallback_status") or ""),
                 "answer_lang": answer_lang,
-                "insufficient_canned_lang": canned_lang,
                 "warehouse_attempted": warehouse_was_attempted(cast(dict[str, Any], state)),
             }
         )
-        logger.info(
-            "insufficient_context: status=%s reason=%s",
-            status,
-            reason,
-        )
-        return {
-            "answer": answer,
-            "citations": [],
-            "insufficient_context": True,
-            "answer_lang": answer_lang,
-            **acf_result_to_state(no_evidence_acf()),
-        }
+    return {
+        "answer": answer,
+        "citations": [],
+        "insufficient_context": True,
+        "answer_outcome": "gap",
+        "answer_lang": answer_lang,
+        **acf_result_to_state(no_evidence_acf()),
+    }
 
 
 def _route_after_web_fallback(state: RAGGraphState) -> str:
@@ -2701,7 +2736,7 @@ def _route_after_web_fallback(state: RAGGraphState) -> str:
     return "generate"
 
 
-def node_generate_language_help(state: RAGGraphState) -> dict[str, Any]:
+def node_generate_language_help(state: RAGGraphState) -> RAGGraphState:
     """Short-circuit when query language cannot be named. No retrieval, no memory."""
     query = state.get("query") or ""
     answer_lang = str(state.get("answer_lang") or "unknown")
@@ -2717,11 +2752,15 @@ def node_generate_language_help(state: RAGGraphState) -> dict[str, Any]:
     }
 
 
-def node_generate(state: RAGGraphState) -> dict[str, Any]:
+def node_generate(state: RAGGraphState) -> RAGGraphState:
     query = state.get("query") or ""
     dec = state.get("decomposition")
     dec_dict = dec if isinstance(dec, dict) else None
-    context = filter_context_items(state.get("reranked_context") or [])
+    context = drop_price_off_topic(
+        filter_context_items(state.get("reranked_context") or []),
+        str(query),
+        dec_dict,
+    )
     bq_results = state.get("bq_results") or []
     usable_bq = [r for r in bq_results if is_usable_structured_bq_row(r)]
     analytical = bool(state.get("analytical_mode"))
@@ -2803,22 +2842,6 @@ def node_generate(state: RAGGraphState) -> dict[str, Any]:
     gkw["usable_bq"] = bool(usable_bq) or has_mergeable_bq
     gkw["bq_sql_debug"] = bq_debug
     gkw["warehouse_was_attempted"] = warehouse_attempted
-    tc_raw = state.get("turn_contract")
-    tc = TurnContract.from_dict(tc_raw if isinstance(tc_raw, dict) else None)
-    is_numeric_job = bool(tc and tc.job in NUMERIC_JOBS) or is_numeric_data_query(
-        str(query), dec_dict
-    )
-    hard = _typed_bq_hard_return(state, exec_flags, bq_debug=bq_debug)
-    if should_hard_return_bq_gap(
-        exec_flags=exec_flags,
-        pre_queries=pre_queries or (["bind"] if warehouse_attempted else []),
-        usable_bq=bool(usable_bq) or has_mergeable_bq,
-        context_items=context,
-        is_numeric_job=is_numeric_job,
-        state=cast(dict[str, Any], state),
-    ):
-        if hard is not None:
-            return hard
     if not usable_bq and not has_mergeable_bq and not any(
         exec_flags.get(k)
         for k in (
@@ -2835,7 +2858,7 @@ def node_generate(state: RAGGraphState) -> dict[str, Any]:
         gkw["structured_bq_numeric_available"] = True
     elif (usable_bq or has_mergeable_bq) and is_comparative_bq_query(str(query), dec_dict):
         gkw["structured_bq_comparative_available"] = True
-    reranked = state.get("reranked_context") or []
+    reranked = context
     measure_hit = None
     mid = state.get("measure_id")
     if mid:
@@ -2876,7 +2899,11 @@ def node_generate(state: RAGGraphState) -> dict[str, Any]:
         rows_by_subquestion=rows_by if slot_active else None,
     )
     gkw["generation_plan"] = gen_plan.to_dict()
-    has_required_bq_rows = False
+    onto_for_gen = state.get("ontology_plan")
+    if isinstance(onto_for_gen, dict):
+        gkw["ontology_plan"] = onto_for_gen
+    elif state.get("source_basis"):
+        gkw["ontology_plan"] = {"source_basis": state.get("source_basis")}
     if slot_active and reasoner:
         passages = filter_context_items(
             state.get("passages") or list(reranked) or context
@@ -2895,96 +2922,9 @@ def node_generate(state: RAGGraphState) -> dict[str, Any]:
             *passages,
         ]
         gkw["composer_addendum"] = composer_addendum(reasoner, rows_by)
-        has_required_bq_rows = any(
-            rows_by.get(sq.id) for sq in reasoner.bq_subquestions() if sq.required
-        )
     tc_raw = state.get("turn_contract")
     if isinstance(tc_raw, dict):
         gkw["turn_contract"] = tc_raw
-    if isinstance(tc_raw, dict):
-        tc = TurnContract.from_dict(tc_raw)
-        academic_count = sum(
-            1 for it in (state.get("reranked_context") or [])
-            if str((it.get("metadata") or {}).get("context_kind") or it.get("_context_kind") or "").lower()
-            in ("academic", "public_report")
-        )
-        empty_tpl = empty_answer_for_contract(
-            tc,
-            query=str(query),
-            academic_count=academic_count,
-            category=gen_plan.effective_category,
-        )
-        weak_ok = should_generate_weak(
-            cast(dict[str, Any], state),
-            context_items=context,
-            exec_flags=exec_flags,
-            turn_contract=tc,
-        )
-        if weak_ok:
-            gen_t0_weak = time.perf_counter()
-            miss_block = build_filter_miss_block(
-                query=str(query),
-                decomposition=dec_dict,
-                turn_contract=tc,
-                exec_flags=exec_flags,
-                class_code=primary_class_from_state(cast(dict[str, Any], state)),
-            )
-            gkw_weak = dict(gkw)
-            gkw_weak["generate_weak"] = True
-            gkw_weak["evidence_tier"] = "weak"
-            gen_result = generate(
-                str(query),
-                [{"content": miss_block, "_context_kind": "filter_miss"}],
-                **gkw_weak,
-            )
-            acf = gen_result.acf or no_evidence_acf()
-            return {
-                "answer": gen_result.answer,
-                "citations": [],
-                "answer_lang": str(state.get("answer_lang") or detect_answer_language(query)),
-                "generation_plan": gen_plan.to_dict(),
-                "evidence_tier": "weak",
-                "generate_ms": trace_elapsed_ms(gen_t0_weak),
-                **acf_result_to_state(acf),
-                **{k: True for k in exec_flags if exec_flags.get(k)},
-            }
-        if gen_plan.output_type == "insufficient" and empty_tpl and not (slot_active and has_required_bq_rows):
-            if resolve_empty_policy(cast(dict[str, Any], state)) != "generate_weak":
-                return {
-                    "answer": empty_tpl,
-                    "citations": [],
-                    "answer_lang": str(state.get("answer_lang") or detect_answer_language(query)),
-                    "generation_plan": gen_plan.to_dict(),
-                    **acf_result_to_state(no_evidence_acf()),
-                }
-        if empty_tpl and (
-            not context
-            or should_zero_pack(tc, bq_failed=not usable_bq, context_items=context)
-        ) and not (slot_active and has_required_bq_rows):
-            if resolve_empty_policy(cast(dict[str, Any], state)) != "generate_weak":
-                return {
-                    "answer": empty_tpl,
-                    "citations": [],
-                    "answer_lang": str(state.get("answer_lang") or detect_answer_language(query)),
-                    "generation_plan": gen_plan.to_dict(),
-                    **acf_result_to_state(no_evidence_acf()),
-                }
-        if (
-            tc.is_fail_closed()
-            and tc.serve_status != "clarify"
-            and tc.vector_policy != "fallback_only"
-            and not (slot_active and has_required_bq_rows)
-        ):
-            from ml.rag.chatbot.answer_language import insufficient_context_answer
-
-            hint = unsupported_answer_hint(tc) or empty_tpl
-            return {
-                "answer": hint or insufficient_context_answer(query=str(query)),
-                "citations": [],
-                "answer_lang": str(state.get("answer_lang") or detect_answer_language(query)),
-                "generation_plan": gen_plan.to_dict(),
-                **acf_result_to_state(no_evidence_acf()),
-            }
     if gen_plan.effective_category:
         gkw["category"] = gen_plan.effective_category
     gen_t0 = time.perf_counter()
@@ -2999,16 +2939,21 @@ def node_generate(state: RAGGraphState) -> dict[str, Any]:
         "answer": gen_result.answer,
         "citations": gen_result.citations,
         "answer_lang": answer_lang,
+        "answer_outcome": decide_outcome(filter_context_items(context)).kind,
         "generation_plan": gen_plan.to_dict(),
         "generate_ms": trace_elapsed_ms(gen_t0),
         "generate_max_tokens": gen_max,
         "generate_input_chars": getattr(gen_result, "generate_input_chars", None),
+        # ML-054: how many LLM calls this request stopped on the max_tokens
+        # ceiling. Surfaced to Langfuse so truncation frequency is measurable
+        # instead of invisible; tune RAG_GENERATE_MAX_TOKENS from real data.
+        "generate_length_capped_calls": length_capped_call_count(),
         **acf_result_to_state(acf),
         **{k: True for k in exec_flags if exec_flags.get(k)},
     }
 
 
-def node_export(state: RAGGraphState) -> dict[str, Any]:
+def node_export(state: RAGGraphState) -> RAGGraphState:
     """Build downloadable artifacts when export is enabled on the route."""
     export_intent = state.get("export_intent")
     export_enabled = bool(state.get("export_enabled"))
@@ -3051,7 +2996,7 @@ def node_export(state: RAGGraphState) -> dict[str, Any]:
     return out
 
 
-def node_generate_clarify(state: RAGGraphState) -> dict[str, Any]:
+def node_generate_clarify(state: RAGGraphState) -> RAGGraphState:
     """Ask for missing slots (measure-aware) before retrieval."""
     query = state.get("query") or ""
     answer_lang = str(state.get("answer_lang") or detect_answer_language(query))
@@ -3079,7 +3024,7 @@ def node_generate_clarify(state: RAGGraphState) -> dict[str, Any]:
     }
 
 
-def node_generate_meta(state: RAGGraphState) -> dict[str, Any]:
+def node_generate_meta(state: RAGGraphState) -> RAGGraphState:
     """Short-circuit node for identity meta questions. No retrieval."""
     from ml.rag.chatbot.assistant_identity import generate_meta_answer
 
@@ -3110,7 +3055,7 @@ def node_generate_meta(state: RAGGraphState) -> dict[str, Any]:
     }
 
 
-def node_generate_social(state: RAGGraphState) -> dict[str, Any]:
+def node_generate_social(state: RAGGraphState) -> RAGGraphState:
     """Short-circuit greetings / out-of-scope. No retrieval and no chat-memory injection."""
     query = state.get("query") or ""
     answer_lang = str(state.get("answer_lang") or detect_answer_language(query))
@@ -3122,17 +3067,36 @@ def node_generate_social(state: RAGGraphState) -> dict[str, Any]:
         update_current_span_metadata({"answer_lang": answer_lang, "route": route})
         answer = generate_social_answer(kind, query, answer_lang=answer_lang)
 
+    # ML-057 (Sprint 2 Week 2, beta finding #9): a greeting or an out-of-scope
+    # refusal is a non-answer -- there is no cited evidence behind it, so it
+    # must not carry "Strong confidence". curated_product_acf() is reserved for
+    # the curated product/meta knowledge base, which is genuinely reliable.
+    if kind == "greeting":
+        social_acf = no_evidence_acf(
+            explanation=(
+                "Greeting — no agricultural claim was made, so there is no "
+                "evidence to score."
+            )
+        )
+    else:
+        social_acf = no_evidence_acf(
+            explanation=(
+                "Out of scope — no OpenTrace evidence was retrieved for this "
+                "request."
+            )
+        )
+
     return {
         "answer": answer,
         "citations": [],
         "answer_lang": answer_lang,
         "is_greeting_query": kind == "greeting",
         "is_out_of_scope_query": kind == "out_of_scope",
-        **acf_result_to_state(curated_product_acf()),
+        **acf_result_to_state(social_acf),
     }
 
 
-def node_generate_product(state: RAGGraphState) -> dict[str, Any]:
+def node_generate_product(state: RAGGraphState) -> RAGGraphState:
     """Short-circuit node for OpenTrace product questions. Uses product KB, no retrieval."""
     from ml.rag.chatbot.product_knowledge import generate_product_answer
 
@@ -3169,28 +3133,127 @@ def node_generate_product(state: RAGGraphState) -> dict[str, Any]:
     }
 
 
-def node_coverage_retry(state: RAGGraphState) -> dict[str, Any]:
-    """At most one re-vector (+ optional BQ) when required slots missing from evidence."""
-    from ml.rag.chatbot.coverage_retry import should_coverage_retry, should_retry_bq
+def node_retrieve_legs(state: RAGGraphState) -> RAGGraphState:
+    """Run Qdrant and BQ reason+retrieve at the same time, then join."""
+
+    def _bq_leg() -> dict[str, Any]:
+        reason = node_bq_reason(state)
+        merged = cast(RAGGraphState, {**dict(state), **reason})
+        retrieve = node_bq_retrieve(merged)
+        return {**reason, **retrieve}
+
+    with ThreadPoolExecutor(max_workers=2) as pool:
+        fut_vec = pool.submit(node_parallel_retrieve, state)
+        fut_bq = pool.submit(_bq_leg)
+        vec_out = fut_vec.result()
+        bq_out = fut_bq.result()
+    return {**vec_out, **bq_out}
+
+
+def _evidence_empty(state: RAGGraphState) -> bool:
+    reranked = state.get("reranked_context") or []
+    if reranked:
+        return False
+    bq = state.get("bq_results") or []
+    return not any(isinstance(row, dict) and is_usable_structured_bq_row(row) for row in bq)
+
+
+def _profile_ui_scope_active(decomposition: dict[str, Any]) -> bool:
+    geo_source = str(decomposition.get("geography_source") or "")
+    time_source = str(decomposition.get("time_source") or "")
+    return geo_source in {"profile", "ui"} or time_source == "ui"
+
+
+def _state_without_profile_ui_scope(state: RAGGraphState) -> RAGGraphState:
+    """Clear profile/UI retrieval filters. Query-derived countries and dates stay."""
+    dec_raw = state.get("decomposition")
+    dec: dict[str, Any] = dec_raw if isinstance(dec_raw, dict) else {}
+    geo_source = str(dec.get("geography_source") or "")
+    time_source = str(dec.get("time_source") or "")
+    cleared = clear_profile_ui_retrieval_scope(dec)
+    updates: dict[str, Any] = {
+        "decomposition": cleared,
+        "profile_scope_retry": 1,
+    }
+    if geo_source in {"profile", "ui"}:
+        updates["geo_override"] = ""
+    if time_source == "ui":
+        updates["time_start_override"] = ""
+        updates["time_end_override"] = ""
+        contract = state.get("turn_contract")
+        if isinstance(contract, dict):
+            rewritten = dict(contract)
+            spec = dict(rewritten.get("time_spec") or {})
+            spec["start"] = ""
+            spec["end"] = ""
+            spec["hard_filter"] = False
+            rewritten["time_spec"] = spec
+            updates["turn_contract"] = rewritten
+    return cast(RAGGraphState, {**dict(state), **updates})
+
+
+def _rerun_retrieve_merge_rerank(state: RAGGraphState) -> RAGGraphState:
+    updates: dict[str, Any] = {}
+    retry_bq = should_retry_bq(cast(dict[str, Any], state))
+    if retry_bq:
+        with ThreadPoolExecutor(max_workers=2) as pool:
+            fut_vec = pool.submit(node_parallel_retrieve, state)
+            fut_bq = pool.submit(node_bq_retrieve, state)
+            vec_out = fut_vec.result()
+            bq_out = fut_bq.result()
+        updates.update(vec_out)
+        updates.update(bq_out)
+        state = cast(RAGGraphState, {**dict(state), **vec_out, **bq_out})
+    else:
+        vec_out = node_parallel_retrieve(state)
+        updates.update(vec_out)
+        state = cast(RAGGraphState, {**dict(state), **vec_out})
+    merge_out = node_merge(state)
+    updates.update(merge_out)
+    state = cast(RAGGraphState, {**dict(state), **merge_out})
+    rerank_out = node_rerank(state)
+    updates.update(rerank_out)
+    return updates
+
+
+def node_coverage_retry(state: RAGGraphState) -> RAGGraphState:
+    """At most one re-vector (+ optional BQ) when required slots missing from evidence.
+
+    When the empty result was filtered by profile or UI scope, that one retry
+    drops only those filters. Query-derived countries and dates stay.
+    """
+    dec_raw = state.get("decomposition")
+    dec: dict[str, Any] = dec_raw if isinstance(dec_raw, dict) else {}
+    if (
+        int(state.get("profile_scope_retry") or 0) < 1
+        and _evidence_empty(state)
+        and _profile_ui_scope_active(dec)
+    ):
+        widened = _state_without_profile_ui_scope(state)
+        updates: dict[str, Any] = {
+            "profile_scope_retry": 1,
+            "decomposition": widened.get("decomposition"),
+        }
+        if str(dec.get("geography_source") or "") in {"profile", "ui"}:
+            updates["geo_override"] = ""
+        if str(dec.get("time_source") or "") == "ui":
+            updates["time_start_override"] = ""
+            updates["time_end_override"] = ""
+            turn_contract = widened.get("turn_contract")
+            if isinstance(turn_contract, dict):
+                updates["turn_contract"] = turn_contract
+        with observed_span("profile_scope_retry", input_data={"attempt": 1}):
+            updates.update(_rerun_retrieve_merge_rerank(widened))
+            update_current_span_metadata({"profile_scope_retry": 1})
+        return updates
 
     if not should_coverage_retry(cast(dict[str, Any], state)):
         return {"coverage_retry": int(state.get("coverage_retry") or 0)}
 
-    updates: dict[str, Any] = {"coverage_retry": 1}
+    updates = {"coverage_retry": 1}
     merged_state = cast(RAGGraphState, {**dict(state), **updates})
     with observed_span("coverage_retry", input_data={"attempt": 1}):
-        vec_out = node_parallel_retrieve(merged_state)
-        updates.update(vec_out)
-        merged_state = cast(RAGGraphState, {**dict(merged_state), **vec_out})
-        if should_retry_bq(cast(dict[str, Any], merged_state)):
-            bq_out = node_bq_retrieve(merged_state)
-            updates.update(bq_out)
-            merged_state = cast(RAGGraphState, {**dict(merged_state), **bq_out})
-        merge_out = node_merge(merged_state)
-        updates.update(merge_out)
-        merged_state = cast(RAGGraphState, {**dict(merged_state), **merge_out})
-        rerank_out = node_rerank(merged_state)
-        updates.update(rerank_out)
+        updates.update(_rerun_retrieve_merge_rerank(merged_state))
         update_current_span_metadata({"coverage_retry": 1})
     return updates
 
@@ -3205,9 +3268,7 @@ def build_graph():
     graph = StateGraph(RAGGraphState)
 
     graph.add_node("decompose", node_decompose)
-    graph.add_node("parallel_retrieve", node_parallel_retrieve)
-    graph.add_node("bq_reason", node_bq_reason)
-    graph.add_node("bq_retrieve", node_bq_retrieve)
+    graph.add_node("retrieve_legs", node_retrieve_legs)
     graph.add_node("merge", node_merge)
     graph.add_node("rerank", node_rerank)
     graph.add_node("coverage_retry", node_coverage_retry)
@@ -3222,6 +3283,17 @@ def build_graph():
     graph.add_node("generate_clarify", node_generate_clarify)
 
     graph.add_edge(START, "decompose")
+    graph.add_edge("retrieve_legs", "merge")
+    graph.add_edge("merge", "rerank")
+    graph.add_edge("rerank", "coverage_retry")
+    graph.add_edge("generate", "export")
+    graph.add_edge("export", END)
+    graph.add_edge("insufficient_context", END)
+    graph.add_edge("generate_meta", END)
+    graph.add_edge("generate_product", END)
+    graph.add_edge("generate_social", END)
+    graph.add_edge("generate_language_help", END)
+    graph.add_edge("generate_clarify", END)
 
     def _route_after_decompose(state: RAGGraphState) -> str:
         if state.get("is_meta_query"):
@@ -3234,28 +3306,36 @@ def build_graph():
             return "generate_language_help"
         if state.get("task_mode") == "clarify":
             return "generate_clarify"
-        tc_raw = state.get("turn_contract")
-        contract = TurnContract.from_dict(tc_raw if isinstance(tc_raw, dict) else None)
-        if not contract.should_retrieve_vector():
-            return "bq_reason"
-        return "parallel_retrieve"
+        return "retrieve_legs"
 
-    graph.add_conditional_edges("decompose", _route_after_decompose)
-    graph.add_edge("parallel_retrieve", "bq_reason")
-    graph.add_edge("bq_reason", "bq_retrieve")
-    graph.add_edge("bq_retrieve", "merge")
-    graph.add_edge("merge", "rerank")
-    graph.add_edge("rerank", "coverage_retry")
-    graph.add_conditional_edges("coverage_retry", route_after_rerank)
-    graph.add_conditional_edges("web_fallback", _route_after_web_fallback)
-    graph.add_edge("generate", "export")
-    graph.add_edge("export", END)
-    graph.add_edge("insufficient_context", END)
-    graph.add_edge("generate_meta", END)
-    graph.add_edge("generate_product", END)
-    graph.add_edge("generate_social", END)
-    graph.add_edge("generate_language_help", END)
-    graph.add_edge("generate_clarify", END)
+    graph.add_conditional_edges(
+        "decompose",
+        _route_after_decompose,
+        {
+            "generate_meta": "generate_meta",
+            "generate_product": "generate_product",
+            "generate_social": "generate_social",
+            "generate_language_help": "generate_language_help",
+            "generate_clarify": "generate_clarify",
+            "retrieve_legs": "retrieve_legs",
+        },
+    )
+    graph.add_conditional_edges(
+        "coverage_retry",
+        route_after_rerank,
+        {
+            "web_fallback": "web_fallback",
+            "generate": "generate",
+        },
+    )
+    graph.add_conditional_edges(
+        "web_fallback",
+        _route_after_web_fallback,
+        {
+            "generate": "generate",
+            "insufficient_context": "insufficient_context",
+        },
+    )
 
     return graph.compile()
 
@@ -3273,12 +3353,20 @@ def _get_compiled_graph():
 def run_rag(query: str, **kwargs: Any) -> dict[str, Any]:
     """Run the RAG pipeline and return the state (including answer)."""
     reset_llm_usage()
+    reset_llm_truncation()  # ML-054
     graph = _get_compiled_graph()
     initial: RAGGraphState = {"query": query}
-    user_profile = kwargs.get("user_profile") if isinstance(kwargs.get("user_profile"), dict) else None
+    raw_profile = kwargs.get("user_profile") if isinstance(kwargs.get("user_profile"), dict) else None
+    user_profile = dict(raw_profile) if raw_profile is not None else None
+    if user_profile is not None:
+        raw_country = user_profile.get("country")
+        user_profile["country"] = sanitize_profile_country(
+            str(raw_country) if raw_country is not None else None
+        )
     plan_type = kwargs.get("plan_type")
     profile_geo = effective_geo_override(plan_type, user_profile)
-    if profile_geo:
+    # Flag off: no hard override. Flag on: still do not replace a country the query named.
+    if profile_geo and not _extract_countries(query):
         initial["geo_override"] = profile_geo  # type: ignore[assignment]
     if plan_type:
         initial["plan_type"] = plan_type  # type: ignore[assignment]
@@ -3286,6 +3374,10 @@ def run_rag(query: str, **kwargs: Any) -> dict[str, Any]:
         initial["category"] = kwargs["category"]  # type: ignore[assignment]
     if user_profile is not None:
         initial["user_profile"] = user_profile  # type: ignore[assignment]
+    if kwargs.get("reference_date"):
+        initial["reference_date"] = str(kwargs["reference_date"]).strip()[:10]
+    else:
+        initial["reference_date"] = utc_today().isoformat()
     for key in (
         "time_start_override",
         "time_end_override",
@@ -3297,17 +3389,13 @@ def run_rag(query: str, **kwargs: Any) -> dict[str, Any]:
     ):
         if key in kwargs and kwargs[key] is not None:
             initial[key] = kwargs[key]  # type: ignore[assignment]
-    if "session_id" in kwargs and kwargs["session_id"]:
+    if kwargs.get("session_id"):
         initial["session_id"] = kwargs["session_id"]  # type: ignore[assignment]
-        sid = str(kwargs["session_id"]).strip()
-        if sid:
-            from ml.rag.session_store import get_session_blob
-
-            blob = get_session_blob(sid)
-            if isinstance(blob, dict) and blob.get("last_structured_ranking"):
-                initial["structured_ranking_cache"] = blob["last_structured_ranking"]  # type: ignore[assignment]
-            if isinstance(blob, dict) and isinstance(blob.get("last_bq_facts"), list):
-                initial["last_bq_facts"] = blob["last_bq_facts"]  # type: ignore[assignment]
+    # Session state is loaded by the adapter (owner-bound) and handed in; the core never reads the store.
+    if isinstance(kwargs.get("active_request"), dict):
+        initial["active_request"] = kwargs["active_request"]  # type: ignore[assignment]
+    if isinstance(kwargs.get("last_bq_facts"), list):
+        initial["last_bq_facts"] = kwargs["last_bq_facts"]  # type: ignore[assignment]
     if "conversation_summary" in kwargs:
         initial["conversation_summary"] = kwargs["conversation_summary"]  # type: ignore[assignment]
     if "recent_turns" in kwargs:

@@ -49,6 +49,9 @@ dist/
 *.egg-info/
 .eggs/
 
+# Never bake a locally-built ontology DB into the image context (rebuild in Dockerfile RUN)
+opentrace_ontology/data/
+
 # OS
 .DS_Store
 Thumbs.db

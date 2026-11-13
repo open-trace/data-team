@@ -20,8 +20,8 @@ _MEASURE_POLICY_PATH = Path(__file__).resolve().parents[1] / "helpers" / "measur
 
 _GEO_GRAIN_TO_LEVEL: dict[str, str] = {
     "point": "point",
-    "admin2": "admin2",
-    "admin1": "admin1",
+    "admin2": "sub_national",
+    "admin1": "sub_national",
     "country": "national",
     "region": "national",
     "africa": "national",
@@ -34,6 +34,10 @@ def _load_registry() -> dict[str, Any]:
         return {"entries": [], "geo_level_order": {}, "max_geo_level_rank": {}}
     with _REGISTRY_PATH.open(encoding="utf-8") as fh:
         return yaml.safe_load(fh) or {}
+
+
+def registry_version() -> str:
+    return str(_load_registry().get("version") or "")
 
 
 @lru_cache(maxsize=1)
@@ -120,10 +124,12 @@ def apply_vector_policy(
             contract.skip_bq = bool((entry or {}).get("skip_bq", True))
             contract.plan_type = "narrative"
             return
-        contract.vector_policy = "none"
-        contract.vector_allow = []
-        contract.vector_block = []
-        contract.skip_vector_retrieval = True
+        contract.vector_policy = "companion"
+        allow, block = measure_vector_lists(measure_id, policy="companion")
+        contract.vector_allow = allow
+        contract.vector_block = block
+        contract.skip_vector_retrieval = False
+        contract.skip_bq = True
         return
 
     if contract.serve_status == "served" and contract.job in NUMERIC_JOBS:
@@ -198,14 +204,11 @@ def _apply_unsupported_entry(contract: TurnContract, entry: dict[str, Any]) -> T
 
 def resolve_capability(contract: TurnContract) -> TurnContract:
     if contract.is_fail_closed():
-        contract.skip_vector_retrieval = True
-        contract.vector_policy = "none"
-        contract.vector_allow = []
-        contract.vector_block = []
         if contract.serve_status == "clarify":
             contract.plan_type = "gap"
         else:
             contract.plan_type = "unsupported"
+        apply_vector_policy(contract)
         return contract
 
     measure_id = contract.measure_id.strip().lower()

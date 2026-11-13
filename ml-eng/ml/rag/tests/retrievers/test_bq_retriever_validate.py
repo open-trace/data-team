@@ -456,6 +456,9 @@ def test_retrieve_zero_rows_labeled_empty_result() -> None:
     meta = items[0]["metadata"]
     assert meta["status"] == "empty_result"
     assert "no rows" in (meta.get("prep_error") or "").lower()
+    assert "fct_production" in str(meta.get("sql") or "")
+    assert meta.get("job_id")
+    assert not meta.get("validation_failed")
 
 
 def test_retrieve_broadens_empty_year_once() -> None:
@@ -634,7 +637,7 @@ def test_retrieve_market_price_uses_template_not_nl2sql() -> None:
                     "ml.rag.retrievers.bq_retriever.try_sql_template",
                     return_value={
                         "sql": template_sql,
-                        "template": "mart_latest_price",
+                        "template": "mart_price",
                         "table_id": "fct_prices",
                     },
                 ):
@@ -652,6 +655,35 @@ def test_retrieve_market_price_uses_template_not_nl2sql() -> None:
     nl.assert_not_called()
     assert len(items) == 1
     assert items[0]["metadata"]["sql_source"] == "template"
+
+
+def test_retrieve_price_gap_returns_gap_item_without_sql() -> None:
+    retriever = BQRetriever(project_id="proj", nl2sql_enabled=True)
+    with patch.object(retriever, "_nl_to_sql_queries") as nl:
+        with patch.object(retriever, "_get_client", return_value=MagicMock()):
+            with patch(
+                "ml.rag.retrievers.bq_retriever.try_sql_template",
+                return_value={
+                    "sql": "",
+                    "template": "price_gap",
+                    "gap_message": "No warehouse price series for the requested product in Ethiopia.",
+                    "countries": ["ETH"],
+                    "table_id": "fct_prices",
+                },
+            ):
+                with patch("ml.rag.retrievers.bq_retriever.try_sql_patterns") as patterns:
+                    items = retriever.retrieve(
+                        "price of quinoa in Ethiopia",
+                        selected_tables=["fct_prices"],
+                        task_mode="fact_lookup",
+                        primary_measures=["market_price"],
+                        geo_country="Ethiopia",
+                    )
+    nl.assert_not_called()
+    patterns.assert_not_called()
+    assert len(items) == 1
+    assert items[0]["metadata"]["status"] == "price_gap"
+    assert "No warehouse price series" in items[0]["content"]
 
 
 def test_retrieve_food_security_skips_nl2sql_when_template_misses() -> None:
@@ -676,4 +708,73 @@ def test_retrieve_food_security_skips_nl2sql_when_template_misses() -> None:
     nl.assert_not_called()
     assert len(items) == 1
     assert items[0]["metadata"]["status"] == "no_valid_sql"
+
+
+_PRICE_SQL = (
+    "SELECT country_name, year, AVG(value) AS avg_price "
+    "FROM `opentrace-prod-5ga4.mart_dev.fct_prices` "
+    "WHERE country_iso3 = 'NGA' AND year = 2024 "
+    "GROUP BY 1, 2 LIMIT 50"
+)
+_COLUMN_REJECT = "SQL uses columns not in the YAML Columns blocks: cou, pro, wfp, ye"
+
+
+def _prepare_with_column_gate(sql_source: str) -> tuple[dict[str, int], str | None, str | None]:
+    calls = {"col": 0, "table": 0}
+
+    def fake_table(sql, tables):
+        calls["table"] += 1
+        return None
+
+    def fake_col(sql, tables=None):
+        calls["col"] += 1
+        return _COLUMN_REJECT
+
+    retriever = BQRetriever(project_id="proj", nl2sql_enabled=False)
+    patches = [
+        patch("ml.rag.retrievers.bq_retriever.validate_sql_table_allowlist", fake_table),
+        patch("ml.rag.retrievers.bq_retriever.validate_sql_column_allowlist", fake_col),
+        patch("ml.rag.retrievers.bq_retriever.validate_required_metric_filters", return_value=None),
+        patch("ml.rag.retrievers.bq_retriever.validate_sql_value_samples", return_value=None),
+        patch("ml.rag.retrievers.bq_retriever.validate_sql_complete_index_literals", return_value=None),
+        patch("ml.rag.retrievers.bq_retriever.validate_semantic_coherence", return_value=None),
+        patch("ml.rag.retrievers.bq_retriever.validate_dry_run_bytes", return_value=None),
+        patch("ml.rag.retrievers.bq_retriever.dry_run_sql", return_value=None),
+        patch("ml.rag.retrievers.bq_retriever.max_bytes_billed_for_source", return_value=10**12),
+        patch("ml.rag.retrievers.bq_retriever.sql_retry_enabled", return_value=False),
+    ]
+    for item in patches:
+        item.start()
+    try:
+        validated, err = retriever._prepare_sql(
+            _PRICE_SQL,
+            question="What was the average maize price in Nigeria in 2024?",
+            table_hints=["hint"],
+            selected_tables={"fct_prices"},
+            allowed_datasets={"mart_dev"},
+            limit=50,
+            client=MagicMock(),
+            sql_source=sql_source,
+            bind_contracts=None,
+        )
+    finally:
+        for item in reversed(patches):
+            item.stop()
+    return calls, validated, err
+
+
+def test_post_checks_gate_bind_compiler_sql_on_columns() -> None:
+    calls, validated, err = _prepare_with_column_gate("bind_compiler")
+    assert validated is None
+    assert err is not None and "YAML Columns" in err
+    assert calls["col"] >= 1
+
+
+def test_post_checks_keeps_column_allowlist_for_nl2sql() -> None:
+    calls, validated, err = _prepare_with_column_gate("nl2sql")
+    assert validated is None
+    assert err is not None
+    assert "YAML Columns" in err
+    assert calls["table"] >= 1
+    assert calls["col"] >= 1
 

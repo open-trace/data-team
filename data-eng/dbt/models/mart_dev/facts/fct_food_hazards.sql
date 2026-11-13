@@ -61,7 +61,7 @@ base as (
     from {{ ref('int_food_hazards_conformed') }} h
     left join country_geo g
         on lower(trim(g.country_name)) = lower(trim(h.country))
-    left join {{ ref('dim_foodborne_hazard') }} d
+    left join {{ ref('dim_disease') }} d
         on lower(d.disease_or_hazard) = lower(h.foodborne_hazard)
     left join {{ ref('dim_source') }} s
         on s.source_natural_key = h.source_natural_key

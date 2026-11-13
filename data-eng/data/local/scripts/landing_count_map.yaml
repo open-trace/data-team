@@ -1,0 +1,110 @@
+# Column rules for counting landing-table datapoints.
+# Locked from the local partition (FAOSTAT wide and long tables, landing_dev
+# HDX WFP prices, World Bank Data360) plus schema samples of IITA phenotype,
+# Dataverse microdata, ILRI, geoportal layers, and Akademiya publications.
+#
+# Indicator here is the measure column that actually exists (element, indicator,
+# category, commodity). It is not a mart class code (EL, PROD, FS, ...).
+# Mart classes are not stored on landing tables.
+
+notes:
+  - Most FAOSTAT landing tables store years as columns named Y1991, Y1992, ... A row is one area-item-element and each non-null Y#### cell is one datapoint. Counting rows would drop the year dimension.
+  - A minority of FAOSTAT tables are already long: Year + Value. Those use the Year column and are not unpivoted.
+  - Columns named Y20002002 (eight digits) are multi-year bins, not a calendar year. They are counted with year labeled 2000-2002.
+  - _ingest_date, _ingested_at, ingestion_timestamp, and source_date are load times, not the observation year.
+  - A column named source is often a numeric breeding field (FLOAT64) on IITA tables. Only STRING source columns are used.
+  - IITA phenotype tables store traits as columns (studyYear, locationName, then one float column per trait). Row counts are plots, not trait observations. locationName is a site, not a country.
+  - HDX WFP Nigeria prices have admin1 and no country column. The country is only implied by the table.
+  - FEWS price time series use period_date (a month-end date). The count keeps the calendar year. source_organization is the source. product is the indicator because there is no element column.
+  - FEWS classification time series use reporting_date and have no indicator column. value is an IPC phase, not a separate indicator field.
+  - WFP VAMPIRE uses adm0_name, cm_name, and mp_year. It has no source column, so source falls back to the table id.
+  - Climate Watch stores a list of year/value pairs inside emissions. Those years are not columns, so each pathway row counts once and year stays null.
+  - iSDA soil bulk is latitude/longitude/property/value with no country and no year. property is the indicator.
+  - ISRIC soil is a wide grid (property by depth) with fetched_at as the load time. Country and year stay null.
+  - NASA POWER rows carry country_code and source, and the observation payload is JSON. fetched_at is not used as the year.
+  - Farmlover price sheets use source_observation_date and _fl_source_id. Workbook grids whose columns are a, b, c have no indicator, country, or year.
+  - GBIF occurrences use year and countryCode. Taxonomic class is not treated as an indicator.
+  - Dataverse microdata often has opentrace_country and opentrace_source_doi and no indicator or observation year.
+  - ILRI sheets include tables whose first row was loaded as column names (unnamed_1, or a sentence used as a header). Those dimensions stay null.
+  - Akademiya publications_raw_stream keeps records inside a JSON column. The count is pages, not extracted indicators.
+  - Geoportal layers are country geometries (iso_3digit) with no year or indicator.
+  - When several source columns match, they are coalesced in list order, skipping blanks. An empty data_source falls through to _source. When no source column matches, source is dataset.table and source_is_fallback is true.
+  - landing_iita is about 7168 base tables and about 6100 names exceed Postgres 63-byte identifiers. The local partition copies every other landing dataset (200 rows each) plus a sample of IITA carotenoid trial tables (studyYear 2016, locationName Ubiaja). The count script still scans every base table.
+  - Ten local copies failed for structural reasons, not missing data: nested arrays (fixed for a retry of ceda_climate_data and unccd_land_degradation_bulk), Postgres's 1600-column limit, and survey column names longer than 63 bytes that collide after truncation. Those tables are still counted in BigQuery.
+
+indicator_columns:
+  - indicator
+  - element
+  - series
+  - variable
+  - metric
+  - property
+  - category
+  - cm_name
+  - product_name
+  - product
+  - commodity
+  - item
+
+country_columns:
+  - country
+  - country_name
+  - country_code
+  - countrycode
+  - opentrace_country
+  - ref_area
+  - area
+  - adm0_name
+  - iso_3digit
+  - iso_code3
+  - iso3
+  - country_iso3
+  - iso_2digit
+  - iso_code2
+  - coverage_country
+  - recipient_country
+  - reporter_countries
+  - locationname
+
+year_columns:
+  - year
+  - studyyear
+  - mp_year
+  - time_period
+  - period_date
+  - reporting_date
+  - survey_date
+  - source_observation_date
+  - date
+  - plantingdate
+  - harvestdate
+  - eventdate
+  - projection_start
+  - start_date
+  - first_period_date
+  - last_period_date
+
+# Load clocks. Never treat these as the observation year.
+year_skip:
+  - _ingest_date
+  - _ingested_at
+  - ingestion_timestamp
+  - fetched_at
+  - _fl_retrieved_at_utc
+  - source_date
+  - time_period_date
+
+source_columns:
+  - data_source
+  - data_source_organization
+  - source_organization
+  - _source
+  - _fl_source_id
+  - opentrace_source_doi
+  - source
+  - source_file
+
+# These names are used only when the BigQuery type is STRING.
+source_string_only:
+  - source
+  - source_file

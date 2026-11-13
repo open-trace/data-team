@@ -41,6 +41,13 @@ _SOFT_FAIL_HTTP = frozenset({401, 402, 403, 410, 429, 502, 503})
 _usage_lock = threading.Lock()
 _request_usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
 
+# Per-request truncation tracking (ML-054). OpenAI-compatible APIs report
+# finish_reason=="length" when generation stopped because max_tokens was hit.
+# That signal was previously read and discarded, so multi-part answers could be
+# cut off mid-sentence with no error and no indication to the user.
+_truncation_lock = threading.Lock()
+_request_truncation = {"length_capped_calls": 0, "last_finish_reason": ""}
+
 
 @dataclass(frozen=True)
 class TokenUsage:
@@ -73,6 +80,39 @@ def get_llm_usage() -> TokenUsage:
             completion_tokens=_request_usage["completion_tokens"],
             total_tokens=_request_usage["total_tokens"],
         )
+
+
+def reset_llm_truncation() -> None:
+    """Clear per-request truncation state (call at start of run_rag)."""
+    with _truncation_lock:
+        _request_truncation["length_capped_calls"] = 0
+        _request_truncation["last_finish_reason"] = ""
+
+
+def record_finish_reason(reason: str | None) -> None:
+    """Record an OpenAI-style finish_reason from a chat completion response."""
+    r = (reason or "").strip().lower()
+    if not r:
+        return
+    with _truncation_lock:
+        _request_truncation["last_finish_reason"] = r
+        if r == "length":
+            _request_truncation["length_capped_calls"] += 1
+
+
+def last_finish_reason() -> str:
+    with _truncation_lock:
+        return str(_request_truncation["last_finish_reason"] or "")
+
+
+def answer_was_length_capped() -> bool:
+    """True when the most recent completion stopped on the max_tokens ceiling."""
+    return last_finish_reason() == "length"
+
+
+def length_capped_call_count() -> int:
+    with _truncation_lock:
+        return int(_request_truncation["length_capped_calls"] or 0)
 
 
 def add_llm_usage(raw: dict[str, Any] | None) -> None:
@@ -203,6 +243,9 @@ def llm_chat_complete(
         if not choices:
             logger.warning("llm_chat_complete: empty choices from %s", url)
             return ""
+        # ML-054: capture finish_reason so a max_tokens cut-off is no longer
+        # silently discarded (multi-part answers were ending mid-sentence).
+        record_finish_reason(choices[0].get("finish_reason"))
         content = choices[0].get("message", {}).get("content")
         if content is None:
             logger.warning("llm_chat_complete: null message content from %s", url)

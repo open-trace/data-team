@@ -10,6 +10,7 @@ from ml.rag.chatbot.agri_measure_ontology import (
     conflicting_domain_tags_for_measure,
     disambiguate_primary_measures,
     entity_is_measure_noise,
+    query_locks_production,
     resolve_measures,
 )
 from ml.rag.chatbot.mart_indicator_classes import class_for_query, facts_for_classes
@@ -195,6 +196,7 @@ def sanitize_decomposition_for_bq(
     decomposition: dict[str, Any] | None,
     *,
     primary_measures: list[str] | None = None,
+    query: str = "",
 ) -> dict[str, Any]:
     """
     Strip decomposer noise from entities/domains when primary_measures is set.
@@ -203,15 +205,19 @@ def sanitize_decomposition_for_bq(
     """
     dec = dict(decomposition or {})
     pm = [str(m).strip().lower() for m in (primary_measures or dec.get("primary_measures") or []) if str(m).strip()]
+    query_text = str(
+        query or dec.get("query") or dec.get("original_query") or ""
+    ).strip()
+    if query_locks_production(query_text, dec):
+        pm = ["production"] + [m for m in pm if m != "production"]
     if pm:
         dec["primary_measures"] = pm
     if not pm:
         return dec
 
-    query_text = str(
-        dec.get("query") or dec.get("original_query") or ""
-    ).strip()
     pm = disambiguate_primary_measures(query_text, pm, dec)
+    if query_locks_production(query_text, dec):
+        pm = ["production"] + [m for m in pm if m != "production"]
     dec["primary_measures"] = pm
     primary = pm[0]
 
@@ -225,7 +231,8 @@ def sanitize_decomposition_for_bq(
             and e.lower() != primary
         ]
         if primary not in {e.lower() for e in cleaned}:
-            cleaned.insert(0, primary)
+            if not query_text or query_locks_production(query_text, dec) or primary in query_text.lower():
+                cleaned.insert(0, primary)
         dec["entities"] = cleaned
 
     domains = dec.get("domains")

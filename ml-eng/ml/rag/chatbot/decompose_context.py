@@ -3,7 +3,7 @@ from __future__ import annotations
 
 import json
 from dataclasses import dataclass, field
-from datetime import date
+from ml.rag.chatbot.time_resolver import parse_iso_date, utc_today
 from typing import TYPE_CHECKING, Any
 
 if TYPE_CHECKING:
@@ -12,7 +12,7 @@ if TYPE_CHECKING:
 from ml.rag.chatbot.agri_entities import CROP_COMMODITY_TERMS
 from ml.rag.chatbot.agri_measure_ontology import decompose_measure_vocabulary
 from ml.rag.chatbot.geo_regions import decompose_region_vocabulary
-from ml.rag.chatbot.plan_policy import allows_cross_country, plan_generation_addendum
+from ml.rag.chatbot.plan_policy import plan_allows_cross_country
 
 # Stakeholder insight intents (mirrored in query_decomposer for heuristics).
 INTENT_ALLOWED: tuple[str, ...] = (
@@ -104,15 +104,14 @@ class DecomposeContext:
     context_rewrite: str = ""
     context_applied: bool = False
     conversation_summary: str = ""
-    prior_topic: str | None = None
-    memory_enriched: bool = False
     plan_type: str = ""
     category: str = ""
     profile_country: str = ""
     geo_override: str = ""
     time_start_override: str = ""
     time_end_override: str = ""
-    today_iso: str = field(default_factory=lambda: date.today().isoformat())
+    today_iso: str = field(default_factory=lambda: utc_today().isoformat())
+    time_resolution_note: str = ""
 
     @classmethod
     def from_query(cls, query: str) -> DecomposeContext:
@@ -142,28 +141,23 @@ class DecomposeContext:
             if "context_applied" in enrich
             else state.get("context_applied")
         )
-        if not context_applied and enrich.get("enriched") and not context_rewrite:
-            # Legacy enrich dict shape
-            enriched_q = str(enrich.get("enriched_query") or "").strip()
-            if enriched_q and enriched_q != raw_q:
-                context_rewrite = enriched_q
-                context_applied = True
         profile = state.get("user_profile") if isinstance(state.get("user_profile"), dict) else {}
         category = str(state.get("category") or (profile or {}).get("category") or "").strip()
+        ref_raw = str(state.get("reference_date") or "").strip()[:10]
+        today_iso = ref_raw if parse_iso_date(ref_raw) else utc_today().isoformat()
         return cls(
             query=raw_q,
             original_query=raw_q,
             context_rewrite=context_rewrite if context_applied else "",
             context_applied=context_applied,
             conversation_summary=str(state.get("conversation_summary") or "").strip(),
-            prior_topic=str(enrich.get("prior_topic") or "").strip() or None,
-            memory_enriched=bool(enrich.get("enriched") or context_applied),
             plan_type=str(state.get("plan_type") or "").strip(),
             category=category,
             profile_country=str((profile or {}).get("country") or "").strip(),
             geo_override=str(state.get("geo_override") or "").strip(),
             time_start_override=str(state.get("time_start_override") or "").strip()[:10],
             time_end_override=str(state.get("time_end_override") or "").strip()[:10],
+            today_iso=today_iso,
         )
 
 
@@ -192,9 +186,10 @@ def format_decompose_system_prompt() -> str:
         "- Never put literal words 'country' or 'countries' in the geography array.\n"
         "- Region labels (West Africa, ECOWAS, SADC) belong in geography or entities when the user names them.\n\n"
         "Grounding:\n"
-        "- Only emit geography and entities evidenced in the question (or conversation context when elliptical).\n"
+        "- Only emit geography, entities, and primary_measure_hints evidenced in the user sentence "
+        "(or conversation context when elliptical).\n"
         "- Crop alias normalization is allowed (e.g. user says paddy → entity rice).\n"
-        "- Do not invent countries or crops not supported by the text.\n\n"
+        "- Do not invent countries, crops, or measures. Plan tier and category must not invent measures.\n\n"
         f"intent must be EXACTLY one of: {intent_csv}\n{intent_block}\n\n"
         f"job must be EXACTLY one of: {job_csv}\n{job_block}\n\n"
         f"geo_scope must be EXACTLY one of: {geo_scope_csv}\n\n"
@@ -203,8 +198,9 @@ def format_decompose_system_prompt() -> str:
         "  intent, job, entities, geography, domains, geo_scope,\n"
         "  primary_measure_hints, time_start, time_end,\n"
         "  africa_panel (boolean, optional), africa_default (boolean, optional)\n\n"
-        "Use time_end = today's date when the question says till now, to date, until now, "
-        "or since YEAR with no fixed end year. Use empty time_start/time_end when no time is implied.\n"
+        "Use time_start and time_end from the user message when it states that a time phrase "
+        "resolves to a start..end. Use exactly those dates; do not invent other dates. "
+        "Use empty time_start/time_end when no time is implied.\n"
         "No markdown, no extra keys."
     )
 
@@ -214,13 +210,12 @@ def format_decompose_user_prompt(
     provisional: dict[str, Any] | None,
 ) -> str:
     blocks: list[str] = [f"Today's date: {ctx.today_iso}"]
+    if ctx.time_resolution_note:
+        blocks.append(ctx.time_resolution_note)
 
     if ctx.plan_type:
         blocks.append(f"Plan tier: {ctx.plan_type}")
-        addendum = plan_generation_addendum(ctx.plan_type)
-        if addendum:
-            blocks.append(addendum)
-        if not allows_cross_country(ctx.plan_type):
+        if not plan_allows_cross_country(ctx.plan_type):
             blocks.append(
                 "Plan constraint: prefer a single country in geography unless the user explicitly names a region or multiple countries."
             )
@@ -239,18 +234,17 @@ def format_decompose_user_prompt(
     if ctx.time_end_override:
         ui_parts.append(f"time_end={ctx.time_end_override}")
     if ui_parts:
-        blocks.append("UI scope (authoritative when set): " + "; ".join(ui_parts))
+        blocks.append(
+            "Screen dates (used only when the question names no time): " + "; ".join(ui_parts)
+        )
 
     if ctx.conversation_summary:
         blocks.append(f"Conversation summary:\n{ctx.conversation_summary[:1200]}")
 
-    if ctx.prior_topic and ctx.context_applied:
-        blocks.append(f"Prior user topic:\n{ctx.prior_topic[:800]}")
-
     blocks.append(f"Question: {ctx.query}")
     if ctx.context_applied and ctx.context_rewrite and ctx.context_rewrite != ctx.query:
         blocks.append(
-            "Context rewrite (related history/profile; use for elliptical grounding only):\n"
+            "Resolved request (slots carried from earlier turns; the question's own words win):\n"
             f"{ctx.context_rewrite[:1200]}"
         )
 

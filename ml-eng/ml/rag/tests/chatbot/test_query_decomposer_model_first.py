@@ -112,17 +112,21 @@ def test_heuristic_time_wins_since_till_now() -> None:
             "ml.rag.chatbot.query_decomposer._call_llama_decompose",
             return_value=fake_llm,
         ):
-            out = decompose_query(q)
+            out = decompose_query(q, reference_date=date(2026, 10, 14))
     assert out["time_start"] == "2015-01-01"
-    assert out["time_end"] == date.today().isoformat()
+    assert out["time_end"] == "2026-10-14"
 
 
 def test_call_llama_uses_system_user_messages() -> None:
     with mock.patch(
-        "ml.rag.chatbot.query_decomposer.llm_chat_complete",
-        return_value='{"intent":"descriptive","entities":[],"geography":[],"domains":[]}',
-    ) as llm:
-        _call_llama_decompose("maize in Kenya")
+        "ml.rag.chatbot.query_decomposer._decompose_backend_configured",
+        return_value=True,
+    ):
+        with mock.patch(
+            "ml.rag.chatbot.query_decomposer.llm_chat_complete",
+            return_value='{"intent":"descriptive","entities":[],"geography":[],"domains":[]}',
+        ) as llm:
+            _call_llama_decompose("maize in Kenya")
     messages = llm.call_args[0][0]
     roles = [m["role"] for m in messages]
     assert roles == ["system", "user"]

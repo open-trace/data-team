@@ -81,9 +81,21 @@ CORPUS_CATALOG: dict[str, CorpusSpec] = {
 
 ALL_CORPUS_KEYS: tuple[str, ...] = tuple(CORPUS_CATALOG.keys())
 
+
+def formation_doc_kinds(query: str) -> list[str]:
+    """Practice guides always. Textbooks only when the question is curricular."""
+    if _CURRICULUM_RE.search(query or ""):
+        return ["agricultural_practise", "textbook"]
+    return ["agricultural_practise"]
+
+
 _FORMATION_RE = re.compile(
     r"\b(how\s+to|practice|practise|training|extension|farmer\s+how|"
     r"agronomic\s+practice|cultivat|planting\s+guide|best\s+practice)\b",
+    re.IGNORECASE,
+)
+_CURRICULUM_RE = re.compile(
+    r"\b(textbook|syllabus|grade|learner|student)\b",
     re.IGNORECASE,
 )
 _POLICY_RE = re.compile(
@@ -167,6 +179,9 @@ def select_corpora(
     allow = [str(x).strip() for x in (vector_allow or []) if str(x).strip()]
     block = {str(x).strip() for x in (vector_block or []) if str(x).strip()}
 
+    if job in ("help", "social"):
+        return CorpusSelection(active=[], boosts={}, rationale=f"turn_contract_job_{job}")
+
     if vector_policy is not None:
         if policy in ("companion", "fallback_only") and allow:
             active = [k for k in allow if k in ALL_CORPUS_KEYS and k not in block]
@@ -175,11 +190,6 @@ def select_corpora(
                 boosts=default_boosts(),
                 rationale=f"vector_policy_{policy}",
             )
-        if policy == "none" or job in ("help", "social"):
-            return CorpusSelection(active=[], boosts={}, rationale=f"vector_policy_{policy or job}")
-
-    if job in ("help", "social"):
-        return CorpusSelection(active=[], boosts={}, rationale=f"turn_contract_job_{job}")
     if job == "outlook":
         return CorpusSelection(
             active=["ota", "public_reports"],
@@ -226,6 +236,8 @@ def select_corpora(
             _boost(boosts, "news", 0.05)
             _boost(boosts, "ota", 0.05)
             reasons.append("domain_markets")
+            if not _FORMATION_RE.search(q):
+                skip.add("formation")
         if any(tok in tag_blob for tok in ("climate", "rainfall", "drought", "environment")):
             preferred.update({"academic_papers", "public_reports"})
             _boost(boosts, "academic_papers", 0.06)

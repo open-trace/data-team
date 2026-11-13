@@ -13,7 +13,7 @@ from typing import Any, Literal
 import requests
 import streamlit as st
 
-from ml.rag.chatbot.generator import usable_context_after_geo_purity
+from ml.rag.chatbot.generator import filter_context_items
 from ml.rag.chatbot.schema_card import card_maturity, load_schema_card
 
 BackendMode = Literal["in_process", "http_api"]
@@ -167,16 +167,16 @@ def _flow_narrative(route: str) -> str:
         return "decompose → generate_language_help → END"
     if route == "insufficient":
         return (
-            "decompose → parallel_retrieve → bq_reason → bq_retrieve → merge → rerank "
+            "decompose → retrieve_legs → merge → rerank "
             "→ web_fallback → insufficient_context → END"
         )
     if route == "full_rag + web_fallback":
         return (
-            "decompose → parallel_retrieve → bq_reason → bq_retrieve → merge → rerank "
+            "decompose → retrieve_legs → merge → rerank "
             "→ web_fallback → generate → END"
         )
     return (
-        "decompose → parallel_retrieve → bq_reason → bq_retrieve → merge → rerank → generate → END"
+        "decompose → retrieve_legs → merge → rerank → generate → END"
     )
 
 
@@ -274,73 +274,6 @@ def normalize_query_response(
     }
 
 
-def normalize_http_response(
-    payload: dict[str, Any],
-    *,
-    latency_ms: float,
-    query: str,
-    kwargs: dict[str, Any],
-) -> dict[str, Any]:
-    """Map POST /v1/chat/{plan} JSON (ChatSuccessResponse) into inspector shape.
-
-    Production response fields: assistant_message, citations, acf (nested ACFSignal),
-    session_id, usage, request_id, created_at, plan_type, langfuse_trace_id, artifacts.
-    There is no 'trace' field in production — retrieval counts are unavailable in HTTP mode.
-    """
-    usage_raw = payload.get("usage")
-    usage: dict[str, int] = {}
-    if isinstance(usage_raw, dict):
-        usage = {
-            "input_tokens": int(usage_raw.get("input_tokens") or 0),
-            "output_tokens": int(usage_raw.get("output_tokens") or 0),
-            "total_tokens": int(usage_raw.get("total_tokens") or 0),
-        }
-
-    # ACF is a nested ACFSignal object in production; flatten to the keys
-    # render_metrics_row already reads (acf_band, acf_score, acf_explanation, …).
-    acf = _as_dict(payload.get("acf"))
-    # plan_type echoed back by the API; fall back to kwargs when absent.
-    plan_type = payload.get("plan_type") or kwargs.get("plan_type")
-    user_profile = kwargs.get("user_profile")
-
-    return {
-        "answer": payload.get("assistant_message") or "",
-        "citations": payload.get("citations") or [],
-        "error": payload.get("error"),
-        "session_id": payload.get("session_id"),
-        "usage": usage,
-        "latency_ms": latency_ms,
-        "plan_type": plan_type,
-        "category": _as_dict(user_profile).get("category"),
-        "user_profile": user_profile,
-        "langfuse_trace_id": payload.get("langfuse_trace_id"),
-        "artifacts": payload.get("artifacts") or [],
-        # ACF flattened — mirrors the flat keys consumed by render_metrics_row.
-        "acf_band": acf.get("band") or "",
-        "acf_band_label": acf.get("band_label") or "",
-        "acf_score": acf.get("score"),
-        "acf_explanation": acf.get("explanation") or acf.get("note") or "",
-        "acf_claim_level": acf.get("claim_level"),
-        "acf_question_type": acf.get("question_type"),
-        # HTTP mode: no decomposition or retrieval counts from this endpoint.
-        "decomposition": {},
-        "bq_table_candidates": [],
-        "vector_news_results": [],
-        "vector_academic_papers_results": [],
-        "vector_policies_results": [],
-        "vector_public_reports_results": [],
-        "vector_formation_results": [],
-        "vector_academic_results": [],
-        "bq_results": [],
-        "vector_ota_results": [],
-        "merged_context": [],
-        "reranked_context": [],
-        "web_results": [],
-        "_backend_mode": "http_api",
-        "_query": query,
-    }
-
-
 def query_via_http_api(
     base_url: str,
     query: str,
@@ -386,6 +319,9 @@ def query_via_http_api(
 
     t0 = time.perf_counter()
     headers: dict[str, str] = {}
+    api_key = os.environ.get("RAG_API_KEY", "").strip()
+    if api_key:
+        headers["X-API-Key"] = api_key
     if trace_id:
         headers["X-Langfuse-Trace-Id"] = trace_id
     resp = requests.post(url, json=body, timeout=timeout_s, headers=headers or None)
@@ -576,6 +512,16 @@ def render_metrics_row(result: dict[str, Any], *, latency_ms: float | None = Non
         st.metric("→ reranked", len(result.get("reranked_context") or []))
     with r1b[2]:
         st.metric("→ cited", len(result.get("citations") or []))
+
+    stages = result.get("retrieval_stage_counts")
+    if isinstance(stages, dict) and stages:
+        drops = result.get("evidence_drops") if isinstance(result.get("evidence_drops"), dict) else {}
+        drop_text = ", ".join(f"{k}={v}" for k, v in drops.items()) or "none"
+        st.caption(
+            "Stages: "
+            + ", ".join(f"{k}={v}" for k, v in stages.items())
+            + f" · excluded: {drop_text}"
+        )
 
     r2 = st.columns(4)
     with r2[0]:
@@ -820,10 +766,7 @@ def render_sql_panel(result: dict[str, Any]) -> None:
 
 def render_retrieval_tabs(result: dict[str, Any]) -> None:
     reranked = list(result.get("reranked_context") or [])
-    usable_for_gen = usable_context_after_geo_purity(
-        reranked,
-        result.get("decomposition") if isinstance(result.get("decomposition"), dict) else None,
-    )
+    usable_for_gen = filter_context_items(reranked)
     citations = list(result.get("citations") or [])
     tabs = st.tabs([
         f"News ({len(result.get('vector_news_results') or [])})",

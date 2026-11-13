@@ -8,6 +8,7 @@ from typing import Any
 import pytest
 from fastapi.testclient import TestClient
 
+from ml.rag import session_store
 from ml.rag.app import api as api_mod
 
 
@@ -17,8 +18,9 @@ def client(monkeypatch: pytest.MonkeyPatch) -> TestClient:
     monkeypatch.setenv("QDRANT_API_KEY", "test-key")
     monkeypatch.setenv("RAG_LLM_BASE_URL", "https://openrouter.ai/api/v1")
     monkeypatch.setenv("RAG_LLM_API_KEY", "sk-test")
-    monkeypatch.delenv("RAG_REDIS_URL", raising=False)
-    monkeypatch.delenv("REDIS_URL", raising=False)
+    monkeypatch.setenv("RAG_API_AUTH", "off")
+    monkeypatch.setattr(session_store, "_REDIS_URL", "")
+    monkeypatch.setattr(session_store, "_redis_client", None)
     return TestClient(api_mod.app)
 
 
@@ -27,15 +29,21 @@ def _mock_rag_result() -> dict[str, Any]:
         "answer": "Maize yields in Kenya were stable.",
         "citations": [],
         "decomposition": {"geography": ["Kenya"], "intent": "descriptive"},
-        "bq_sql_queries": ["SELECT country_name FROM mart_dev.fct_production LIMIT 10"],
+        "bq_sql_queries": [
+            "SELECT country_name FROM mart_dev.fct_production WHERE country_name = 'Kenya' LIMIT 10"
+        ],
         "bq_sql_debug": [
             {
-                "sql": "SELECT country_name FROM mart_dev.fct_production LIMIT 10",
+                "sql": "SELECT country_name FROM mart_dev.fct_production WHERE country_name = 'Kenya' LIMIT 10",
                 "status": "ok",
                 "sql_source": "pattern",
+                "job_id": "bq-job-1",
             }
         ],
         "bq_sql_plan": {
+            "bq_sql_queries": [
+                "SELECT country_name FROM mart_dev.fct_production WHERE country_name = 'Kenya' LIMIT 10"
+            ],
             "selected_tables": ["fct_production"],
             "query_intents": [
                 {
@@ -55,6 +63,10 @@ def _mock_rag_result() -> dict[str, Any]:
         "bq_cache_hit": False,
         "bq_nl2sql_ms": 120.5,
         "bq_execute_ms": 45.0,
+        "decompose_llm_ms": 230.0,
+        "vector_ms": 180.0,
+        "rerank_ms": 35.0,
+        "generate_ms": 900.0,
         "usage": {"input_tokens": 10, "output_tokens": 20, "total_tokens": 30},
     }
 
@@ -62,7 +74,12 @@ def _mock_rag_result() -> dict[str, Any]:
 @contextmanager
 def _fake_rag_trace(**_kwargs: Any):
     class _Handle:
-        def update_output(self, _result: dict[str, Any]) -> None:
+        def update_output(
+            self,
+            _result: dict[str, Any],
+            *,
+            latency_ms: float | None = None,
+        ) -> None:
             return None
 
     yield _Handle()
@@ -94,10 +111,22 @@ def test_query_include_trace_exposes_bq_sql(
     body = resp.json()
     trace = body.get("trace")
     assert isinstance(trace, dict)
-    assert trace["bq_sql_queries"] == mock["bq_sql_queries"]
+    expected_sql = (
+        "SELECT country_name FROM mart_dev.fct_production "
+        "WHERE country_name = '<REDACTED>' LIMIT <REDACTED>"
+    )
+    assert trace["bq_sql_queries"] == [expected_sql]
+    assert trace["bq_planned_sql"] == [expected_sql]
+    assert trace["bq_submitted_sql"] == [expected_sql]
     assert trace["bq_sql_debug"][0]["status"] == "ok"
+    assert trace["bq_sql_debug"][0]["sql"] == expected_sql
     assert trace["sql_source"] == "pattern"
     assert trace["bq_nl2sql_ms"] == 120.5
+    assert trace["rag_pipeline_ms"] >= 0
+    assert trace["decompose_llm_ms"] == 230.0
+    assert trace["vector_ms"] == 180.0
+    assert trace["rerank_ms"] == 35.0
+    assert trace["generate_ms"] == 900.0
     plan = trace.get("bq_sql_plan")
     assert isinstance(plan, dict)
     assert plan.get("selected_tables") == ["fct_production"]

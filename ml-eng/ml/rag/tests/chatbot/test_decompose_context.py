@@ -38,6 +38,8 @@ def test_format_user_prompt_includes_plan_and_overrides() -> None:
     prov = build_provisional_decompose_hints(ctx.query)
     user = format_decompose_user_prompt(ctx, prov)
     assert "Plan tier: Farmers" in user
+    assert "climate × nutrition" not in user
+    assert "Plan tier: NGOs / development" not in user
     assert "Profile country" in user
     assert "geo=Kenya" in user
     assert "Conversation summary" in user
@@ -48,6 +50,7 @@ def test_format_user_prompt_includes_plan_and_overrides() -> None:
 def test_format_system_prompt_includes_schema_keys() -> None:
     system = format_decompose_system_prompt()
     assert "primary_measure_hints" in system
+    assert "must not invent measures" in system
     assert "geo_scope" in system
     assert "job must be" in system
 
@@ -70,17 +73,14 @@ def test_from_graph_state_reads_profile_and_overrides() -> None:
         "conversation_summary": "Prior turn about maize.",
     }
     enrich = {
-        "enriched_query": "Prior. Follow-up: and in Ghana?",
-        "original_query": "and in Ghana?",
-        "enriched": True,
-        "prior_topic": "maize production in Kenya 2020",
+        "user_query": "and in Ghana?",
+        "context_rewrite": "and in Ghana? (carried from earlier turns: commodity: maize)",
+        "context_applied": True,
     }
     ctx = DecomposeContext.from_graph_state(state, enrich)
     assert ctx.plan_type == "Government"
     assert ctx.profile_country == "Kenya"
     assert ctx.geo_override == "Ghana"
-    assert ctx.memory_enriched is True
-    assert ctx.prior_topic == "maize production in Kenya 2020"
     assert ctx.query == "and in Ghana?"
     assert ctx.context_applied is True
-    assert "Follow-up" in ctx.context_rewrite
+    assert "carried from earlier turns" in ctx.context_rewrite

@@ -3,8 +3,10 @@ from __future__ import annotations
 
 from unittest.mock import MagicMock, patch
 
+import pytest
+
 from ml.rag.chatbot.bq_table_schema_yaml import intent_pattern_for_query
-from ml.rag.retrievers.bq_retriever import BQRetriever, _format_query_constraints
+from ml.rag.retrievers.bq_retriever import BQRetriever, _format_query_constraints, _load_dotenv
 
 
 def test_format_query_constraints_includes_bind_intents_and_crop_entities() -> None:
@@ -47,6 +49,15 @@ def test_format_query_constraints_includes_bind_intents_and_crop_entities() -> N
     assert "fact_lookup" in text
     assert "rice" in text.lower()
     assert "Primary measures" in text
+
+
+def test_credential_bootstrap_errors_are_not_silenced() -> None:
+    with patch(
+        "ml.rag.retrievers.bq_retriever.load_rag_dotenv",
+        side_effect=RuntimeError("invalid BigQuery credentials"),
+    ):
+        with pytest.raises(RuntimeError, match="invalid BigQuery credentials"):
+            _load_dotenv()
 
 
 def test_planned_path_skips_template_and_pattern_calls_nl2sql() -> None:
@@ -180,8 +191,7 @@ def test_prepare_sql_retry_passes_bind_contracts() -> None:
     assert retry_fn.call_args.kwargs.get("query_intents") == [{"goal": "fact_lookup"}]
 
 
-def test_bind_compiler_skips_nl2sql(monkeypatch) -> None:
-    monkeypatch.setenv("RAG_BIND_SQL_COMPILER", "1")
+def test_bind_compiler_skips_nl2sql() -> None:
     retriever = BQRetriever(project_id="proj", nl2sql_enabled=True)
     bind = {
         "agg_production_country_year": {
@@ -201,6 +211,7 @@ def test_bind_compiler_skips_nl2sql(monkeypatch) -> None:
                     selected_tables=["agg_production_country_year"],
                     bind_contracts=bind,
                     query_intents=[{"goal": "fact_lookup"}],
+                    task_mode="fact_lookup",
                     plan_source="class_engine",
                 )
 

@@ -15,9 +15,9 @@ from sqlalchemy import text
 from sqlalchemy.dialects import postgresql
 
 from bq_partition_to_local import _load_dotenv
-from bq_pg_types import local_table_name, postgres_type
+from bq_pg_types import postgres_type
 from bq_schema_to_local_pg import quote_ident
-from bq_table_lists import LAYERS, dataset_id_for_layer, load_layer_tables
+from bq_table_lists import LAYERS, dataset_id_for_layer, load_layer_tables, local_table_name
 from engine_connector import get_engine
 
 LOCAL = Path(__file__).resolve().parents[1]
@@ -25,20 +25,21 @@ LOCAL = Path(__file__).resolve().parents[1]
 
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument('--dataset', choices=LAYERS, default='gold')
+    parser.add_argument('--dataset', choices=LAYERS, default='mart_dev')
     parser.add_argument('--log', type=Path, default=LOCAL / 'populate-last-run.log')
     args = parser.parse_args()
     _load_dotenv()
     project = os.environ['BQ_PROJECT']
     schema = dataset_id_for_layer(args.dataset)
     limit = int(os.environ.get('BQ_PARTITION_LIMIT', '0'))
+    partition_filter = os.environ.get('BQ_PARTITION_FILTER', '').strip()
     client = bigquery.Client(project=project)
     selected = load_layer_tables(args.dataset, client=client)
     imported = {name: int(n) for n, name in re.findall(
         r'^Wrote (\d+) rows to .+ table (.+)$', args.log.read_text(), re.MULTILINE)}
     engine = get_engine()
     report = {'verified_at_utc': datetime.now(timezone.utc).isoformat(),
-              'project': project, 'dataset': schema, 'row_limit': limit,
+              'project': project, 'dataset': schema, 'row_limit': limit, 'partition_filter': partition_filter,
               'discovered_objects': len(selected), 'objects': [], 'errors': []}
     with engine.connect() as conn:
         columns = {}
@@ -75,7 +76,7 @@ def main():
                     record['rows_reported_by_import'] = logged
                     if n != logged:
                         record['errors'].append('Local row count differs from the completed import log')
-                    if table.table_type == 'TABLE':
+                    if table.table_type == 'TABLE' and not partition_filter:
                         source_count = table.num_rows
                         record['source_rows_from_metadata'] = source_count
                         wanted = source_count if limit == 0 else min(source_count, limit)

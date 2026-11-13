@@ -89,6 +89,24 @@ def test_agri_activities_adds_prc_when_prices_mentioned() -> None:
     assert "PRC" in sp.secondary
 
 
+def test_coffee_price_outlook_plans_structured_price_companion() -> None:
+    q = (
+        "How are coffee prices in East Africa likely to be affected by current rainfall "
+        "patterns and global demand trends over the next planting season?"
+    )
+    dec = expand_regions_in_decomposition({"geography": []}, q)
+    bundles = match_intent_bundles(q, dec)
+    sp = compile_supervisor_plan(q, decomposition=dec, matched_bundles=bundles)
+    assert sp.classes == ("CLIM",)
+    assert "PRC" in sp.secondary
+
+    results = run_class_engines(q, supervisor_plan=sp, facets=dec)
+    price = next(result for result in results if result.class_code == "PRC")
+    assert price.status == "planned", price.caveats
+    assert price.table_id == "agg_prices_country_month"
+    assert "Coffee" in price.value_hits["product_name"]
+
+
 def test_generic_engine_fs_picks_food_security_table() -> None:
     from ml.rag.chatbot.class_engines.generic import GenericEngine
 

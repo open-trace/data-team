@@ -1,0 +1,25 @@
+CREATE SCHEMA IF NOT EXISTS "landing";
+CREATE TABLE IF NOT EXISTS "landing"."s4a_field_land_management_info" (
+  "boundedby" TEXT,
+  "plot_code" TEXT,
+  "country_code" TEXT,
+  "survey_date" TEXT,
+  "altitude" TEXT,
+  "longitude" TEXT,
+  "latitude" TEXT,
+  "tsu_id" TEXT,
+  "plot_id" TEXT,
+  "obstruct_lyr" TEXT,
+  "depth_restriction_cause" TEXT,
+  "country_name" TEXT,
+  "ploughing_sign" TEXT,
+  "ploughing_direction" TEXT,
+  "tillage_mode" TEXT,
+  "input_crop_residue" TEXT,
+  "input_green_manure" TEXT,
+  "input_animal_manure" TEXT,
+  "input_inorganic" TEXT,
+  "water_supply" TEXT,
+  "irrigation_mode" TEXT,
+  "irrigation_water_source" TEXT
+);

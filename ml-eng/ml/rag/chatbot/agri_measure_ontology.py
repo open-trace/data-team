@@ -9,10 +9,13 @@ from __future__ import annotations
 import os
 import re
 from dataclasses import dataclass, field
+from datetime import date
 from typing import Any, Literal
 
+from ml.rag.chatbot.agri_entities import query_has_crop_or_commodity
 from ml.rag.chatbot.mart_indicator_classes import class_for_query, facts_for_classes
 from ml.rag.chatbot.query_normalize import normalize_query_text
+from ml.rag.chatbot.time_resolver import resolve_relative_time, utc_today
 
 RecencyTier = Literal["live", "near_term", "historical_ok", "point_in_time"]
 TaskModeName = Literal[
@@ -62,13 +65,14 @@ MEASURES: dict[str, MeasureSpec] = {
             "tonnes produced",
             "produced",
             "produces",
+            "produce",
             "produce the most",
         ),
         corpus_domains=("Agricultural Production & Yield", "agriculture"),
         bq_index_domains=("production", "faostat"),
         candidate_tables=(
+            "agg_production_country_year",
             "fct_production",
-            "agg_production_annual",
         ),
         filter_hints="production_grain='physical'; filter metric/element; country_iso3; year; never mix with fct_yield",
         crop_required=True,
@@ -170,6 +174,11 @@ MEASURES: dict[str, MeasureSpec] = {
             "farm gate",
             "commodity price",
             "producer price",
+            "expensive",
+            "cheaper",
+            "cheapest",
+            "volatile",
+            "volatility",
         ),
         corpus_domains=(
             "Agricultural Economics",
@@ -612,7 +621,7 @@ MEASURES: dict[str, MeasureSpec] = {
         ),
         corpus_domains=("Agricultural Production & Yield",),
         bq_index_domains=("production",),
-        candidate_tables=("fct_production", "agg_production_annual"),
+        candidate_tables=("agg_production_country_year", "fct_production"),
         filter_hints="full African country panel export; inherits child measure tables when resolved",
         crop_required=False,
         geography_required=False,
@@ -693,6 +702,15 @@ _PRODUCTION_VOLUME_RE = re.compile(
     r"how much was produced|output in tonnes)\b",
     re.IGNORECASE,
 )
+_PRODUCE_CROP_RE = re.compile(r"\b(produc(?:e|es|tion))\b", re.IGNORECASE)
+
+
+def query_locks_production(query: str, decomposition: dict[str, Any] | None = None) -> bool:
+    """True when the user sentence is crop production (produce/produces/production + crop)."""
+    q = (query or "").strip()
+    if not q or not _PRODUCE_CROP_RE.search(q):
+        return False
+    return query_has_crop_or_commodity(q, decomposition)
 
 
 def _build_measure_bind_skip_cache() -> frozenset[str]:
@@ -1123,9 +1141,17 @@ def effective_crop_required(hit: MeasureHit) -> bool:
     return hit.measure.crop_required
 
 
-def resolve_recency_tier(query: str, hit: MeasureHit | None) -> RecencyTier:
+def resolve_recency_tier(
+    query: str,
+    hit: MeasureHit | None,
+    *,
+    reference_date: date | None = None,
+) -> RecencyTier:
     base: RecencyTier = hit.measure.recency_tier if hit else "historical_ok"
-    if _LIVE_RE.search(query or ""):
+    ref = reference_date or utc_today()
+    windows = resolve_relative_time(query or "", ref)
+    live = bool(windows and not windows[0].strict) or bool(_LIVE_RE.search(query or ""))
+    if live:
         if base in ("historical_ok", "point_in_time"):
             return "near_term"
         return "live" if base == "live" else "near_term"
@@ -1356,6 +1382,7 @@ __all__ = [
     "conflicting_entities_for_measure",
     "disambiguate_primary_measures",
     "entity_is_measure_noise",
+    "query_locks_production",
     "measure_bind_skip_tokens",
     "measure_own_tokens",
     "measures_are_confusable",

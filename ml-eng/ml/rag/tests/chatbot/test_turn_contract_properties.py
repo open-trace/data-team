@@ -6,14 +6,16 @@ from pathlib import Path
 import pytest
 import yaml
 
-from ml.rag.chatbot.agri_measure_ontology import resolve_measure
+from ml.rag.chatbot.agri_measure_ontology import MEASURES, MeasureHit, resolve_measure
 from ml.rag.chatbot.capability_registry import resolve_capability
 from ml.rag.chatbot.corpus_catalog import select_corpora
 from ml.rag.chatbot.facet_compiler import compile_turn_contract
+from ml.rag.chatbot.generation_plan import build_generation_plan
+from ml.rag.chatbot.ontology_context import sanitize_decomposition_for_bq
 from ml.rag.chatbot.query_decomposer import decompose_query
 from ml.rag.chatbot.task_mode import resolve_task_mode
 from ml.rag.chatbot.time_retrieval import time_kwargs_from_contract
-from ml.rag.chatbot.typed_pack import should_zero_pack, typed_context_pack
+from ml.rag.chatbot.typed_pack import typed_context_pack
 from ml.rag.chatbot.turn_contract import TimeSpec, TurnContract
 from ml.rag.tests.chatbot.fixtures.synthetic_facets import facet_to_query, synthetic_numeric_facets
 
@@ -58,14 +60,16 @@ def test_employment_served_academic_only() -> None:
     assert "policies" not in sel.active
 
 
-def test_employment_unsupported_grain_zero_vector() -> None:
+def test_employment_unsupported_grain_keeps_vector() -> None:
     contract = resolve_capability(
         TurnContract(measure_id="employment_share", geo_grain="admin2", job="list")
     )
-    assert contract.vector_policy == "none"
-    assert not contract.should_retrieve_vector()
-    items = [{"content": "Policy essay", "metadata": {"context_kind": "policy"}}]
-    assert typed_context_pack(items, contract) == []
+    assert contract.skip_bq is True
+    assert contract.skip_vector_retrieval is False
+    assert contract.should_retrieve_vector()
+    items = [{"content": "Academic essay", "metadata": {"context_kind": "academic"}}]
+    packed = typed_context_pack(items, contract).items
+    assert any("Academic essay" in str(i.get("content") or "") for i in packed)
 
 
 def test_companion_pack_includes_narrative_when_bq_present() -> None:
@@ -76,7 +80,7 @@ def test_companion_pack_includes_narrative_when_bq_present() -> None:
         {"content": "[Structured data] 1000 tonnes", "metadata": {"context_kind": "bigquery", "status": "ok"}},
         {"content": "Drought affected yields", "metadata": {"context_kind": "news"}},
     ]
-    packed = typed_context_pack(items, contract, bq_failed=False)
+    packed = typed_context_pack(items, contract).items
     assert any("[Structured data]" in str(i.get("content") or "") for i in packed)
     assert any("Drought" in str(i.get("content") or "") for i in packed)
 
@@ -87,7 +91,7 @@ def test_help_social_skip_retrieval_via_contract_job() -> None:
         assert sel.active == []
 
 
-def test_unsupported_grain_zero_pack() -> None:
+def test_unsupported_grain_keeps_documents() -> None:
     contract = TurnContract(
         measure_id="employment_share",
         geo_grain="admin2",
@@ -95,9 +99,8 @@ def test_unsupported_grain_zero_pack() -> None:
         job="list",
         vector_policy="none",
     )
-    items = [{"content": "[Structured data] x", "metadata": {"context_kind": "bigquery"}}]
-    assert should_zero_pack(contract)
-    assert typed_context_pack(items, contract) == []
+    items = [{"content": "District employment survey", "metadata": {"context_kind": "academic"}}]
+    assert typed_context_pack(items, contract).items == items
 
 
 def test_no_valid_sql_numeric_zero_pack() -> None:
@@ -111,21 +114,39 @@ def test_no_valid_sql_numeric_zero_pack() -> None:
         {"content": "News about rice", "metadata": {"context_kind": "news"}},
         {"content": "[Structured data] 1000", "metadata": {"context_kind": "bigquery", "status": "ok"}},
     ]
-    packed = typed_context_pack(items, contract, bq_failed=True)
+    packed = typed_context_pack(items, contract).items
     assert len(packed) >= 1
     assert any("News about rice" in it.get("content", "") for it in packed)
 
 
-def test_bq_timeout_zero_pack() -> None:
+def test_bq_timeout_keeps_documents() -> None:
     contract = TurnContract(measure_id="production", job="fact", serve_status="served")
     items = [
-        {
-            "content": "timeout",
-            "metadata": {"context_kind": "bigquery", "status": "bq_timeout"},
-        }
+        {"content": "timeout", "metadata": {"context_kind": "bigquery", "status": "bq_timeout"}},
+        {"content": "Maize harvest fell after drought", "metadata": {"context_kind": "news"}},
     ]
-    assert should_zero_pack(contract, context_items=items)
-    assert typed_context_pack(items, contract) == []
+    pack = typed_context_pack(items, contract)
+    assert [i["content"] for i in pack.items] == ["Maize harvest fell after drought"]
+    assert sum(pack.dropped.values()) == 1
+
+
+def test_document_budget_caps_documents() -> None:
+    contract = TurnContract(measure_id="production", job="fact", serve_status="served")
+    items = [{"content": f"report {n}", "metadata": {"context_kind": "news"}} for n in range(10)]
+    pack = typed_context_pack(items, contract)
+    assert len(pack.items) == 6
+    assert pack.dropped == {"document_budget": 4}
+
+
+def test_relevance_floor_drops_weak_documents() -> None:
+    contract = TurnContract(measure_id="production", job="fact", serve_status="served")
+    items = [
+        {"content": "on topic maize harvest", "score": 0.8, "metadata": {"context_kind": "news"}},
+        {"content": "unrelated page", "score": 0.01, "metadata": {"context_kind": "web"}},
+    ]
+    pack = typed_context_pack(items, contract)
+    assert [i["content"] for i in pack.items] == ["on topic maize harvest"]
+    assert pack.dropped.get("relevance_floor") == 1
 
 
 def test_disease_prevalence_fallback_only() -> None:
@@ -160,7 +181,7 @@ def test_hard_filter_time_kwargs() -> None:
     assert kw["published_at_from"] == "2024-01-01"
 
 
-def test_hard_filter_drops_out_of_window_vector() -> None:
+def test_out_of_window_documents_rank_last() -> None:
     contract = TurnContract(
         measure_id="production",
         job="fact",
@@ -169,13 +190,16 @@ def test_hard_filter_drops_out_of_window_vector() -> None:
         time_spec=TimeSpec(start="2024-01-01", end="2024-12-31", hard_filter=True),
     )
     items = [
-        {"content": "[Structured data] 100", "metadata": {"context_kind": "bigquery"}},
         {"content": "Old report from 2006", "metadata": {"context_kind": "news", "year": "2006"}},
+        {"content": "Undated drought brief", "metadata": {"context_kind": "news"}},
         {"content": "Recent 2024 update", "metadata": {"context_kind": "news", "year": "2024"}},
     ]
-    packed = typed_context_pack(items, contract, bq_failed=False)
-    assert any("2024" in str(i.get("content") or "") for i in packed)
-    assert not any("2006" in str(i.get("content") or "") for i in packed)
+    packed = typed_context_pack(items, contract).items
+    assert [i["content"] for i in packed] == [
+        "Recent 2024 update",
+        "Undated drought brief",
+        "Old report from 2006",
+    ]
 
 
 @pytest.mark.parametrize("facet", list(synthetic_numeric_facets(limit=50)))
@@ -207,6 +231,73 @@ def test_employment_sex_breakdown_compiles() -> None:
     assert contract.serve_status == "served"
     assert contract.sql_plan.get("template") == "employment_share_by_sex"
     assert contract.vector_policy == "companion"
+
+
+def test_yam_africa_ngo_declared_ipc_locks_production() -> None:
+    query = "how many countries produce yam in africa"
+    dec = {
+        "entities": ["food_security_ipc", "yam", "Africa", "nutrition"],
+        "domains": ["nutrition", "markets"],
+        "primary_measures": ["food_security_ipc"],
+        "geo_scope": "continent",
+        "africa_panel": True,
+        "job": "list",
+    }
+    ipc_hit = MeasureHit(MEASURES["food_security_ipc"], score=20, matched_alias="food_security_ipc")
+    cleaned = sanitize_decomposition_for_bq(dec, primary_measures=["food_security_ipc"], query=query)
+    assert cleaned["primary_measures"][0] == "production"
+    assert "food_security_ipc" not in {str(e).lower() for e in (cleaned.get("entities") or [])}
+    turn = resolve_capability(
+        compile_turn_contract(query, cleaned, measure_hit=ipc_hit, task_mode_hint="fact_lookup")
+    )
+    assert turn.measure_id == "production"
+    assert turn.serve_status == "served"
+    assert turn.skip_vector_retrieval is False
+
+
+def test_unsupported_measure_keeps_narrative_for_generate() -> None:
+    contract = TurnContract(
+        measure_id="food_security_ipc",
+        geo_grain="africa",
+        job="list",
+        serve_status="unsupported_measure",
+        skip_bq=True,
+        skip_vector_retrieval=False,
+        vector_policy="companion",
+    )
+    items = [
+        {
+            "content": "Yam is grown in West and Central Africa.",
+            "metadata": {"context_kind": "academic"},
+        }
+    ]
+    assert contract.should_retrieve_vector()
+    packed = typed_context_pack(items, contract).items
+    assert packed
+    plan = build_generation_plan(
+        "how many countries produce yam in africa",
+        reranked_context=packed,
+        turn_contract=contract.to_dict(),
+        task_mode="fact_lookup",
+    )
+    assert plan.answer_shape != "gap_ack"
+
+
+def test_producer_prices_not_production() -> None:
+    query = "producer prices of maize in Kenya"
+    dec = {"entities": ["maize", "Kenya"], "primary_measures": ["market_price"]}
+    turn = compile_turn_contract(query, dec, task_mode_hint="fact_lookup")
+    assert turn.measure_id == "market_price"
+
+
+def test_should_retrieve_vector_numeric_policy_none() -> None:
+    contract = TurnContract(
+        measure_id="production",
+        job="fact",
+        serve_status="served",
+        vector_policy="none",
+    )
+    assert contract.should_retrieve_vector() is True
 
 
 def test_gold_traces_smoke() -> None:

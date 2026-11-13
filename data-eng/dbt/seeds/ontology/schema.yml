@@ -1,0 +1,66 @@
+version: 2
+# Place these files in data-eng/dbt/seeds/ontology/ and run: dbt seed --select ontology
+seeds:
+  - name: ontology_entities
+    description: OpenTrace agricultural ontology - one row per concept (built by ontology build/build_ontology.py)
+    config:
+      column_types: {ontology_id: string, entity_type: string, canonical_name_en: string, scientific_name: string, parent_id: string, attributes: string, primary_source: string}
+    columns:
+      - name: ontology_id
+        tests: [unique, not_null]
+      - name: entity_type
+        tests:
+          - not_null
+          - accepted_values:
+              values: [crop, crop_group, variety, animal, animal_group, breed, organism, product, by_product, commodity, commodity_aggregate, trade_commodity, input, equipment, service, process, farming_system, disease_pest, measure, unit, season, value_chain_stage, indicator_class]
+      - name: canonical_name_en
+        tests: [not_null]
+      - name: parent_id
+        tests:
+          - relationships: {to: ref('ontology_entities'), field: ontology_id}
+  - name: ontology_aliases
+    config:
+      column_types: {ontology_id: string, alias: string, language: string, country_iso3: string, alias_type: string, source: string, review_status: string}
+    columns:
+      - name: ontology_id
+        tests: [not_null, {relationships: {to: ref('ontology_entities'), field: ontology_id}}]
+      - name: alias
+        tests: [not_null]
+      - name: language
+        tests: [not_null]
+      - name: alias_type
+        tests:
+          - accepted_values: {values: [preferred, synonym, local, scientific, abbrev, plural, misspelling]}
+  - name: ontology_relations
+    columns:
+      - name: subject_id
+        tests: [not_null, {relationships: {to: ref('ontology_entities'), field: ontology_id}}]
+      - name: object_id
+        tests: [not_null, {relationships: {to: ref('ontology_entities'), field: ontology_id}}]
+      - name: predicate
+        tests:
+          - accepted_values: {values: [broader, derived_from, affects, same_commodity_as, has_product, product_of, has_pest, pest_of, has_disease, causes, common_name, scientific_name_of, part_of, has_component, input_of, used_as, host]}
+  - name: ontology_codes
+    config:
+      column_types: {ontology_id: string, scheme: string, code: string, source: string}
+    columns:
+      - name: ontology_id
+        tests: [not_null, {relationships: {to: ref('ontology_entities'), field: ontology_id}}]
+      - name: scheme
+        tests: [{accepted_values: {values: [faostat_item, cpc, hs, agrovoc, wikidata, gbif, eppo, external_match]}}]
+  - name: ontology_warehouse_map
+    config:
+      column_types: {ontology_id: string, bq_table: string, column: string, value: string, match_type: string, provenance: string}
+    columns:
+      - name: ontology_id
+        tests: [not_null, {relationships: {to: ref('ontology_entities'), field: ontology_id}}]
+  - name: ontology_value_map
+    description: "v3: every mart_value_index enum value (table_name.column_name = stored_value) -> ontology entity_id (OT:GEO:* for countries, OT:MV:* for warehouse-native values)."
+    columns:
+      - name: entity_id
+        tests: [not_null]
+      - name: table_name
+      - name: column_name
+      - name: stored_value
+      - name: match_type
+      - name: col_class

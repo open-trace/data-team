@@ -25,8 +25,10 @@ from ml.rag.chatbot.bq_sql_validate import (
     inject_bind_contract_filters,
     inject_time_bounds,
     max_bytes_billed_for_source,
+    referenced_mart_tables,
     sql_retry_enabled,
     validate_dry_run_bytes,
+    validate_literals_against_value_map,
     validate_required_metric_filters,
     validate_semantic_coherence,
     validate_sql_column_allowlist,
@@ -35,7 +37,20 @@ from ml.rag.chatbot.bq_sql_validate import (
     validate_sql_value_samples,
 )
 from ml.rag.chatbot.query_decomposer import _NON_COUNTRY_GEO
-from ml.rag.chatbot.bq_table_schema_yaml import crop_entities_for_bind, join_fragments_for_tables
+from ml.rag.chatbot.bq_table_schema_yaml import (
+    crop_entities_for_bind,
+    join_fragments_for_tables,
+    with_column_units,
+)
+from ml.rag.chatbot.compile_sql_from_bind import (
+    RESULT_ROW_BUDGET,
+    bind_contract_for_table,
+    compile_operation,
+)
+from ml.rag.chatbot.geo_iso3 import iso3_to_canonical_name, name_to_iso3
+from ml.rag.chatbot.bq_execute_state import NON_EVIDENCE_ROW_STATUSES, evidence_id_for_sql
+from ml.rag.chatbot.mart_coverage import clamp_year, route_tables
+from ml.rag.chatbot.result_shape import check_result_shape
 from ml.rag.llm_chat import llm_chat_complete, llm_default_timeout_s, llm_model_id
 from ml.rag.local_env import load_rag_dotenv
 from ml.rag.observability import (
@@ -111,10 +126,7 @@ def _is_mart_table_id(table_id: str) -> bool:
 
 def _load_dotenv() -> None:
     """Delegate to the single RAG env loader. Safe to call multiple times."""
-    try:
-        load_rag_dotenv(_REPO_ROOT)
-    except Exception:
-        pass
+    load_rag_dotenv(_REPO_ROOT)
 
 
 def _get_datasets_config() -> dict[str, str]:
@@ -284,6 +296,40 @@ def _format_intent_block(
     return "\n".join(lines)
 
 
+def _format_ontology_value_literals(
+    ontology_value_filters: dict[str, list[str]] | None,
+    *,
+    max_lines: int = 40,
+    max_values_per_col: int = 16,
+    budget_bytes: int | None = None,
+) -> str:
+    """ALLOWED FILTER LITERALS block for NL2SQL (capped; counts against hint budget)."""
+    if not ontology_value_filters:
+        return ""
+    lines: list[str] = ["ALLOWED FILTER LITERALS (use exact stored strings for these columns):"]
+    used = len(lines[0].encode("utf-8"))
+    cap = budget_bytes if budget_bytes is not None else hint_max_bytes()
+    for key in sorted(ontology_value_filters.keys()):
+        if len(lines) - 1 >= max_lines:
+            lines.append("[ontology_literals_truncated=true]")
+            break
+        vals = [str(v) for v in (ontology_value_filters.get(key) or []) if str(v).strip()]
+        if not vals:
+            continue
+        shown = vals[:max_values_per_col]
+        suffix = "" if len(vals) <= max_values_per_col else f" …(+{len(vals) - max_values_per_col})"
+        line = f"- {key}: {', '.join(repr(v) for v in shown)}{suffix}"
+        cost = len(line.encode("utf-8")) + 1
+        if used + cost > cap:
+            lines.append("[ontology_literals_truncated=true]")
+            break
+        lines.append(line)
+        used += cost
+    if len(lines) <= 1:
+        return ""
+    return "\n".join(lines)
+
+
 def _format_query_constraints(
     *,
     geo_country: str | None,
@@ -297,6 +343,8 @@ def _format_query_constraints(
     query_intents: list[Any] | None = None,
     primary_measures: list[str] | None = None,
     task_mode: str = "",
+    ontology_value_filters: dict[str, list[str]] | None = None,
+    hint_budget_bytes: int | None = None,
 ) -> str:
     """Structured filters from query decomposition (must appear in generated SQL)."""
     lines: list[str] = []
@@ -371,9 +419,19 @@ def _format_query_constraints(
         continental = _continental_scope_hint(query, entities)
         if continental:
             lines.append(continental)
-    if not lines:
-        return ""
-    return "Query constraints from decomposition (MUST honor in WHERE / GROUP BY):\n" + "\n".join(lines)
+    base = ""
+    if lines:
+        base = "Query constraints from decomposition (MUST honor in WHERE / GROUP BY):\n" + "\n".join(lines)
+    used = len(base.encode("utf-8")) if base else 0
+    budget = hint_budget_bytes if hint_budget_bytes is not None else hint_max_bytes()
+    remain = max(0, budget - used)
+    lit_block = _format_ontology_value_literals(
+        ontology_value_filters,
+        budget_bytes=remain if remain > 64 else 0,
+    )
+    if base and lit_block:
+        return base + "\n\n" + lit_block
+    return base or lit_block
 
 
 def _extract_single_select(raw: str) -> str:
@@ -521,6 +579,8 @@ class BQRetriever(BaseRetriever):
         self.last_sql_source: str | None = None
         self.last_bq_execute_ms: float | None = None
         self.last_bq_nl2sql_ms: float | None = None
+        self.last_ontology_value_filters: dict[str, list[str]] | None = None
+        self.last_ontology_literal_notes: list[str] = []
 
     def _record_nl2sql_raw(self, raw: str | None, *, parsed_ok: bool) -> None:
         """Keep short snippets of failed/empty NL2SQL generations for inspector debug."""
@@ -537,6 +597,15 @@ class BQRetriever(BaseRetriever):
     def _get_client(self):
         if self._client is None:
             from google.cloud import bigquery
+
+            credential_path = os.environ.get("GOOGLE_APPLICATION_CREDENTIALS", "").strip()
+            logger.info(
+                "Initializing BigQuery client: project_configured=%s "
+                "credentials_path_configured=%s credentials_base64_configured=%s",
+                bool(self.project_id),
+                bool(credential_path),
+                bool(os.environ.get("GOOGLE_APPLICATION_CREDENTIALS_BASE64", "").strip()),
+            )
             self._client = bigquery.Client(project=self.project_id)
         return self._client
 
@@ -620,8 +689,10 @@ class BQRetriever(BaseRetriever):
         query_intents: list[Any] | None = None,
         primary_measures: list[str] | None = None,
         task_mode: str = "",
+        ontology_value_filters: dict[str, list[str]] | None = None,
     ) -> list[dict[str, str]]:
         schema_text = self._schema_for_nl2sql(table_hints)
+        total_budget = hint_max_bytes()
         constraints_block = _format_query_constraints(
             geo_country=geo_country,
             geo_countries=geo_countries,
@@ -634,21 +705,27 @@ class BQRetriever(BaseRetriever):
             query_intents=query_intents,
             primary_measures=primary_measures,
             task_mode=task_mode,
+            ontology_value_filters=ontology_value_filters,
+            hint_budget_bytes=total_budget,
         )
+        constraints_bytes = len(constraints_block.encode("utf-8")) if constraints_block else 0
+        hints_budget = max(0, total_budget - constraints_bytes)
         hints_block = ""
         hints_truncated = False
         if table_hints:
             cleaned = [str(h).strip() for h in table_hints if str(h).strip()]
             if cleaned:
-                total_budget = hint_max_bytes()
-                per_hint_cap = max(400, total_budget // max(1, len(cleaned)))
+                per_hint_cap = max(400, hints_budget // max(1, len(cleaned))) if hints_budget else 0
                 packed: list[str] = []
                 used = 0
                 for h in cleaned:
+                    if hints_budget <= 0:
+                        hints_truncated = True
+                        break
                     frag, was_cut = truncate_utf8(h, per_hint_cap)
                     cost = len(frag.encode("utf-8"))
-                    if used + cost > total_budget:
-                        remain = total_budget - used
+                    if used + cost > hints_budget:
+                        remain = hints_budget - used
                         if remain > 64:
                             frag, _ = truncate_utf8(h, remain)
                             packed.append(f"- {frag}")
@@ -771,6 +848,7 @@ class BQRetriever(BaseRetriever):
             query_intents=query_intents,
             primary_measures=primary_measures,
             task_mode=task_mode,
+            ontology_value_filters=self.last_ontology_value_filters,
         )
         raw = _call_llama_for_sql(messages)
         sql = _extract_single_select(raw)
@@ -804,6 +882,7 @@ class BQRetriever(BaseRetriever):
         decomposition: dict[str, Any] | None = None,
         bind_contracts: dict[str, Any] | None = None,
         query_intents: list[Any] | None = None,
+        ontology_value_filters: dict[str, list[str]] | None = None,
     ) -> tuple[str | None, str | None]:
         """
         Validate SQL, enforce table allowlist, dry-run, and optionally retry once.
@@ -815,9 +894,12 @@ class BQRetriever(BaseRetriever):
             return None, "validation_failed"
 
         trusted = (sql_source or "").strip().lower() == "engine"
+        _source = (sql_source or "").strip().lower()
+        code_owned = trusted or _source == "template"
+        filters = ontology_value_filters if ontology_value_filters is not None else self.last_ontology_value_filters
 
         def _post_checks(sql: str) -> str | None:
-            allow_err = validate_sql_table_allowlist(sql, selected_tables)
+            allow_err = None if _source == "template" else validate_sql_table_allowlist(sql, selected_tables)
             if allow_err:
                 return allow_err
             col_err = validate_sql_column_allowlist(sql, selected_tables or None)
@@ -902,10 +984,21 @@ class BQRetriever(BaseRetriever):
                         sql = revalidated
             return sql
 
-        if not trusted:
+        if not code_owned:
             validated = _maybe_inject(validated)
+        if filters and _source != "template":
+            rewritten, lit_notes = validate_literals_against_value_map(validated, filters)
+            if lit_notes:
+                self.last_ontology_literal_notes.extend(lit_notes)
+                logger.info("BQ ontology literal notes: %s", "; ".join(lit_notes[:8]))
+            if any(n.startswith("strict_reject:") for n in lit_notes):
+                return None, "; ".join(n for n in lit_notes if n.startswith("strict_reject:"))
+            if rewritten and rewritten != validated:
+                revalidated = _validate_sql(rewritten, allowed_datasets, limit)
+                if revalidated is not None:
+                    validated = revalidated
         check_err = _post_checks(validated)
-        if check_err and sql_retry_enabled() and not trusted:
+        if check_err and sql_retry_enabled() and not code_owned:
             allowed_list = ", ".join(sorted(selected_tables)) or "(none)"
             bind_block = ""
             if bind_contracts:
@@ -1024,6 +1117,7 @@ class BQRetriever(BaseRetriever):
                     query_intents=query_intents,
                     primary_measures=primary_measures,
                     task_mode=task_mode,
+                    ontology_value_filters=self.last_ontology_value_filters,
                 )
                 raw_batch = _call_llama_for_sql(messages)
                 parsed = _parse_sql_queries(raw_batch, max_queries)
@@ -1159,6 +1253,8 @@ class BQRetriever(BaseRetriever):
         self.last_sql_source = None
         self.last_bq_execute_ms = None
         self.last_bq_nl2sql_ms = None
+        self.last_ontology_value_filters = None
+        self.last_ontology_literal_notes = []
         if not self.project_id:
             update_current_span_metadata({"status": "no_project", "row_count": 0})
             return [
@@ -1213,6 +1309,38 @@ class BQRetriever(BaseRetriever):
                 tid = str(item).strip().split(".")[-1].lower()
                 if _is_mart_table_id(tid):
                     selected_tables.add(tid)
+        iso3 = name_to_iso3(geo_country) if geo_country else None
+        if not iso3 and geo_countries and len(geo_countries) == 1:
+            iso3 = name_to_iso3(geo_countries[0])
+        if selected_tables:
+            selected_tables = set(route_tables(selected_tables, iso3))
+        if iso3 and time_end and len(time_end) >= 4 and time_end[:4].isdigit():
+            first = next(iter(selected_tables), "")
+            capped = clamp_year(first, iso3, int(time_end[:4]))
+            if capped is not None and capped < int(time_end[:4]):
+                time_end = f"{capped}-12-31"
+
+        raw_ovf = kwargs.get("ontology_value_filters")
+        ontology_value_filters: dict[str, list[str]] | None = None
+        if isinstance(raw_ovf, dict) and raw_ovf:
+            kept: dict[str, list[str]] = {}
+            for key, vals in raw_ovf.items():
+                key_s = str(key).strip()
+                if "." not in key_s:
+                    continue
+                table = key_s.split(".", 1)[0].strip().lower()
+                if selected_tables and table not in selected_tables:
+                    continue
+                if isinstance(vals, (list, tuple)):
+                    cleaned_vals = [str(v) for v in vals if str(v).strip()]
+                elif vals is None:
+                    cleaned_vals = []
+                else:
+                    cleaned_vals = [str(vals)]
+                if cleaned_vals:
+                    kept[key_s] = cleaned_vals
+            ontology_value_filters = kept or None
+        self.last_ontology_value_filters = ontology_value_filters
 
         raw_intents = kwargs.get("query_intents")
         query_intents: list[Any] | None = raw_intents if isinstance(raw_intents, list) else None
@@ -1241,6 +1369,8 @@ class BQRetriever(BaseRetriever):
         bind_contracts: dict[str, Any] | None = (
             bind_contracts_raw if isinstance(bind_contracts_raw, dict) and bind_contracts_raw else None
         )
+        contract_by_sql: dict[str, dict[str, Any]] = {}
+        bind_refusals: list[dict[str, Any]] = []
 
         if (
             not heavy_path
@@ -1318,7 +1448,8 @@ class BQRetriever(BaseRetriever):
                 return []
             template_meta = hit
             sql_source = "template"
-            return [str(hit["sql"])]
+            sql = str(hit.get("sql") or "").strip()
+            return [sql] if sql else []
 
         planned_path = (
             str(kwargs.get("retrieve_mode") or "").strip().lower() == "planned"
@@ -1327,35 +1458,73 @@ class BQRetriever(BaseRetriever):
             or str(kwargs.get("plan_source") or "").strip() == "class_engine"
         )
 
+        price_turn = bool(selected_tables and set(selected_tables) & {"fct_prices", "agg_prices_country_month"})
         if not engine_execute_only and not sql_queries and not explicit_sql:
-            if planned_path:
-                from ml.rag.chatbot.compile_sql_from_bind import (
-                    bind_sql_compiler_enabled,
-                    compile_sql_from_bind,
-                )
-
+            price_sqls = _try_template_sql() if planned_path and price_turn else []
+            if price_sqls or (template_meta or {}).get("template") == "price_gap":
+                sql_queries = price_sqls
+            elif planned_path:
+                template_meta = None
+                sql_source = "none"
                 bind_sqls: list[str] = []
-                if bind_sql_compiler_enabled() and bind_contracts:
-                    row_limit = 1 if fast_fact else rows_per_query
+                if bind_contracts:
+                    shape_job = str(kwargs.get("contract_job") or "")
+                    shape_pattern = ""
+                    raw_breakdown = kwargs.get("breakdown")
+                    breakdown = (
+                        [str(x) for x in raw_breakdown if str(x).strip()]
+                        if isinstance(raw_breakdown, (list, tuple))
+                        else []
+                    )
+                    if isinstance(decomp, dict):
+                        shape_job = shape_job or str(decomp.get("job") or decomp.get("shape") or "")
+                        shape_pattern = str(decomp.get("pattern") or "")
+                    if isinstance(query_intents, list):
+                        for intent in query_intents:
+                            if not isinstance(intent, dict):
+                                continue
+                            if not shape_pattern and intent.get("pattern"):
+                                shape_pattern = str(intent.get("pattern") or "")
+                            if not shape_job and intent.get("shape"):
+                                shape_job = str(intent.get("shape") or "")
                     for tid in sorted(selected_tables):
-                        raw_bind = (bind_contracts or {}).get(tid)
-                        if not isinstance(raw_bind, dict):
+                        raw_bind = bind_contract_for_table(bind_contracts, tid)
+                        if raw_bind is None:
                             continue
-                        compiled = compile_sql_from_bind(
+                        compiled = compile_operation(
                             raw_bind,
                             project_id=self.project_id,
                             dataset=ds_name,
-                            limit=row_limit,
+                            limit=1,
+                            job=shape_job,
+                            pattern=shape_pattern,
+                            breakdown=breakdown,
                         )
-                        if compiled:
-                            bind_sqls.append(compiled)
+                        if compiled is None:
+                            continue
+                        if compiled.sql:
+                            bind_sqls.append(compiled.sql)
+                            contract_by_sql[compiled.sql] = raw_bind
+                        elif compiled.refusal.startswith(compiled.operation):
+                            bind_refusals.append(
+                                {
+                                    "content": f"[BQ validation failed: {compiled.refusal}]",
+                                    "source": "bigquery",
+                                    "metadata": {
+                                        "status": "validation_failed",
+                                        "prep_error": compiled.refusal,
+                                        "sql_source": "bind_compiler",
+                                        "table_id": compiled.table_id,
+                                        "operation": compiled.operation,
+                                    },
+                                }
+                            )
                 if bind_sqls:
                     sql_source = "bind_compiler"
                     sql_queries = bind_sqls
                 else:
                     sql_source = "nl2sql"
-                    nl2sql_sqls: list[str] = []
-                    need_nl2sql = self.nl2sql_enabled and not contract_sql_only
+                    need_nl2sql = self.nl2sql_enabled and not contract_sql_only and not bind_refusals
                     if need_nl2sql:
                         nl_tables = sorted(selected_tables) if selected_tables else None
                         prev_max = os.environ.get("RAG_BQ_MAX_SQL_QUERIES")
@@ -1389,6 +1558,8 @@ class BQRetriever(BaseRetriever):
                 template_sqls = _try_template_sql()
                 if template_sqls:
                     sql_queries = template_sqls
+                elif (template_meta or {}).get("template") == "price_gap":
+                    pass
                 else:
                     pattern_cap = 1 if fast_fact else None
                     pattern_hits = try_sql_patterns(
@@ -1519,6 +1690,23 @@ class BQRetriever(BaseRetriever):
         else:
             sql_source = "none"
 
+        if not sql_queries and (template_meta or {}).get("template") == "price_gap":
+            self.last_sql_source = "template"
+            self.last_bq_execute_ms = 0.0
+            return [
+                {
+                    "content": str(template_meta.get("gap_message") or ""),
+                    "source": "bigquery",
+                    "metadata": {
+                        "status": "price_gap",
+                        "sql_source": "template",
+                        "template": "price_gap",
+                        "table_id": "fct_prices",
+                        "countries": template_meta.get("countries") or [],
+                    },
+                }
+            ]
+
         if not sql_queries:
             reason = (
                 "NL2SQL disabled and no explicit SQL provided"
@@ -1547,6 +1735,7 @@ class BQRetriever(BaseRetriever):
             if self.last_bq_nl2sql_ms is None:
                 self.last_bq_nl2sql_ms = 0.0
             return [
+                *bind_refusals,
                 _bq_diagnostic_item(
                     status="no_valid_sql",
                     message=reason,
@@ -1560,7 +1749,7 @@ class BQRetriever(BaseRetriever):
         max_queries = max(1, int(os.environ.get("RAG_BQ_MAX_SQL_QUERIES", "10") or 10))
         allowed = set(self.datasets_config.values())
         budget = top_k or self.max_rows
-        items: list[dict[str, Any]] = []
+        items: list[dict[str, Any]] = list(bind_refusals)
         any_usable_rows = False
         prepared_ok = False
         queries_left = max_queries
@@ -1579,6 +1768,7 @@ class BQRetriever(BaseRetriever):
             limit: int
             slot_id: str
             batch_size: int
+            contract: dict[str, Any] | None = None
 
         def _run_sql_batch(
             batch: list[str],
@@ -1634,9 +1824,11 @@ class BQRetriever(BaseRetriever):
                     telem = _job_telemetry(row_count=0, status="timeout" if is_timeout else "execution_error")
                     if is_timeout:
                         logger.warning(
-                            "BQ job timeout sql#%d source=%s after %.1fs",
+                            "BQ execution status=timeout sql_index=%d source=%s "
+                            "job_id_recorded=%s after=%.1fs",
                             idx + 1,
                             source,
+                            bool(telem.get("job_id")),
                             _bq_job_timeout_s(validated),
                         )
                         exec_items.append(
@@ -1657,10 +1849,13 @@ class BQRetriever(BaseRetriever):
                         )
                         return exec_items, True
                     logger.warning(
-                        "BQ execution failed for validated SQL #%d: %s (sql: %s)",
+                        "BQ execution status=execution_error sql_index=%d source=%s "
+                        "job_id_recorded=%s error_type=%s error=%s",
                         idx + 1,
+                        source,
+                        bool(telem.get("job_id")),
+                        type(exc).__name__,
                         str(exc)[:200],
-                        validated[:200],
                     )
                     exec_meta: dict[str, Any] = {
                         "sql": validated,
@@ -1737,9 +1932,58 @@ class BQRetriever(BaseRetriever):
                                     str(exc)[:200],
                                 )
 
-                telem = _job_telemetry(row_count=min(len(rows), limit), status="ok")
+                if not rows:
+                    telem = _job_telemetry(row_count=0, status="empty_result")
+                    reason = "SQL executed successfully but returned no rows"
+                    exec_items.append(
+                        {
+                            "content": f"[BQ empty_result: {reason}]",
+                            "source": "bigquery",
+                            "metadata": {
+                                "sql": validated,
+                                "sql_index": idx + 1,
+                                "sql_count": batch_size,
+                                "status": "empty_result",
+                                "prep_error": f"{reason}; model={_nl2sql_model_id()}",
+                                "sql_source": source,
+                                "nl2sql_model": _nl2sql_model_id(),
+                                **telem,
+                            },
+                        }
+                    )
+                    return exec_items, True
+
+                if source == "bind_compiler" and len(rows) > RESULT_ROW_BUDGET:
+                    telem = _job_telemetry(row_count=len(rows), status="result_too_large")
+                    reason = f"result exceeds {RESULT_ROW_BUDGET} rows; narrow members, period or grain"
+                    exec_items.append(
+                        {
+                            "content": f"[BQ result_too_large: {reason}]",
+                            "source": "bigquery",
+                            "metadata": {
+                                "sql": validated,
+                                "sql_index": idx + 1,
+                                "sql_count": batch_size,
+                                "status": "result_too_large",
+                                "prep_error": reason,
+                                "sql_source": source,
+                                **telem,
+                            },
+                        }
+                    )
+                    return exec_items, True
+
+                shape = check_result_shape([dict(r) for r in rows], work.contract)
+                status = "ok" if shape.complete else "partial"
+                telem = _job_telemetry(row_count=min(len(rows), limit), status=status)
+                if not shape.complete:
+                    telem["result_shape"] = shape.to_dict()
+                read_tables = referenced_mart_tables(validated)
                 for row in rows[:limit]:
-                    d = dict(row)
+                    d = with_column_units(dict(row), read_tables)
+                    if d.get("country_iso3") and not d.get("country_name"):
+                        if name := iso3_to_canonical_name(str(d["country_iso3"])):
+                            d["country_name"] = name
                     row_meta = project_bq_row_acf(
                         {
                             **d,
@@ -1748,19 +1992,24 @@ class BQRetriever(BaseRetriever):
                             "sql_count": batch_size,
                             "sql_source": source,
                             "nl2sql_model": _nl2sql_model_id(),
+                            "evidence_id": evidence_id_for_sql(validated),
                             **telem,
                         }
                     )
                     if slot_id:
                         row_meta["subquestion_id"] = slot_id
                         row_meta["slot_id"] = slot_id
+                    content = str(d)
                     if template_meta and source == "template":
                         row_meta["template"] = template_meta.get("template")
+                        if template_meta.get("widened"):
+                            row_meta["coverage_note"] = template_meta["widened"]
+                            content = f"{content} (note: {template_meta['widened']})"
                     if pattern_meta and source == "pattern":
                         row_meta["pattern"] = pattern_meta.get("pattern")
                     exec_items.append(
                         {
-                            "content": str(d),
+                            "content": content,
                             "source": "bigquery",
                             "metadata": row_meta,
                         }
@@ -1774,7 +2023,7 @@ class BQRetriever(BaseRetriever):
                 for entry in exec_items:
                     meta = entry.get("metadata") if isinstance(entry.get("metadata"), dict) else {}
                     status = str(meta.get("status") or "") if isinstance(meta, dict) else ""
-                    if status in ("timeout", "execution_error", "validation_failed"):
+                    if status in NON_EVIDENCE_ROW_STATUSES:
                         items.append(entry)
                         continue
                     if budget <= 0:
@@ -1786,7 +2035,11 @@ class BQRetriever(BaseRetriever):
                         break
 
             prepared: list[_PreparedWork] = []
-            batch_row_limit = min(rows_per_query, budget) if budget > 0 else rows_per_query
+            if source == "bind_compiler":
+                budget = max(budget, RESULT_ROW_BUDGET)
+                batch_row_limit = RESULT_ROW_BUDGET + 1
+            else:
+                batch_row_limit = min(rows_per_query, budget) if budget > 0 else rows_per_query
             for idx, raw_sql in enumerate(batch):
                 if queries_left <= 0:
                     break
@@ -1875,6 +2128,7 @@ class BQRetriever(BaseRetriever):
                         limit=limit,
                         slot_id=slot_id,
                         batch_size=len(batch),
+                        contract=contract_by_sql.get(raw_sql),
                     )
                 )
 
@@ -2001,4 +2255,10 @@ class BQRetriever(BaseRetriever):
         self.last_bq_execute_ms = trace_elapsed_ms(execute_t0)
         if self.last_bq_nl2sql_ms is None:
             self.last_bq_nl2sql_ms = 0.0
+        if self.last_ontology_literal_notes:
+            notes = list(self.last_ontology_literal_notes)
+            for item in items:
+                meta = item.get("metadata")
+                if isinstance(meta, dict):
+                    meta.setdefault("ontology_literal_notes", notes)
         return items

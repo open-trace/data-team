@@ -17,6 +17,8 @@ from __future__ import annotations
 
 import os
 import re
+import time
+import unicodedata
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
@@ -39,9 +41,9 @@ from ml.rag.mart_yaml_contract import dim_expose_columns
 _DEFAULT_DIR = Path(__file__).resolve().parents[1] / "bq_tables_yaml_files"
 _DEFAULT_MART_DIR = Path(__file__).resolve().parents[1] / "bq_mart_tables_yaml_files"
 
-# Cache: (cache_key, index)
-_cache: tuple[tuple[Any, ...], dict[str, dict[str, Any]]] | None = None
-_mart_cache: tuple[tuple[Any, ...], dict[str, dict[str, Any]]] | None = None
+_INDEX_RECHECK_S = 2.0
+# directory -> (file signature, last check, index)
+_index_cache: dict[str, tuple[tuple[tuple[str, int], ...], float, dict[str, dict[str, Any]]]] = {}
 
 
 def _yaml_dir() -> Path:
@@ -104,31 +106,32 @@ def _index_yaml_files(directory: Path) -> dict[str, dict[str, Any]]:
     return out
 
 
-def _build_index() -> dict[str, dict[str, Any]]:
-    """Load all YAML files; cache by (dir_path, dir_mtime, sorted file mtimes)."""
-    global _cache
-    directory = _yaml_dir()
+def _file_signature(directory: Path) -> tuple[tuple[str, int], ...]:
     try:
-        dir_mtime = directory.stat().st_mtime_ns if directory.is_dir() else None
+        return tuple(sorted((p.name, p.stat().st_mtime_ns) for p in directory.glob("*.yml")))
     except OSError:
-        dir_mtime = None
-    file_sig: tuple[tuple[str, int], ...] = tuple()
-    if dir_mtime is not None and directory.is_dir():
-        try:
-            file_sig = tuple(
-                sorted(
-                    (p.name, p.stat().st_mtime_ns)
-                    for p in directory.glob("*.yml")
-                )
-            )
-        except OSError:
-            file_sig = tuple()
-    cache_key = ("v1", str(directory), dir_mtime, file_sig)
-    if _cache is not None and _cache[0] == cache_key:
-        return _cache[1]
+        return tuple()
+
+
+def _cached_index(directory: Path) -> dict[str, dict[str, Any]]:
+    """YAML index for a directory. File mtimes are re-checked at most every few seconds,
+    so edits are picked up without stat-ing every file on each schema lookup."""
+    key = str(directory)
+    now = time.monotonic()
+    cached = _index_cache.get(key)
+    if cached is not None and now - cached[1] < _INDEX_RECHECK_S:
+        return cached[2]
+    signature = _file_signature(directory) if directory.is_dir() else tuple()
+    if cached is not None and cached[0] == signature:
+        _index_cache[key] = (signature, now, cached[2])
+        return cached[2]
     index = _index_yaml_files(directory)
-    _cache = (cache_key, index)
+    _index_cache[key] = (signature, now, index)
     return index
+
+
+def _build_index() -> dict[str, dict[str, Any]]:
+    return _cached_index(_yaml_dir())
 
 
 def known_table_names() -> set[str]:
@@ -151,30 +154,7 @@ def load_table_schema(table_name: str) -> dict[str, Any] | None:
 
 
 def _build_mart_index() -> dict[str, dict[str, Any]]:
-    """Load all mart YAML files; cache by (dir_path, dir_mtime, sorted file mtimes)."""
-    global _mart_cache
-    directory = _mart_yaml_dir()
-    try:
-        dir_mtime = directory.stat().st_mtime_ns if directory.is_dir() else None
-    except OSError:
-        dir_mtime = None
-    file_sig: tuple[tuple[str, int], ...] = tuple()
-    if dir_mtime is not None and directory.is_dir():
-        try:
-            file_sig = tuple(
-                sorted(
-                    (p.name, p.stat().st_mtime_ns)
-                    for p in directory.glob("*.yml")
-                )
-            )
-        except OSError:
-            file_sig = tuple()
-    cache_key = ("v1", str(directory), dir_mtime, file_sig)
-    if _mart_cache is not None and _mart_cache[0] == cache_key:
-        return _mart_cache[1]
-    index = _index_yaml_files(directory)
-    _mart_cache = (cache_key, index)
-    return index
+    return _cached_index(_mart_yaml_dir())
 
 
 def known_mart_table_names() -> set[str]:
@@ -208,6 +188,95 @@ def bind_spine_map(table_id: str) -> dict[str, str]:
         ref = str(dim_ref or "").strip()
         if fk and ref and "." in ref:
             out[fk] = ref
+    return out
+
+
+_GRAIN_TOKEN_COLUMNS: dict[str, tuple[str, ...]] = {
+    "country": ("country_iso3", "country_name", "geography_key", "geo_key", "area"),
+    "area": ("country_iso3", "country_name", "geography_key", "geo_key", "area"),
+    "geography": ("geography_key", "geo_key", "country_iso3"),
+    "product": ("product_key", "product_name", "item"),
+    "commodity": ("product_key", "product_name", "commodity", "item"),
+    "crop": ("product_key", "product_name", "crop", "item"),
+    "item": ("item", "item_key", "item_name", "product_key"),
+    "year": ("year", "time_key", "harvest_year", "observation_year", "mp_year"),
+    "month": ("month", "as_of_date"),
+    "date": ("as_of_date", "date"),
+    "source": ("source_key", "price_source", "source"),
+    "market": ("market_key", "market_name", "market"),
+    "element": ("element", "element_key"),
+    "indicator": ("indicator", "indicator_key", "indicator_name"),
+    "sex": ("sex",),
+    "measure": ("measure_type",),
+    "season": ("season", "season_key"),
+    "admin": ("admin_1", "admin_1_name"),
+    "region": ("admin_1", "admin_1_name", "region"),
+}
+_GRAIN_TOKEN_RE = re.compile(r"[a-z][a-z0-9_]*")
+
+
+def grain_columns(table_id: str) -> list[str]:
+    """Columns that together identify one row: YAML ``grain_columns`` or the parsed ``grain`` line."""
+    schema = load_mart_table_schema(table_id) or load_table_schema(table_id) or {}
+    by_low = {
+        str(c.get("name") or "").strip().lower(): str(c.get("name") or "").strip()
+        for c in _schema_columns(schema)
+        if str(c.get("name") or "").strip()
+    }
+    explicit = schema.get("grain_columns")
+    if isinstance(explicit, list):
+        return [by_low[str(c).strip().lower()] for c in explicit if str(c).strip().lower() in by_low]
+    out: list[str] = []
+    for token in _GRAIN_TOKEN_RE.findall(str(schema.get("grain") or "").lower()):
+        for cand in (token, *_GRAIN_TOKEN_COLUMNS.get(token, ())):
+            if cand in by_low:
+                if by_low[cand] not in out:
+                    out.append(by_low[cand])
+                break
+    return out
+
+
+def column_units(table_id: str) -> dict[str, str]:
+    """Measure column → unit for tables without a unit column (YAML ``column_units``)."""
+    schema = load_mart_table_schema(table_id) or load_table_schema(table_id) or {}
+    raw = schema.get("column_units")
+    if not isinstance(raw, dict):
+        return {}
+    return {str(k).strip(): str(v).strip() for k, v in raw.items() if str(k).strip() and str(v).strip()}
+
+
+def with_column_units(row: dict[str, Any], table_ids: set[str]) -> dict[str, Any]:
+    """Row plus ``<measure>_unit`` for each declared unit the row does not already carry."""
+    out = dict(row)
+    for table_id in sorted(table_ids):
+        for col, unit in column_units(table_id).items():
+            key = f"{col}_unit"
+            if col in out and key not in out:
+                out[key] = unit
+    return out
+
+
+_DIM_LABEL_COL = {
+    "dim_product": "product_name",
+    "dim_source": "organisation_name",
+    "dim_market": "market_name",
+    "dim_geography": "country_name",
+    "dim_element": "element_name",
+    "dim_unit": "unit_code",
+    "dim_season": "season_name",
+    "dim_indicator": "indicator_name",
+    "dim_item": "item_name",
+}
+
+
+def dim_label_joins(table_id: str) -> dict[str, tuple[str, str, str]]:
+    """FK column → (dim table, dim key column, display label) from ``bind_spine``."""
+    out: dict[str, tuple[str, str, str]] = {}
+    for fk, ref in bind_spine_map(table_id).items():
+        dim, filter_col = ref.split(".", 1)
+        key = _FK_DIM_SELECT_COL.get((fk.lower(), dim.lower()), fk)
+        label = _DIM_LABEL_COL.get(dim.lower(), filter_col)
+        out[fk] = (dim, key, label)
     return out
 
 
@@ -279,8 +348,7 @@ def match_subnational_geo_labels(blob: str) -> list[tuple[str, str]]:
                 blob_tokens = set(_alnum_tokens(expand_speech_text(text)))
                 if not toks or toks[0] not in blob_tokens:
                     continue
-                # Still require multi-char distinctive match for short admin labels.
-                if len(cand_s) <= 5:
+                if len(toks[0]) < 4:
                     continue
             out.append((col, cand_s))
             seen_cols.add(col)
@@ -420,6 +488,7 @@ def compile_spine_entity_filters(
     for lab in consumed_low:
         consumed_tokens.update(_alnum_tokens(lab))
 
+    fact_cols = {name.lower() for name in _column_names(bare)}
     out: list[tuple[str, str, str]] = []
     for fk_col, dim_ref in sorted(spine.items()):
         fk = str(fk_col or "").strip()
@@ -427,12 +496,14 @@ def compile_spine_entity_filters(
         fk_l = fk.lower()
         if not fk or fk_l in skip or "." not in ref:
             continue
-        if fk_l not in _SPINE_ENTITY_ALLOW_FKS:
+        if fk_l not in _SPINE_ENTITY_ALLOW_FKS or fk_l not in fact_cols:
             continue
         dim_table, dim_col = ref.split(".", 1)
         dim_table = dim_table.strip()
         dim_col = dim_col.strip()
         if not dim_table or not dim_col:
+            continue
+        if fk_l.removesuffix("_key") in fact_cols or dim_col.lower() in fact_cols:
             continue
         samples = column_samples_for_table(dim_table, dim_col)
         if not samples:
@@ -488,22 +559,30 @@ def compile_spine_entity_filters(
     return out
 
 
-# Aligned with bq_sql_validate metric-discriminator sets.
-_CORE_METRIC_DISCRIMINATORS = frozenset(
+CORE_METRIC_DISCRIMINATORS = frozenset(
     {
         "element",
         "indicator",
         "price_type",
         "measure_type",
         "treatment",
+        "metric",
+        "production_grain",
+        "price_source",
+        "trade_grain",
+        "climate_grain",
+        "input_grain",
+        "vegetation_grain",
     }
 )
-_GRAIN_METRIC_DISCRIMINATORS = frozenset(
+GRAIN_METRIC_DISCRIMINATORS = frozenset(
     {
         "classification_scale",
         "scenario_name",
     }
 )
+_CORE_METRIC_DISCRIMINATORS = CORE_METRIC_DISCRIMINATORS
+_GRAIN_METRIC_DISCRIMINATORS = GRAIN_METRIC_DISCRIMINATORS
 
 _NUMERIC_COLUMN_TYPES = frozenset({"INT64", "FLOAT64", "NUMERIC", "BIGNUMERIC", "INTEGER", "FLOAT"})
 _MEASURE_SKIP_COLUMNS = frozenset(
@@ -753,6 +832,16 @@ _GENERIC_SAMPLE_TOKENS = frozenset(
         "the",
         "with",
         "from",
+        "in",
+        "on",
+        "at",
+        "to",
+        "for",
+        "by",
+        "per",
+        "a",
+        "an",
+        "is",
         "n",
         "e",
         "c",
@@ -761,13 +850,6 @@ _GENERIC_SAMPLE_TOKENS = frozenset(
         "nes",
         "nec",
     }
-)
-_PREFERRED_DISCRIMINATOR_DEFAULTS = (
-    "Production",
-    "Export quantity",
-    "Producer Price (USD/tonne)",
-    "Retail",
-    "population",
 )
 _AUTO_DEFAULT_DISCRIMINATOR_COLS = frozenset({"element", "price_type", "measure_type"})
 _WORD_RE = re.compile(r"[a-z0-9]+", re.IGNORECASE)
@@ -779,6 +861,7 @@ _PRODUCTION_QUERY_RE = re.compile(
 )
 _PRODUCER_PRICE_QUERY_RE = re.compile(r"\b(producer|farm\s*gate)\b", re.IGNORECASE)
 _WHOLESALE_QUERY_RE = re.compile(r"\bwholesale\b", re.IGNORECASE)
+_RETAIL_QUERY_RE = re.compile(r"\bretail\b", re.IGNORECASE)
 _POPULATION_QUERY_RE = re.compile(r"\b(population|people|ipc)\b", re.IGNORECASE)
 _CLASSIFICATION_QUERY_RE = re.compile(r"\b(classification|phase)\b", re.IGNORECASE)
 _MEASURE_DISCRIMINATOR_COLS = frozenset(
@@ -1210,21 +1293,48 @@ def resolve_measure_column(table_id: str, requested: str | None) -> str | None:
     return measures[0]
 
 
+def fold_accents(text: str) -> str:
+    """Lowercase and strip diacritics so 'Ségou' tokenizes as one word, 'segou'."""
+    decomposed = unicodedata.normalize("NFKD", text or "")
+    return "".join(ch for ch in decomposed if not unicodedata.combining(ch)).lower()
+
+
 def _alnum_tokens(text: str) -> list[str]:
-    return [m.group(0).lower() for m in _WORD_RE.finditer(text or "")]
+    return [m.group(0) for m in _WORD_RE.finditer(fold_accents(text))]
+
+
+def _singular(token: str) -> str:
+    if len(token) <= 3 or token.endswith("ss"):
+        return token
+    if token.endswith("ies"):
+        return token[:-3] + "y"
+    if token.endswith("oes"):
+        return token[:-2]
+    if token.endswith("s"):
+        return token[:-1]
+    return token
+
+
+def _canon_token(token: str) -> str:
+    return _singular(_SPEECH_SYNONYMS.get(token, token))
 
 
 def expand_speech_text(text: str) -> str:
-    out = (text or "").lower()
+    out = fold_accents(text)
     for src, dst in _SPEECH_SYNONYMS.items():
         out = re.sub(rf"\b{re.escape(src)}\b", dst, out)
     return out
 
 
 def match_value_samples(blob: str, samples: set[str] | list[str]) -> list[str]:
-    """Pick warehouse labels whose head token appears in the query (speech synonyms expanded)."""
+    """Pick warehouse labels whose head token appears in the query (speech synonyms expanded).
+
+    Tokens are accent-folded and singularized on both sides; a head token must be at
+    least two characters so possessive 's' or initials never select a label.
+    """
     expanded = expand_speech_text(blob)
-    blob_tokens = set(_alnum_tokens(expanded))
+    raw_blob_tokens = {_singular(t) for t in _alnum_tokens(expanded)}
+    blob_tokens = {_canon_token(t) for t in _alnum_tokens(expanded)}
     if not blob_tokens:
         return []
     grouped: dict[str, list[str]] = {}
@@ -1236,26 +1346,35 @@ def match_value_samples(blob: str, samples: set[str] | list[str]) -> list[str]:
         toks = [t for t in _alnum_tokens(sample) if t not in _GENERIC_SAMPLE_TOKENS]
         if not toks:
             continue
-        head = _SPEECH_SYNONYMS.get(toks[0], toks[0])
-        if head not in blob_tokens:
+        head = _canon_token(toks[0])
+        if len(head) < 2 or head not in blob_tokens:
             continue
         grouped.setdefault(head, []).append(sample)
     chosen: list[str] = []
     for head, group in grouped.items():
         scored: list[tuple[Any, ...]] = []
         for sample in group:
-            extra = [
-                t
-                for t in _alnum_tokens(sample)
-                if t not in _GENERIC_SAMPLE_TOKENS and _SPEECH_SYNONYMS.get(t, t) != head
-            ]
-            extra_hits = sum(
-                1 for t in extra if t in blob_tokens or _SPEECH_SYNONYMS.get(t, t) in blob_tokens
-            )
+            sample_tokens = [t for t in _alnum_tokens(sample) if t not in _GENERIC_SAMPLE_TOKENS]
+
+            def _said(token: str) -> bool:
+                if _singular(token) in raw_blob_tokens:
+                    return True
+                canonical = _canon_token(token)
+                return canonical != head and canonical in blob_tokens
+
+            extra = []
+            for token in sample_tokens:
+                canonical = _canon_token(token)
+                if canonical == head and (token == sample_tokens[0] or _singular(token) in raw_blob_tokens):
+                    continue
+                extra.append(token)
+            extra_hits = sum(1 for token in extra if _said(token))
+            unmatched = {token for token in extra if not _said(token)}
+            order = sample_order.get(sample, 10**9)
             if extra and extra_hits == 0:
-                scored.append((1, len(extra), sample_order.get(sample, 10**9), sample))
+                scored.append((1, len(unmatched), 0, order, sample))
             else:
-                scored.append((0, -extra_hits, len(sample), sample))
+                scored.append((0, len(unmatched), -extra_hits, order, sample))
         scored.sort()
         chosen.append(scored[0][-1])
 
@@ -1453,26 +1572,29 @@ def _resolve_product_labels_for_table(
         primary_measures=primary_measures,
     )
     table_samples = column_samples_for_table(bare, _PRODUCT_LABEL_COL)
-    if table_samples:
-        if hinted:
-            in_table = [h for h in hinted if h in table_samples]
-            if in_table:
-                return in_table[:6]
-        matched = match_value_samples(blob, table_samples)
-        if matched:
-            return matched[:6]
-        if hinted:
-            return hinted[:6]
-        return []
-
-    prefer = [bare, *_PRODUCT_PREFER_TABLES]
-    if hinted:
-        return hinted[:6]
-    return resolve_dictionary_labels(
-        column=_PRODUCT_LABEL_COL,
-        blob=blob,
-        prefer_tables=prefer,
+    dictionary = dictionary_samples_for_column(
+        _PRODUCT_LABEL_COL, prefer_tables=[bare, *_PRODUCT_PREFER_TABLES]
     )
+    pool = table_samples or dictionary
+    if hinted:
+        resolved = _resolve_hints_against(hinted, pool, pool)
+        if resolved:
+            return resolved[:6]
+    return match_value_samples(blob, pool)[:6]
+
+
+def _resolve_hints_against(hints: list[str], exact_pool: list[str], fuzzy_pool: list[str]) -> list[str]:
+    """Map each hint to a warehouse label (exact first, then speech match); unmatched hints are dropped."""
+    exact = {s.casefold(): s for s in reversed(exact_pool)}
+    out: list[str] = []
+    for hint in hints:
+        label = exact.get(hint.casefold())
+        if label is None:
+            matched = match_value_samples(hint, fuzzy_pool)
+            label = matched[0] if matched else None
+        if label and label not in out:
+            out.append(label)
+    return out
 
 
 def _resolve_bind_product_labels(
@@ -1528,6 +1650,8 @@ def compile_product_filter_sql(
     Returns ``(sql_fragment, resolved_labels)``. Fragment is empty when no dictionary match.
     """
     bare = _strip_fqn(table_id).lower()
+    if not product_column(bare):
+        return "", []
     resolved = _resolve_product_labels_for_table(bare, blob=blob, labels=labels)
     if not resolved:
         return "", []
@@ -1646,6 +1770,13 @@ def _wants_yield(primary_measures: list[str] | None, measure_blob_text: str) -> 
     )
 
 
+def _every_token_said(sample: str, blob: str) -> bool:
+    """Slug samples fuse measure and product; one said token does not name the slug."""
+    blob_tokens = set(_alnum_tokens(expand_speech_text(blob)))
+    tokens = [t for t in _alnum_tokens(sample) if t not in _GENERIC_SAMPLE_TOKENS]
+    return bool(tokens) and all(_SPEECH_SYNONYMS.get(t, t) in blob_tokens or t in blob_tokens for t in tokens)
+
+
 def compile_measure_filters(
     table_id: str,
     *,
@@ -1725,7 +1856,11 @@ def compile_measure_filters(
             metric_samples = samples_map.get("metric") or []
             metric_val = _match_metric_slug(measure_blob_text, metric_samples)
             if not metric_val:
-                matched = match_value_samples(measure_blob_text, metric_samples)
+                matched = [
+                    m
+                    for m in match_value_samples(measure_blob_text, metric_samples)
+                    if _every_token_said(m, measure_blob_text)
+                ]
                 metric_val = matched[0] if matched else default_discriminator_value(
                     "metric",
                     metric_samples,
@@ -1742,6 +1877,8 @@ def compile_measure_filters(
         if col_l in skip or col_l not in _MEASURE_DISCRIMINATOR_COLS:
             continue
         matched = match_value_samples(measure_blob_text, samples)
+        if col_l == "metric":
+            matched = [m for m in matched if _every_token_said(m, measure_blob_text)]
         if matched:
             _add(col, matched[0])
             continue
@@ -1783,7 +1920,7 @@ def compile_time_filter_sql(
     time_start: str | None = None,
     time_end: str | None = None,
 ) -> str:
-    """Partition-aware time bounds when table has as_of_date."""
+    """Time predicate for one table. A passed year is an equality. A start and end in different years is BETWEEN on as_of_date when that column exists, otherwise on the table year column."""
     bare = _strip_fqn(table_id).lower()
     schema = (_schema_loader_for(bare))(bare) or {}
     col_names = {
@@ -1795,7 +1932,9 @@ def compile_time_filter_sql(
     te = (time_end or "")[:10]
     if "as_of_date" in col_names and ts and te:
         return f"AND as_of_date BETWEEN DATE '{ts}' AND DATE '{te}' "
-    ycol = year_column(bare) or "year"
+    ycol = year_column(bare)
+    if not ycol:
+        return ""
     if year is not None:
         return f"AND {ycol} = {int(year)} "
     if ts[:4].isdigit() and te[:4].isdigit():
@@ -1867,8 +2006,12 @@ def compile_semantic_filter(
         )
     if facet_l == "geo":
         resolved = resolve_geo_filter_values(table_id, country_labels) if country_labels else []
-        subnational = match_subnational_geo_labels(blob)
-        geo_level = match_geo_level_label(blob)
+        place_blob = blob or ""
+        for name in [*(country_labels or []), *resolved]:
+            if str(name).strip():
+                place_blob = re.sub(re.escape(str(name).strip()), " ", place_blob, flags=re.IGNORECASE)
+        subnational = match_subnational_geo_labels(place_blob)
+        geo_level = match_geo_level_label(place_blob)
         extra: list[tuple[str, str]] = list(subnational)
         if geo_level:
             extra.append(("geo_level", geo_level))
@@ -1919,7 +2062,7 @@ def compile_semantic_filter(
                 table_id,
                 fk_col=fk_for_dim,
                 dim_ref=spine_ref,
-                literals=resolved,
+                literals=resolved if col in ("geo_key", "geography_key") else [],
                 project_id=project_id,
                 dataset=dataset,
                 extra_predicates=extra or None,
@@ -1967,9 +2110,24 @@ class TableBindContract:
     nomenclature: str = ""
     anti_patterns: list[str] = field(default_factory=list)
     bind_spine: dict[str, str] = field(default_factory=dict)
+    filter_provenance: dict[str, str] = field(default_factory=dict)
+    time_policy: dict[str, Any] = field(default_factory=dict)
+
+    def unproven_filters(self) -> list[str]:
+        """Bound facets with no recorded origin (Question, resolved request or documented policy)."""
+        bound = {
+            "geo": bool(self.geo_literals),
+            "product": bool(self.product_literals),
+            "time": bool(str(self.time_sql or "").strip()),
+            "spine_entities": bool(self.spine_entity_filters),
+            "subnational": bool(re.search(r"\b(admin_\d\w*|city_name)\b", self.required_filters_sql or "")),
+        }
+        return [facet for facet, is_bound in bound.items() if is_bound and facet not in self.filter_provenance]
 
     def to_dict(self) -> dict[str, Any]:
         return {
+            "filter_provenance": dict(self.filter_provenance),
+            "time_policy": dict(self.time_policy),
             "table_id": self.table_id,
             "geo_column": self.geo_column,
             "geo_literals": list(self.geo_literals),
@@ -2019,6 +2177,10 @@ class TableBindContract:
                 for k, v in (raw.get("bind_spine") or {}).items()
                 if str(k).strip() and str(v).strip()
             },
+            filter_provenance={
+                str(k): str(v) for k, v in (raw.get("filter_provenance") or {}).items()
+            },
+            time_policy=dict(raw.get("time_policy") or {}),
         )
 
 
@@ -2036,13 +2198,16 @@ def format_bind_nomenclature(contract: TableBindContract) -> str:
     elif contract.time_column:
         lines.append(f"TIME_COLUMN: {contract.time_column}")
     if contract.product_column and contract.product_literals:
+        prod_col = contract.product_column
+        if prod_col.lower() in {"product_key", "product_id"}:
+            prod_col = "product_name"
         if len(contract.product_literals) == 1:
             lines.append(
-                f"PRODUCT: {contract.product_column} = {_sql_literal(contract.product_literals[0])}"
+                f"PRODUCT: {prod_col} = {_sql_literal(contract.product_literals[0])}"
             )
         else:
             lits = ", ".join(_sql_literal(v) for v in contract.product_literals[:8])
-            lines.append(f"PRODUCT: {contract.product_column} IN ({lits})")
+            lines.append(f"PRODUCT: {prod_col} IN ({lits})")
     if contract.measure_columns:
         lines.append(f"MEASURE_COLUMNS: {', '.join(contract.measure_columns[:4])}")
     for col, val in contract.measure_filters:
@@ -2125,26 +2290,37 @@ def compile_table_bind_contract(
 
     ts = str(dec.get("time_start") or "")[:10]
     te = str(dec.get("time_end") or "")[:10]
+    start_year = int(ts[:4]) if ts[:4].isdigit() else None
+    end_year = int(te[:4]) if te[:4].isdigit() else None
+    # A year equality is only a point. A span stays a span so the time filter
+    # can emit BETWEEN on whatever time column the table has.
     year_hint: int | None = None
-    if te[:4].isdigit() and ts[:4].isdigit() and ts[:4] == te[:4]:
-        year_hint = int(te[:4])
-    elif te[:4].isdigit():
-        year_hint = int(te[:4])
+    if start_year is not None and end_year is not None and start_year == end_year:
+        year_hint = start_year
+    elif start_year is not None and end_year is None:
+        year_hint = start_year
+    elif end_year is not None and start_year is None:
+        year_hint = end_year
 
     parts: list[str] = []
-    geo_blob = " ".join(
-        [query or "", *[str(e).strip() for e in entities if str(e).strip()]]
-    ).strip()
+    provenance: dict[str, str] = {}
+    # Places come only from the Question or the resolved geography, never from entities.
+    geo_blob = " ".join([query or "", *geo_labels]).strip()
     geo_clause = compile_semantic_filter(
         bare,
         "geo",
-        blob=geo_blob or query,
+        blob=geo_blob,
         project_id=proj,
         dataset=ds,
         country_labels=geo_labels or geo_literals,
     )
     if geo_clause and geo_clause.sql.strip():
         parts.append(geo_clause.sql.strip())
+        folded_q = fold_accents(query)
+        named = [g for g in geo_labels if fold_accents(g) in folded_q]
+        provenance["geo"] = "question" if named or not geo_labels else "resolved_request"
+        if "admin_" in geo_clause.sql or "city_name" in geo_clause.sql:
+            provenance["subnational"] = "question"
 
     time_clause = compile_semantic_filter(
         bare,
@@ -2160,6 +2336,7 @@ def compile_table_bind_contract(
     time_sql = time_clause.sql.strip() if time_clause else None
     if time_clause and time_clause.sql.strip():
         parts.append(time_clause.sql.strip())
+        provenance["time"] = str(dec.get("time_policy_source") or dec.get("time_source") or "question")
 
     bind_product_labels = _resolve_bind_product_labels(
         bare,
@@ -2182,6 +2359,7 @@ def compile_table_bind_contract(
     product_literals = list(prod_clause.labels) if prod_clause and prod_clause.labels else []
     if prod_clause and prod_clause.sql.strip():
         parts.append(prod_clause.sql.strip())
+        provenance["product"] = "question" if match_value_samples(query, product_literals) else "resolved_request"
 
     roles_raw = dec.get("entity_roles")
     entity_roles: dict[str, list[str]] | None = None
@@ -2227,6 +2405,9 @@ def compile_table_bind_contract(
     )
     if meas_clause and meas_clause.sql.strip():
         parts.append(meas_clause.sql.strip())
+        provenance["measure"] = "question" if primary_measures is None else "resolved_request"
+    if spine_entity_filters:
+        provenance["spine_entities"] = "question"
 
     required_sql = " ".join(parts)
     measure_cols = measure_columns_mart(bare) or measure_columns(bare)
@@ -2250,6 +2431,7 @@ def compile_table_bind_contract(
         anti_patterns=anti,
         nomenclature="",
         bind_spine=bind_spine_map(bare),
+        filter_provenance=provenance,
     )
     contract.nomenclature = format_bind_nomenclature(contract)
     return contract
@@ -2335,9 +2517,10 @@ def default_discriminator_value(
             hit = _from_cands("Wholesale")
             if hit:
                 return hit
-        hit = _from_cands("Retail")
-        if hit:
-            return hit
+        if _RETAIL_QUERY_RE.search(q):
+            hit = _from_cands("Retail")
+            if hit:
+                return hit
 
     if col_l == "measure_type":
         if _POPULATION_QUERY_RE.search(q):
@@ -2353,13 +2536,7 @@ def default_discriminator_value(
     if matched:
         return matched[0]
 
-    for preferred in _PREFERRED_DISCRIMINATOR_DEFAULTS:
-        hit = by_low.get(preferred.lower())
-        if hit:
-            return hit
-
-    ordered = sorted(sample_set, key=lambda s: (len(s), s.lower()))
-    return ordered[0]
+    return None
 
 
 def discriminator_equality_filters(

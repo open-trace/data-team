@@ -12,9 +12,12 @@ Run locally: uvicorn ml.rag.api:app --reload --host 0.0.0.0 --port 7860
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import logging
 import os
+import time
+import traceback
 import uuid
 from contextlib import asynccontextmanager
 from pathlib import Path
@@ -29,24 +32,59 @@ from ml.rag.local_env import load_rag_dotenv
 _ml_eng = Path(__file__).resolve().parents[3]
 load_rag_dotenv(_ml_eng)
 
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, ConfigDict, Field
 
 from ml.rag.acf_signal import acf_signal_from_result
-from ml.rag.api_schemas import ACFSignal, ArtifactItem, CitationItem, UsageStats, UserProfile
+from ml.rag.api_schemas import (
+    ACFSignal,
+    ArtifactItem,
+    CitationItem,
+    UsageStats,
+    UserProfile,
+)
 from ml.rag.chat_history import normalize_messages
 from ml.rag.chat_memory import flat_messages_to_memory
+from ml.rag.chat_turn import empty_session_blob, load_session, persist_session_turn
 from ml.rag.chatbot.artifact_storage import refresh_artifact_url
+from ml.rag.chatbot.bq_sql_diagnostics import (
+    MAX_DIAGNOSTIC_SQL_STATEMENTS,
+    sql_debug_rows_for_diagnostics,
+    sql_statements_for_diagnostics,
+)
+from ml.rag.chatbot.capability_registry import registry_version
+from ml.rag.chatbot.compile_sql_from_bind import RESULT_ROW_BUDGET
+from ml.rag.chatbot.coverage_ledger import load_ledger
+from ml.rag.chatbot.mart_indicator_classes import taxonomy_version
 from ml.rag.chatbot.plan_policy import PLAN_ROUTE_SLUGS, allows_export
-from ml.rag.chat_turn import persist_session_turn
-from ml.rag.observability import flush_langfuse, get_current_trace_id, rag_trace_context, record_trace_score
+from ml.rag.chatbot.sql_compiler import sql_compiler_enabled
+from ml.rag.chatbot.time_policy import trend_years
+from ml.rag.chatbot.time_resolver import utc_today
+from ml.rag.llm_model_config import resolved_llm_models
+from ml.rag.observability import (
+    flush_langfuse,
+    get_current_trace_id,
+    rag_trace_context,
+    record_trace_score,
+    tracing_release,
+)
+from ml.rag.rate_limiter import check_plan_rate_limit
 from ml.rag.request_context import resolve_request_context
-from ml.rag.session_store import delete_session, get_session_blob, redis_status, session_ttl_seconds
+from ml.rag.retrievers.web_retriever import web_fallback_enabled
+from ml.rag.session_store import (
+    delete_session,
+    get_idempotent_response,
+    redis_status,
+    save_idempotent_response,
+    session_ttl_seconds,
+)
+from ml.serving.enterprise.auth import EnterpriseAuthMiddleware, get_request_tenant
+from ml.serving.enterprise.metering import record_usage
 
 logger = logging.getLogger("ml.rag.api")
 
-_TRACE_BQ_SQL_DEBUG_MAX = 20
+_TRACE_BQ_SQL_DEBUG_MAX = MAX_DIAGNOSTIC_SQL_STATEMENTS
 
 
 def _slim_bq_sql_plan_for_trace(plan: Any) -> dict[str, Any] | None:
@@ -63,11 +101,20 @@ def _slim_bq_sql_plan_for_trace(plan: Any) -> dict[str, Any] | None:
 
 
 def _trace_bq_sql_debug_rows(result: dict[str, Any]) -> list[dict[str, Any]]:
-    raw = result.get("bq_sql_debug")
-    if not isinstance(raw, list):
+    return sql_debug_rows_for_diagnostics(result.get("bq_sql_debug"))
+
+
+def _trace_submitted_bq_sql(result: dict[str, Any]) -> list[str]:
+    rows = result.get("bq_sql_debug")
+    if not isinstance(rows, list):
         return []
-    rows = [row for row in raw if isinstance(row, dict)]
-    return rows[:_TRACE_BQ_SQL_DEBUG_MAX]
+    return sql_statements_for_diagnostics(
+        [
+            row.get("sql")
+            for row in rows
+            if isinstance(row, dict) and row.get("job_id") and row.get("sql")
+        ]
+    )
 
 
 @asynccontextmanager
@@ -83,14 +130,17 @@ app = FastAPI(
     lifespan=_app_lifespan,
 )
 
-# Allow frontend to call from another origin (set RAG_CORS_ORIGINS for production)
-_cors_origins = os.environ.get("RAG_CORS_ORIGINS", "*").strip().split(",")
+app.add_middleware(EnterpriseAuthMiddleware)
+
+# Added last so it wraps auth: preflights and 401/403 responses still carry CORS headers.
+# No origins are allowed unless RAG_CORS_ORIGINS lists them (comma-separated).
+_cors_origins = os.environ.get("RAG_CORS_ORIGINS", "").strip().split(",")
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[o.strip() for o in _cors_origins if o.strip()],
-    allow_credentials=True,
-    allow_methods=["GET", "POST", "OPTIONS"],
-    allow_headers=["*"],
+    allow_credentials=False,
+    allow_methods=["GET", "POST", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization", "X-API-Key", "Idempotency-Key"],
 )
 
 
@@ -103,7 +153,13 @@ class QueryRequest(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
     query: str = Field(..., min_length=1, description="Natural language question for the RAG")
-    include_trace: bool = Field(False, description="Include decomposition and retrieval counts in response")
+    include_trace: bool = Field(
+        False,
+        description=(
+            "Include sanitized SQL, decomposition, retrieval diagnostics, and stage timings "
+            "in response"
+        ),
+    )
     session_id: str | None = Field(
         None,
         description="Omit to start a new session; reuse for multi-turn chat (server-side memory)",
@@ -141,6 +197,13 @@ class QueryResponse(BaseModel):
         description=(
             "ADZA Confidence Framework (Path B): band, score 0–100, and explanation "
             "from cited evidence. Surfaced on every response."
+        ),
+    )
+    source_basis: str | None = Field(
+        default=None,
+        description=(
+            "Ontology routing basis when ADZA_ONTOLOGY_ROUTING=1: structured, "
+            "documents_only, web_only, or none. Omitted / null when routing is off."
         ),
     )
     session_id: str = Field(..., description="Pass on the next request for chat continuity")
@@ -298,68 +361,113 @@ async def ready():
     }
     if redis_info:
         payload["redis"] = redis_info
-    from ml.rag.llm_model_config import resolved_llm_models
-
     payload["llm_models"] = resolved_llm_models()
     return payload
 
 
-def _resolve_prior_memory(
-    session_id: str | None,
-    history_messages: list[dict[str, str]] | None,
-) -> tuple[str, str, list[dict[str, str]], bool]:
-    """Return (session_id, conversation_summary, recent_turns, session_found)."""
-    if history_messages is not None:
-        sid = (session_id or "").strip() or uuid.uuid4().hex
-        prior = normalize_messages(history_messages)
-        summary, recent = flat_messages_to_memory(prior)
-        return sid, summary, recent, False
-
-    sid = (session_id or "").strip() or uuid.uuid4().hex
-    blob = get_session_blob(sid)
-    session_found = blob is not None
-    blob = blob or {"conversation_summary": "", "recent_turns": []}
-    summary = str(blob.get("conversation_summary") or "")
-    recent = normalize_messages(blob.get("recent_turns"))
-    return sid, summary, recent, session_found
+def _version_settings() -> dict[str, Any]:
+    """Behaviour-shaping settings only: flags, budgets and model ids. Never keys or URLs."""
+    return {
+        "sql_compiler": sql_compiler_enabled(),
+        "slot_reasoner": os.environ.get("RAG_SLOT_REASONER", "").strip().lower() in ("1", "true", "yes", "on"),
+        "web_fallback": web_fallback_enabled(),
+        "trend_latest_years": trend_years(),
+        "result_row_budget": RESULT_ROW_BUDGET,
+        "llm_models": resolved_llm_models(),
+    }
 
 
-def _persist_session_turn(
-    session_id: str,
-    user_msg: str,
-    assistant_msg: str,
-    *,
-    category: str | None = None,
-    plan_type: str | None = None,
-    country: str | None = None,
-) -> None:
-    persist_session_turn(
-        session_id,
-        user_msg,
-        assistant_msg,
-        category=category,
-        plan_type=plan_type,
-        country=country,
-    )
+@app.get("/version")
+async def version():
+    """Build and contract identity: SHA, execution mode, catalog and ledger versions, settings fingerprint."""
+    settings = _version_settings()
+    ledger = load_ledger()
+    return {
+        "service": "rag",
+        "sha": tracing_release() or "unknown",
+        "execution_mode": "bind_compiler" if settings["sql_compiler"] else "nl2sql",
+        "catalog_version": taxonomy_version(),
+        "registry_version": registry_version(),
+        "ledger_snapshot": ledger.get("snapshot_hash"),
+        "ledger_built_at": ledger.get("built_at"),
+        "coverage_built_at": ledger.get("coverage_built_at"),
+        "settings_fingerprint": hashlib.sha256(
+            json.dumps(settings, sort_keys=True, default=str).encode()
+        ).hexdigest()[:16],
+    }
+
+
+def _session_owner(http_request: Request) -> str:
+    """Sessions belong to the authenticated tenant; with auth off there is one local owner."""
+    tenant = get_request_tenant(http_request)
+    return f"tenant:{tenant.tenant_id}" if tenant is not None else "local"
+
+
+def _client_history_memory(
+    history_messages: list[dict[str, str]],
+) -> tuple[str, list[dict[str, str]]]:
+    """(conversation_summary, recent_turns) folded from client-supplied history."""
+    return flat_messages_to_memory(normalize_messages(history_messages))
+
+
+_GENERIC_500_DETAIL = "The question could not be answered due to an internal error; retry later."
+
+
+def _augment_http_500_detail(detail: str, *, debug: bool) -> str:
+    """Shape a 500 body. Exception text reaches clients only when RAG_DEBUG is on."""
+    if debug:
+        return detail + "\n\n" + traceback.format_exc()
+    if "unsourced_figures" in detail:
+        return "Answer grounding failed unexpectedly; retry the question."
+    return _GENERIC_500_DETAIL
+
+
+def _plan_slug_for(plan_type: str | None) -> str:
+    for slug, name in PLAN_ROUTE_SLUGS.items():
+        if name == plan_type:
+            return slug
+    return "free"
 
 
 async def _run_query(
     request: QueryRequest,
+    http_request: Request,
     *,
     injected_plan_type: str | None = None,
 ) -> QueryResponse:
-    """Shared query logic. When injected_plan_type is set, path owns the plan tier."""
+    """Shared query logic. When injected_plan_type is set, path owns the plan tier.
+
+    Without a plan route, an authenticated tenant's own plan applies.
+    """
+    tenant = get_request_tenant(http_request)
+    if injected_plan_type is None and tenant is not None:
+        injected_plan_type = PLAN_ROUTE_SLUGS[tenant.plan_slug]
+    owner = _session_owner(http_request)
+    idempotency_key = http_request.headers.get("idempotency-key", "").strip()
+    if idempotency_key:
+        replay = get_idempotent_response(owner, idempotency_key)
+        if replay is not None:
+            return QueryResponse.model_validate(replay)
+    langfuse_trace_id: str | None = None
     try:
+        client_history = request.chat_history is not None or request.conversation_history is not None
+        session_id = (request.session_id or "").strip() or uuid.uuid4().hex
+        if client_history:
+            loaded, session_found = empty_session_blob(), False
+        else:
+            loaded, session_found = load_session(owner, session_id)
         try:
             ctx = resolve_request_context(
                 user_profile=request.user_profile,
                 chat_history=request.chat_history,
                 conversation_history=request.conversation_history,
-                session_id=request.session_id,
+                session_blob=None if client_history else loaded,
                 injected_plan_type=injected_plan_type,
             )
         except ValueError as e:
             raise HTTPException(status_code=422, detail=str(e)) from e
+
+        check_plan_rate_limit(_plan_slug_for(ctx.plan_type), http_request)
 
         logger.info(
             "query request received (len=%d, has_history=%s, plan_type=%s, category=%s)",
@@ -371,15 +479,20 @@ async def _run_query(
 
         from ml.rag.graph import run_rag
 
-        session_id, prior_summary, prior_recent, session_found = _resolve_prior_memory(
-            request.session_id,
-            ctx.history_messages,
-        )
+        if ctx.history_messages is not None:
+            prior_summary, prior_recent = _client_history_memory(ctx.history_messages)
+        else:
+            prior_summary = str(loaded.get("conversation_summary") or "")
+            prior_recent = normalize_messages(loaded.get("recent_turns"))
 
         kwargs: dict = {}
         if prior_summary.strip() or prior_recent:
             kwargs["conversation_summary"] = prior_summary
             kwargs["recent_turns"] = prior_recent
+        if isinstance(loaded.get("active_request"), dict):
+            kwargs["active_request"] = loaded["active_request"]
+        if isinstance(loaded.get("last_bq_facts"), list):
+            kwargs["last_bq_facts"] = loaded["last_bq_facts"]
         if ctx.user_profile is not None:
             kwargs["user_profile"] = ctx.user_profile
         if ctx.plan_type:
@@ -389,6 +502,7 @@ async def _run_query(
         kwargs["export_enabled"] = allows_export(ctx.plan_type)
         kwargs["session_id"] = session_id
         kwargs["trace_tags"] = ["api"]
+        kwargs["reference_date"] = utc_today().isoformat()
         for key in (
             "time_start_override",
             "time_end_override",
@@ -414,12 +528,16 @@ async def _run_query(
             trace_input={"query": request.query[:500]},
             tags=["api"],
         ) as trace_handle:
-            result = run_rag(request.query, **kwargs)
-            trace_handle.update_output(result)
             langfuse_trace_id = get_current_trace_id()
+            rag_started_at = time.perf_counter()
+            result = run_rag(request.query, **kwargs)
+            rag_pipeline_ms = (time.perf_counter() - rag_started_at) * 1000
+            trace_handle.update_output(result, latency_ms=rag_pipeline_ms)
+            langfuse_trace_id = get_current_trace_id() or langfuse_trace_id
         flush_langfuse()
         trace: dict | None = None
-        if request.include_trace:
+        trace_allowed = tenant.allow_trace if tenant is not None else True
+        if request.include_trace and trace_allowed:
             trace = {
                 "decomposition": result.get("decomposition"),
                 "bq_table_candidates_count": len(result.get("bq_table_candidates") or []),
@@ -433,13 +551,24 @@ async def _run_query(
                 "merged_context_count": len(result.get("merged_context") or []),
                 "reranked_context_count": len(result.get("reranked_context") or []),
                 "langfuse_trace_id": langfuse_trace_id,
-                "bq_sql_queries": list(result.get("bq_sql_queries") or []),
+                "rag_pipeline_ms": rag_pipeline_ms,
+                "bq_sql_queries": sql_statements_for_diagnostics(result.get("bq_sql_queries")),
+                "bq_planned_sql": sql_statements_for_diagnostics(
+                    (result.get("bq_sql_plan") or {}).get("bq_sql_queries")
+                    if isinstance(result.get("bq_sql_plan"), dict)
+                    else None
+                ),
+                "bq_submitted_sql": _trace_submitted_bq_sql(result),
                 "bq_sql_debug": _trace_bq_sql_debug_rows(result),
                 "bq_sql_plan": _slim_bq_sql_plan_for_trace(result.get("bq_sql_plan")),
                 "sql_source": result.get("sql_source"),
                 "bq_cache_hit": result.get("bq_cache_hit"),
                 "bq_nl2sql_ms": result.get("bq_nl2sql_ms"),
                 "bq_execute_ms": result.get("bq_execute_ms"),
+                "decompose_llm_ms": result.get("decompose_llm_ms"),
+                "vector_ms": result.get("vector_ms"),
+                "rerank_ms": result.get("rerank_ms"),
+                "generate_ms": result.get("generate_ms"),
                 "supervisor_plan": result.get("supervisor_plan"),
                 "value_hits": result.get("value_hits")
                 or (result.get("bq_sql_plan") or {}).get("value_hits"),
@@ -456,27 +585,45 @@ async def _run_query(
         answer = result.get("answer", "") or ""
         if not ctx.has_client_history:
             profile = ctx.user_profile or {}
-            _persist_session_turn(
+            saved = persist_session_turn(
+                owner,
                 session_id,
                 request.query.strip(),
                 answer,
+                loaded=loaded,
+                result=result,
                 category=ctx.category,
                 plan_type=ctx.plan_type,
                 country=str(profile.get("country") or "").strip() or None,
             )
+            if not saved:
+                logger.warning("session %s moved on during this turn; stale state not written", session_id)
 
         raw_citations = result.get("citations") or []
         citations = [CitationItem.model_validate(c) for c in raw_citations if isinstance(c, dict)]
         raw_artifacts = result.get("artifacts") or []
         artifacts = [ArtifactItem.model_validate(a) for a in raw_artifacts if isinstance(a, dict)]
         usage = UsageStats.from_usage_dict(result.get("usage") if isinstance(result.get("usage"), dict) else None)
+        if tenant is not None:
+            record_usage(
+                tenant,
+                input_tokens=usage.input_tokens,
+                output_tokens=usage.output_tokens,
+                total_tokens=usage.total_tokens,
+                export_count=len(artifacts),
+            )
 
         acf = acf_signal_from_result(result)
 
-        return QueryResponse(
+        source_basis = result.get("source_basis")
+        if source_basis is not None:
+            source_basis = str(source_basis).strip() or None
+
+        response = QueryResponse(
             answer=answer,
             citations=citations,
             acf=acf,
+            source_basis=source_basis,
             session_id=session_id,
             session_found=session_found,
             session_ttl_seconds=session_ttl_seconds(),
@@ -486,62 +633,64 @@ async def _run_query(
             langfuse_trace_id=langfuse_trace_id,
             artifacts=artifacts,
         )
+        if idempotency_key:
+            save_idempotent_response(owner, idempotency_key, response.model_dump(mode="json"))
+        return response
     except HTTPException:
         raise
     except Exception as e:
-        import traceback
-        detail = str(e)
-        if os.environ.get("RAG_DEBUG", "").strip().lower() in ("1", "true", "on"):
-            detail += "\n\n" + traceback.format_exc()
-        elif "nn" in detail.lower() or "not defined" in detail.lower():
-            detail += ". If using the vector retriever, install PyTorch: pip install torch"
+        logger.exception("query failed (langfuse_trace_id=%s)", langfuse_trace_id)
+        debug = os.environ.get("RAG_DEBUG", "").strip().lower() in ("1", "true", "on")
+        detail = _augment_http_500_detail(str(e), debug=debug)
+        if langfuse_trace_id:
+            detail = f"{detail} (trace id: {langfuse_trace_id})"
         raise HTTPException(status_code=500, detail=detail) from e
 
 
 @app.post("/query", response_model=QueryResponse)
-async def query(request: QueryRequest):
-    """Run the RAG pipeline. Prefer plan-scoped routes (/query/{plan}) for new integrations."""
-    return await _run_query(request)
+async def query(request: QueryRequest, http_request: Request):
+    """Run the RAG pipeline with the caller's tenant plan. Prefer /query/{plan} routes."""
+    return await _run_query(request, http_request)
 
 
 @app.post("/query/free", response_model=QueryResponse, summary="Query (Free plan)")
-async def query_free(request: QueryRequest):
+async def query_free(request: QueryRequest, http_request: Request):
     """Free tier — single country, top-line answers. Path locks plan_type; body cannot escalate."""
-    return await _run_query(request, injected_plan_type="Free")
+    return await _run_query(request, http_request, injected_plan_type="Free")
 
 
 @app.post("/query/farmers", response_model=QueryResponse, summary="Query (Farmers plan)")
-async def query_farmers(request: QueryRequest):
+async def query_farmers(request: QueryRequest, http_request: Request):
     """Farmers tier — localized crop/rainfall/market. Path locks plan_type."""
-    return await _run_query(request, injected_plan_type="Farmers")
+    return await _run_query(request, http_request, injected_plan_type="Farmers")
 
 
 @app.post("/query/government", response_model=QueryResponse, summary="Query (Government plan)")
-async def query_government(request: QueryRequest):
+async def query_government(request: QueryRequest, http_request: Request):
     """Government tier — national/sub-national food security. Path locks plan_type."""
-    return await _run_query(request, injected_plan_type="Government")
+    return await _run_query(request, http_request, injected_plan_type="Government")
 
 
 @app.post("/query/ngos", response_model=QueryResponse, summary="Query (NGOs plan)")
-async def query_ngos(request: QueryRequest):
+async def query_ngos(request: QueryRequest, http_request: Request):
     """NGOs tier — multi-region risk and program angles. Path locks plan_type."""
-    return await _run_query(request, injected_plan_type="NGOs")
+    return await _run_query(request, http_request, injected_plan_type="NGOs")
 
 
 @app.post("/query/agribusinesses", response_model=QueryResponse, summary="Query (Agribusinesses plan)")
-async def query_agribusinesses(request: QueryRequest):
+async def query_agribusinesses(request: QueryRequest, http_request: Request):
     """Agribusinesses tier — cross-country, market volatility. Path locks plan_type."""
-    return await _run_query(request, injected_plan_type="Agribusinesses")
+    return await _run_query(request, http_request, injected_plan_type="Agribusinesses")
 
 
 @app.post("/query/integrated", response_model=QueryResponse, summary="Query (Integrated plan)")
-async def query_integrated(request: QueryRequest):
+async def query_integrated(request: QueryRequest, http_request: Request):
     """Integrated tier — full access; category lens per message. Path locks plan_type."""
-    return await _run_query(request, injected_plan_type="Integrated")
+    return await _run_query(request, http_request, injected_plan_type="Integrated")
 
 
 @app.delete("/session/{session_id}")
-async def delete_session_endpoint(session_id: str):
+async def delete_session_endpoint(session_id: str, http_request: Request):
     """
     Delete a session and its conversation memory.
 
@@ -552,7 +701,7 @@ async def delete_session_endpoint(session_id: str):
     sid = session_id.strip()
     if not sid:
         raise HTTPException(status_code=400, detail="session_id must not be empty")
-    delete_session(sid)
+    delete_session(_session_owner(http_request), sid)
     logger.info("session deleted: %s", sid)
     return {"status": "deleted", "session_id": sid}
 
@@ -576,7 +725,7 @@ async def get_artifact_url(
         raise HTTPException(status_code=404, detail=str(exc)) from exc
     except Exception as exc:
         logger.exception("artifact re-sign failed id=%s filename=%s", artifact_id, filename)
-        raise HTTPException(status_code=500, detail=f"Failed to refresh artifact URL: {exc}") from exc
+        raise HTTPException(status_code=500, detail="Failed to refresh artifact URL") from exc
     return ArtifactUrlResponse.model_validate(meta)
 
 

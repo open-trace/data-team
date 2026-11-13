@@ -6,7 +6,7 @@ from dataclasses import asdict, dataclass, field
 from typing import Any, Literal
 
 from ml.rag.chatbot.agri_measure_ontology import MEASURES, MeasureHit, resolve_measure
-from ml.rag.chatbot.context_diversity import normalize_context_kind
+from ml.rag.chatbot.evidence_kinds import source_kind
 from ml.rag.chatbot.generator import (
     classify_evidence_tier,
     filter_context_items,
@@ -17,7 +17,7 @@ from ml.rag.chatbot.generator import (
     is_usable_structured_bq_row,
 )
 from ml.rag.chatbot.retrieval_contract import RetrievalContract
-from ml.rag.chatbot.turn_contract import NUMERIC_JOBS, TurnContract
+from ml.rag.chatbot.turn_contract import TurnContract
 from ml.rag.chatbot.stakeholder_prompts import (
     CategorySource,
     prose_register_for_persona,
@@ -173,14 +173,14 @@ def _context_kind_counts(items: list[dict[str, Any]]) -> dict[str, int]:
     for item in items or []:
         if not is_usable_context_item(item):
             continue
-        kind = normalize_context_kind(item)
+        kind = source_kind(item)
         counts[kind] = counts.get(kind, 0) + 1
     return counts
 
 
 def _has_usable_bq(items: list[dict[str, Any]]) -> bool:
     return any(
-        is_usable_context_item(item) and normalize_context_kind(item) == "bigquery"
+        is_usable_context_item(item) and source_kind(item) == "bigquery"
         for item in items or []
     )
 
@@ -555,19 +555,15 @@ def build_generation_plan(
 
     has_structured_numeric = any(is_usable_structured_bq_row(i) for i in usable)
     has_usable = bool(usable)
+    if (task_mode or "").strip().lower() == "research" and not has_structured_numeric:
+        use_contract_shape = False
 
-    numeric_fail_closed = (
-        tc.is_fail_closed()
-        and tc.serve_status != "clarify"
-        and tc.job in NUMERIC_JOBS
-        and not slot_reasoner
-    )
-    if not has_usable or numeric_fail_closed:
+    if not has_usable:
         evidence_tier: EvidenceTier = "empty"
         shape: AnswerShape = "gap_ack"
         output_type: OutputType = "insufficient"
         priority: tuple[str, ...] = ()
-        rationale = "gap_no_usable_context" if not has_usable else f"contract_{tc.serve_status}"
+        rationale = "gap_no_usable_context"
     else:
         evidence_tier = classify_evidence_tier(
             query,
@@ -621,6 +617,16 @@ def build_generation_plan(
                 )
                 if not use_contract_shape:
                     output_type = output_type_from_answer_shape(shape)
+            if (
+                not slot_reasoner
+                and task_mode == "analytical"
+                and isinstance(decomposition, dict)
+                and str(decomposition.get("intent") or "").strip().lower() == "compare"
+                and evidence_tier != "empty"
+                and output_type not in ("export", "insufficient")
+            ):
+                shape = "comparison"
+                output_type = output_type_from_answer_shape(shape)
             if task_mode == "data_export_only":
                 output_type = "export"
                 shape = "export_table"
@@ -637,6 +643,13 @@ def build_generation_plan(
                 f"task_{task_mode or 'chat'}|measure_{mid or 'none'}|"
                 f"output_{output_type}|shape_{shape}|tier_{evidence_tier}"
             )
+
+    if output_type == "insufficient" and evidence_tier != "empty":
+        evidence_tier = "empty"
+        rationale = (
+            f"task_{task_mode or 'chat'}|measure_{mid or 'none'}|"
+            f"output_{output_type}|shape_{shape}|tier_{evidence_tier}"
+        )
 
     lead = _lead_with_for_shape(shape, has_bq)
     ground = _must_ground_in_for_output_type(output_type, has_bq)

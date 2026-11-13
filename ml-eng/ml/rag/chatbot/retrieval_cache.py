@@ -26,13 +26,15 @@ def retrieval_cache_key(
     corpora: str,
     geo: str = "",
     year: str = "",
+    ontology_filter: bool = False,
 ) -> str | None:
     sid = _s(session_id)
     if not sid or not _s(text):
         return None
+    onto = "1" if ontology_filter else "0"
     return (
         f"{_NS}:{sid}:{text_hash(text)}:"
-        f"{_s(corpora) or 'all'}:{_s(geo) or '-'}:{_s(year) or '-'}"
+        f"{_s(corpora) or 'all'}:{_s(geo) or '-'}:{_s(year) or '-'}:{onto}"
     )
 
 

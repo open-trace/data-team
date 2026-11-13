@@ -28,7 +28,7 @@ def test_resolve_geo_filter_values(table_id: str, label: str, expected: str) -> 
     assert resolve_geo_filter_values(table_id, [label]) == [expected]
 
 
-def test_compile_intent_single_country_not_custom() -> None:
+def test_compile_intent_single_country_point_fact_is_custom() -> None:
     intent = compile_intent_for_table(
         "fct_production",
         measure_id="production",
@@ -39,8 +39,7 @@ def test_compile_intent_single_country_not_custom() -> None:
         time_start="2022-01-01",
         time_end="2022-12-31",
     )
-    assert intent["pattern"] != "custom"
-    assert intent["pattern"] == "rank_by_sum"
+    assert intent["pattern"] == "custom"
     assert "country_iso3" in intent["grain"]
 
 
@@ -55,7 +54,7 @@ def test_retrieval_contract_single_country_production_intent(monkeypatch) -> Non
     }
     contract = build_retrieval_contract(q, decomposition=dec, known_tables=_KNOWN)
     assert contract.bq_intents
-    assert contract.bq_intents[0]["pattern"] != "custom"
+    assert contract.bq_intents[0]["pattern"] == "custom"
 
 
 def test_try_sql_patterns_nigeria_maize_2022() -> None:
@@ -69,6 +68,7 @@ def test_try_sql_patterns_nigeria_maize_2022() -> None:
         time_start="2022-01-01",
         time_end="2022-12-31",
     )
+    assert intent["pattern"] == "custom"
     hit = try_sql_pattern(
         intent,
         project_id="proj",
@@ -79,10 +79,8 @@ def test_try_sql_patterns_nigeria_maize_2022() -> None:
         geo_country="Nigeria",
         selected_tables={"fct_production"},
     )
-    assert hit is not None
-    assert "stg_" not in hit["sql"]
-    assert "NGA" in hit["sql"]
-    assert "2022" in hit["sql"]
+    # Point facts skip rank/pattern SQL; NL2SQL / mart_point_fact handle them.
+    assert hit is None
 
 
 def test_fact_bq_plan_single_country_pattern() -> None:
@@ -98,4 +96,4 @@ def test_fact_bq_plan_single_country_pattern() -> None:
         task_mode="fact_lookup",
     )
     assert plan is not None
-    assert plan["query_intents"][0]["pattern"] != "custom"
+    assert plan["query_intents"][0]["pattern"] == "custom"

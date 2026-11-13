@@ -215,8 +215,8 @@ def load_rag_dotenv(repo_root: Path) -> None:
     load_data_local_dotenv(repo_root)
     load_config_dotenv(repo_root)
     bq_project = os.environ.get("BQ_PROJECT", "").strip()
-    bootstrap_gcp_credentials(fail_on_legacy_invalid=bool(bq_project))
     apply_ml_eng_path_defaults(repo_root)
+    bootstrap_gcp_credentials(fail_on_legacy_invalid=bool(bq_project))
     apply_lm_studio_defaults()
     from ml.rag.llm_model_config import log_resolved_llm_models
 

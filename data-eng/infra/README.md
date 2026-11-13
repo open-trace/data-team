@@ -1,17 +1,20 @@
 # Infrastructure (Terraform)
 
-Foundation for the data platform: BigQuery, Composer, Airbyte-related resources, IAM, and storage.
+Foundation for the data platform: BigQuery, Composer, IAM, storage, and ingest SA setup.
+
+**Active ingest path:** [`ingestion/setup.sh`](./ingestion/setup.sh) + Python [`../ingestion/`](../ingestion/). Airbyte Terraform modules are **retired** for new work (transform-v2).
 
 ## Layout
 
 | Path | Purpose |
 |------|---------|
-| **`modules/bigquery/`** | Datasets: `landing`, raw/staging/mart dev + prod. |
-| **`modules/phase2_airbyte_composer/`** | Phase 2: `sa-airbyte-bq-writer`, landing IAM, Secret Manager, firewall (Composer → Airbyte VM). |
-| **`modules/`** | Other stubs: `airflow_composer/`, `iam/`, `storage/`, legacy `airbyte/`. |
-| **`environments/`** | Root modules per environment (`dev/`, `staging/`, `prod/`) with `main.tf`, `variables.tf`, `backend.tf`. |
-| **`global/`** | Org-wide or shared resources. |
-| **`terraform/`** | Legacy stub; new work uses `modules/` + `environments/`. |
-| **`composer/`** | Non-DAG Composer notes only — **DAGs** live in `data-eng/airflow/dags/`. |
+| **`ingestion/`** | Shared ingest-dev SA / `landing_dev` IAM setup script |
+| **`modules/bigquery/`** | Datasets: landing*, raw/staging/mart |
+| **`modules/phase2_airbyte_composer/`** | Retired — do not expand |
+| **`modules/airbyte/`** | Retired — do not expand |
+| **`modules/`** | Other stubs: `airflow_composer/`, `iam/`, `storage/` |
+| **`environments/`** | Root modules per environment |
+| **`global/`** | Org-wide or shared resources |
+| **`composer/`** | Non-DAG Composer notes — DAGs in `data-eng/airflow/dags/` |
 
-Do not commit `.tfstate` or secrets; use remote state (e.g. GCS backend) and Secret Manager.
+Do not commit `.tfstate` or secrets; use remote state and Secret Manager.

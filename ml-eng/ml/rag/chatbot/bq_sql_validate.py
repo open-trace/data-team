@@ -6,6 +6,9 @@ import re
 from typing import Any
 
 from ml.rag.chatbot.bq_table_schema_yaml import (
+    CORE_METRIC_DISCRIMINATORS as _CORE_METRIC_DISCRIMINATORS,
+    GRAIN_METRIC_DISCRIMINATORS as _GRAIN_METRIC_DISCRIMINATORS,
+    TableBindContract,
     columns_for_mart_tables,
     columns_for_tables,
     default_discriminator_value,
@@ -17,10 +20,22 @@ from ml.rag.chatbot.bq_table_schema_yaml import (
     value_samples_for_tables,
     year_column,
 )
+from ml.rag.chatbot.price_vocab import price_vocab_values
+from ml.rag.chatbot.sql_ast_validate import parse_select, physical_tables, unknown_columns
 from ml.rag.chatbot.value_index import complete_enum
 from ml.rag.helpers.mart_semantic_relationships import SEMANTIC_RELATIONSHIPS
 
 _SHARED_DICTIONARY_COLUMNS = frozenset({"product_name"})
+
+# Profiling stores at most this many samples per column; a shorter list is the whole domain.
+PROFILE_SAMPLE_CAP = 50
+
+_DIMENSION_LABEL_COLUMNS: dict[str, tuple[str, str]] = {
+    "product_name": ("dim_product", "product_name"),
+    "element": ("dim_element", "element_name"),
+    "indicator": ("dim_indicator", "indicator_name"),
+    "indicator_name": ("dim_indicator", "indicator_name"),
+}
 
 _LARGE_PARTITIONED_TABLES = frozenset({"fct_production", "fct_trade", "fct_prices", "fct_yield"})
 
@@ -59,6 +74,20 @@ _IN_FILTER_RE = re.compile(
     r"\b([A-Za-z_][A-Za-z0-9_]*)\s+IN\s*\(([^)]*)\)",
     re.IGNORECASE,
 )
+_PREDICATE_RE = re.compile(
+    r"^(?P<col>[A-Za-z_][A-Za-z0-9_]*)\s*(?:"
+    r"(?:NOT\s+)?IN\s*\(|"
+    r"(?:NOT\s+)?BETWEEN\b|"
+    r"(?:NOT\s+)?LIKE\b|"
+    r"IS\s+(?:NOT\s+)?|"
+    r"=|<>|!=|>=|<=|>|<"
+    r")",
+    re.IGNORECASE,
+)
+_BETWEEN_OPEN_RE = re.compile(
+    r"\bBETWEEN\s+(?:DATE\s+)?(?:'(?:''|[^'])*'|\d{4}(?:-\d{2}-\d{2})?)\s*$",
+    re.IGNORECASE,
+)
 # Equality or IN on a column (string or non-string RHS) — used for required filters.
 _COL_FILTERED_RE = re.compile(
     r"\b([A-Za-z_][A-Za-z0-9_]*)\s*(?:=\s*|IN\s*\()",
@@ -82,30 +111,7 @@ _PRODUCT_IN_RE = re.compile(
     re.IGNORECASE,
 )
 
-# Metric discriminators: change the meaning of ``value`` / measures.
-# Optional ones are required only when mentioned in the table grain.
-_CORE_METRIC_DISCRIMINATORS = frozenset(
-    {
-        "element",
-        "indicator",
-        "price_type",
-        "measure_type",
-        "treatment",
-        "metric",
-        "production_grain",
-        "price_source",
-        "trade_grain",
-        "climate_grain",
-        "input_grain",
-        "vegetation_grain",
-    }
-)
-_GRAIN_METRIC_DISCRIMINATORS = frozenset(
-    {
-        "classification_scale",
-        "scenario_name",
-    }
-)
+# Metric discriminators live in bq_table_schema_yaml (one list).
 
 _SQL_KEYWORDS = frozenset(
     {
@@ -353,60 +359,112 @@ def _strip_string_literals(sql: str) -> str:
     return _STRING_LIT_RE.sub("''", sql or "")
 
 
-def _aliases_in_sql(sql: str) -> set[str]:
-    names = {m.group(1).lower() for m in _AS_ALIAS_RE.finditer(sql or "")}
-    names |= {m.group(1).lower() for m in _CTE_NAME_RE.finditer(sql or "")}
-    for match in _TABLE_ALIAS_RE.finditer(sql or ""):
-        alias = match.group(1).lower()
-        # Avoid treating ON/WHERE keywords after FROM as aliases when regex over-matches.
-        if alias in _SQL_KEYWORDS:
-            continue
-        names.add(alias)
-    return names
-
-
-def _strip_table_refs(sql: str) -> str:
-    """Remove FROM/JOIN table targets and backtick FQNs so project ids are not scanned as columns."""
-
-    def _repl(match: re.Match[str]) -> str:
-        full = match.group(0)
-        target = match.group(1)
-        return full[: len(full) - len(target)] + " "
-
-    text = _FROM_JOIN_TABLE_RE.sub(_repl, sql or "")
-    return _BACKTICK_RE.sub(" ", text)
-
-
-def candidate_column_idents(sql: str) -> set[str]:
-    """Heuristic column identifiers referenced outside string literals and table FQNs."""
-    scrubbed = _strip_table_refs(_strip_string_literals(sql))
-    aliases = _aliases_in_sql(sql)
-    tables = referenced_tables(sql)
-    out: set[str] = set()
-    for match in _IDENT_RE.finditer(scrubbed):
-        ident = match.group(1)
-        low = ident.lower()
-        if low in _SQL_KEYWORDS:
-            continue
-        if low in aliases:
-            continue
-        if low in tables:
-            continue
-        if low.startswith("stg_") or low.startswith(("fct_", "agg_", "dim_", "bridge_")):
-            continue
-        if low in {"proj", "project", "staging_dev", "mart_dev", "raw_dev", "opentrace"}:
-            continue
-        # Hyphen-split GCP project fragments (e.g. opentrace-prod-5ga4 → prod).
-        if low in {"prod", "dev", "raw"} or low[:1].isdigit():
-            continue
-        out.add(ident)
-    return out
-
-
 def _filtered_columns(sql: str) -> set[str]:
     """Column names that appear in equality or IN filters."""
     scrubbed = _strip_string_literals(sql)
     return {m.group(1).lower() for m in _COL_FILTERED_RE.finditer(scrubbed)}
+
+
+def metric_discriminator_names() -> frozenset[str]:
+    """Columns whose values must not be blended across a numeric measure."""
+    return _CORE_METRIC_DISCRIMINATORS | _GRAIN_METRIC_DISCRIMINATORS
+
+
+def _non_aggregate_exposes_column(sql: str, column: str) -> bool:
+    """True when a non-aggregated statement selects ``column``, so each row stays labeled."""
+    scrubbed = _strip_string_literals(sql or "")
+    if re.search(r"\bGROUP\s+BY\b", scrubbed, re.IGNORECASE):
+        return False
+    if re.search(r"\b(?:SUM|AVG|COUNT|MIN|MAX)\s*\(", scrubbed, re.IGNORECASE):
+        return False
+    select_m = re.search(r"\bSELECT\b(?P<body>.*?)\bFROM\b", scrubbed, re.IGNORECASE | re.DOTALL)
+    if not select_m:
+        return False
+    return re.search(rf"\b{re.escape(column)}\b", select_m.group("body"), re.IGNORECASE) is not None
+
+
+def _split_top_level_and(expr: str) -> list[str]:
+    """Split a filter expression on AND outside quotes, parentheses, and BETWEEN pairs."""
+    text = (expr or "").strip()
+    if text.upper().startswith("AND "):
+        text = text[4:].strip()
+    parts: list[str] = []
+    buf: list[str] = []
+    depth = 0
+    in_quote = False
+    i = 0
+    n = len(text)
+    while i < n:
+        ch = text[i]
+        if in_quote:
+            buf.append(ch)
+            if ch == "'":
+                if i + 1 < n and text[i + 1] == "'":
+                    buf.append(text[i + 1])
+                    i += 2
+                    continue
+                in_quote = False
+            i += 1
+            continue
+        if ch == "'":
+            in_quote = True
+            buf.append(ch)
+            i += 1
+            continue
+        if ch == "(":
+            depth += 1
+            buf.append(ch)
+            i += 1
+            continue
+        if ch == ")":
+            depth = max(0, depth - 1)
+            buf.append(ch)
+            i += 1
+            continue
+        and_at = (
+            depth == 0
+            and text[i : i + 3].upper() == "AND"
+            and (i == 0 or not (text[i - 1].isalnum() or text[i - 1] == "_"))
+            and (i + 3 >= n or not (text[i + 3].isalnum() or text[i + 3] == "_"))
+        )
+        if and_at and _BETWEEN_OPEN_RE.search("".join(buf)):
+            buf.append(text[i : i + 3])
+            i += 3
+            continue
+        if and_at:
+            piece = "".join(buf).strip()
+            if piece:
+                parts.append(piece)
+            buf = []
+            i += 3
+            continue
+        buf.append(ch)
+        i += 1
+    tail = "".join(buf).strip()
+    if tail:
+        parts.append(tail)
+    return parts
+
+
+def _complete_predicate(piece: str) -> str | None:
+    """Return a finished predicate, or None when the fragment is truncated or unbalanced."""
+    text = piece.strip().rstrip(";")
+    if not text or not _PREDICATE_RE.match(text):
+        return None
+    if text.count("(") != text.count(")"):
+        return None
+    quotes = 0
+    i = 0
+    while i < len(text):
+        if text[i] == "'":
+            if i + 1 < len(text) and text[i + 1] == "'":
+                i += 2
+                continue
+            quotes += 1
+        i += 1
+    if quotes % 2:
+        return None
+    return text
 
 
 def _required_metric_cols_for_table(bare: str, samples_by_col: dict[str, set[str]]) -> list[str]:
@@ -495,6 +553,8 @@ def inject_missing_metric_filters(
         for col in _required_metric_cols_for_table(bare, by_col_set):
             if col in filtered:
                 continue
+            if _non_aggregate_exposes_column(text, col):
+                continue
             sample_vals: set[str] = set()
             orig_col = col
             for key, vals in by_col.items():
@@ -525,22 +585,23 @@ def inject_bind_contract_filters(
     sql: str,
     bind_contracts: dict[str, Any] | None,
 ) -> tuple[str, list[str]]:
-    """Inject missing facet filters from TableBindContract when generated SQL omits them."""
+    """Inject missing facet filters from the bind contract of each table the statement reads."""
     text = (sql or "").strip()
     if not text or not isinstance(bind_contracts, dict) or not bind_contracts:
         return text, []
 
-    from ml.rag.chatbot.bq_table_schema_yaml import TableBindContract
-
+    refs = referenced_tables(text)
     filtered = _filtered_columns(text)
     clauses: list[str] = []
     notes: list[str] = []
 
     for tid in sorted(bind_contracts.keys()):
-        contract = TableBindContract.from_dict(
-            bind_contracts.get(tid) if isinstance(bind_contracts.get(tid), dict) else None
-        )
+        raw = bind_contracts.get(tid)
+        contract = TableBindContract.from_dict(raw if isinstance(raw, dict) else None)
         if contract is None:
+            continue
+        bare = str(contract.table_id or tid).strip().split(".")[-1].lower()
+        if bare not in refs:
             continue
         if contract.geo_column and contract.geo_literals:
             gcol = contract.geo_column
@@ -548,27 +609,32 @@ def inject_bind_contract_filters(
                 if len(contract.geo_literals) == 1:
                     lit = contract.geo_literals[0].replace("'", "''")
                     clauses.append(f"{gcol} = '{lit}'")
-                    notes.append(f"{tid}.{gcol}='{contract.geo_literals[0]}'")
+                    notes.append(f"{bare}.{gcol}='{contract.geo_literals[0]}'")
                 else:
                     lits = ", ".join(
                         f"'{v.replace(chr(39), chr(39)+chr(39))}'"
                         for v in contract.geo_literals[:16]
                     )
                     clauses.append(f"{gcol} IN ({lits})")
-                    notes.append(f"{tid}.{gcol} IN (...)" )
+                    notes.append(f"{bare}.{gcol} IN (...)")
+                filtered.add(gcol.lower())
         for col, val in contract.measure_filters:
             if col.lower() in filtered:
                 continue
             lit = val.replace("'", "''")
             clauses.append(f"{col} = '{lit}'")
-            notes.append(f"{tid}.{col}='{val}'")
-        req = str(contract.required_filters_sql or "").strip()
-        if req and contract.geo_column:
-            for frag in re.findall(r"AND\s+[^AND]+", req, flags=re.IGNORECASE):
-                piece = frag.strip()
-                col_m = re.match(r"AND\s+(\w+)", piece, re.I)
-                if col_m and col_m.group(1).lower() not in filtered:
-                    clauses.append(piece[4:].strip())
+            notes.append(f"{bare}.{col}='{val}'")
+            filtered.add(col.lower())
+        for piece in _split_top_level_and(str(contract.required_filters_sql or "")):
+            predicate = _complete_predicate(piece)
+            if predicate is None:
+                continue
+            col_m = _PREDICATE_RE.match(predicate)
+            if col_m is None or col_m.group("col").lower() in filtered:
+                continue
+            clauses.append(predicate)
+            notes.append(f"{bare}.{col_m.group('col')}")
+            filtered.add(col_m.group("col").lower())
 
     if not clauses:
         return text, []
@@ -723,17 +789,6 @@ def _refs_for_sql_checks(sql: str, table_ids: set[str] | None = None) -> set[str
     return {str(t).strip().split(".")[-1].lower() for t in table_ids if str(t).strip()}
 
 
-def validation_table_refs(sql: str, table_ids: set[str] | None = None) -> set[str]:
-    """Plan-selected tables plus every mart/staging table referenced in SQL."""
-    selected = {
-        str(t).strip().split(".")[-1].lower()
-        for t in (table_ids or [])
-        if str(t).strip()
-    }
-    refs = _refs_for_sql_checks(sql, table_ids)
-    return selected | refs
-
-
 def validate_required_metric_filters(sql: str, table_ids: set[str] | None = None) -> str | None:
     """
     Require equality/IN filters on YAML metric-discriminator columns that have samples.
@@ -756,6 +811,8 @@ def validate_required_metric_filters(sql: str, table_ids: set[str] | None = None
         for col in _required_metric_cols_for_table(bare, by_col_set):
             if col in filtered:
                 continue
+            if _non_aggregate_exposes_column(sql, col):
+                continue
             missing.append(f"{bare}.{col}")
             vals: list[str] = []
             for k, v in by_col.items():
@@ -773,44 +830,34 @@ def validate_required_metric_filters(sql: str, table_ids: set[str] | None = None
     )
 
 
+def _yaml_columns_for_table(bare: str) -> set[str] | None:
+    names = _columns_for_refs({bare}).get(bare)
+    return set(names) if names else None
+
+
 def validate_sql_column_allowlist(sql: str, table_ids: set[str] | None = None) -> str | None:
     """
-    Reject identifiers that are not YAML columns for referenced (or provided) tables.
+    Reject column references that no source in their scope exposes.
 
-    When YAML columns cannot be loaded for any referenced table, skip the check.
+    Columns are resolved on the parsed statement: qualified names against their table
+    alias, CTE or derived table; unqualified names against every source in scope.
+    Sources without YAML columns are not checked.
     """
-    refs = validation_table_refs(sql, table_ids)
-    if not refs:
-        return None
-    col_map = _columns_for_refs(refs)
-    if not col_map:
-        return None
-    allowed: set[str] = set()
-    for names in col_map.values():
-        allowed |= {n.lower() for n in names}
-    if not allowed:
-        return None
-    aliases = _aliases_in_sql(sql)
-    bad: list[str] = []
-    for ident in candidate_column_idents(sql):
-        low = ident.lower()
-        if low in aliases:
-            continue
-        if low in allowed:
-            continue
-        bad.append(ident)
+    root, err = parse_select(sql)
+    if err:
+        return err
+    bad = unknown_columns(root, _yaml_columns_for_table)
     if not bad:
         return None
-    seen: set[str] = set()
-    uniq: list[str] = []
-    for b in sorted(bad, key=str.lower):
-        if b.lower() in seen:
-            continue
-        seen.add(b.lower())
-        uniq.append(b)
+    refs = {t.name for t in physical_tables(root)} | {
+        str(t).strip().split(".")[-1].lower() for t in (table_ids or set())
+    }
+    allowed: set[str] = set()
+    for names in _columns_for_refs(refs).values():
+        allowed |= {n.lower() for n in names}
     allowed_preview = ", ".join(sorted(allowed)[:40])
     return (
-        f"SQL uses columns not in the YAML Columns blocks: {', '.join(uniq)}. "
+        f"SQL uses columns not in the YAML Columns blocks: {', '.join(bad)}. "
         f"Allowed columns include: {allowed_preview}. "
         "Use only exact column names from the table hints; do not invent bronze/raw names."
     )
@@ -821,7 +868,7 @@ def validate_sql_complete_index_literals(
     table_ids: set[str] | None = None,
 ) -> str | None:
     """Reject string literals not present in complete value index (closed-world)."""
-    refs = validation_table_refs(sql, table_ids)
+    refs = _refs_for_sql_checks(sql, table_ids)
     if not refs:
         return None
 
@@ -859,13 +906,50 @@ def validate_sql_complete_index_literals(
     return f"SQL uses labels not in complete value index: {', '.join(bad[:8])}"
 
 
+def _profiled_domain(table_id: str, column: str) -> list[str] | None:
+    """All labels of ``table.column`` when the profile captured the full domain, else None."""
+    schema = _load_schema_for_ref(table_id) or {}
+    samples = schema.get(f"{column}_value_samples")
+    if not isinstance(samples, list) or not samples:
+        return None
+    stats = schema.get(f"{column}_value_stats")
+    if isinstance(stats, dict) and "is_truncated" in stats:
+        complete = stats.get("is_truncated") is False
+    else:
+        complete = len(samples) < PROFILE_SAMPLE_CAP
+    return [str(s).strip() for s in samples if str(s).strip()] if complete else None
+
+
+def label_domain(table_ids: set[str], column: str) -> set[str] | None:
+    """Complete lower-cased label domain for a filter column, from the fact profile or its dimension.
+
+    None means only a capped sample is known, so an unseen label is not evidence of a bad label.
+    """
+    col = column.lower()
+    domains = [
+        _profiled_domain(t, col)
+        for t in table_ids
+        if (_load_schema_for_ref(t) or {}).get(f"{col}_value_samples")
+    ]
+    if domains and all(d is not None for d in domains):
+        return {label.lower() for d in domains for label in d or []}
+    dimension = _DIMENSION_LABEL_COLUMNS.get(col)
+    if dimension:
+        dim_domain = _profiled_domain(*dimension)
+        if dim_domain is not None:
+            return {label.lower() for label in dim_domain}
+    return None
+
+
 def validate_sql_value_samples(sql: str, table_ids: set[str] | None = None) -> str | None:
     """
-    Soft-check equality / IN string literals against YAML ``*_value_samples``.
+    Check equality / IN string literals against the label domain of their column.
 
+    A label outside the YAML samples is rejected only when the samples (or the column's
+    dimension) cover the full domain; capped samples cannot prove a label absent.
     Skips columns with no samples and leaves LIKE filters alone.
     """
-    refs = validation_table_refs(sql, table_ids)
+    refs = _refs_for_sql_checks(sql, table_ids)
     if not refs:
         return None
     samples_map = _samples_for_refs(refs)
@@ -877,6 +961,10 @@ def validate_sql_value_samples(sql: str, table_ids: set[str] | None = None) -> s
             by_col.setdefault(col.lower(), set()).update(vals)
     for col in _SHARED_DICTIONARY_COLUMNS:
         by_col.setdefault(col, set()).update(dictionary_samples_for_column(col))
+    if refs & {"fct_prices", "agg_prices_country_month"}:
+        for col in ("price_type", "price_source", "metric"):
+            if col in by_col:
+                by_col[col].update(price_vocab_values(col))
 
     def _ok(col: str, literal: str) -> bool:
         col_l = col.lower()
@@ -887,9 +975,11 @@ def validate_sql_value_samples(sql: str, table_ids: set[str] | None = None) -> s
                 allowed = set(shared)
         if not allowed:
             return True
-        lit = literal.replace("''", "'").strip()
-        allowed_l = {a.lower() for a in allowed}
-        return lit.lower() in allowed_l
+        lit = literal.replace("''", "'").strip().lower()
+        if lit in {a.lower() for a in allowed}:
+            return True
+        domain = label_domain(refs, col_l)
+        return domain is None or lit in domain
 
     bad: list[str] = []
     for match in _EQ_FILTER_RE.finditer(sql or ""):
@@ -966,7 +1056,7 @@ def _sql_has_product_filter(sql: str) -> bool:
     scrubbed = _strip_string_literals(sql or "").lower()
     if re.search(r"\bproduct_name\s*(=|in\s*\()", scrubbed):
         return True
-    if re.search(r"\bproduct_key\s+in\s*\(\s*select\b", scrubbed):
+    if re.search(r"\bproduct_key\s+in\s*\(", scrubbed):
         return True
     return False
 
@@ -1143,3 +1233,189 @@ def max_bytes_billed_for_source(sql_source: str) -> int:
     if src in ("template", "pattern"):
         return int(os.environ.get("RAG_BQ_TEMPLATE_MAX_BYTES_BILLED", str(512 * 1024 * 1024)) or 0)
     return int(os.environ.get("RAG_BQ_MAX_BYTES_BILLED", str(250 * 1024 * 1024)) or 0)
+
+
+_QUAL_EQ_FILTER_RE = re.compile(
+    r"\b(?:([A-Za-z_][A-Za-z0-9_]*)\.)?([A-Za-z_][A-Za-z0-9_]*)\s*=\s*'((?:''|[^'])*)'",
+    re.IGNORECASE,
+)
+_QUAL_IN_FILTER_RE = re.compile(
+    r"\b(?:([A-Za-z_][A-Za-z0-9_]*)\.)?([A-Za-z_][A-Za-z0-9_]*)\s+IN\s*\(([^)]*)\)",
+    re.IGNORECASE,
+)
+_FROM_ALIAS_MAP_RE = re.compile(
+    r"\b(?:FROM|JOIN)\s+(?:`([^`]+)`|([A-Za-z_][\w.]*))"
+    r"(?:\s+(?:AS\s+)?([A-Za-z_][A-Za-z0-9_]*))?",
+    re.IGNORECASE,
+)
+
+
+def _ontology_bq_strict() -> bool:
+    return os.environ.get("ADZA_ONTOLOGY_BQ_STRICT", "0").strip().lower() in (
+        "1",
+        "true",
+        "on",
+        "yes",
+    )
+
+
+def _bare_from_fqn(raw: str) -> str:
+    text = (raw or "").strip().strip("`")
+    if not text:
+        return ""
+    return text.split(".")[-1].lower()
+
+
+def _alias_to_table(sql: str) -> dict[str, str]:
+    """Map SQL alias (and bare table) → bare mart table id."""
+    out: dict[str, str] = {}
+    for match in _FROM_ALIAS_MAP_RE.finditer(sql or ""):
+        target = match.group(1) or match.group(2) or ""
+        bare = _bare_from_fqn(target)
+        if not bare.startswith(("fct_", "agg_", "dim_", "bridge_")):
+            continue
+        out[bare] = bare
+        alias = (match.group(3) or "").strip().lower()
+        if alias and alias not in _SQL_KEYWORDS:
+            out[alias] = bare
+    return out
+
+
+def _allowed_for_column(
+    filters: dict[str, list[str]],
+    *,
+    column: str,
+    table_hint: str | None,
+    tables_in_sql: set[str],
+) -> tuple[str | None, list[str]]:
+    """Pick the best filter key for a column reference; return (key, values)."""
+    col_l = column.lower()
+    candidates: list[tuple[str, list[str]]] = []
+    for key, vals in (filters or {}).items():
+        if "." not in key:
+            continue
+        table, col = key.split(".", 1)
+        if col.lower() != col_l:
+            continue
+        table_l = table.lower()
+        if table_hint and table_l != table_hint.lower():
+            continue
+        if tables_in_sql and table_l not in tables_in_sql and not table_hint:
+            continue
+        candidates.append((key, list(vals)))
+    if not candidates and not table_hint:
+        for key, vals in (filters or {}).items():
+            if "." not in key:
+                continue
+            _table, col = key.split(".", 1)
+            if col.lower() == col_l:
+                candidates.append((key, list(vals)))
+    if not candidates:
+        return None, []
+    if table_hint:
+        for key, vals in candidates:
+            if key.split(".", 1)[0].lower() == table_hint.lower():
+                return key, vals
+    return candidates[0]
+
+
+def _rewrite_via_bq_targets(col_key: str, literal: str, allowed: list[str]) -> str | None:
+    """Map an alternate country/product form onto an allowed stored literal when possible."""
+    allowed_l = {a.lower(): a for a in allowed}
+    if literal.lower() in allowed_l:
+        return allowed_l[literal.lower()]
+    try:
+        import opentrace_ontology as oo
+    except Exception:
+        return None
+    try:
+        ents = oo.resolve(literal)
+    except Exception:
+        return None
+    for ent in ents or []:
+        eid = getattr(ent, "entity_id", None) or (ent.get("entity_id") if isinstance(ent, dict) else None)
+        if not eid:
+            continue
+        try:
+            targets = oo.bq_targets(str(eid)) or {}
+        except Exception:
+            continue
+        for val in targets.get(col_key) or []:
+            if val in allowed:
+                return val
+            if str(val).lower() in allowed_l:
+                return allowed_l[str(val).lower()]
+    return None
+
+
+def validate_literals_against_value_map(
+    sql: str,
+    filters: dict[str, list[str]] | None,
+) -> tuple[str, list[str]]:
+    """Rewrite / check equality and IN string literals against ontology value-map filters.
+
+    Returns ``(sql, notes)``. When ``ADZA_ONTOLOGY_BQ_STRICT=1``, unrepaired
+    mismatches produce a ``strict_reject:…`` note (caller should fail closed).
+    """
+    notes: list[str] = []
+    text = sql or ""
+    if not text or not filters:
+        return text, notes
+
+    alias_map = _alias_to_table(text)
+    tables_in_sql = set(alias_map.values()) | referenced_tables(text)
+    strict = _ontology_bq_strict()
+    replacements: list[tuple[str, str]] = []
+
+    def _handle(col: str, literal: str, table_hint: str | None) -> None:
+        lit = literal.replace("''", "'").strip()
+        key, allowed = _allowed_for_column(
+            filters,
+            column=col,
+            table_hint=table_hint,
+            tables_in_sql=tables_in_sql,
+        )
+        if not key or not allowed:
+            return
+        if lit in allowed:
+            return
+        rewritten = _rewrite_via_bq_targets(key, lit, allowed)
+        if rewritten and rewritten != lit:
+            replacements.append((lit, rewritten))
+            notes.append(f"rewrote {key} '{lit}' -> '{rewritten}'")
+            return
+        if lit.lower() in {a.lower() for a in allowed}:
+            for a in allowed:
+                if a.lower() == lit.lower() and a != lit:
+                    replacements.append((lit, a))
+                    notes.append(f"rewrote {key} '{lit}' -> '{a}' (case)")
+                    return
+            return
+        msg = f"literal not in value map: {key}='{lit}'"
+        if strict:
+            notes.append(f"strict_reject:{msg}")
+        else:
+            notes.append(msg)
+
+    for match in _QUAL_EQ_FILTER_RE.finditer(text):
+        prefix, col, lit = match.group(1), match.group(2), match.group(3)
+        table_hint = alias_map.get((prefix or "").lower()) if prefix else None
+        _handle(col, lit, table_hint)
+
+    for match in _QUAL_IN_FILTER_RE.finditer(text):
+        prefix, col, body = match.group(1), match.group(2), match.group(3)
+        if "select" in (body or "").lower():
+            continue
+        table_hint = alias_map.get((prefix or "").lower()) if prefix else None
+        for lit_m in re.finditer(r"'((?:''|[^'])*)'", body or ""):
+            _handle(col, lit_m.group(1), table_hint)
+
+    out = text
+    # Longest-first so partial overlaps do not corrupt longer literals.
+    for old, new in sorted(set(replacements), key=lambda p: -len(p[0])):
+        if old == new:
+            continue
+        out = out.replace(f"'{old}'", f"'{new}'")
+        out = out.replace(f"'{old.replace(chr(39), chr(39)+chr(39))}'", f"'{new}'")
+
+    return out, notes

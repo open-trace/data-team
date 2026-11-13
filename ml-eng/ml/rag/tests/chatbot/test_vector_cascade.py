@@ -77,6 +77,46 @@ def test_cascade_tries_time_widen_before_drop(monkeypatch) -> None:
     assert calls[1].get("geo_country") == "Kenya"
 
 
+def test_cascade_second_attempt_drops_ontology_ids(monkeypatch) -> None:
+    monkeypatch.setenv("RAG_NEWS_GEO_FALLBACK", "off")
+    monkeypatch.setenv("RAG_NEWS_TIME_FALLBACK", "off")
+    calls: list[dict] = []
+
+    def _fake_retrieve(query: str, **kwargs):
+        calls.append(dict(kwargs))
+        return []
+
+    vr = MagicMock()
+    vr.collection_name = "news_data"
+    vr.retrieve.side_effect = _fake_retrieve
+
+    base = {
+        "top_k": 5,
+        "geo_country": "Kenya",
+        "published_at_from": "2020-01-01",
+        "published_at_to": "2020-12-31",
+        "ontology_ids": ["OT:CROP:cassava"],
+    }
+    _retrieve_vector_cascade(
+        vr,
+        "cassava Kenya",
+        base_kwargs=base,
+        countries=["Kenya"],
+        has_time=True,
+        geo_fallback_env="RAG_NEWS_GEO_FALLBACK",
+        time_fallback_env="RAG_NEWS_TIME_FALLBACK",
+        allow_geo_fallback=False,
+        allow_time_fallback=False,
+        max_levels=2,
+    )
+    assert len(calls) >= 2
+    assert calls[0].get("ontology_ids") == ["OT:CROP:cassava"]
+    assert calls[0].get("geo_country") == "Kenya"
+    assert "ontology_ids" not in calls[1]
+    assert calls[1].get("geo_country") == "Kenya"
+    assert calls[1].get("published_at_from") == "2020-01-01"
+
+
 def test_post_filter_geography_avoids_niger_nigeria() -> None:
     items = [
         {

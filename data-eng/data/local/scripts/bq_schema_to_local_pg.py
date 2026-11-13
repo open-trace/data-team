@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Fetch BigQuery table schemas for bronze, silver, and gold (raw_dev/staging_dev/mart_dev in BQ) and generate PostgreSQL DDL.
-Writes one .sql file per table to data/local/schema/{bronze,silver,gold}/ and optionally
+Fetch BigQuery table schemas for configured transform datasets in BigQuery and generate PostgreSQL DDL.
+Writes one .sql file per table to data/local/schema/{landing,raw_dev,staging_dev,intermediate_dev,mart_dev}/ and optionally
 creates the tables on the local DB when LOCAL_DB_URL is set.
 
 Usage:
@@ -21,8 +21,8 @@ import re
 import sys
 from pathlib import Path
 
-from bq_table_lists import LAYERS, dataset_id_for_layer, load_layer_tables, local_schema_for_layer
-from bq_pg_types import local_table_name, postgres_type
+from bq_table_lists import LAYERS, dataset_id_for_layer, load_layer_tables, local_schema_for_layer, local_table_name
+from bq_pg_types import postgres_type
 from sqlalchemy.dialects import postgresql
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
@@ -69,7 +69,7 @@ def build_create_table(*, layer: str, table_id: str, schema_fields: list) -> str
 def main() -> None:
     import argparse
 
-    parser = argparse.ArgumentParser(description="Generate PostgreSQL DDL from BigQuery schemas (bronze, silver, gold)")
+    parser = argparse.ArgumentParser(description="Generate PostgreSQL DDL from BigQuery schemas (landing/raw_dev/staging_dev/intermediate_dev/mart_dev)")
     parser.add_argument("--write-only", action="store_true", help="Only write .sql files")
     parser.add_argument("--execute-only", action="store_true", help="Only execute DDL on local DB (requires existing .sql)")
     parser.add_argument('--dataset', choices=['all', *LAYERS], default='all', help='Layer to prepare; default: all')

@@ -1,0 +1,25 @@
+CREATE SCHEMA IF NOT EXISTS "landing";
+CREATE TABLE IF NOT EXISTS "landing"."s4a_field_soil_surface_info" (
+  "boundedby" TEXT,
+  "plot_code" TEXT,
+  "country_code" TEXT,
+  "survey_date" TEXT,
+  "altitude" TEXT,
+  "longitude" TEXT,
+  "latitude" TEXT,
+  "tsu_id" TEXT,
+  "plot_id" TEXT,
+  "obstruct_lyr" TEXT,
+  "depth_restriction_cause" TEXT,
+  "country_name" TEXT,
+  "sign_of_erosion" TEXT,
+  "rill_erosion" TEXT,
+  "gully_erosion" TEXT,
+  "mass_erosion" TEXT,
+  "stone_pedestals" TEXT,
+  "stone_pavement" TEXT,
+  "wind_erosion" TEXT,
+  "srf_salt" TEXT,
+  "srf_crust" TEXT,
+  "crsfrgab" TEXT
+);

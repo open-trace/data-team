@@ -3,14 +3,16 @@ gcp_default_region: europe-west3
 bigquery_default_location: europe-west3
 gcp_project_id: opentrace-prod-5ga4
 
-# dbt / medallion layer names -> BigQuery dataset IDs (see data/local/.env BQ_DATASET_*).
+# Transform-v2 dataset ids (team language — not bronze/silver/gold).
 datasets:
+  landing_dev: landing_dev
   landing: landing
-  bronze: raw_dev
-  silver: staging_dev
-  gold: mart_dev
+  raw_dev: raw_dev
+  staging_dev: staging_dev
+  intermediate_dev: intermediate_dev
+  mart_dev: mart_dev
 
-# Optional landing variants and other source datasets (reference; catalog scripts may use BQ_DATASETS_INCLUDE in .env).
+# Optional additional source datasets (catalog scripts may use BQ_DATASETS_INCLUDE).
 additional_dataset_ids:
   - dataverse
   - ingestion_metadata

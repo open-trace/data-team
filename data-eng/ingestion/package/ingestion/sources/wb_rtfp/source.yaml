@@ -1,0 +1,11 @@
+name: wb_rtfp
+table: wb_rtfp
+url: https://microdata.worldbank.org/api/tables/data/fcv/wld_2021_rtfp_v02_m
+load:
+  mode: merge
+  key: [country, market, date, commodity]
+expect:
+  required: [country, market, date, commodity]
+  min_rows: 1
+schedule: weekly
+owner: data-eng

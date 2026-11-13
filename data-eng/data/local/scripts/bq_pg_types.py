@@ -3,19 +3,9 @@ from __future__ import annotations
 
 from collections.abc import Mapping
 import json
-import hashlib
 
 from sqlalchemy import types
 from sqlalchemy.dialects.postgresql import JSONB
-
-
-def local_table_name(name: str) -> str:
-    """Fit PostgreSQL's 63-byte limit without merging distinct source tables."""
-    encoded = name.encode('utf-8')
-    if len(encoded) <= 63:
-        return name
-    prefix = encoded[:54].decode('utf-8', errors='ignore')
-    return prefix + '_' + hashlib.sha256(encoded).hexdigest()[:8]
 
 
 def postgres_type(field_type: str, mode: str | None = None):

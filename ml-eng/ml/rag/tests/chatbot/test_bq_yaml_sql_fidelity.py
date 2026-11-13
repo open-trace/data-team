@@ -1,6 +1,8 @@
 """Tests for YAML column allowlist and value-sample SQL validation."""
 from __future__ import annotations
 
+import pytest
+
 from ml.rag.chatbot.bq_sql_validate import (
     broaden_empty_sql_once,
     inject_missing_metric_filters,
@@ -283,3 +285,12 @@ def test_broaden_empty_sql_noop_without_year_or_product() -> None:
         "GROUP BY country_name LIMIT 5"
     )
     assert broaden_empty_sql_once(sql, crop_required=True) is None
+
+
+def test_column_allowlist_flags_invented_names() -> None:
+    err = validate_sql_column_allowlist(
+        "SELECT totally_invented_col FROM `proj.mart_dev.fct_prices` LIMIT 1",
+        {"fct_prices"},
+    )
+    assert err is not None
+    assert "totally_invented_col" in err

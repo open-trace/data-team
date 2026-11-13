@@ -13,7 +13,8 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1] / 'scripts'))
 import bq_table_lists as lists
 import bq_partition_to_local as partition
 import bq_schema_to_local_pg as ddl
-from bq_pg_types import local_table_name, postgres_type, value_for_field
+from bq_pg_types import postgres_type, value_for_field
+from bq_table_lists import local_table_name
 import sync_all_tables as sync
 from copy_progress import CopyProgress
 
@@ -26,29 +27,42 @@ class PopulationTests(unittest.TestCase):
             [SimpleNamespace(table_id='new_dashboard_view'), SimpleNamespace(table_id='existing_mart')],
         ]
         with patch.dict(os.environ, {'BQ_PROJECT': 'test-project'}, clear=True):
-            self.assertEqual(lists.load_layer_tables('gold', client=client), ['existing_mart'])
-            self.assertEqual(lists.load_layer_tables('gold', client=client), ['existing_mart', 'new_dashboard_view'])
+            self.assertEqual(lists.load_layer_tables('mart_dev', client=client), ['existing_mart'])
+            self.assertEqual(lists.load_layer_tables('mart_dev', client=client), ['existing_mart', 'new_dashboard_view'])
         self.assertEqual(client.list_tables.call_args.args, ('test-project.mart_dev',))
 
     def test_every_layer_uses_live_metadata(self):
         client = Mock()
         client.list_tables.return_value = []
         with patch.dict(os.environ, {'BQ_PROJECT': 'test-project', 'BQ_DATASET_GOLD': 'custom_marts'}, clear=True):
-            for layer, dataset in [('bronze', 'raw_dev'), ('silver', 'staging_dev'), ('gold', 'custom_marts')]:
+            for layer, dataset in [('landing', 'landing'), ('raw_dev', 'raw_dev'), ('staging_dev', 'staging_dev'), ('intermediate_dev', 'intermediate_dev'), ('mart_dev', 'custom_marts')]:
                 lists.load_layer_tables(layer, client=client)
                 self.assertEqual(client.list_tables.call_args.args, ('test-project.' + dataset,))
+
+    def test_primary_dataset_environment_takes_precedence(self):
+        with patch.dict(os.environ, {'BQ_DATASET_MART_DEV': 'primary', 'BQ_DATASET_GOLD': 'legacy'}, clear=True):
+            self.assertEqual(lists.dataset_id_for_layer('mart_dev'), 'primary')
+
+    def test_landing_entry_point_can_inject_a_client(self):
+        client = Mock()
+        client.get_table.return_value = SimpleNamespace(schema=[])
+        config = {'bq_project': 'test-project', 'bq_dataset': 'landing',
+                  'bq_table': 'empty', 'target_table': 'empty', 'target_schema': 'landing',
+                  'local_db_url': 'postgresql://localhost/test', 'limit': 0, 'partition_filter': ''}
+        self.assertEqual(partition.sync_table(config, client=client), 0)
+        client.query.assert_not_called()
 
     def test_discovery_failure_is_not_hidden_by_stale_catalog(self):
         client = Mock()
         client.list_tables.side_effect = RuntimeError('no discovery access')
         with patch.dict(os.environ, {'BQ_PROJECT': 'test-project'}, clear=True):
             with self.assertRaisesRegex(RuntimeError, 'no discovery access'):
-                lists.load_layer_tables('gold', client=client)
+                lists.load_layer_tables('mart_dev', client=client)
 
     def test_explicit_subset_is_the_only_discovery_override(self):
         client = Mock()
-        with patch.dict(os.environ, {'BQ_GOLD_TABLES': ' second,first,second '}, clear=True):
-            self.assertEqual(lists.load_layer_tables('gold', client=client), ['first', 'second'])
+        with patch.dict(os.environ, {'BQ_MART_DEV_TABLES': ' second,first,second '}, clear=True):
+            self.assertEqual(lists.load_layer_tables('mart_dev', client=client), ['first', 'second'])
         client.list_tables.assert_not_called()
 
     def test_uniform_row_limit_and_correct_default_dataset(self):
@@ -57,7 +71,7 @@ class PopulationTests(unittest.TestCase):
             calls.append((cmd, kwargs['env']))
             return SimpleNamespace(returncode=0)
         with patch.dict(os.environ, {'BQ_PARTITION_LIMIT': '25'}, clear=True), \
-                patch.object(sys, 'argv', ['sync_all_tables.py', '--dataset', 'gold', '--workers', '1']), \
+                patch.object(sys, 'argv', ['sync_all_tables.py', '--dataset', 'mart_dev', '--workers', '1']), \
                 patch.object(sync, 'load_layer_tables', return_value=['new_mart', 'another_mart']), \
                 patch.object(sync.subprocess, 'run', side_effect=run):
             sync.main()
@@ -70,7 +84,7 @@ class PopulationTests(unittest.TestCase):
     def test_full_copy_is_default_without_an_arbitrary_outer_deadline(self):
         with patch.dict(os.environ, {}, clear=True):
             self.assertEqual(partition.get_config()['limit'], 0)
-            with patch.object(sys, 'argv', ['sync_all_tables.py', '--dataset', 'gold']), \
+            with patch.object(sys, 'argv', ['sync_all_tables.py', '--dataset', 'mart_dev']), \
                     patch.object(sync, 'load_layer_tables', return_value=['new_mart']), \
                     patch.object(sync.subprocess, 'run', return_value=SimpleNamespace(returncode=0)) as run:
                 sync.main()
@@ -124,7 +138,7 @@ class PopulationTests(unittest.TestCase):
             imported.append(name)
             return SimpleNamespace(returncode=2 if name == 'bad_table' else 0)
         with patch.dict(os.environ, {}, clear=True), \
-                patch.object(sys, 'argv', ['sync_all_tables.py', '--dataset', 'gold', '--workers', '1']), \
+                patch.object(sys, 'argv', ['sync_all_tables.py', '--dataset', 'mart_dev', '--workers', '1']), \
                 patch.object(sync, 'load_layer_tables', return_value=['bad_table', 'good_table']), \
                 patch.object(sync.subprocess, 'run', side_effect=run):
             with self.assertRaises(SystemExit) as status:
@@ -135,7 +149,7 @@ class PopulationTests(unittest.TestCase):
     def test_schema_less_source_is_skipped_without_query_or_local_write(self):
         client = Mock()
         client.get_table.return_value = SimpleNamespace(schema=[])
-        env = {'BQ_PROJECT': 'test-project', 'BQ_DATASET': 'raw_dev'}
+        env = {'BQ_PROJECT': 'test-project', 'BQ_DATASET': 'raw_dev', 'LOCAL_DB_URL': 'postgresql://localhost/test'}
         with patch.dict(os.environ, env, clear=True), \
                 patch.object(sys, 'argv', ['bq_partition_to_local.py', '--table', 'empty_source']), \
                 patch.object(partition, '_load_dotenv'), \

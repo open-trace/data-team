@@ -231,6 +231,9 @@ PAYLOAD_RESEARCH: Final[frozenset[str]] = frozenset({
     "section_role", "content_type",
     "article_title", "authors", "publication_year", "journal", "doi",
     "volume", "issue", "pages", "bibliography_source",
+    "title", "publisher", "url", "language", "content_form",
+    "value_chain_stage", "commodity_group", "commodity", "training_topic",
+    "education_level", "textbook_subject", "audience", "country",
 }) | _PAYLOAD_ACF
 
 PAYLOAD_OTA: Final[frozenset[str]] = frozenset({
@@ -241,16 +244,41 @@ PAYLOAD_OTA: Final[frozenset[str]] = frozenset({
 }) | _PAYLOAD_ACF
 
 
+def _ontology_tags(doc: str, meta: dict[str, Any]) -> dict[str, list[str]]:
+    """Tag a chunk with ontology entity ids. Default off (ADZA_ONTOLOGY_TAGGING=0)."""
+    if os.environ.get("ADZA_ONTOLOGY_TAGGING", "0").strip().lower() in (
+        "0",
+        "false",
+        "off",
+        "no",
+        "",
+    ):
+        return {}
+    try:
+        from opentrace_ontology import tag_chunk
+    except ImportError:
+        return {}
+    title = str(meta.get("title") or "")
+    try:
+        t = tag_chunk(f"{title}\n{doc}"[:6000], lang=None)
+    except Exception:
+        return {}
+    return {k: v for k, v in t.items() if v}
+
+
 def _filter_payload(
     meta: dict[str, Any],
     doc: str,
     allowed: frozenset[str] | None,
-) -> dict[str, str | int | float | bool]:
+) -> dict[str, Any]:
     """Build a point payload keeping only *allowed* keys plus ``content``."""
-    payload: dict[str, str | int | float | bool] = {"content": doc}
+    payload: dict[str, Any] = {"content": doc}
+    tags = _ontology_tags(doc, meta)
     if allowed is None:
         payload.update(meta)
+        payload.update(tags)
         return payload
+    payload.update(tags)  # list-valued KEYWORD fields; always kept when tagging is on
     for k, v in meta.items():
         if k in allowed and v is not None:
             if isinstance(v, (str, int, float, bool)):
@@ -523,26 +551,37 @@ def upsert_jsonl_to_qdrant_for_collection(
     )
 
 
-def _ensure_collection_from_spec(*, client: Any, collection: str, corpus: str, reset: bool) -> None:
-    from ml.rag.scripts.qdrant_collection_specs import COLLECTION_BUILDERS
+def _payload_index_corpus(collection: str, corpus: str) -> str:
+    """Formation points use the research vector layout and their own payload indexes."""
+    formation = os.environ.get("QDRANT_COLLECTION_FORMATION", "formation").strip() or "formation"
+    if collection == formation:
+        return "formation"
+    return corpus
 
+
+def _ensure_collection_from_spec(*, client: Any, collection: str, corpus: str, reset: bool) -> None:
+    from ml.rag.scripts.qdrant_collection_specs import COLLECTION_BUILDERS, ensure_payload_indexes
+
+    index_corpus = _payload_index_corpus(collection, corpus)
     if reset:
         try:
             client.delete_collection(collection_name=collection)
         except Exception:
             pass
+    exists = True
     try:
         client.get_collection(collection_name=collection)
-        return
     except Exception:
-        pass
-    from ml.rag.scripts.qdrant_collection_specs import ensure_payload_indexes
-
-    builder = COLLECTION_BUILDERS.get(corpus)
-    if not builder:
-        raise ValueError(f"No Qdrant collection spec for corpus {corpus!r}")
-    client.create_collection(collection_name=collection, **builder())
-    ensure_payload_indexes(client, collection, corpus)
+        exists = False
+    if not exists:
+        builder = COLLECTION_BUILDERS.get(corpus)
+        if not builder:
+            raise ValueError(f"No Qdrant collection spec for corpus {corpus!r}")
+        client.create_collection(collection_name=collection, **builder())
+        ensure_payload_indexes(client, collection, index_corpus)
+        return
+    if index_corpus != corpus:
+        ensure_payload_indexes(client, collection, index_corpus)
 
 
 def _research_lane_texts(doc: str, meta: dict[str, Any]) -> tuple[str, str]:

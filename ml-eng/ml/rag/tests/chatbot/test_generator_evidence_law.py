@@ -30,10 +30,48 @@ def test_fact_lookup_prompt_excludes_analytical_skeleton() -> None:
     assert "FACT LOOKUP" in system
 
 
+def test_prompt_distinguishes_policy_programme_gedsi_and_source_quality() -> None:
+    system = _system_prompt(task_mode="research", evidence_tier="strong").lower()
+    for phrase in (
+        "distinguish formal policies",
+        "programmes, projects, and interventions",
+        "gender, equity, disability",
+        "broader social inclusion",
+        "wikipedia as a tertiary",
+        "do not present it as equivalent",
+        "units explicitly supported by context",
+        "respect the requested geographic level",
+        "state the year of historical figures",
+        "current date supplied in context",
+    ):
+        assert phrase in system
+
+
+def test_market_price_prompt_uses_figures_without_inventing_forecasts() -> None:
+    system = _build_prompt(
+        "How are coffee prices in East Africa likely to change?",
+        "Context line",
+    )[0]["content"].lower()
+
+    for phrase in (
+        "latest available observation",
+        "not a live or current price",
+        "basis is loaded_at",
+        "do not invent one",
+        "do not give a numeric price forecast",
+    ):
+        assert phrase in system
+
+
+def test_market_price_prompt_is_not_added_to_unrelated_queries() -> None:
+    system = _system_prompt().lower()
+    assert "market-price questions" not in system
+
+
 def test_empty_tier_prompt_has_no_key_findings() -> None:
     system = _system_prompt(task_mode="analytical", evidence_tier="empty", analytical_mode=True)
     assert "Key Findings" not in system
-    assert "INSUFFICIENT EVIDENCE" in system
+    assert "Context is empty" in system
 
 
 def test_export_intent_adds_caption_rules() -> None:
@@ -103,7 +141,7 @@ def test_generate_honors_structured_bq_numeric_available_flag() -> None:
         "primary_measures": ["production"],
     }
     item = {
-        "content": "[Structured data] production for Kenya 2016",
+        "content": "[Structured data] production for Kenya 2016: 100000 tons",
         "source": "bigquery",
         "_context_kind": "bigquery",
         "metadata": {

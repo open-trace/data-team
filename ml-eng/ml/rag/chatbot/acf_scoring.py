@@ -24,6 +24,32 @@ logger = logging.getLogger(__name__)
 
 ACFBandLiteral = str  # very_strong | strong | moderate | limited | low | no_evidence
 
+# Mirror open-trace ACF band_thresholds (min score → band), descending.
+_BAND_ORDER: tuple[str, ...] = (
+    "very_strong",
+    "strong",
+    "moderate",
+    "limited",
+    "low",
+    "no_evidence",
+)
+_BAND_MAX_SCORE: dict[str, int] = {
+    "very_strong": 100,
+    "strong": 84,  # < 85 very_strong floor
+    "moderate": 69,  # < 70 strong floor
+    "limited": 54,  # < 55 moderate floor
+    "low": 39,  # < 40 limited floor
+    "no_evidence": 0,
+}
+_BAND_LABELS: dict[str, str] = {
+    "very_strong": "Very strong confidence",
+    "strong": "Strong confidence",
+    "moderate": "Moderate confidence",
+    "limited": "Limited confidence",
+    "low": "Low confidence",
+    "no_evidence": "No evidence",
+}
+
 
 @dataclass(frozen=True)
 class ACFResult:
@@ -75,26 +101,6 @@ def no_evidence_acf(*, explanation: str | None = None) -> ACFResult:
         components=None,
         applied_ceiling=None,
         config_version=None,
-        claim_level=None,
-        question_type=None,
-    )
-
-
-def weak_orientation_acf(*, explanation: str | None = None) -> ACFResult:
-    """Forced low confidence for ungrounded orientation after federated miss."""
-    expl = explanation or (
-        "No federated rows or scored documents for this filter. "
-        "Answer is general orientation, not OpenTrace structured data."
-    )
-    return ACFResult(
-        band="low",
-        band_label="Low confidence",
-        score=20,
-        explanation=expl,
-        note=expl,
-        components=None,
-        applied_ceiling="weak_orientation",
-        config_version="weak_orientation_v1",
         claim_level=None,
         question_type=None,
     )
@@ -156,12 +162,58 @@ def adapt_cited_claims(cited_items: list[Any]) -> list[ExtractedClaim]:
     return claims
 
 
+def cap_acf_band(result: ACFResult, ceiling: str | None) -> ACFResult:
+    """Clamp ACF band/score to a source-basis ceiling (documents / web only).
+
+    Band order follows ACF thresholds. Explanation notes that the answer relies
+    on documents (or weaker) rather than structured warehouse rows.
+    """
+    if not ceiling:
+        return result
+    ceil = str(ceiling).strip().lower()
+    if ceil not in _BAND_MAX_SCORE:
+        return result
+    cur_idx = _BAND_ORDER.index(result.band) if result.band in _BAND_ORDER else len(_BAND_ORDER) - 1
+    ceil_idx = _BAND_ORDER.index(ceil)
+    # Lower index = stronger band. Cap means we cannot be stronger than ceiling.
+    band = ceil if cur_idx < ceil_idx else result.band
+    max_score = _BAND_MAX_SCORE[band]
+    score = min(int(result.score), max_score)
+    if band == result.band and score == result.score:
+        return result
+    if band == "moderate":
+        expl = (
+            f"{result.explanation} Confidence capped at moderate because cited evidence "
+            "is documents only (no BigQuery / structured warehouse rows)."
+        )
+    elif band == "limited":
+        expl = (
+            f"{result.explanation} Confidence capped at limited because cited evidence "
+            "is web-only (no warehouse or document hits)."
+        )
+    else:
+        expl = f"{result.explanation} Confidence capped at {band} by source-basis policy."
+    return ACFResult(
+        band=band,
+        band_label=_BAND_LABELS.get(band, band.replace("_", " ").title()),
+        score=score,
+        explanation=expl.strip(),
+        note=expl.strip(),
+        components=result.components,
+        applied_ceiling=f"source_basis:{band}",
+        config_version=result.config_version,
+        claim_level=result.claim_level,
+        question_type=result.question_type,
+    )
+
+
 def apply_bq_execute_ceiling(
     result: ACFResult,
     exec_flags: dict[str, bool] | None,
     *,
     usable_bq: bool = False,
     bq_sql_debug: list[dict[str, Any]] | None = None,
+    cited: bool = False,
 ) -> ACFResult:
     """Cap ACF when warehouse execute state does not support strong confidence."""
     flags = exec_flags or {}
@@ -208,7 +260,27 @@ def apply_bq_execute_ceiling(
             claim_level=result.claim_level,
             question_type=result.question_type,
         )
-    if flags.get("structured_bq_never_executed") or flags.get("structured_bq_validation_failed"):
+    if (
+        flags.get("structured_bq_never_executed")
+        or flags.get("structured_bq_validation_failed")
+        or flags.get("structured_bq_compile_error")
+    ):
+        if cited and result.score > 0:
+            expl = (
+                "Warehouse figures were not retrieved — confidence reflects cited reports only."
+            )
+            return ACFResult(
+                band="limited",
+                band_label="Limited confidence",
+                score=min(result.score, 45),
+                explanation=expl,
+                note=expl,
+                components=result.components,
+                applied_ceiling="bq_narrative",
+                config_version=result.config_version,
+                claim_level=result.claim_level,
+                question_type=result.question_type,
+            )
         expl = (
             "Structured warehouse evidence was not executed — confidence cannot reflect "
             "FAOSTAT or mart figures for this filter."

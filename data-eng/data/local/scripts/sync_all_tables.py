@@ -1,14 +1,14 @@
 #!/usr/bin/env python3
 """
-Sync data from BigQuery into the local database for a given layer (bronze, silver, or gold).
+Sync data from BigQuery into the local database for a given layer (landing, raw_dev, staging_dev, intermediate_dev, or mart_dev).
 Discovers current tables/views from BigQuery for every layer. Each run refreshes
 the local snapshots using the same configurable row limit for every table.
 
 Usage:
   Set BQ_PROJECT, BQ_DATASET_BRONZE / BQ_DATASET_SILVER / BQ_DATASET_GOLD, LOCAL_DB_URL (or LOCAL_DB_PATH).
-  python sync_all_tables.py --dataset bronze [--limit N] [--timeout SECONDS]
-  python sync_all_tables.py --dataset silver
-  python sync_all_tables.py --dataset gold
+  python sync_all_tables.py --dataset raw_dev [--limit N] [--timeout SECONDS]
+  python sync_all_tables.py --dataset staging_dev
+  python sync_all_tables.py --dataset mart_dev
 """
 from __future__ import annotations
 
@@ -18,8 +18,7 @@ import sys
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
-from bq_table_lists import LAYERS, dataset_id_for_layer, load_layer_tables, local_schema_for_layer
-from bq_pg_types import local_table_name
+from bq_table_lists import LAYERS, dataset_id_for_layer, load_layer_tables, local_schema_for_layer, local_table_name
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 SCRIPTS_DIR = Path(__file__).resolve().parent
@@ -28,7 +27,7 @@ SYNC_SCRIPT = SCRIPTS_DIR / "bq_partition_to_local.py"
 
 def main() -> None:
     import argparse
-    parser = argparse.ArgumentParser(description="Sync BigQuery tables to local DB for a layer (bronze/silver/gold)")
+    parser = argparse.ArgumentParser(description="Sync BigQuery tables to local DB for a layer (landing/raw_dev/staging_dev/intermediate_dev/mart_dev)")
     parser.add_argument("--dataset", choices=LAYERS, required=True, help="Layer to sync")
     parser.add_argument("--limit", type=int, default=None, help="Override row limits for every table; 0 copies all rows")
     parser.add_argument('--workers', type=int, default=4, help='Concurrent independent table imports (default: 4)')

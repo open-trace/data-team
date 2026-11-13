@@ -20,7 +20,7 @@
 #   QDRANT_COLLECTION_OTA_INSIGHTS=OTA_insights
 #   BQ_PROJECT, BQ_DATASET_SILVER=staging_dev
 #   GOOGLE_APPLICATION_CREDENTIALS_BASE64 (base64 of GCP service account JSON)
-#   RAG_RERANKER_MODE=cross_encoder, RAG_RERANKER_MODEL=BAAI/bge-reranker-base
+#   RAG_RERANKER_MODE=cross_encoder, RAG_RERANKER_MODEL=BAAI/bge-reranker-v2-m3
 # Do NOT set RAG_LLM_BASE_URL to a local/LAN IP. Remove QDRANT_COLLECTION_DATA_DESCRIPTIONS.
 
 FROM python:3.11-slim
@@ -49,6 +49,15 @@ RUN chmod +x /app/scripts/railway-entrypoint.sh
 ENV PYTHONPATH=/app
 ENV PYTHONUNBUFFERED=1
 
+# Offline ontology (SQLite + Aho-Corasick keys) built at image build time; ~1-2 s, ~57 MB, no runtime network.
+COPY opentrace_ontology ./opentrace_ontology
+RUN python opentrace_ontology/ontology_build/build_sqlite.py \
+ && python opentrace_ontology/ontology_build/check_sqlite_matches_csv.py \
+ && python opentrace_ontology/ontology_build/build_value_map.py --mvi ml/rag/value_index/mart_value_index.json \
+ && python opentrace_ontology/ontology_build/check_value_index_coverage.py --mvi ml/rag/value_index/mart_value_index.json \
+ && python -c "import opentrace_ontology as o; p=o.plan_query('What is the current state of casssava in Nigeria'); assert p['source_basis']=='structured', p; print('ontology ok', o.__version__)" \
+ && rm -rf opentrace_ontology/seeds opentrace_ontology/tests opentrace_ontology/bench
+
 # Railway defaults: in-container ONNX dense + BM25 sparse (no HF inference API)
 ENV FASTEMBED_CACHE_PATH=/app/models/fastembed
 ENV RAG_EMBEDDINGS_MODE=fastembed
@@ -65,7 +74,7 @@ from ml.rag.sparse_embeddings import warmup_sparse_model; \
 from ml.rag.chatbot.reranker import _load_cross_encoder; \
 warmup_dense_model('intfloat/multilingual-e5-small'); \
 warmup_sparse_model(); \
-_load_cross_encoder('BAAI/bge-reranker-base'); \
+_load_cross_encoder('BAAI/bge-reranker-v2-m3'); \
 print('Embedding and rerank models cached in image')"
 
 # Health check for Railway

@@ -1,0 +1,26 @@
+CREATE SCHEMA IF NOT EXISTS "landing";
+CREATE TABLE IF NOT EXISTS "landing"."FAOstat_africa_Food_Value_Chain_Value_sh_bacdd2953601" (
+  "Area_Code" TEXT,
+  "Area_Code_M49" TEXT,
+  "Area" TEXT,
+  "Food_Value_Code" TEXT,
+  "Food_Value" TEXT,
+  "Industry_Code" TEXT,
+  "Industry" TEXT,
+  "Factor_Code" TEXT,
+  "Factor" TEXT,
+  "Element_Code" TEXT,
+  "Element" TEXT,
+  "Unit" TEXT,
+  "Y2005" TEXT,
+  "Y2006" TEXT,
+  "Y2007" TEXT,
+  "Y2008" TEXT,
+  "Y2009" TEXT,
+  "Y2010" TEXT,
+  "Y2011" TEXT,
+  "Y2012" TEXT,
+  "Y2013" TEXT,
+  "Y2014" TEXT,
+  "Y2015" TEXT
+);
