@@ -1,4 +1,4 @@
-{{ config(materialized='table') }}
+{{ config(materialized='table',enabled=false) }}
 
 -- Gold: technology fact extended from staging_dev fact_technology.
 

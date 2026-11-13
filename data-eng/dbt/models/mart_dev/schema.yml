@@ -746,7 +746,7 @@ models:
       - name: disease_key
         tests:
           - relationships:
-              to: ref('dim_disease')
+              to: ref('dim_foodborne_hazard')
               field: disease_key
               config:
                 where: "disease_key is not null"
