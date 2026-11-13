@@ -19,7 +19,8 @@
 # BigQuery reality:
 # - Datasets are named: raw_dev, staging_dev, mart_dev
 # - Local Postgres schemas are created to match those dataset ids: raw_dev.*, staging_dev.*, mart_dev.*
-# - Table lists come from dbt/models/sources.yml by default (or scripts/{raw_dev,staging_dev,mart_dev}_tables.txt)
+# - Tables/views are discovered live from BigQuery on every population run.
+# - BQ_PARTITION_LIMIT applies uniformly (0 = all rows); BQ_{LAYER}_TABLES optionally selects a subset.
 
 services:
   postgres:

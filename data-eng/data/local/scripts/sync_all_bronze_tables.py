@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-Sync data from all bronze tables (listed in raw_dev_tables.txt) into the local database.
+Sync data from all bronze tables discovered in BigQuery into the local database.
 Calls bq_partition_to_local.py for each table. Run after creating tables with
 bq_schema_to_local_pg.py. Uses BQ_PARTITION_LIMIT and BQ_PARTITION_FILTER from env.
 
 Usage:
-  Set BQ_PROJECT, BQ_DATASET, LOCAL_DB_URL (or LOCAL_DB_PATH). Optionally BQ_PARTITION_LIMIT (default 10000).
+  Set BQ_PROJECT, BQ_DATASET, LOCAL_DB_URL (or LOCAL_DB_PATH). Optionally BQ_PARTITION_LIMIT (default 0: all rows).
   python sync_all_bronze_tables.py [--limit N]
 """
 from __future__ import annotations
