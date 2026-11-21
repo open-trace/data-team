@@ -1,0 +1,40 @@
+# Ingestion worker dependencies
+# Slim: fastembed (ONNX, no torch) for embedding, qdrant-client for upsert,
+# google-api-python-client for Drive sync, pypdf for research PDFs.
+#
+# Install: pip install -r ml-eng/requirements.ingestion.txt
+
+# Embeddings (ONNX, no torch required)
+fastembed>=0.5.0
+numpy>=1.24.0,<2.0
+
+# Vector DB
+qdrant-client>=1.9.0
+
+# Google Drive sync (OAuth user token, pre-authorised)
+google-api-python-client>=2.100.0
+google-auth>=2.23.0
+google-auth-oauthlib>=1.1.0
+google-auth-httplib2>=0.2.0
+
+# GCP (BigQuery not needed for ingestion, but gcp_credentials.py imports it)
+google-cloud-bigquery>=3.14.0
+
+# PDF parsing (research papers)
+pypdf>=4.1.0
+python-docx>=1.1.0
+
+# ACF (payload enrichment during upsert)
+acf @ git+https://github.com/open-trace/ACF.git
+
+# LangChain core (graph imports at module level in some rag paths)
+langgraph>=0.2.0
+langchain-core>=0.3.0
+langchain>=0.3.0
+
+# Utilities
+PyYAML>=6.0
+requests>=2.31.0
+tiktoken>=0.5.0
+pandas>=2.0.0
+pyarrow>=14.0.0

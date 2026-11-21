@@ -1,0 +1,59 @@
+# Ingestion worker: Drive sync → preprocess → upsert to Qdrant.
+# No torch / sentence-transformers. Dense embeddings via fastembed (ONNX).
+# Sparse (BM25) embeddings via fastembed.
+#
+# Build from ml-eng/:
+#   docker build -f Dockerfile.ingestion -t opentrace-ingestion:latest .
+#
+# Required env at runtime (see scripts/ingestion-entrypoint.sh):
+#   GDRIVE_TOKEN_BASE64            — base64 of pre-authorised gdrive_token.json
+#   GDRIVE_CLIENT_SECRET_BASE64    — base64 of OAuth client_secret.json
+#   GDRIVE_FOLDER_RESEARCH_PAPERS_ID
+#   GDRIVE_FOLDER_NEWS_ID
+#   GDRIVE_FOLDER_OTA_INSIGHTS_ID  (optional)
+#   QDRANT_URL, QDRANT_API_KEY
+#   QDRANT_COLLECTION_NEWS, QDRANT_COLLECTION_RESEARCH_PAPERS, QDRANT_COLLECTION_OTA_INSIGHTS
+#   INGESTION_KIND    — news|research|ota|all  (default: all)
+#   INGESTION_RESET   — 1 to delete+recreate collections (default: 0)
+
+FROM python:3.11-slim
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        ca-certificates \
+        curl \
+        git \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Install ingestion dependencies (slim: no torch)
+COPY requirements.ingestion.txt requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+# Application code
+COPY ml ./ml
+COPY opentrace_ontology ./opentrace_ontology
+COPY scripts/ingestion-entrypoint.sh /app/scripts/ingestion-entrypoint.sh
+RUN chmod +x /app/scripts/ingestion-entrypoint.sh
+
+ENV PYTHONPATH=/app
+ENV PYTHONUNBUFFERED=1
+
+# Embedding model defaults (matches Railway API image)
+ENV FASTEMBED_CACHE_PATH=/app/models/fastembed
+ENV RAG_EMBEDDINGS_MODE=fastembed
+ENV RAG_SPARSE_EMBEDDINGS=on
+ENV RAG_SPARSE_MODEL=Qdrant/bm25
+ENV RAG_EMBEDDING_MODEL_ID=intfloat/multilingual-e5-small
+
+# Bake embedding models into the image (avoids Hub download on first run)
+RUN mkdir -p /app/models/fastembed \
+    && python -c "\
+from ml.rag.dense_embeddings import warmup_dense_model; \
+from ml.rag.sparse_embeddings import warmup_sparse_model; \
+warmup_dense_model('intfloat/multilingual-e5-small'); \
+warmup_sparse_model(); \
+print('Embedding models cached')"
+
+ENTRYPOINT ["/app/scripts/ingestion-entrypoint.sh"]
