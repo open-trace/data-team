@@ -1,0 +1,65 @@
+# Automated mining + ingestion worker.
+# Runs the full pipeline: RSS mining → preprocess → embed (fastembed ONNX) → upsert to Qdrant.
+# No torch. Single container, no shared volume needed between services.
+#
+# Build from ml-eng/:
+#   docker build -f Dockerfile.automine -t opentrace-automine:latest .
+#
+# Required env at runtime (see scripts/automine-entrypoint.sh):
+#   MINING_COUNTRIES    — comma-separated, e.g. "Nigeria,Ghana,Kenya,Rwanda"
+#   QDRANT_URL          — e.g. http://qdrant.railway.internal:6333
+#   QDRANT_API_KEY
+#
+# Optional:
+#   MINING_START_YEAR / MINING_END_YEAR  (default: current year)
+#   MINING_START_DATE / MINING_END_DATE  (overrides year vars)
+#   MINING_MAX_URLS_PER_COUNTRY (default: 500)
+#   MINING_BATCH_SIZE           (default: 100)
+#   MINING_GOOGLE_DAILY_SLICE   (default: 0)
+#   MINING_OUTPUT_DIR           (default: /data/web_news_rss)
+#   INGESTION_RESET             (default: 0 — set to 1 for full reload)
+#   TAVILY_API_KEY              (enables Tavily enrichment)
+#   QDRANT_COLLECTION_NEWS      (default: news_data)
+
+FROM python:3.11-slim
+
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+        ca-certificates \
+        curl \
+        git \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+COPY requirements.automine.txt requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY ml ./ml
+COPY opentrace_ontology ./opentrace_ontology
+COPY scripts/automine-entrypoint.sh /app/scripts/automine-entrypoint.sh
+RUN chmod +x /app/scripts/automine-entrypoint.sh
+
+ENV PYTHONPATH=/app
+ENV PYTHONUNBUFFERED=1
+
+# Embedding model defaults (must match the Qdrant collection index)
+ENV FASTEMBED_CACHE_PATH=/app/models/fastembed
+ENV RAG_EMBEDDINGS_MODE=fastembed
+ENV RAG_SPARSE_EMBEDDINGS=on
+ENV RAG_SPARSE_MODEL=Qdrant/bm25
+ENV RAG_EMBEDDING_MODEL_ID=intfloat/multilingual-e5-small
+
+# Bake embedding models into the image
+RUN mkdir -p /app/models/fastembed \
+    && python -c "\
+from ml.rag.dense_embeddings import warmup_dense_model; \
+from ml.rag.sparse_embeddings import warmup_sparse_model; \
+warmup_dense_model('intfloat/multilingual-e5-small'); \
+warmup_sparse_model(); \
+print('Embedding models cached')"
+
+# Default scratch dir for mined articles (mount a volume for persistence across runs)
+ENV MINING_OUTPUT_DIR=/data/web_news_rss
+
+ENTRYPOINT ["/app/scripts/automine-entrypoint.sh"]

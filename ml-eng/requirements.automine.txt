@@ -1,0 +1,33 @@
+# Automated mining + ingestion worker dependencies
+# Combines web mining (requirements.webminer.txt) + ingestion (requirements.ingestion.txt).
+# No torch — fastembed (ONNX) for dense embeddings.
+
+# === Web mining ===
+feedparser>=6.0.0
+trafilatura>=1.8.0
+lxml_html_clean>=0.4.0
+pypdf>=5.0.0
+
+# === Embeddings (ONNX, no torch) ===
+fastembed>=0.5.0
+numpy>=1.24.0,<2.0
+
+# === Vector DB ===
+qdrant-client>=1.9.0
+
+# === GCP + BQ (SA decode, not BQ queries) ===
+google-cloud-bigquery>=3.14.0
+
+# === LangChain (rag graph imports) ===
+acf @ git+https://github.com/open-trace/ACF.git
+langgraph>=0.2.0
+langchain-core>=0.3.0
+langchain>=0.3.0
+
+# === Utilities ===
+requests>=2.31.0
+PyYAML>=6.0.0
+tiktoken>=0.5.0
+pandas>=2.0.0
+pyarrow>=14.0.0
+python-docx>=1.1.0
