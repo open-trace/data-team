@@ -1,0 +1,32 @@
+# One-off Qdrant Cloud -> self-managed Qdrant migration job.
+# Deploy as a Railway service in the SAME environment as the new `qdrant`
+# service (so QDRANT_URL=http://qdrant.railway.internal:6333 resolves),
+# run it once, then remove/stop it. No public exposure of the new Qdrant
+# instance is required.
+#
+# Build from ml-eng/:
+#   docker build -f Dockerfile.migrate-qdrant -t opentrace-qdrant-migrate:latest .
+#
+# Required env at runtime (see scripts/migrate-qdrant-entrypoint.sh):
+#   QDRANT_OLD_URL, QDRANT_OLD_API_KEY   — source (Qdrant Cloud)
+#   QDRANT_URL, QDRANT_API_KEY           — target (self-managed Railway Qdrant)
+#
+# Optional:
+#   MIGRATE_COLLECTIONS   — comma-separated (default: all six production collections)
+#   MIGRATE_VERIFY_ONLY   — "1" to only compare point counts
+
+FROM python:3.11-slim
+
+WORKDIR /app
+
+COPY requirements.migrate.txt requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt
+
+COPY ml ./ml
+COPY scripts/migrate-qdrant-entrypoint.sh /app/scripts/migrate-qdrant-entrypoint.sh
+RUN chmod +x /app/scripts/migrate-qdrant-entrypoint.sh
+
+ENV PYTHONPATH=/app
+ENV PYTHONUNBUFFERED=1
+
+ENTRYPOINT ["/app/scripts/migrate-qdrant-entrypoint.sh"]

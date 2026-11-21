@@ -1,0 +1,3 @@
+# Qdrant Cloud -> self-managed Qdrant snapshot migration.
+# No qdrant-client, no embedding libs — raw REST snapshot transfer only.
+requests>=2.31.0
