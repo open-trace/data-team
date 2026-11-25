@@ -63,7 +63,7 @@ _DIRECTIONAL_AFRICAN_RE = re.compile(
     r"\b(?:west|western|east|eastern|north|northern|south|southern|central)\s+african\b",
     re.IGNORECASE,
 )
-_AFRICAN_COUNTRIES_RE = re.compile(r"\bafrican\s+countr(?:y|ies)\b", re.IGNORECASE)
+_AFRICAN_COUNTRIES_RE = re.compile(r"\bafrican\s+countries\b", re.IGNORECASE)
 
 
 def mentions_african_countries_panel(text: str) -> bool:

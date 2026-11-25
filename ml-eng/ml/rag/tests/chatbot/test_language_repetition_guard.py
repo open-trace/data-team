@@ -131,4 +131,6 @@ def test_french_report_keeps_valid_indicator_repetition_and_citations(monkeypatc
     )
     assert "la part de l’emploi agricole" in result.answer
     assert "rephrase" not in result.answer
-    assert len(result.citations) == 3
+    # Three rows of one warehouse indicator are presented as one public source.
+    assert [c["kind"] for c in result.citations] == ["structured_data"]
+    assert result.answer.count("[1]") == 3

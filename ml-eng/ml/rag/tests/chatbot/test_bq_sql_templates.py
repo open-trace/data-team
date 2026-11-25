@@ -65,7 +65,7 @@ def test_build_mart_point_fact_sql_uses_nga() -> None:
     assert "NGA" in sql
     assert "2022" in sql
     assert "dim_product" in sql
-    assert "product_name = 'Maize'" in sql
+    assert "product_name = 'Maize (corn)'" in sql
     assert "product_key = 'Maize'" not in sql
     assert "source_key" in sql
     assert "production_grain" in sql
@@ -81,9 +81,9 @@ def test_compile_semantic_filter_fct_production_maize() -> None:
         dataset="mart_dev",
         blob="maize production Nigeria 2022",
     )
-    assert labels == ["Maize"]
+    assert labels == ["Maize (corn)"]
     assert "dim_product" in sql
-    assert "product_name = 'Maize'" in sql
+    assert "product_name = 'Maize (corn)'" in sql
     assert "product_key = 'Maize'" not in sql
 
 
@@ -149,7 +149,8 @@ def test_mart_point_fact_routes_to_agg_for_single_country() -> None:
     assert hit["template"] == "mart_point_fact"
     assert hit["table_id"] in ("agg_production_country_year", "agg_production_annual", "fct_production")
     assert hit["table_id"] in hit["sql"]
-    assert "product_name = 'Maize'" in hit["sql"]
+    # agg tables store "Maize"; fct_production reads dim_product's "Maize (corn)".
+    assert "product_name = 'Maize'" in hit["sql"] or "product_name = 'Maize (corn)'" in hit["sql"]
     assert "LIMIT 1" in hit["sql"]
 
 

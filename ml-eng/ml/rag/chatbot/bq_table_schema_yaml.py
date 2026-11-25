@@ -1499,7 +1499,7 @@ def _match_metric_slug(blob: str, samples: set[str] | list[str]) -> str | None:
         return None
     skip_toks = _GENERIC_SAMPLE_TOKENS | frozenset({"production", "yield", "physical"})
     best: str | None = None
-    best_hits = 0
+    best_key = (0, 0)
     for raw in samples or []:
         sample = str(raw).strip()
         if not sample:
@@ -1508,10 +1508,13 @@ def _match_metric_slug(blob: str, samples: set[str] | list[str]) -> str | None:
         hits = sum(
             1 for t in toks if t in blob_tokens or _SPEECH_SYNONYMS.get(t, t) in blob_tokens
         )
-        if hits > best_hits:
-            best_hits = hits
+        # Most words said wins; on a tie, the slug with fewer unsaid words (maize over
+        # maize_(yellow) when only "maize" was said).
+        key = (hits, -(len(toks) - hits))
+        if hits > 0 and (best is None or key > best_key):
+            best_key = key
             best = sample
-    return best if best_hits > 0 else None
+    return best
 
 
 _PRODUCT_FK_COL = "product_key"
@@ -1655,7 +1658,7 @@ def _filter_measure_tokens_from_labels(
     ]
 
 
-_FORM_QUALIFIERS = frozenset({"fresh", "dry", "paddy", "green", "raw", "seed", "husked"})
+_FORM_QUALIFIERS = frozenset({"fresh", "dry", "paddy", "green", "raw", "seed", "husked", "milled"})
 _PRODUCT_FAMILY_STAGING = (
     ("production", "stg_faostat_production"),
     ("trade", "stg_faostat_trade"),
@@ -1689,14 +1692,12 @@ def _label_belongs_on_table(label: str, blob: str, pool: list[str]) -> bool:
     A unique stored form such as ``Cassava, fresh`` stays. ``Cereals n.e.c.`` does not.
     """
     blob_tokens = set(_alnum_tokens(expand_speech_text(blob or "")))
+    blob_canon = {_canon_token(t) for t in blob_tokens}
     tokens = [t for t in _alnum_tokens(label) if t not in _GENERIC_SAMPLE_TOKENS]
     if not tokens:
         return False
-    extra = [
-        t
-        for t in tokens
-        if t not in blob_tokens and _SPEECH_SYNONYMS.get(t, t) not in blob_tokens
-    ]
+    # Compare singular, synonym-folded forms: "yam" says "Yams".
+    extra = [t for t in tokens if _canon_token(t) not in blob_canon]
     if not extra:
         return True
     head = _canon_token(tokens[0])

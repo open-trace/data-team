@@ -1,6 +1,6 @@
 # Coverage ledger summary
 
-Snapshot `be0c5bbf9de9f880`, coverage built 2026-11-12T23:28:45.519083+00:00.
+Snapshot `6e7400f91d90355f`, coverage built 2026-11-12T23:28:45.519083+00:00.
 
 | Class | Readiness | Default table | Default readiness | Serving tables |
 |---|---|---|---|---|

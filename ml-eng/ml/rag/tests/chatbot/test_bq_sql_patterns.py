@@ -317,7 +317,7 @@ def test_try_sql_patterns_kenya_nigeria_maize_series() -> None:
     assert "country_iso3 IN (" in sqls
     assert hits[0].get("product_name") == "Maize"
     assert "dim_product" in sqls
-    assert "product_name = 'Maize'" in sqls
+    assert "product_name = 'Maize (corn)'" in sqls
 
 
 def test_time_series_honors_country_grain() -> None:

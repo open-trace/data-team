@@ -34,8 +34,8 @@ from ml.rag.chatbot.stage_budget import remaining_seconds
 from ml.rag.llm_chat import llm_chat_complete
 
 NO_EVIDENCE_NOTE = (
-    "Source: no OpenTrace evidence was found to verify this answer. It comes from general "
-    "model knowledge, so treat its figures as unverified."
+    "Source: no OpenTrace evidence was found to verify this answer, so treat its figures "
+    "as unverified."
 )
 _RETRY_PAUSE_S = 0.5
 _RETRY_MIN_LEFT_S = 3.0
@@ -46,9 +46,14 @@ _DRAFT_PROMPT = (
     "You are ADZA, an expert on agriculture across Africa: crops, livestock, fisheries, "
     "markets and prices, trade, climate and weather, soils, inputs, finance, policy, "
     "nutrition and food security. Answer the question fully and directly from your own "
-    "knowledge. Give the specific figures, dates, places and names you know, and state "
-    "the year a figure belongs to. Do not say you lack data and do not refuse; give your "
-    "best answer. Do not cite sources."
+    "knowledge. Give the places, names and typical figures you know, and state the year a "
+    "figure belongs to. Where you are unsure of an exact figure, give an approximate range "
+    "instead of a precise number. Do not say you lack data and do not refuse; give your "
+    "best answer.\n"
+    "Never attribute a statement or figure to a named report, agency, dataset, survey or "
+    "publication (no 'according to ...', no 'X recorded ...'), and never present a figure "
+    "as official or measured. Do not cite sources. Do not mention your training data or "
+    "knowledge cutoff."
 )
 
 _REVISE_PROMPT = (
@@ -64,11 +69,19 @@ _REVISE_PROMPT = (
     "statement gives a specific number, date or percentage, write (estimate) right after it.\n"
     "5. Only use [Source N] numbers that appear in the evidence. Never cite a source for a "
     "statement it does not support.\n"
-    "6. Return only the final answer, in the language and register of the draft. Do not "
+    "6. A statement without a [Source N] marker must not name a report, agency, dataset or "
+    "publication as its source (remove phrases like 'according to ...') and must not call a "
+    "figure official or recorded.\n"
+    "7. Return only the final answer, in the language and register of the draft. Do not "
     "mention the draft, the evidence check, or these rules, and do not add a sources list."
 )
 
 _STATEMENT_SPLIT = re.compile(r"(?<=[.!?])\s+|\n+")
+# A lead-in that names a source the answer cannot back, e.g. "According to the X report, ...".
+_UNBACKED_ATTRIBUTION = re.compile(
+    r"^(\s*(?:[-*>]+|\d+[.)])?\s*)(?:according\s+to|as\s+reported\s+by|as\s+per)\s+[^,\n]{3,160},\s*",
+    re.IGNORECASE,
+)
 _LIST_LEAD = re.compile(r"^\s*(?:[-*>#]+|\d+[.)])\s*")
 _MARKER = re.compile(r"\[Source\s*\d+(?:\s*,\s*(?:Source\s*)?\d+)*\]", re.IGNORECASE)
 _BAND_FLOORS: tuple[tuple[int, str], ...] = (
@@ -131,6 +144,23 @@ def statements(answer: str) -> list[str]:
     return out
 
 
+def drop_unbacked_attributions(answer: str) -> str:
+    """Remove "according to <source>," lead-ins from statements that cite no evidence.
+
+    A model-knowledge statement must not claim a named report or agency as its source.
+    """
+    parts = re.split(f"({_STATEMENT_SPLIT.pattern})", answer)
+    for i in range(0, len(parts), 2):
+        part = parts[i]
+        if not part or _MARKER.search(part):
+            continue
+        match = _UNBACKED_ATTRIBUTION.match(part)
+        if match:
+            rest = part[match.end():]
+            parts[i] = match.group(1) + rest[:1].upper() + rest[1:]
+    return "".join(parts)
+
+
 def statement_rows(answer: str, known_ids: set[int]) -> list[dict[str, Any]]:
     """One row per statement: the sources it cites and whether those sources exist."""
     rows: list[dict[str, Any]] = []
@@ -168,8 +198,8 @@ def score_revision(
     verified = sum(1 for row in rows if row["verified"])
     if not cited_refs or verified == 0:
         explanation = (
-            f"No OpenTrace evidence verifies any of the {total} statements; "
-            "the answer comes from model knowledge."
+            f"No OpenTrace evidence verifies any of the {total} statements, "
+            "so its figures are unverified."
         )
         return ACFResult(
             band="no_evidence",
@@ -282,6 +312,7 @@ def revise_with_evidence(
             # unchecked draft over the evidence answer.
             return None
         answer = revised
+    answer = drop_unbacked_attributions(answer)
     rows = statement_rows(answer, {ref.source_id for ref in registry})
     cited_ids = {sid for row in rows for sid in row["sources"]}
     if not cited_ids:

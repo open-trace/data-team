@@ -74,7 +74,8 @@ def test_score_without_evidence_is_low_not_a_refusal() -> None:
         rows, [], query="where is teff grown", decomposition=None, reference_date=date(2026, 11, 25)
     )
     assert (acf.band, acf.score, len(rows)) == ("no_evidence", 0, 2)
-    assert "model knowledge" in acf.explanation
+    assert acf.explanation == "No OpenTrace evidence verifies any of the 2 statements, so its figures are unverified."
+    assert "model knowledge" not in rarr.NO_EVIDENCE_NOTE
 
 
 def test_revise_cites_evidence_and_scales_score_by_coverage(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -107,6 +108,30 @@ def test_revise_without_evidence_keeps_draft_and_scores_low(monkeypatch: pytest.
     assert revision.citations == []
     assert (revision.acf.band, revision.acf.score) == ("no_evidence", 0)
     assert seen == []
+
+
+def test_unbacked_attributions_are_dropped_and_cited_ones_kept() -> None:
+    answer = (
+        "According to the Malawi Meteorological Department's 2023 summary, Machinga recorded 1,480 mm. "
+        "As reported by FEWS NET, floods followed.\n"
+        "- according to a 2023 survey, yields fell (estimate).\n"
+        "According to the ministry, maize yields fell in 2024 [Source 1]."
+    )
+    assert rarr.drop_unbacked_attributions(answer) == (
+        "Machinga recorded 1,480 mm. "
+        "Floods followed.\n"
+        "- Yields fell (estimate).\n"
+        "According to the ministry, maize yields fell in 2024 [Source 1]."
+    )
+
+
+def test_revise_without_evidence_drops_named_source_claims(monkeypatch: pytest.MonkeyPatch) -> None:
+    _stub_llm(monkeypatch, {})
+    revision = rarr.revise_with_evidence(
+        "rainfall in Machinga", "According to the 2023 rainfall summary, Machinga was wettest.", {"reranked_context": []}
+    )
+    assert revision is not None
+    assert revision.answer == "Machinga was wettest.\n\n" + rarr.NO_EVIDENCE_NOTE
 
 
 def test_default_mode_never_drafts(monkeypatch: pytest.MonkeyPatch) -> None:

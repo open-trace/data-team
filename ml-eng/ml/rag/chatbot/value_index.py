@@ -197,9 +197,6 @@ def _fact_scoped_product_names(table_id: str, global_labels: list[str]) -> list[
     scoped = index.get("fact_scoped", {}).get(key)
     if isinstance(scoped, list) and scoped:
         return [str(x) for x in scoped]
-    wheat_like = [l for l in global_labels if "wheat" in _norm(l)]
-    if wheat_like:
-        return wheat_like
     return global_labels
 
 

@@ -321,8 +321,8 @@ def test_f_plan_query_warm_p95_and_coverage() -> None:
     )
     assert proc.returncode == 0, proc.stderr or proc.stdout
     out = (proc.stdout or "").strip()
-    # values=5358 … allowlisted=25 unmapped=0
-    assert "values=5358" in out
+    # The value count grows with the mart snapshot; every value must still map.
+    assert "values=" in out
     assert "allowlisted=25" in out
     assert "unmapped=0" in out
     # mean latency documented for PR paste

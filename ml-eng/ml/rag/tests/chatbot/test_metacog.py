@@ -28,9 +28,16 @@ from ml.rag.chatbot.metacog import (
     metacog_self_check_enabled,
     propose_metacog_revise,
     self_check_applies,
+    self_check_draft,
     verify_metacog_evidence,
 )
 from ml.rag.chatbot.turn_contract import TimeSpec, TurnContract
+
+
+def _enable(monkeypatch: pytest.MonkeyPatch, *flags: str) -> None:
+    monkeypatch.setenv("RAG_METACOG", "1")
+    for flag in flags:
+        monkeypatch.setenv(flag, "1")
 
 
 @pytest.fixture(autouse=True)
@@ -307,18 +314,18 @@ def test_propose_revise_skip_when_disabled(monkeypatch: pytest.MonkeyPatch) -> N
     assert decision.action == "skip"
 
 
-def test_propose_revise_accept_when_gap_but_already_revised(monkeypatch: pytest.MonkeyPatch) -> None:
-    monkeypatch.setenv("RAG_METACOG", "1")
-    monkeypatch.setenv("RAG_METACOG_REVISE", "1")
+def test_propose_revise_skips_second_pass(monkeypatch: pytest.MonkeyPatch) -> None:
+    _enable(monkeypatch, "RAG_METACOG_REVISE")
     plan = MetacogPlan(advisory_mode="diagnose", confidence=0.9, source="heuristic")
     verified = MetacogVerify(status="gap", evidence_tier_hint="empty")
     decision = propose_metacog_revise(
         plan, verified, query="", already_revised=1, bq_results=[], reranked_context=[]
     )
-    assert decision.action == "accept"
+    assert decision.action == "skip"
 
 
-def test_propose_revise_accept_when_ok() -> None:
+def test_propose_revise_accept_when_ok(monkeypatch: pytest.MonkeyPatch) -> None:
+    _enable(monkeypatch, "RAG_METACOG_REVISE")
     plan = MetacogPlan(advisory_mode="diagnose", confidence=0.9, source="heuristic")
     verified = MetacogVerify(status="ok", evidence_tier_hint="strong")
     decision = propose_metacog_revise(
@@ -342,8 +349,8 @@ def test_propose_revise_accept_bad_json(monkeypatch: pytest.MonkeyPatch) -> None
     assert decision.action == "accept"
 
 
-def test_propose_revise_replan() -> None:
-    monkeypatch.setenv("RAG_METACOG", "1")
+def test_propose_revise_replan(monkeypatch: pytest.MonkeyPatch) -> None:
+    _enable(monkeypatch, "RAG_METACOG_REVISE")
     monkeypatch.setenv("RAG_METACOG_REVISE_MODEL_ID", "deepseek/deepseek-r1")
     payload = {
         "action": "replan",
@@ -392,22 +399,31 @@ def test_apply_revise_decision_replan() -> None:
     assert counter == 1
 
 
-def test_self_check_applies_diagnose() -> None:
+def test_self_check_applies_diagnose(monkeypatch: pytest.MonkeyPatch) -> None:
+    _enable(monkeypatch, "RAG_METACOG_SELF_CHECK")
     plan = MetacogPlan(advisory_mode="diagnose", confidence=0.9, source="heuristic")
     verified = MetacogVerify(status="strong", evidence_tier_hint="strong")
     assert self_check_applies(plan, verified, job="diagnose")
 
 
-def test_self_check_applies_partial_verify() -> None:
+def test_self_check_applies_partial_verify(monkeypatch: pytest.MonkeyPatch) -> None:
+    _enable(monkeypatch, "RAG_METACOG_SELF_CHECK")
     plan = MetacogPlan(advisory_mode="fact", confidence=0.9, source="heuristic")
     verified = MetacogVerify(status="partial", evidence_tier_hint="weak")
     assert self_check_applies(plan, verified, job="fact")
 
 
-def test_self_check_does_not_apply_ok_verify() -> None:
-    plan = MetacogPlan(advisory_mode="diagnose", confidence=0.9, source="heuristic")
+def test_self_check_does_not_apply_fact_with_ok_verify(monkeypatch: pytest.MonkeyPatch) -> None:
+    _enable(monkeypatch, "RAG_METACOG_SELF_CHECK")
+    plan = MetacogPlan(advisory_mode="fact", confidence=0.9, source="heuristic")
     verified = MetacogVerify(status="ok", evidence_tier_hint="strong")
-    assert not self_check_applies(plan, verified, job="diagnose")
+    assert not self_check_applies(plan, verified, job="fact")
+
+
+def test_self_check_off_by_default(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.delenv("RAG_METACOG_SELF_CHECK", raising=False)
+    plan = MetacogPlan(advisory_mode="diagnose", confidence=0.9, source="heuristic")
+    assert not self_check_applies(plan, MetacogVerify(status="partial"), job="diagnose")
 
 
 def test_self_check_keep_bad_json(monkeypatch: pytest.MonkeyPatch) -> None:
@@ -442,7 +458,8 @@ def test_self_check_revise() -> None:
     assert list(check.problems) == ["wrong country", "invented number"]
 
 
-def test_self_check_applies_fact_with_partial_verify() -> None:
+def test_self_check_applies_fact_with_partial_verify(monkeypatch: pytest.MonkeyPatch) -> None:
+    _enable(monkeypatch, "RAG_METACOG_SELF_CHECK")
     plan = MetacogPlan(advisory_mode="fact", confidence=0.9, source="heuristic")
     verified = MetacogVerify(status="partial", evidence_tier_hint="weak")
     assert self_check_applies(plan, verified, job="fact")

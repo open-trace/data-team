@@ -169,7 +169,7 @@ entries:
     max_geo_level: national
     contract_sql_only: true
 
-  - measure: rainfall
+  - measure: climate
     geo_grain: admin2
     time_grain: year
     status: unsupported_grain

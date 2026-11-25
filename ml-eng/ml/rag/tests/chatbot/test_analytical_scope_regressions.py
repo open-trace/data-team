@@ -244,5 +244,6 @@ def test_complete_pipeline_keeps_local_period_and_renders_facts_without_model(mo
     assert "+8.00 percentage points" in result["answer"]
     assert "2018: 1.50 t/ha" in result["answer"] and "+0.50 t/ha" in result["answer"]
     assert "What this value is" not in result["answer"]
-    assert len(result["citations"]) == 21
+    # 21 warehouse rows from two indicators are presented as one source per indicator.
+    assert len(result["citations"]) == 2
     model.assert_not_called()

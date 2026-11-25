@@ -17,7 +17,7 @@ traces:
 
   - id: admin2_unsupported_rain
     query: "Which districts in Malawi had the highest rainfall in 2023?"
-    expect_measure: rainfall
+    expect_measure: climate
     expect_geo_grain: admin2
     expect_serve_status: unsupported_grain
 

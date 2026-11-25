@@ -186,6 +186,9 @@ def compile_geo_grain(query: str, decomposition: dict[str, Any] | None) -> GeoGr
         return "africa"
     if geo_scope == "region":
         return "region"
+    # "Which districts in Malawi…" is scoped to one country but asked at district grain.
+    if _ADMIN2_RE.search(q):
+        return "admin2"
     if geo_scope == "multi_country":
         return "country"
     if geo_scope == "country":

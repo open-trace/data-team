@@ -1,6 +1,6 @@
 {
- "built_at": "2026-11-12T23:33:03.416493+00:00",
- "snapshot_hash": "be0c5bbf9de9f880",
+ "built_at": "2026-11-25T08:04:25.411340+00:00",
+ "snapshot_hash": "6e7400f91d90355f",
  "coverage_built_at": "2026-11-12T23:28:45.519083+00:00",
  "classes": {
   "AH": {
@@ -404,7 +404,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.value_avg, f.row_count, f.year, f.country_name, f.measurement_form, f.unit, d0.organisation_name, d1.item_name, d2.country_name FROM (SELECT value_avg, row_count, year, country_name, measurement_form, unit, source_key, item_key, geography_key FROM `opentrace-prod-5ga4.mart_dev.agg_economics_country_year` WHERE country_name = 'Kenya' AND year = 2020 LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d0 ON d0.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_item` AS d1 ON d1.item_key = f.item_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d2 ON d2.geography_key = f.geography_key"
+    "sql": "SELECT f.value, f.row_count, f.year, f.country_name, f.measurement_form, f.unit, d0.organisation_name, d1.item_name, d2.country_name FROM (SELECT value_avg AS value, row_count, year, country_name, measurement_form, unit, source_key, item_key, geography_key FROM `opentrace-prod-5ga4.mart_dev.agg_economics_country_year` WHERE country_name = 'Kenya' AND year = 2020 LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d0 ON d0.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_item` AS d1 ON d1.item_key = f.item_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d2 ON d2.geography_key = f.geography_key"
    },
    "readiness": "integration_verified"
   },
@@ -464,7 +464,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.value_avg, f.row_count, f.year, f.country_name, f.unit, d0.organisation_name, d1.item_name, d2.element_name, d3.country_name FROM (SELECT value_avg, row_count, year, country_name, unit, source_key, item_key, element_key, geography_key FROM `opentrace-prod-5ga4.mart_dev.agg_emissions_country_year` WHERE country_name = 'Kenya' AND year = 2020 LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d0 ON d0.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_item` AS d1 ON d1.item_key = f.item_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_element` AS d2 ON d2.element_key = f.element_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d3 ON d3.geography_key = f.geography_key"
+    "sql": "SELECT f.value, f.row_count, f.year, f.country_name, f.unit, d0.organisation_name, d1.item_name, d2.element_name, d3.country_name FROM (SELECT value_avg AS value, row_count, year, country_name, unit, source_key, item_key, element_key, geography_key FROM `opentrace-prod-5ga4.mart_dev.agg_emissions_country_year` WHERE country_name = 'Kenya' AND year = 2020 LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d0 ON d0.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_item` AS d1 ON d1.item_key = f.item_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_element` AS d2 ON d2.element_key = f.element_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d3 ON d3.geography_key = f.geography_key"
    },
    "readiness": "integration_verified"
   },
@@ -524,7 +524,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.value_avg, f.row_count, f.year, f.country_name, f.indicator, f.sex, f.unit, d0.organisation_name, d1.country_name FROM (SELECT value_avg, row_count, year, country_name, indicator, sex, unit, source_key, geography_key FROM `opentrace-prod-5ga4.mart_dev.agg_employment_country_year` WHERE country_name = 'Kenya' AND year = 2020 LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d0 ON d0.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d1 ON d1.geography_key = f.geography_key"
+    "sql": "SELECT f.value, f.row_count, f.year, f.country_name, f.indicator, f.sex, f.unit, d0.organisation_name, d1.country_name FROM (SELECT value_avg AS value, row_count, year, country_name, indicator, sex, unit, source_key, geography_key FROM `opentrace-prod-5ga4.mart_dev.agg_employment_country_year` WHERE country_name = 'Kenya' AND year = 2020 LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d0 ON d0.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d1 ON d1.geography_key = f.geography_key"
    },
    "readiness": "integration_verified"
   },
@@ -587,7 +587,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.production_sum, f.imports_sum, f.exports_sum, f.food_sum, f.year, f.country_name, d0.product_name, d1.organisation_name, d2.country_name FROM (SELECT production_sum, imports_sum, exports_sum, food_sum, year, country_name, product_key, source_key, geography_key FROM `opentrace-prod-5ga4.mart_dev.agg_food_balance_country_year` WHERE country_name = 'Kenya' AND year = 2020 LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_product` AS d0 ON d0.product_key = f.product_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d1 ON d1.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d2 ON d2.geography_key = f.geography_key"
+    "sql": "SELECT f.value, f.imports_sum, f.exports_sum, f.food_sum, f.year, f.country_name, d0.product_name, d1.organisation_name, d2.country_name FROM (SELECT production_sum AS value, imports_sum, exports_sum, food_sum, year, country_name, product_key, source_key, geography_key FROM `opentrace-prod-5ga4.mart_dev.agg_food_balance_country_year` WHERE country_name = 'Kenya' AND year = 2020 LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_product` AS d0 ON d0.product_key = f.product_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d1 ON d1.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d2 ON d2.geography_key = f.geography_key"
    },
    "readiness": "integration_verified"
   },
@@ -650,7 +650,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.value_sum, f.pct_phase3_avg, f.pct_phase4_avg, f.pct_phase5_avg, f.year, f.month, f.country_name, f.measure_type, d0.organisation_name, d1.country_name FROM (SELECT value_sum, pct_phase3_avg, pct_phase4_avg, pct_phase5_avg, year, month, country_name, measure_type, source_key, geography_key FROM `opentrace-prod-5ga4.mart_dev.agg_food_security_country_month` WHERE country_name = 'Kenya' AND year = 2020 ORDER BY month DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d0 ON d0.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d1 ON d1.geography_key = f.geography_key ORDER BY f.month DESC"
+    "sql": "SELECT f.value, f.pct_phase3_avg, f.pct_phase4_avg, f.pct_phase5_avg, f.year, f.month, f.country_name, f.measure_type, d0.organisation_name, d1.country_name FROM (SELECT value_sum AS value, pct_phase3_avg, pct_phase4_avg, pct_phase5_avg, year, month, country_name, measure_type, source_key, geography_key FROM `opentrace-prod-5ga4.mart_dev.agg_food_security_country_month` WHERE country_name = 'Kenya' AND year = 2020 ORDER BY month DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d0 ON d0.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d1 ON d1.geography_key = f.geography_key ORDER BY f.month DESC"
    },
    "readiness": "integration_verified"
   },
@@ -713,7 +713,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.phase_number, f.total_population_affected, f.avg_population_affected, f.avg_pct_phase3, f.time_key, f.country_name, f.phase_name, f.scenario_name, d0.country_name, d1.phase_code, d2.scenario_code FROM (SELECT phase_number, total_population_affected, avg_population_affected, avg_pct_phase3, time_key, country_name, phase_name, scenario_name, geo_key, classification_key, scenario_key FROM `opentrace-prod-5ga4.mart_dev.agg_food_security_monthly` WHERE country_name = 'Kenya' AND (time_key = 2020 OR time_key IN (SELECT time_key FROM `opentrace-prod-5ga4.mart_dev.dim_time` WHERE year = 2020)) LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d0 ON d0.geography_key = f.geo_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_classification` AS d1 ON d1.classification_key = f.classification_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_scenario` AS d2 ON d2.scenario_key = f.scenario_key"
+    "sql": "SELECT f.value, f.total_population_affected, f.avg_population_affected, f.avg_pct_phase3, f.country_name, f.phase_name, f.scenario_name, d0.country_name, d1.phase_code, d2.scenario_code, d3.month_name FROM (SELECT phase_number AS value, total_population_affected, avg_population_affected, avg_pct_phase3, time_key, country_name, phase_name, scenario_name, geo_key, classification_key, scenario_key FROM `opentrace-prod-5ga4.mart_dev.agg_food_security_monthly` WHERE country_name = 'Kenya' AND (time_key = 2020 OR time_key IN (SELECT time_key FROM `opentrace-prod-5ga4.mart_dev.dim_time` WHERE year = 2020)) LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d0 ON d0.geography_key = f.geo_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_classification` AS d1 ON d1.classification_key = f.classification_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_scenario` AS d2 ON d2.scenario_key = f.scenario_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_time` AS d3 ON d3.time_key = f.time_key"
    },
    "readiness": "integration_verified"
   },
@@ -773,7 +773,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.value_avg, f.row_count, f.year, f.country_name, f.forestry_grain, f.unit, d0.organisation_name, d1.item_name, d2.country_name FROM (SELECT value_avg, row_count, year, country_name, forestry_grain, unit, source_key, item_key, geography_key FROM `opentrace-prod-5ga4.mart_dev.agg_forestry_country_year` WHERE country_name = 'Kenya' AND year = 2020 LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d0 ON d0.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_item` AS d1 ON d1.item_key = f.item_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d2 ON d2.geography_key = f.geography_key"
+    "sql": "SELECT f.value, f.row_count, f.year, f.country_name, f.forestry_grain, f.unit, d0.organisation_name, d1.item_name, d2.country_name FROM (SELECT value_avg AS value, row_count, year, country_name, forestry_grain, unit, source_key, item_key, geography_key FROM `opentrace-prod-5ga4.mart_dev.agg_forestry_country_year` WHERE country_name = 'Kenya' AND year = 2020 LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d0 ON d0.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_item` AS d1 ON d1.item_key = f.item_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d2 ON d2.geography_key = f.geography_key"
    },
    "readiness": "integration_verified"
   },
@@ -830,7 +830,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.latest_year, f.hdi_value, f.country_iso3, d0.country_name FROM (SELECT latest_year, hdi_value, country_iso3, geography_key FROM `opentrace-prod-5ga4.mart_dev.agg_hdi_latest` WHERE country_iso3 = 'KEN' LIMIT 1) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d0 ON d0.geography_key = f.geography_key"
+    "sql": "SELECT f.value, f.hdi_value, f.country_iso3, d0.country_name FROM (SELECT latest_year AS value, hdi_value, country_iso3, geography_key FROM `opentrace-prod-5ga4.mart_dev.agg_hdi_latest` WHERE country_iso3 = 'KEN' LIMIT 1) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d0 ON d0.geography_key = f.geography_key"
    },
    "readiness": "integration_verified"
   },
@@ -892,7 +892,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.price_avg, f.common_unit_price_avg, f.market_count, f.year, f.month, f.country_name, f.price_source, d0.product_name, d1.organisation_name, d2.country_name FROM (SELECT price_avg, common_unit_price_avg, market_count, year, month, country_name, price_source, product_key, source_key, geography_key FROM `opentrace-prod-5ga4.mart_dev.agg_prices_country_month` WHERE country_name = 'Kenya' AND year = 2020 AND price_type = 'Value' ORDER BY month DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_product` AS d0 ON d0.product_key = f.product_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d1 ON d1.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d2 ON d2.geography_key = f.geography_key ORDER BY f.month DESC"
+    "sql": "SELECT f.value, f.common_unit_price_avg, f.market_count, f.year, f.month, f.country_name, f.price_source, d0.product_name, d1.organisation_name, d2.country_name FROM (SELECT price_avg AS value, common_unit_price_avg, market_count, year, month, country_name, price_source, product_key, source_key, geography_key FROM `opentrace-prod-5ga4.mart_dev.agg_prices_country_month` WHERE country_name = 'Kenya' AND year = 2020 AND price_type = 'Value' ORDER BY month DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_product` AS d0 ON d0.product_key = f.product_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d1 ON d1.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d2 ON d2.geography_key = f.geography_key ORDER BY f.month DESC"
    },
    "readiness": "integration_verified"
   },
@@ -953,7 +953,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.total_production_qty, f.avg_production_qty, f.total_area, f.avg_yield, f.time_key, f.country_name, f.product_name, f.source_name, d0.product_name, d1.organisation_name FROM (SELECT total_production_qty, avg_production_qty, total_area, avg_yield, time_key, country_name, product_name, source_name, product_key, source_key FROM `opentrace-prod-5ga4.mart_dev.agg_production_annual` WHERE country_name = 'Kenya' AND (time_key = 2020 OR time_key IN (SELECT time_key FROM `opentrace-prod-5ga4.mart_dev.dim_time` WHERE year = 2020)) LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_product` AS d0 ON d0.product_key = f.product_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d1 ON d1.source_key = f.source_key"
+    "sql": "SELECT f.value, f.avg_production_qty, f.total_area, f.avg_yield, f.time_key, f.country_name, f.product_name, f.source_name, d0.product_name, d1.organisation_name FROM (SELECT total_production_qty AS value, avg_production_qty, total_area, avg_yield, time_key, country_name, product_name, source_name, product_key, source_key FROM `opentrace-prod-5ga4.mart_dev.agg_production_annual` WHERE country_name = 'Kenya' AND (time_key = 2020 OR time_key IN (SELECT time_key FROM `opentrace-prod-5ga4.mart_dev.dim_time` WHERE year = 2020)) LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_product` AS d0 ON d0.product_key = f.product_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d1 ON d1.source_key = f.source_key"
    },
    "readiness": "integration_verified"
   },
@@ -1014,7 +1014,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.area_harvested, f.production_qty, f.yield_recomputed, f.fnid_count, f.harvest_year, f.country_name, d0.product_name, d1.organisation_name, d2.season_name, d3.country_name FROM (SELECT area_harvested, production_qty, yield_recomputed, fnid_count, harvest_year, country_name, product_key, source_key, season_key, geography_key FROM `opentrace-prod-5ga4.mart_dev.agg_production_country_season` WHERE country_name = 'Kenya' AND harvest_year = 2020 LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_product` AS d0 ON d0.product_key = f.product_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d1 ON d1.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_season` AS d2 ON d2.season_key = f.season_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d3 ON d3.geography_key = f.geography_key"
+    "sql": "SELECT f.value, f.production_qty, f.yield_recomputed, f.fnid_count, f.harvest_year, f.country_name, d0.product_name, d1.organisation_name, d2.season_name, d3.country_name FROM (SELECT area_harvested AS value, production_qty, yield_recomputed, fnid_count, harvest_year, country_name, product_key, source_key, season_key, geography_key FROM `opentrace-prod-5ga4.mart_dev.agg_production_country_season` WHERE country_name = 'Kenya' AND harvest_year = 2020 LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_product` AS d0 ON d0.product_key = f.product_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d1 ON d1.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_season` AS d2 ON d2.season_key = f.season_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d3 ON d3.geography_key = f.geography_key"
    },
    "readiness": "integration_verified"
   },
@@ -1075,7 +1075,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.area_harvested, f.production_qty, f.yield_recomputed, f.row_count, f.year, f.country_iso3, d0.product_name, d1.organisation_name, d2.country_name FROM (SELECT area_harvested, production_qty, yield_recomputed, row_count, year, country_iso3, product_key, source_key, geography_key FROM `opentrace-prod-5ga4.mart_dev.agg_production_country_year` WHERE country_iso3 = 'KEN' AND year = 2020 LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_product` AS d0 ON d0.product_key = f.product_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d1 ON d1.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d2 ON d2.geography_key = f.geography_key"
+    "sql": "SELECT f.value, f.production_qty, f.yield_recomputed, f.row_count, f.year, f.country_iso3, d0.product_name, d1.organisation_name, d2.country_name FROM (SELECT area_harvested AS value, production_qty, yield_recomputed, row_count, year, country_iso3, product_key, source_key, geography_key FROM `opentrace-prod-5ga4.mart_dev.agg_production_country_year` WHERE country_iso3 = 'KEN' AND year = 2020 LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_product` AS d0 ON d0.product_key = f.product_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d1 ON d1.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d2 ON d2.geography_key = f.geography_key"
    },
    "readiness": "integration_verified"
   },
@@ -1133,7 +1133,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.value_avg, f.point_count, f.admin_1_name, f.soil_property, f.depth, f.country_name, d0.organisation_name FROM (SELECT value_avg, point_count, admin_1_name, soil_property, depth, country_name, source_key FROM `opentrace-prod-5ga4.mart_dev.agg_soil_admin` WHERE country_name = 'Kenya' LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d0 ON d0.source_key = f.source_key"
+    "sql": "SELECT f.value, f.point_count, f.admin_1_name, f.soil_property, f.depth, f.country_name, d0.organisation_name FROM (SELECT value_avg AS value, point_count, admin_1_name, soil_property, depth, country_name, source_key FROM `opentrace-prod-5ga4.mart_dev.agg_soil_admin` WHERE country_name = 'Kenya' LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d0 ON d0.source_key = f.source_key"
    },
    "readiness": "integration_verified"
   },
@@ -1984,7 +1984,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.value, f.as_of_date, f.metric, f.unit, d0.country_name, d1.organisation_name FROM (SELECT value, as_of_date, metric, unit, geography_key, source_key FROM `opentrace-prod-5ga4.mart_dev.fct_air_quality` WHERE country_iso3 = 'KEN' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 1) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d0 ON d0.geography_key = f.geography_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d1 ON d1.source_key = f.source_key ORDER BY f.as_of_date DESC"
+    "sql": "SELECT f.value, f.as_of_date, f.as_of_date_basis, f.metric, f.unit, d0.country_name, d1.organisation_name FROM (SELECT value, as_of_date, as_of_date_basis, metric, unit, geography_key, source_key FROM `opentrace-prod-5ga4.mart_dev.fct_air_quality` WHERE country_iso3 = 'KEN' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 1) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d0 ON d0.geography_key = f.geography_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d1 ON d1.source_key = f.source_key ORDER BY f.as_of_date DESC"
    },
    "readiness": "integration_verified"
   },
@@ -2066,7 +2066,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.value, f.as_of_date, f.species, f.metric, f.unit, d0.country_name, d1.village_code, d2.organisation_name FROM (SELECT value, as_of_date, species, metric, unit, geography_key, household_key, source_key FROM `opentrace-prod-5ga4.mart_dev.fct_animal_health` WHERE country_iso3 = 'KEN' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d0 ON d0.geography_key = f.geography_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_household` AS d1 ON d1.household_key = f.household_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d2 ON d2.source_key = f.source_key ORDER BY f.as_of_date DESC"
+    "sql": "SELECT f.value, f.as_of_date, f.as_of_date_basis, f.species, f.metric, f.unit, d0.country_name, d1.village_code, d2.organisation_name FROM (SELECT value, as_of_date, as_of_date_basis, species, metric, unit, geography_key, household_key, source_key FROM `opentrace-prod-5ga4.mart_dev.fct_animal_health` WHERE country_iso3 = 'KEN' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d0 ON d0.geography_key = f.geography_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_household` AS d1 ON d1.household_key = f.household_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d2 ON d2.source_key = f.source_key ORDER BY f.as_of_date DESC"
    },
    "readiness": "integration_verified"
   },
@@ -2140,7 +2140,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.value, f.year, f.as_of_date, f.metric, f.unit, d0.country_name FROM (SELECT value, year, as_of_date, metric, unit, geography_key FROM `opentrace-prod-5ga4.mart_dev.fct_biodiversity` WHERE country_iso3 = 'KEN' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 1) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d0 ON d0.geography_key = f.geography_key ORDER BY f.as_of_date DESC"
+    "sql": "SELECT f.value, f.year, f.as_of_date, f.as_of_date_basis, f.metric, f.unit, d0.country_name FROM (SELECT value, year, as_of_date, as_of_date_basis, metric, unit, geography_key FROM `opentrace-prod-5ga4.mart_dev.fct_biodiversity` WHERE country_iso3 = 'KEN' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 1) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d0 ON d0.geography_key = f.geography_key ORDER BY f.as_of_date DESC"
    },
    "readiness": "integration_verified"
   },
@@ -2210,7 +2210,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.value, f.as_of_date, f.country_iso3, f.metric, f.climate_grain, f.unit, d0.indicator_name, d1.organisation_name, d2.country_name FROM (SELECT value, as_of_date, country_iso3, metric, climate_grain, unit, indicator_key, source_key, geography_key FROM `opentrace-prod-5ga4.mart_dev.fct_climate` WHERE country_iso3 = 'KEN' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_indicator` AS d0 ON d0.indicator_key = f.indicator_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d1 ON d1.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d2 ON d2.geography_key = f.geography_key ORDER BY f.as_of_date DESC"
+    "sql": "SELECT f.value, f.as_of_date, f.as_of_date_basis, f.country_iso3, f.metric, f.climate_grain, f.unit, d0.indicator_name, d1.organisation_name, d2.country_name FROM (SELECT value, as_of_date, as_of_date_basis, country_iso3, metric, climate_grain, unit, indicator_key, source_key, geography_key FROM `opentrace-prod-5ga4.mart_dev.fct_climate` WHERE country_iso3 = 'KEN' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_indicator` AS d0 ON d0.indicator_key = f.indicator_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d1 ON d1.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d2 ON d2.geography_key = f.geography_key ORDER BY f.as_of_date DESC"
    },
    "readiness": "integration_verified"
   },
@@ -2282,7 +2282,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.value, f.year, f.as_of_date, f.country_iso3, f.measurement_form, f.metric, f.unit, d0.item_name, d1.element_name, d2.country_name, d3.organisation_name FROM (SELECT value, year, as_of_date, country_iso3, measurement_form, metric, unit, item_key, element_key, geography_key, source_key FROM `opentrace-prod-5ga4.mart_dev.fct_economics` WHERE country_iso3 = 'KEN' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_item` AS d0 ON d0.item_key = f.item_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_element` AS d1 ON d1.element_key = f.element_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d2 ON d2.geography_key = f.geography_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d3 ON d3.source_key = f.source_key ORDER BY f.as_of_date DESC"
+    "sql": "SELECT f.value, f.year, f.as_of_date, f.as_of_date_basis, f.country_iso3, f.measurement_form, f.metric, f.unit, d0.item_name, d1.element_name, d2.country_name, d3.organisation_name FROM (SELECT value, year, as_of_date, as_of_date_basis, country_iso3, measurement_form, metric, unit, item_key, element_key, geography_key, source_key FROM `opentrace-prod-5ga4.mart_dev.fct_economics` WHERE country_iso3 = 'KEN' AND geo_level = 'country' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_item` AS d0 ON d0.item_key = f.item_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_element` AS d1 ON d1.element_key = f.element_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d2 ON d2.geography_key = f.geography_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d3 ON d3.source_key = f.source_key ORDER BY f.as_of_date DESC"
    },
    "readiness": "integration_verified"
   },
@@ -2351,7 +2351,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.value, f.year, f.as_of_date, f.country_iso3, f.metric, f.unit, d0.item_name, d1.element_name, d2.country_name, d3.organisation_name FROM (SELECT value, year, as_of_date, country_iso3, metric, unit, item_key, element_key, geography_key, source_key FROM `opentrace-prod-5ga4.mart_dev.fct_emissions` WHERE country_iso3 = 'KEN' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_item` AS d0 ON d0.item_key = f.item_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_element` AS d1 ON d1.element_key = f.element_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d2 ON d2.geography_key = f.geography_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d3 ON d3.source_key = f.source_key ORDER BY f.as_of_date DESC"
+    "sql": "SELECT f.value, f.year, f.as_of_date, f.as_of_date_basis, f.country_iso3, f.metric, f.unit, d0.item_name, d1.element_name, d2.country_name, d3.organisation_name FROM (SELECT value, year, as_of_date, as_of_date_basis, country_iso3, metric, unit, item_key, element_key, geography_key, source_key FROM `opentrace-prod-5ga4.mart_dev.fct_emissions` WHERE country_iso3 = 'KEN' AND geo_level = 'country' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_item` AS d0 ON d0.item_key = f.item_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_element` AS d1 ON d1.element_key = f.element_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d2 ON d2.geography_key = f.geography_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d3 ON d3.source_key = f.source_key ORDER BY f.as_of_date DESC"
    },
    "readiness": "integration_verified"
   },
@@ -2425,7 +2425,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.value, f.year, f.as_of_date, f.country_iso3, f.indicator, f.sex, f.metric, f.unit, d0.country_name, d1.item_name, d2.element_name, d3.indicator_name, d4.organisation_name FROM (SELECT value, year, as_of_date, country_iso3, indicator, sex, metric, unit, geography_key, item_key, element_key, indicator_key, source_key FROM `opentrace-prod-5ga4.mart_dev.fct_employment` WHERE country_iso3 = 'KEN' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d0 ON d0.geography_key = f.geography_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_item` AS d1 ON d1.item_key = f.item_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_element` AS d2 ON d2.element_key = f.element_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_indicator` AS d3 ON d3.indicator_key = f.indicator_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d4 ON d4.source_key = f.source_key ORDER BY f.as_of_date DESC"
+    "sql": "SELECT f.value, f.year, f.as_of_date, f.as_of_date_basis, f.country_iso3, f.indicator, f.sex, f.metric, f.unit, d0.country_name, d1.item_name, d2.element_name, d3.indicator_name, d4.organisation_name FROM (SELECT value, year, as_of_date, as_of_date_basis, country_iso3, indicator, sex, metric, unit, geography_key, item_key, element_key, indicator_key, source_key FROM `opentrace-prod-5ga4.mart_dev.fct_employment` WHERE country_iso3 = 'KEN' AND geo_level = 'country' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d0 ON d0.geography_key = f.geography_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_item` AS d1 ON d1.item_key = f.item_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_element` AS d2 ON d2.element_key = f.element_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_indicator` AS d3 ON d3.indicator_key = f.indicator_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d4 ON d4.source_key = f.source_key ORDER BY f.as_of_date DESC"
    },
    "readiness": "integration_verified"
   },
@@ -2481,7 +2481,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.quantity, f.time_key, d0.product_name, d1.organisation_name, d2.unit_code, d3.country_name FROM (SELECT quantity, time_key, product_key, source_key, unit_key, geo_key FROM `opentrace-prod-5ga4.mart_dev.fct_fertilizer` WHERE geo_key IN (SELECT geography_key FROM `opentrace-prod-5ga4.mart_dev.dim_geography` WHERE country_iso3 = 'KEN') AND (time_key = 2020 OR time_key IN (SELECT time_key FROM `opentrace-prod-5ga4.mart_dev.dim_time` WHERE year = 2020)) LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_product` AS d0 ON d0.product_key = f.product_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d1 ON d1.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_unit` AS d2 ON d2.unit_key = f.unit_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d3 ON d3.geography_key = f.geo_key"
+    "sql": "SELECT f.value, f.time_key, d0.product_name, d1.organisation_name, d2.unit_code, d3.country_name FROM (SELECT quantity AS value, time_key, product_key, source_key, unit_key, geo_key FROM `opentrace-prod-5ga4.mart_dev.fct_fertilizer` WHERE geo_key IN (SELECT geography_key FROM `opentrace-prod-5ga4.mart_dev.dim_geography` WHERE country_iso3 = 'KEN') AND (time_key = 2020 OR time_key IN (SELECT time_key FROM `opentrace-prod-5ga4.mart_dev.dim_time` WHERE year = 2020)) LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_product` AS d0 ON d0.product_key = f.product_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d1 ON d1.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_unit` AS d2 ON d2.unit_key = f.unit_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d3 ON d3.geography_key = f.geo_key"
    },
    "readiness": "integration_verified"
   },
@@ -2559,7 +2559,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.value, f.year, f.as_of_date, f.country_iso3, f.element, f.metric, f.unit, d0.product_name, d1.country_name, d2.element_name, d3.organisation_name FROM (SELECT value, year, as_of_date, country_iso3, element, metric, unit, product_key, geography_key, element_key, source_key FROM `opentrace-prod-5ga4.mart_dev.fct_food_balance` WHERE country_iso3 = 'KEN' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_product` AS d0 ON d0.product_key = f.product_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d1 ON d1.geography_key = f.geography_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_element` AS d2 ON d2.element_key = f.element_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d3 ON d3.source_key = f.source_key ORDER BY f.as_of_date DESC"
+    "sql": "SELECT f.value, f.year, f.as_of_date, f.as_of_date_basis, f.country_iso3, f.element, f.metric, f.unit, d0.product_name, d1.country_name, d2.element_name, d3.organisation_name FROM (SELECT value, year, as_of_date, as_of_date_basis, country_iso3, element, metric, unit, product_key, geography_key, element_key, source_key FROM `opentrace-prod-5ga4.mart_dev.fct_food_balance` WHERE country_iso3 = 'KEN' AND geo_level = 'country' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_product` AS d0 ON d0.product_key = f.product_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d1 ON d1.geography_key = f.geography_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_element` AS d2 ON d2.element_key = f.element_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d3 ON d3.source_key = f.source_key ORDER BY f.as_of_date DESC"
    },
    "readiness": "integration_verified"
   },
@@ -2633,7 +2633,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.tier, f.as_of_date, f.metric, d0.country_name, d1.organisation_name FROM (SELECT tier, as_of_date, metric, geography_key, source_key FROM `opentrace-prod-5ga4.mart_dev.fct_food_hazards` WHERE country_iso3 = 'KEN' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 1) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d0 ON d0.geography_key = f.geography_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d1 ON d1.source_key = f.source_key ORDER BY f.as_of_date DESC"
+    "sql": "SELECT f.value, f.as_of_date, f.as_of_date_basis, f.metric, d0.country_name, d1.organisation_name FROM (SELECT tier AS value, as_of_date, as_of_date_basis, metric, geography_key, source_key FROM `opentrace-prod-5ga4.mart_dev.fct_food_hazards` WHERE country_iso3 = 'KEN' AND geo_level = 'country' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 1) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d0 ON d0.geography_key = f.geography_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d1 ON d1.source_key = f.source_key ORDER BY f.as_of_date DESC"
    },
    "readiness": "integration_verified"
   },
@@ -2709,7 +2709,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.value, f.year, f.month, f.as_of_date, f.measure_type, f.metric, f.scenario_name, f.unit, d0.country_name, d1.phase_code FROM (SELECT value, year, month, as_of_date, measure_type, metric, scenario_name, unit, geography_key, classification_key FROM `opentrace-prod-5ga4.mart_dev.fct_food_security` WHERE country_iso3 = 'KEN' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC, month DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d0 ON d0.geography_key = f.geography_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_classification` AS d1 ON d1.classification_key = f.classification_key ORDER BY f.as_of_date DESC, f.month DESC"
+    "sql": "SELECT f.value, f.year, f.month, f.as_of_date, f.as_of_date_basis, f.measure_type, f.metric, f.scenario_name, f.unit, d0.country_name, d1.phase_code FROM (SELECT value, year, month, as_of_date, as_of_date_basis, measure_type, metric, scenario_name, unit, geography_key, classification_key FROM `opentrace-prod-5ga4.mart_dev.fct_food_security` WHERE country_iso3 = 'KEN' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC, month DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d0 ON d0.geography_key = f.geography_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_classification` AS d1 ON d1.classification_key = f.classification_key ORDER BY f.as_of_date DESC, f.month DESC"
    },
    "readiness": "integration_verified"
   },
@@ -2781,7 +2781,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.value, f.year, f.as_of_date, f.country_iso3, f.forestry_grain, f.metric, f.unit, d0.item_name, d1.country_name, d2.element_name, d3.organisation_name FROM (SELECT value, year, as_of_date, country_iso3, forestry_grain, metric, unit, item_key, geography_key, element_key, source_key FROM `opentrace-prod-5ga4.mart_dev.fct_forestry` WHERE country_iso3 = 'KEN' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_item` AS d0 ON d0.item_key = f.item_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d1 ON d1.geography_key = f.geography_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_element` AS d2 ON d2.element_key = f.element_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d3 ON d3.source_key = f.source_key ORDER BY f.as_of_date DESC"
+    "sql": "SELECT f.value, f.year, f.as_of_date, f.as_of_date_basis, f.country_iso3, f.forestry_grain, f.metric, f.unit, d0.item_name, d1.country_name, d2.element_name, d3.organisation_name FROM (SELECT value, year, as_of_date, as_of_date_basis, country_iso3, forestry_grain, metric, unit, item_key, geography_key, element_key, source_key FROM `opentrace-prod-5ga4.mart_dev.fct_forestry` WHERE country_iso3 = 'KEN' AND geo_level = 'country' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_item` AS d0 ON d0.item_key = f.item_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d1 ON d1.geography_key = f.geography_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_element` AS d2 ON d2.element_key = f.element_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d3 ON d3.source_key = f.source_key ORDER BY f.as_of_date DESC"
    },
    "readiness": "integration_verified"
   },
@@ -2852,7 +2852,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.value, f.year, f.as_of_date, f.country_iso3, f.metric, f.unit, d0.item_name, d1.element_name, d2.country_name FROM (SELECT value, year, as_of_date, country_iso3, metric, unit, item_key, element_key, geography_key FROM `opentrace-prod-5ga4.mart_dev.fct_gender_inclusion` WHERE country_iso3 = 'KEN' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_item` AS d0 ON d0.item_key = f.item_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_element` AS d1 ON d1.element_key = f.element_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d2 ON d2.geography_key = f.geography_key ORDER BY f.as_of_date DESC"
+    "sql": "SELECT f.value, f.year, f.as_of_date, f.as_of_date_basis, f.country_iso3, f.metric, f.unit, d0.item_name, d1.element_name, d2.country_name FROM (SELECT value, year, as_of_date, as_of_date_basis, country_iso3, metric, unit, item_key, element_key, geography_key FROM `opentrace-prod-5ga4.mart_dev.fct_gender_inclusion` WHERE country_iso3 = 'KEN' AND geo_level = 'country' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_item` AS d0 ON d0.item_key = f.item_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_element` AS d1 ON d1.element_key = f.element_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d2 ON d2.geography_key = f.geography_key ORDER BY f.as_of_date DESC"
    },
    "readiness": "integration_verified"
   },
@@ -2922,7 +2922,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.value, f.as_of_date, f.metric, f.unit, d0.country_name, d1.organisation_name FROM (SELECT value, as_of_date, metric, unit, geography_key, source_key FROM `opentrace-prod-5ga4.mart_dev.fct_germplasm` WHERE country_iso3 = 'KEN' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 1) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d0 ON d0.geography_key = f.geography_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d1 ON d1.source_key = f.source_key ORDER BY f.as_of_date DESC"
+    "sql": "SELECT f.value, f.as_of_date, f.as_of_date_basis, f.metric, f.unit, d0.country_name, d1.organisation_name FROM (SELECT value, as_of_date, as_of_date_basis, metric, unit, geography_key, source_key FROM `opentrace-prod-5ga4.mart_dev.fct_germplasm` WHERE country_iso3 = 'KEN' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 1) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d0 ON d0.geography_key = f.geography_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d1 ON d1.source_key = f.source_key ORDER BY f.as_of_date DESC"
    },
    "readiness": "integration_verified"
   },
@@ -2989,7 +2989,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.value, f.year, f.as_of_date, f.country_iso3, f.metric, f.unit, d0.country_name FROM (SELECT value, year, as_of_date, country_iso3, metric, unit, geography_key FROM `opentrace-prod-5ga4.mart_dev.fct_hdi` WHERE country_iso3 = 'KEN' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 1) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d0 ON d0.geography_key = f.geography_key ORDER BY f.as_of_date DESC"
+    "sql": "SELECT f.value, f.year, f.as_of_date, f.as_of_date_basis, f.country_iso3, f.metric, f.unit, d0.country_name FROM (SELECT value, year, as_of_date, as_of_date_basis, country_iso3, metric, unit, geography_key FROM `opentrace-prod-5ga4.mart_dev.fct_hdi` WHERE country_iso3 = 'KEN' AND geo_level = 'country' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 1) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d0 ON d0.geography_key = f.geography_key ORDER BY f.as_of_date DESC"
    },
    "readiness": "integration_verified"
   },
@@ -3074,7 +3074,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.value, f.as_of_date, f.metric, f.unit, d0.country_name, d1.village_code FROM (SELECT value, as_of_date, metric, unit, geography_key, household_key FROM `opentrace-prod-5ga4.mart_dev.fct_household` WHERE country_iso3 = 'KEN' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 1) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d0 ON d0.geography_key = f.geography_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_household` AS d1 ON d1.household_key = f.household_key ORDER BY f.as_of_date DESC"
+    "sql": "SELECT f.value, f.as_of_date, f.as_of_date_basis, f.metric, f.unit, d0.country_name, d1.village_code FROM (SELECT value, as_of_date, as_of_date_basis, metric, unit, geography_key, household_key FROM `opentrace-prod-5ga4.mart_dev.fct_household` WHERE country_iso3 = 'KEN' AND geo_level = 'country' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 1) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d0 ON d0.geography_key = f.geography_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_household` AS d1 ON d1.household_key = f.household_key ORDER BY f.as_of_date DESC"
    },
    "readiness": "integration_verified"
   },
@@ -3143,7 +3143,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.value, f.year, f.as_of_date, f.country_iso3, f.metric, f.unit, d0.item_name, d1.element_name, d2.country_name, d3.organisation_name FROM (SELECT value, year, as_of_date, country_iso3, metric, unit, item_key, element_key, geography_key, source_key FROM `opentrace-prod-5ga4.mart_dev.fct_humanitarian` WHERE country_iso3 = 'KEN' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_item` AS d0 ON d0.item_key = f.item_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_element` AS d1 ON d1.element_key = f.element_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d2 ON d2.geography_key = f.geography_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d3 ON d3.source_key = f.source_key ORDER BY f.as_of_date DESC"
+    "sql": "SELECT f.value, f.year, f.as_of_date, f.as_of_date_basis, f.country_iso3, f.metric, f.unit, d0.item_name, d1.element_name, d2.country_name, d3.organisation_name FROM (SELECT value, year, as_of_date, as_of_date_basis, country_iso3, metric, unit, item_key, element_key, geography_key, source_key FROM `opentrace-prod-5ga4.mart_dev.fct_humanitarian` WHERE country_iso3 = 'KEN' AND geo_level = 'country' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_item` AS d0 ON d0.item_key = f.item_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_element` AS d1 ON d1.element_key = f.element_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d2 ON d2.geography_key = f.geography_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d3 ON d3.source_key = f.source_key ORDER BY f.as_of_date DESC"
    },
    "readiness": "integration_verified"
   },
@@ -3214,7 +3214,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.value, f.as_of_date, f.metric, f.unit, d0.country_name, d1.village_code, d2.organisation_name FROM (SELECT value, as_of_date, metric, unit, geography_key, household_key, source_key FROM `opentrace-prod-5ga4.mart_dev.fct_insurance` WHERE country_iso3 = 'KEN' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 1) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d0 ON d0.geography_key = f.geography_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_household` AS d1 ON d1.household_key = f.household_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d2 ON d2.source_key = f.source_key ORDER BY f.as_of_date DESC"
+    "sql": "SELECT f.value, f.as_of_date, f.as_of_date_basis, f.metric, f.unit, d0.country_name, d1.village_code, d2.organisation_name FROM (SELECT value, as_of_date, as_of_date_basis, metric, unit, geography_key, household_key, source_key FROM `opentrace-prod-5ga4.mart_dev.fct_insurance` WHERE country_iso3 = 'KEN' AND geo_level = 'country' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 1) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d0 ON d0.geography_key = f.geography_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_household` AS d1 ON d1.household_key = f.household_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d2 ON d2.source_key = f.source_key ORDER BY f.as_of_date DESC"
    },
    "readiness": "integration_verified"
   },
@@ -3291,7 +3291,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.value, f.year, f.as_of_date, f.country_iso3, f.donor, f.indicator, f.sex, f.institution, f.metric, f.unit, d0.item_name, d1.element_name, d2.country_name, d3.indicator_name, d4.country_name, d5.organisation_name FROM (SELECT value, year, as_of_date, country_iso3, donor, indicator, sex, institution, metric, unit, item_key, element_key, geography_key, indicator_key, organisation_key, source_key FROM `opentrace-prod-5ga4.mart_dev.fct_investment` WHERE country_iso3 = 'KEN' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_item` AS d0 ON d0.item_key = f.item_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_element` AS d1 ON d1.element_key = f.element_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d2 ON d2.geography_key = f.geography_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_indicator` AS d3 ON d3.indicator_key = f.indicator_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_organisation` AS d4 ON d4.organisation_key = f.organisation_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d5 ON d5.source_key = f.source_key ORDER BY f.as_of_date DESC"
+    "sql": "SELECT f.value, f.year, f.as_of_date, f.as_of_date_basis, f.country_iso3, f.donor, f.indicator, f.sex, f.institution, f.metric, f.unit, d0.item_name, d1.element_name, d2.country_name, d3.indicator_name, d4.country_name, d5.organisation_name FROM (SELECT value, year, as_of_date, as_of_date_basis, country_iso3, donor, indicator, sex, institution, metric, unit, item_key, element_key, geography_key, indicator_key, organisation_key, source_key FROM `opentrace-prod-5ga4.mart_dev.fct_investment` WHERE country_iso3 = 'KEN' AND geo_level = 'country' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_item` AS d0 ON d0.item_key = f.item_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_element` AS d1 ON d1.element_key = f.element_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d2 ON d2.geography_key = f.geography_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_indicator` AS d3 ON d3.indicator_key = f.indicator_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_organisation` AS d4 ON d4.organisation_key = f.organisation_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d5 ON d5.source_key = f.source_key ORDER BY f.as_of_date DESC"
    },
    "readiness": "integration_verified"
   },
@@ -3348,7 +3348,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.pct_degraded, f.upper_bound, f.lower_bound, f.time_key, d0.organisation_name, d1.unit_code, d2.country_name FROM (SELECT pct_degraded, upper_bound, lower_bound, time_key, source_key, unit_key, geo_key FROM `opentrace-prod-5ga4.mart_dev.fct_land_degradation` WHERE geo_key IN (SELECT geography_key FROM `opentrace-prod-5ga4.mart_dev.dim_geography` WHERE country_iso3 = 'KEN') AND (time_key = 2020 OR time_key IN (SELECT time_key FROM `opentrace-prod-5ga4.mart_dev.dim_time` WHERE year = 2020)) LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d0 ON d0.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_unit` AS d1 ON d1.unit_key = f.unit_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d2 ON d2.geography_key = f.geo_key"
+    "sql": "SELECT f.value, f.upper_bound, f.lower_bound, f.time_key, d0.organisation_name, d1.unit_code, d2.country_name FROM (SELECT pct_degraded AS value, upper_bound, lower_bound, time_key, source_key, unit_key, geo_key FROM `opentrace-prod-5ga4.mart_dev.fct_land_degradation` WHERE geo_key IN (SELECT geography_key FROM `opentrace-prod-5ga4.mart_dev.dim_geography` WHERE country_iso3 = 'KEN') AND (time_key = 2020 OR time_key IN (SELECT time_key FROM `opentrace-prod-5ga4.mart_dev.dim_time` WHERE year = 2020)) LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d0 ON d0.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_unit` AS d1 ON d1.unit_key = f.unit_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d2 ON d2.geography_key = f.geo_key"
    },
    "readiness": "integration_verified"
   },
@@ -3421,7 +3421,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.value, f.year, f.as_of_date, f.country_iso3, f.input_grain, f.metric, f.unit, d0.item_name, d1.element_name, d2.country_name, d3.organisation_name FROM (SELECT value, year, as_of_date, country_iso3, input_grain, metric, unit, item_key, element_key, geography_key, source_key FROM `opentrace-prod-5ga4.mart_dev.fct_land_inputs` WHERE country_iso3 = 'KEN' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_item` AS d0 ON d0.item_key = f.item_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_element` AS d1 ON d1.element_key = f.element_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d2 ON d2.geography_key = f.geography_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d3 ON d3.source_key = f.source_key ORDER BY f.as_of_date DESC"
+    "sql": "SELECT f.value, f.year, f.as_of_date, f.as_of_date_basis, f.country_iso3, f.input_grain, f.metric, f.unit, d0.item_name, d1.element_name, d2.country_name, d3.organisation_name FROM (SELECT value, year, as_of_date, as_of_date_basis, country_iso3, input_grain, metric, unit, item_key, element_key, geography_key, source_key FROM `opentrace-prod-5ga4.mart_dev.fct_land_inputs` WHERE country_iso3 = 'KEN' AND geo_level = 'country' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_item` AS d0 ON d0.item_key = f.item_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_element` AS d1 ON d1.element_key = f.element_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d2 ON d2.geography_key = f.geography_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d3 ON d3.source_key = f.source_key ORDER BY f.as_of_date DESC"
    },
    "readiness": "integration_verified"
   },
@@ -3476,7 +3476,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.area, f.time_key, d0.organisation_name, d1.land_use_code, d2.country_name FROM (SELECT area, time_key, source_key, land_use_key, geo_key FROM `opentrace-prod-5ga4.mart_dev.fct_land_use` WHERE geo_key IN (SELECT geography_key FROM `opentrace-prod-5ga4.mart_dev.dim_geography` WHERE country_iso3 = 'KEN') AND (time_key = 2020 OR time_key IN (SELECT time_key FROM `opentrace-prod-5ga4.mart_dev.dim_time` WHERE year = 2020)) LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d0 ON d0.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_land_use` AS d1 ON d1.land_use_key = f.land_use_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d2 ON d2.geography_key = f.geo_key"
+    "sql": "SELECT f.value, f.time_key, d0.organisation_name, d1.land_use_code, d2.country_name FROM (SELECT area AS value, time_key, source_key, land_use_key, geo_key FROM `opentrace-prod-5ga4.mart_dev.fct_land_use` WHERE geo_key IN (SELECT geography_key FROM `opentrace-prod-5ga4.mart_dev.dim_geography` WHERE country_iso3 = 'KEN') AND (time_key = 2020 OR time_key IN (SELECT time_key FROM `opentrace-prod-5ga4.mart_dev.dim_time` WHERE year = 2020)) LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d0 ON d0.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_land_use` AS d1 ON d1.land_use_key = f.land_use_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d2 ON d2.geography_key = f.geo_key"
    },
    "readiness": "integration_verified"
   },
@@ -3548,7 +3548,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.value, f.year, f.as_of_date, f.country_iso3, f.item, f.element, f.metric, f.unit, d0.country_name, d1.item_name, d2.element_name, d3.organisation_name FROM (SELECT value, year, as_of_date, country_iso3, item, element, metric, unit, geography_key, item_key, element_key, source_key FROM `opentrace-prod-5ga4.mart_dev.fct_machinery` WHERE country_iso3 = 'KEN' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d0 ON d0.geography_key = f.geography_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_item` AS d1 ON d1.item_key = f.item_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_element` AS d2 ON d2.element_key = f.element_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d3 ON d3.source_key = f.source_key ORDER BY f.as_of_date DESC"
+    "sql": "SELECT f.value, f.year, f.as_of_date, f.as_of_date_basis, f.country_iso3, f.item, f.element, f.metric, f.unit, d0.country_name, d1.item_name, d2.element_name, d3.organisation_name FROM (SELECT value, year, as_of_date, as_of_date_basis, country_iso3, item, element, metric, unit, geography_key, item_key, element_key, source_key FROM `opentrace-prod-5ga4.mart_dev.fct_machinery` WHERE country_iso3 = 'KEN' AND geo_level = 'country' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d0 ON d0.geography_key = f.geography_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_item` AS d1 ON d1.item_key = f.item_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_element` AS d2 ON d2.element_key = f.element_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d3 ON d3.source_key = f.source_key ORDER BY f.as_of_date DESC"
    },
    "readiness": "integration_verified"
   },
@@ -3615,7 +3615,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.access_index, f.distance_to_market, f.travel_time_minutes, f.outlet_choice_cleanliness, f.time_key, d0.market_name, d1.country_name, d2.organisation_name FROM (SELECT access_index, distance_to_market, travel_time_minutes, outlet_choice_cleanliness, time_key, market_key, geo_key, source_key FROM `opentrace-prod-5ga4.mart_dev.fct_market_access` WHERE geo_key IN (SELECT geography_key FROM `opentrace-prod-5ga4.mart_dev.dim_geography` WHERE country_iso3 = 'KEN') AND (time_key = 2020 OR time_key IN (SELECT time_key FROM `opentrace-prod-5ga4.mart_dev.dim_time` WHERE year = 2020)) LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_market` AS d0 ON d0.market_key = f.market_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d1 ON d1.geography_key = f.geo_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d2 ON d2.source_key = f.source_key"
+    "sql": "SELECT f.value, f.distance_to_market, f.travel_time_minutes, f.outlet_choice_cleanliness, f.time_key, d0.market_name, d1.country_name, d2.organisation_name FROM (SELECT access_index AS value, distance_to_market, travel_time_minutes, outlet_choice_cleanliness, time_key, market_key, geo_key, source_key FROM `opentrace-prod-5ga4.mart_dev.fct_market_access` WHERE geo_key IN (SELECT geography_key FROM `opentrace-prod-5ga4.mart_dev.dim_geography` WHERE country_iso3 = 'KEN') AND (time_key = 2020 OR time_key IN (SELECT time_key FROM `opentrace-prod-5ga4.mart_dev.dim_time` WHERE year = 2020)) LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_market` AS d0 ON d0.market_key = f.market_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d1 ON d1.geography_key = f.geo_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d2 ON d2.source_key = f.source_key"
    },
    "readiness": "integration_verified"
   },
@@ -3676,7 +3676,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.quantity, f.application_frequency, f.eiq_score, f.eiq_field_use, f.time_key, d0.product_name, d1.organisation_name, d2.unit_code, d3.pest_name, d4.country_name FROM (SELECT quantity, application_frequency, eiq_score, eiq_field_use, time_key, product_key, source_key, unit_key, pest_key, geo_key FROM `opentrace-prod-5ga4.mart_dev.fct_pesticide` WHERE geo_key IN (SELECT geography_key FROM `opentrace-prod-5ga4.mart_dev.dim_geography` WHERE country_iso3 = 'KEN') AND (time_key = 2020 OR time_key IN (SELECT time_key FROM `opentrace-prod-5ga4.mart_dev.dim_time` WHERE year = 2020)) LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_product` AS d0 ON d0.product_key = f.product_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d1 ON d1.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_unit` AS d2 ON d2.unit_key = f.unit_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_pest` AS d3 ON d3.pest_key = f.pest_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d4 ON d4.geography_key = f.geo_key"
+    "sql": "SELECT f.value, f.application_frequency, f.eiq_score, f.eiq_field_use, f.time_key, d0.product_name, d1.organisation_name, d2.unit_code, d3.pest_name, d4.country_name FROM (SELECT quantity AS value, application_frequency, eiq_score, eiq_field_use, time_key, product_key, source_key, unit_key, pest_key, geo_key FROM `opentrace-prod-5ga4.mart_dev.fct_pesticide` WHERE geo_key IN (SELECT geography_key FROM `opentrace-prod-5ga4.mart_dev.dim_geography` WHERE country_iso3 = 'KEN') AND (time_key = 2020 OR time_key IN (SELECT time_key FROM `opentrace-prod-5ga4.mart_dev.dim_time` WHERE year = 2020)) LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_product` AS d0 ON d0.product_key = f.product_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d1 ON d1.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_unit` AS d2 ON d2.unit_key = f.unit_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_pest` AS d3 ON d3.pest_key = f.pest_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d4 ON d4.geography_key = f.geo_key"
    },
    "readiness": "integration_verified"
   },
@@ -3730,7 +3730,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.population_count, f.time_key, d0.organisation_name, d1.country_name FROM (SELECT population_count, time_key, source_key, geo_key FROM `opentrace-prod-5ga4.mart_dev.fct_population_dynamics` WHERE geo_key IN (SELECT geography_key FROM `opentrace-prod-5ga4.mart_dev.dim_geography` WHERE country_iso3 = 'KEN') AND (time_key = 2020 OR time_key IN (SELECT time_key FROM `opentrace-prod-5ga4.mart_dev.dim_time` WHERE year = 2020)) LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d0 ON d0.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d1 ON d1.geography_key = f.geo_key"
+    "sql": "SELECT f.value, f.time_key, d0.organisation_name, d1.country_name FROM (SELECT population_count AS value, time_key, source_key, geo_key FROM `opentrace-prod-5ga4.mart_dev.fct_population_dynamics` WHERE geo_key IN (SELECT geography_key FROM `opentrace-prod-5ga4.mart_dev.dim_geography` WHERE country_iso3 = 'KEN') AND (time_key = 2020 OR time_key IN (SELECT time_key FROM `opentrace-prod-5ga4.mart_dev.dim_time` WHERE year = 2020)) LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d0 ON d0.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d1 ON d1.geography_key = f.geo_key"
    },
    "readiness": "integration_verified"
   },
@@ -3808,7 +3808,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.value, f.year, f.month, f.as_of_date, f.metric, f.price_source, f.currency, f.unit, d0.product_name, d1.organisation_name, d2.market_name, d3.unit_code, d4.country_name FROM (SELECT value, year, month, as_of_date, metric, price_source, currency, unit, product_key, source_key, market_key, unit_key, geography_key FROM `opentrace-prod-5ga4.mart_dev.fct_prices` WHERE country_iso3 = 'KEN' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' AND price_type = 'Value' ORDER BY as_of_date DESC, month DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_product` AS d0 ON d0.product_key = f.product_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d1 ON d1.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_market` AS d2 ON d2.market_key = f.market_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_unit` AS d3 ON d3.unit_key = f.unit_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d4 ON d4.geography_key = f.geography_key ORDER BY f.as_of_date DESC, f.month DESC"
+    "sql": "SELECT f.value, f.year, f.month, f.as_of_date, f.as_of_date_basis, f.metric, f.price_source, f.currency, f.unit, d0.product_name, d1.organisation_name, d2.market_name, d3.unit_code, d4.country_name FROM (SELECT value, year, month, as_of_date, as_of_date_basis, metric, price_source, currency, unit, product_key, source_key, market_key, unit_key, geography_key FROM `opentrace-prod-5ga4.mart_dev.fct_prices` WHERE country_iso3 = 'KEN' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' AND price_type = 'Value' ORDER BY as_of_date DESC, month DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_product` AS d0 ON d0.product_key = f.product_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d1 ON d1.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_market` AS d2 ON d2.market_key = f.market_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_unit` AS d3 ON d3.unit_key = f.unit_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d4 ON d4.geography_key = f.geography_key ORDER BY f.as_of_date DESC, f.month DESC"
    },
    "readiness": "integration_verified"
   },
@@ -3889,7 +3889,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.value, f.year, f.month, f.as_of_date, f.country_iso3, f.element, f.metric, f.production_grain, f.area_unit, f.production_unit, f.unit, f.yield_unit, d0.product_name, d1.organisation_name, d2.country_name, d3.element_name, d4.season_name FROM (SELECT value, year, month, as_of_date, country_iso3, element, metric, production_grain, area_unit, production_unit, unit, yield_unit, product_key, source_key, geography_key, element_key, season_key FROM `opentrace-prod-5ga4.mart_dev.fct_production` WHERE country_iso3 = 'KEN' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC, month DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_product` AS d0 ON d0.product_key = f.product_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d1 ON d1.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d2 ON d2.geography_key = f.geography_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_element` AS d3 ON d3.element_key = f.element_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_season` AS d4 ON d4.season_key = f.season_key ORDER BY f.as_of_date DESC, f.month DESC"
+    "sql": "SELECT f.value, f.year, f.month, f.as_of_date, f.as_of_date_basis, f.country_iso3, f.element, f.metric, f.production_grain, f.area_unit, f.production_unit, f.unit, f.yield_unit, d0.product_name, d1.organisation_name, d2.country_name, d3.element_name, d4.season_name FROM (SELECT value, year, month, as_of_date, as_of_date_basis, country_iso3, element, metric, production_grain, area_unit, production_unit, unit, yield_unit, product_key, source_key, geography_key, element_key, season_key FROM `opentrace-prod-5ga4.mart_dev.fct_production` WHERE country_iso3 = 'KEN' AND geo_level = 'country' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC, month DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_product` AS d0 ON d0.product_key = f.product_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d1 ON d1.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d2 ON d2.geography_key = f.geography_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_element` AS d3 ON d3.element_key = f.element_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_season` AS d4 ON d4.season_key = f.season_key ORDER BY f.as_of_date DESC, f.month DESC"
    },
    "readiness": "integration_verified"
   },
@@ -3958,7 +3958,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.value, f.as_of_date, f.country_iso3, f.metric, f.unit, d0.country_name, d1.organisation_name FROM (SELECT value, as_of_date, country_iso3, metric, unit, geography_key, source_key FROM `opentrace-prod-5ga4.mart_dev.fct_protected_areas` WHERE country_iso3 = 'KEN' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 1) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d0 ON d0.geography_key = f.geography_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d1 ON d1.source_key = f.source_key ORDER BY f.as_of_date DESC"
+    "sql": "SELECT f.value, f.as_of_date, f.as_of_date_basis, f.country_iso3, f.metric, f.unit, d0.country_name, d1.organisation_name FROM (SELECT value, as_of_date, as_of_date_basis, country_iso3, metric, unit, geography_key, source_key FROM `opentrace-prod-5ga4.mart_dev.fct_protected_areas` WHERE country_iso3 = 'KEN' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 1) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d0 ON d0.geography_key = f.geography_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d1 ON d1.source_key = f.source_key ORDER BY f.as_of_date DESC"
    },
    "readiness": "integration_verified"
   },
@@ -4014,7 +4014,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.expenditure_amount, f.time_key, d0.organisation_name, d1.unit_code, d2.short_name, d3.country_name FROM (SELECT expenditure_amount, time_key, source_key, unit_key, organisation_key, geo_key FROM `opentrace-prod-5ga4.mart_dev.fct_research_expenditure` WHERE geo_key IN (SELECT geography_key FROM `opentrace-prod-5ga4.mart_dev.dim_geography` WHERE country_iso3 = 'KEN') AND (time_key = 2020 OR time_key IN (SELECT time_key FROM `opentrace-prod-5ga4.mart_dev.dim_time` WHERE year = 2020)) LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d0 ON d0.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_unit` AS d1 ON d1.unit_key = f.unit_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_organisation` AS d2 ON d2.organisation_key = f.organisation_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d3 ON d3.geography_key = f.geo_key"
+    "sql": "SELECT f.value, f.time_key, d0.organisation_name, d1.unit_code, d2.short_name, d3.country_name FROM (SELECT expenditure_amount AS value, time_key, source_key, unit_key, organisation_key, geo_key FROM `opentrace-prod-5ga4.mart_dev.fct_research_expenditure` WHERE geo_key IN (SELECT geography_key FROM `opentrace-prod-5ga4.mart_dev.dim_geography` WHERE country_iso3 = 'KEN') AND (time_key = 2020 OR time_key IN (SELECT time_key FROM `opentrace-prod-5ga4.mart_dev.dim_time` WHERE year = 2020)) LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d0 ON d0.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_unit` AS d1 ON d1.unit_key = f.unit_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_organisation` AS d2 ON d2.organisation_key = f.organisation_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d3 ON d3.geography_key = f.geo_key"
    },
    "readiness": "integration_verified"
   },
@@ -4072,7 +4072,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.researcher_count_fte, f.researcher_count_hc, f.time_key, d0.organisation_name, d1.unit_code, d2.short_name, d3.country_name, d4.family_name FROM (SELECT researcher_count_fte, researcher_count_hc, time_key, source_key, unit_key, organisation_key, geo_key, person_key FROM `opentrace-prod-5ga4.mart_dev.fct_researchers` WHERE geo_key IN (SELECT geography_key FROM `opentrace-prod-5ga4.mart_dev.dim_geography` WHERE country_iso3 = 'KEN') AND (time_key = 2020 OR time_key IN (SELECT time_key FROM `opentrace-prod-5ga4.mart_dev.dim_time` WHERE year = 2020)) LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d0 ON d0.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_unit` AS d1 ON d1.unit_key = f.unit_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_organisation` AS d2 ON d2.organisation_key = f.organisation_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d3 ON d3.geography_key = f.geo_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_person` AS d4 ON d4.person_key = f.person_key"
+    "sql": "SELECT f.value, f.researcher_count_hc, f.time_key, d0.organisation_name, d1.unit_code, d2.short_name, d3.country_name, d4.family_name FROM (SELECT researcher_count_fte AS value, researcher_count_hc, time_key, source_key, unit_key, organisation_key, geo_key, person_key FROM `opentrace-prod-5ga4.mart_dev.fct_researchers` WHERE geo_key IN (SELECT geography_key FROM `opentrace-prod-5ga4.mart_dev.dim_geography` WHERE country_iso3 = 'KEN') AND (time_key = 2020 OR time_key IN (SELECT time_key FROM `opentrace-prod-5ga4.mart_dev.dim_time` WHERE year = 2020)) LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d0 ON d0.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_unit` AS d1 ON d1.unit_key = f.unit_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_organisation` AS d2 ON d2.organisation_key = f.organisation_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d3 ON d3.geography_key = f.geo_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_person` AS d4 ON d4.person_key = f.person_key"
    },
    "readiness": "integration_verified"
   },
@@ -4142,7 +4142,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.value, f.as_of_date, f.depth, f.metric, f.unit, d0.organisation_name, d1.country_name FROM (SELECT value, as_of_date, depth, metric, unit, source_key, geography_key FROM `opentrace-prod-5ga4.mart_dev.fct_soil_health` WHERE country_iso3 = 'KEN' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d0 ON d0.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d1 ON d1.geography_key = f.geography_key ORDER BY f.as_of_date DESC"
+    "sql": "SELECT f.value, f.as_of_date, f.as_of_date_basis, f.depth, f.metric, f.unit, d0.organisation_name, d1.country_name FROM (SELECT value, as_of_date, as_of_date_basis, depth, metric, unit, source_key, geography_key FROM `opentrace-prod-5ga4.mart_dev.fct_soil_health` WHERE country_iso3 = 'KEN' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d0 ON d0.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d1 ON d1.geography_key = f.geography_key ORDER BY f.as_of_date DESC"
    },
    "readiness": "integration_verified"
   },
@@ -4202,7 +4202,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.machinery_stock, f.rd_expenditure, f.rd_intensity, f.time_key, f.technology_key, d0.organisation_name, d1.unit_code, d2.short_name, d3.country_name FROM (SELECT machinery_stock, rd_expenditure, rd_intensity, time_key, technology_key, source_key, unit_key, organisation_key, geo_key FROM `opentrace-prod-5ga4.mart_dev.fct_technology` WHERE geo_key IN (SELECT geography_key FROM `opentrace-prod-5ga4.mart_dev.dim_geography` WHERE country_iso3 = 'KEN') AND (time_key = 2020 OR time_key IN (SELECT time_key FROM `opentrace-prod-5ga4.mart_dev.dim_time` WHERE year = 2020)) LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d0 ON d0.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_unit` AS d1 ON d1.unit_key = f.unit_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_organisation` AS d2 ON d2.organisation_key = f.organisation_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d3 ON d3.geography_key = f.geo_key"
+    "sql": "SELECT f.value, f.rd_expenditure, f.rd_intensity, f.time_key, f.technology_key, d0.organisation_name, d1.unit_code, d2.short_name, d3.country_name FROM (SELECT machinery_stock AS value, rd_expenditure, rd_intensity, time_key, technology_key, source_key, unit_key, organisation_key, geo_key FROM `opentrace-prod-5ga4.mart_dev.fct_technology` WHERE geo_key IN (SELECT geography_key FROM `opentrace-prod-5ga4.mart_dev.dim_geography` WHERE country_iso3 = 'KEN') AND (time_key = 2020 OR time_key IN (SELECT time_key FROM `opentrace-prod-5ga4.mart_dev.dim_time` WHERE year = 2020)) LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d0 ON d0.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_unit` AS d1 ON d1.unit_key = f.unit_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_organisation` AS d2 ON d2.organisation_key = f.organisation_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d3 ON d3.geography_key = f.geo_key"
    },
    "readiness": "integration_verified"
   },
@@ -4281,7 +4281,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.value, f.year, f.month, f.as_of_date, f.country_iso3, f.element, f.trade_flow, f.trade_grain, f.border_point, f.product_name, f.metric, f.unit, d0.organisation_name, d1.country_name, d2.item_name, d3.element_name FROM (SELECT value, year, month, as_of_date, country_iso3, element, trade_flow, trade_grain, border_point, product_name, metric, unit, source_key, geography_key, item_key, element_key FROM `opentrace-prod-5ga4.mart_dev.fct_trade` WHERE country_iso3 = 'KEN' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC, month DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d0 ON d0.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d1 ON d1.geography_key = f.geography_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_item` AS d2 ON d2.item_key = f.item_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_element` AS d3 ON d3.element_key = f.element_key ORDER BY f.as_of_date DESC, f.month DESC"
+    "sql": "SELECT f.value, f.year, f.month, f.as_of_date, f.as_of_date_basis, f.country_iso3, f.element, f.trade_flow, f.trade_grain, f.border_point, f.product_name, f.metric, f.unit, d0.organisation_name, d1.country_name, d2.item_name, d3.element_name FROM (SELECT value, year, month, as_of_date, as_of_date_basis, country_iso3, element, trade_flow, trade_grain, border_point, product_name, metric, unit, source_key, geography_key, item_key, element_key FROM `opentrace-prod-5ga4.mart_dev.fct_trade` WHERE country_iso3 = 'KEN' AND geo_level = 'country' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC, month DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d0 ON d0.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d1 ON d1.geography_key = f.geography_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_item` AS d2 ON d2.item_key = f.item_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_element` AS d3 ON d3.element_key = f.element_key ORDER BY f.as_of_date DESC, f.month DESC"
    },
    "readiness": "integration_verified"
   },
@@ -4337,7 +4337,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.value_share, f.time_key, d0.product_name, d1.organisation_name, d2.unit_code, d3.country_name FROM (SELECT value_share, time_key, product_key, source_key, unit_key, geo_key FROM `opentrace-prod-5ga4.mart_dev.fct_value_chain` WHERE geo_key IN (SELECT geography_key FROM `opentrace-prod-5ga4.mart_dev.dim_geography` WHERE country_iso3 = 'KEN') AND (time_key = 2020 OR time_key IN (SELECT time_key FROM `opentrace-prod-5ga4.mart_dev.dim_time` WHERE year = 2020)) LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_product` AS d0 ON d0.product_key = f.product_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d1 ON d1.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_unit` AS d2 ON d2.unit_key = f.unit_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d3 ON d3.geography_key = f.geo_key"
+    "sql": "SELECT f.value, f.time_key, d0.product_name, d1.organisation_name, d2.unit_code, d3.country_name FROM (SELECT value_share AS value, time_key, product_key, source_key, unit_key, geo_key FROM `opentrace-prod-5ga4.mart_dev.fct_value_chain` WHERE geo_key IN (SELECT geography_key FROM `opentrace-prod-5ga4.mart_dev.dim_geography` WHERE country_iso3 = 'KEN') AND (time_key = 2020 OR time_key IN (SELECT time_key FROM `opentrace-prod-5ga4.mart_dev.dim_time` WHERE year = 2020)) LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_product` AS d0 ON d0.product_key = f.product_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d1 ON d1.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_unit` AS d2 ON d2.unit_key = f.unit_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d3 ON d3.geography_key = f.geo_key"
    },
    "readiness": "integration_verified"
   },
@@ -4414,7 +4414,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.value, f.as_of_date, f.country_iso3, f.metric, f.vegetation_grain, f.grid_id, f.unit, d0.organisation_name, d1.country_name FROM (SELECT value, as_of_date, country_iso3, metric, vegetation_grain, grid_id, unit, source_key, geography_key FROM `opentrace-prod-5ga4.mart_dev.fct_vegetation` WHERE country_iso3 = 'KEN' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d0 ON d0.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d1 ON d1.geography_key = f.geography_key ORDER BY f.as_of_date DESC"
+    "sql": "SELECT f.value, f.as_of_date, f.as_of_date_basis, f.country_iso3, f.metric, f.vegetation_grain, f.grid_id, f.unit, d0.organisation_name, d1.country_name FROM (SELECT value, as_of_date, as_of_date_basis, country_iso3, metric, vegetation_grain, grid_id, unit, source_key, geography_key FROM `opentrace-prod-5ga4.mart_dev.fct_vegetation` WHERE country_iso3 = 'KEN' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d0 ON d0.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d1 ON d1.geography_key = f.geography_key ORDER BY f.as_of_date DESC"
    },
    "readiness": "integration_verified"
   },
@@ -4491,7 +4491,7 @@
    "probe": {
     "ok": true,
     "error": "",
-    "sql": "SELECT f.value, f.year, f.month, f.as_of_date, f.country_iso3, f.metric, f.area_unit, f.production_unit, f.yield_unit, d0.product_name, d1.organisation_name, d2.season_name, d3.country_name FROM (SELECT value, year, month, as_of_date, country_iso3, metric, area_unit, production_unit, yield_unit, product_key, source_key, season_key, geography_key FROM `opentrace-prod-5ga4.mart_dev.fct_yield` WHERE country_iso3 = 'KEN' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC, month DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_product` AS d0 ON d0.product_key = f.product_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d1 ON d1.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_season` AS d2 ON d2.season_key = f.season_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d3 ON d3.geography_key = f.geography_key ORDER BY f.as_of_date DESC, f.month DESC"
+    "sql": "SELECT f.value, f.year, f.month, f.as_of_date, f.as_of_date_basis, f.country_iso3, f.metric, f.area_unit, f.production_unit, f.yield_unit, d0.product_name, d1.organisation_name, d2.season_name, d3.country_name FROM (SELECT value, year, month, as_of_date, as_of_date_basis, country_iso3, metric, area_unit, production_unit, yield_unit, product_key, source_key, season_key, geography_key FROM `opentrace-prod-5ga4.mart_dev.fct_yield` WHERE country_iso3 = 'KEN' AND as_of_date BETWEEN DATE '2020-01-01' AND DATE '2020-12-31' ORDER BY as_of_date DESC, month DESC LIMIT 50) AS f LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_product` AS d0 ON d0.product_key = f.product_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_source` AS d1 ON d1.source_key = f.source_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_season` AS d2 ON d2.season_key = f.season_key LEFT JOIN `opentrace-prod-5ga4.mart_dev.dim_geography` AS d3 ON d3.geography_key = f.geography_key ORDER BY f.as_of_date DESC, f.month DESC"
    },
    "readiness": "integration_verified"
   },
